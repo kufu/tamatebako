@@ -1,6 +1,7 @@
 {
   "name": "@smarthr/package-a",
   "version": "1.0.0",
+  "private": true,
   "description": "A test library",
   "author": "SmartHR",
   "homepage": "",

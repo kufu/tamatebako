@@ -1,0 +1,35 @@
+{
+  "name": "tamatebako",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend packages for projects at SmartHR",
+  "workspaces": [
+    "packages/*"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "build": "yarn tsc",
+    "prebuild": "lerna run clean --stream",
+    "lint": "eslint '**/*.{ts,tsx}'",
+    "release": "lerna publish --conventional-commits",
+    "prerelease": "yarn build && yarn lint && yarn test",
+    "initial:release": "lerna publish from-package",
+    "preinitial:release": "yarn prerelease",
+    "start": "yarn build --watch",
+    "tsc": "tsc --build packages --force",
+    "test": "jest"
+  },
+  "author": "SmartHR",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^26.0.3",
+    "eslint": "^7.2.0",
+    "eslint-config-smarthr": "^4.0.0",
+    "jest": "^26.1.0",
+    "lerna": "^3.22.1",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.5"
+  }
+}

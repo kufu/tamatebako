@@ -3,6 +3,7 @@
   "include": [],
   "references": [
     { "path": "./package-a" },
-    { "path": "./package-b" }
+    { "path": "./package-b" },
+    { "path": "./useBulkCheck" },
   ]
 }

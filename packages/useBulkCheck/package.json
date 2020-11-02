@@ -1,0 +1,38 @@
+{
+  "name": "@smarthr/useBulkCheck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React hooks for managing the values ​​in the checkbox list",
+  "author": "SmartHR",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/useBulkCheck"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prebuild": "yarn clean",
+    "clean": "rimraf lib"
+  },
+  "dependencies": {
+    "react": "^17.0.1"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "^3.4.2",
+    "@types/react": "^16.9.55",
+    "react-test-renderer": "^17.0.1"
+  }
+}

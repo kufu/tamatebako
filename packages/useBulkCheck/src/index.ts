@@ -1,10 +1,3 @@
-/**
- * useBulkCheck
- *
- * リストに対しての個別チェック・ページ内一括チェック・ページを跨いだ一括全件チェックの状態を管理するための React のカスタムフックです。
- * バックエンドではチェックした要素の ID 一覧(sting[])かページを跨いだ一括全件チェックのフラグ(boolean)を受け取ることを想定します。
- */
-
 import { useState } from 'react'
 
 export type ListItem<T> = { id: string } & T

@@ -1,4 +1,5 @@
 # `@smarthr/useBulkCheck`
+
 [![npm version](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck.svg)](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck)
 
 リストに対しての個別チェック・ページ内一括チェック・ページを跨いだ一括全件チェックの状態を管理するための React のカスタムフックです。  
@@ -86,3 +87,7 @@ export const Component = () => {
   )
 }
 ```
+
+## License
+
+This project is licensed under the terms of the [MIT license](https://github.com/kufu/tamatebako/blob/master/packages/useBulkCheck/LICENSE).

@@ -1,7 +1,6 @@
 {
   "name": "@smarthr/useBulkCheck",
   "version": "1.0.0",
-  "private": true,
   "description": "React hooks for managing the values ​​in the checkbox list",
   "author": "SmartHR",
   "homepage": "",

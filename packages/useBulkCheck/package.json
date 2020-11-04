@@ -26,8 +26,8 @@
     "prebuild": "yarn clean",
     "clean": "rimraf lib"
   },
-  "dependencies": {
-    "react": "^17.0.1"
+  "peerDependencies": {
+    "react": ">=16.13.0"
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^3.4.2",

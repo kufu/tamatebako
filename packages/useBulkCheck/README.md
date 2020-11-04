@@ -1,4 +1,5 @@
 # `@smarthr/useBulkCheck`
+[![npm version](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck.svg)](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck)
 
 リストに対しての個別チェック・ページ内一括チェック・ページを跨いだ一括全件チェックの状態を管理するための React のカスタムフックです。  
 バックエンドではチェックした要素の ID 一覧(sting[])かページを跨いだ一括全件チェックのフラグ(boolean)を受け取ることを想定します。

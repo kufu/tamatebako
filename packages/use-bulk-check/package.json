@@ -1,14 +1,13 @@
 {
-  "name": "@smarthr/package-b",
+  "name": "@smarthr/use-bulk-check",
   "version": "1.0.0",
-  "private": true,
-  "description": "A test library",
+  "description": "React hooks for managing the values ​​in the checkbox list",
   "author": "SmartHR",
   "homepage": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufu/tamatebako.git",
-    "directory": "packages/pacakge-b"
+    "directory": "packages/use-bulk-check"
   },
   "bugs": {
     "url": "https://github.com/kufu/tamatebako/issues"
@@ -23,8 +22,15 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
-    "prebuild": "yarn clean",
     "clean": "rimraf lib"
+  },
+  "peerDependencies": {
+    "react": ">=16.13.0"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "^3.4.2",
+    "@types/react": "^16.9.55",
+    "react": "^17.0.1",
+    "react-test-renderer": "^17.0.1"
   }
 }

@@ -17,6 +17,7 @@
     "preinitial:release": "yarn prerelease",
     "start": "yarn build --watch",
     "tsc": "tsc --build packages --force",
+    "pretest": "yarn build",
     "test": "jest"
   },
   "author": "SmartHR",

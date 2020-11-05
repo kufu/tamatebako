@@ -1,5 +1,5 @@
 {
-  "name": "@smarthr/useBulkCheck",
+  "name": "@smarthr/use-bulk-check",
   "version": "1.0.0",
   "description": "React hooks for managing the values ​​in the checkbox list",
   "author": "SmartHR",
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufu/tamatebako.git",
-    "directory": "packages/useBulkCheck"
+    "directory": "packages/use-bulk-check"
   },
   "bugs": {
     "url": "https://github.com/kufu/tamatebako/issues"

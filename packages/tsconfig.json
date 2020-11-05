@@ -4,6 +4,6 @@
   "references": [
     { "path": "./package-a" },
     { "path": "./package-b" },
-    { "path": "./useBulkCheck" },
+    { "path": "./use-bulk-check" },
   ]
 }

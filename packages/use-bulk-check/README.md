@@ -1,6 +1,6 @@
-# `@smarthr/useBulkCheck`
+# `@smarthr/use-bulk-check`
 
-[![npm version](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck.svg)](https://badge.fury.io/js/%40smarthr%2FuseBulkCheck)
+[![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check)
 
 リストに対しての個別チェック・ページ内一括チェック・ページを跨いだ一括全件チェックの状態を管理するための React のカスタムフックです。  
 バックエンドではチェックした要素の ID 一覧(sting[])かページを跨いだ一括全件チェックのフラグ(boolean)を受け取ることを想定します。
@@ -9,7 +9,7 @@
 
 ```tsx
 import React from 'react'
-import { useBulkCheck } from '@smarthr/useBulkCheck'
+import { useBulkCheck } from '@smarthr/use-bulk-check'
 
 export const Component = () => {
   const users = [
@@ -90,4 +90,4 @@ export const Component = () => {
 
 ## License
 
-This project is licensed under the terms of the [MIT license](https://github.com/kufu/tamatebako/blob/master/packages/useBulkCheck/LICENSE).
+This project is licensed under the terms of the [MIT license](https://github.com/kufu/tamatebako/blob/master/packages/use-bulk-check/LICENSE).

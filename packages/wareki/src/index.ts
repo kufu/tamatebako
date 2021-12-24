@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-
 class JpnEra {
   from: Date
   constructor(from: Date) {
@@ -49,7 +47,7 @@ function dateToWareki(date: string | Date): string {
 }
 export function warekiToDate(wareki: string): Date {
   // convert number from full-width to half-width
-  // TODO: 
+  // TODO: ほかの全角文字も半角に治すようにしたほうが良さそう
   const converted = wareki.replace(/[０-９．]/g, (s) =>
     String.fromCharCode(s.charCodeAt(0) - 0xfee0),
   )
@@ -71,16 +69,17 @@ export function warekiToDate(wareki: string): Date {
     }
   }
 
+  // parse as A.D.
   const matchedAD = converted.match(
     `^([0-9]{4})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?`,
   )
   if (matchedAD) {
-    // parse as A.D.
     const year = Number(matchedAD[1])
     const month = Number(matchedAD[3])
     const date = Number(matchedAD[5])
     return new Date(year, month - 1, date)
   }
 
-  return dayjs(converted).toDate()
+  // TODO テスト追加する&エラー文言や内容を検討する
+  throw Error('hoge')
 }

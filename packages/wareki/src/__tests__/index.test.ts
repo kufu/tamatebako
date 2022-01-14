@@ -1,6 +1,14 @@
-import { warekiToDate } from '../index'
+import { dateToWareki, warekiToDate } from '../index'
 
-describe('datePickerHelper', () => {
+describe('wareki', () => {
+  describe('dateToWareki', () => {
+    it('Date を和暦に変換できること', () => {
+      const actual = dateToWareki(new Date(2022, 0, 1))
+      expect(actual.isValid).toBeTruthy()
+      expect(actual.result).toBe('令和4年1月1日')
+    })
+  })
+
   describe('warekiToDate', () => {
     it('parse a date string of Meiji', () => {
       const expected = new Date(1869, 0, 1)

@@ -3,9 +3,28 @@ import { dateToWareki, warekiToDate } from '../index'
 describe('wareki', () => {
   describe('dateToWareki', () => {
     it('Date を和暦に変換できること', () => {
-      const actual = dateToWareki(new Date(2022, 0, 1))
-      expect(actual.isValid).toBeTruthy()
-      expect(actual.result).toBe('令和4年1月1日')
+      Object.entries({
+        '令和4年1月1日': new Date(2022, 1 - 1, 1),
+        '令和元年5月1日': new Date(2019, 5 - 1, 1),
+        '平成31年4月30日': new Date(2019, 4 - 1, 30),
+        '平成元年1月8日': new Date(1989, 1 - 1, 8),
+        '昭和64年1月7日': new Date(1989, 1 - 1, 7),
+        '昭和元年12月25日': new Date(1926, 12 - 1, 25),
+        '大正15年12月24日': new Date(1926, 12 - 1, 24),
+        '大正元年7月30日': new Date(1912, 7 - 1, 30),
+        '明治45年7月29日': new Date(1912, 7 - 1, 29),
+        '明治元年1月25日': new Date(1868, 1 - 1, 25),
+        '明治元年1月24日': new Date(1868, 1 - 1, 24),
+        '明治元年1月1日': new Date(1868, 1 - 1, 1),
+        '明治0年12月31日': new Date(1867, 12 - 1, 31),
+        '明治0年1月25日': new Date(1867, 1 - 1, 25),
+        '明治0年1月24日': new Date(1867, 1 - 1, 24),
+      }).forEach(([exptected, date]) => {
+        const actual = dateToWareki(date)
+
+        expect(actual.isValid).toBeTruthy()
+        expect(actual.result).toBe(exptected)
+      })
     })
   })
 

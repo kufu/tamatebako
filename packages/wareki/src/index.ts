@@ -110,21 +110,18 @@ export function dateToWareki(d: string | Date): Result<string> {
 
 export function warekiToDate(wareki: string): Date {
   const converted = fullWidthToHalfWidth(wareki)
-
   // parse as japanese era
   const matchedJpnEra = converted.match(
     `^(${jpnEraSigns.join(
       '|',
     )})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg}?)$`,
   )
+
   if (matchedJpnEra) {
-    const eraSign = matchedJpnEra[1]
-    const year = Number(matchedJpnEra[2])
-    const month = Number(matchedJpnEra[4])
-    const date = Number(matchedJpnEra[6])
-    const jpnEra = jpnEraSignMap.get(eraSign)
+    const jpnEra = jpnEraSignMap.get(matchedJpnEra[1])
+
     if (jpnEra) {
-      return new Date(jpnEra.getADYear(year), month - 1, date)
+      return new Date(jpnEra.getADYear(Number(matchedJpnEra[2])), Number(matchedJpnEra[4]) - 1, Number(matchedJpnEra[6]))
     }
   }
 
@@ -132,11 +129,9 @@ export function warekiToDate(wareki: string): Date {
   const matchedAD = converted.match(
     `^([0-9]{4})(${separatorReg})?([0-9]{1,2})(${separatorReg})?([0-9]{1,2})(${separatorReg})?`,
   )
+
   if (matchedAD) {
-    const year = Number(matchedAD[1])
-    const month = Number(matchedAD[3])
-    const date = Number(matchedAD[5])
-    return new Date(year, month - 1, date)
+    return new Date(Number(matchedAD[1]), Number(matchedAD[3]) - 1, Number(matchedAD[5]))
   }
 
   // TODO テスト追加する&エラー文言や内容を検討する

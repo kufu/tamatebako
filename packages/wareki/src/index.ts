@@ -67,14 +67,13 @@ type Result<T> = {
 }
 
 export function dateToWareki(d: string | Date): Result<string> {
-  const rawDateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
-  const dateString = fullWidthToHalfWidth(rawDateString)
-  const matcher = dateString.match(adDateStringReg)
+  const dateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
+  const matcher = fullWidthToHalfWidth(dateString).match(adDateStringReg)
 
   if (!matcher) {
     return {
       isValid: false,
-      result: rawDateString,
+      result: dateString,
     }
   }
 

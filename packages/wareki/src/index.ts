@@ -6,7 +6,7 @@ const { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo } = (() => {
   const MEIJI = '明治' as const
   type Geongo = typeof REIWA | typeof HEISEI | typeof SHOWA | typeof TAISHO | typeof MEIJI
 
-  const WAREKI_BOUNDARY = [
+  const WAREKI_BOUNDARYS = [
     [REIWA, 2019, 4, 30, HEISEI],
     [HEISEI, 1989, 1, 7, SHOWA],
     [SHOWA, 1926, 12, 24, TAISHO],
@@ -35,7 +35,7 @@ const { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo } = (() => {
   const warekiReg = new RegExp(`^(${Object.keys(WAREKI_START_YEARS).join('|')})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`)
 
   const selectGengo = (year: number, month: number, date: number): Geongo => {
-    for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of WAREKI_BOUNDARY) {
+    for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of WAREKI_BOUNDARYS) {
       if (year > boundaryYear) {
         return modern
       } else if (year === boundaryYear) {
@@ -76,7 +76,7 @@ export function dateToWareki(d: string | Date): Result<string> {
 
   const gengo = selectGengo(year, month, date)
   // 和暦は1年から始まるので + 1 が必要
-  const warekiYear = year - WAREKI_START_YEARS[gengo]! + 1
+  const warekiYear = year - WAREKI_START_YEARS[gengo] + 1
 
   return {
     isValid: true,
@@ -93,12 +93,10 @@ export function warekiToDate(wareki: string): Result<Date> {
   if (matchedJpnEra) {
     const baseYear = WAREKI_START_YEARS[(matchedJpnEra[1] as keyof typeof WAREKI_START_YEARS)]
 
-    if (baseYear) {
-      return {
-        isValid: true,
-        // 和暦は1年から始まるので - 1 が必要
-        result: new Date(baseYear + Number(matchedJpnEra[2]) - 1, Number(matchedJpnEra[4]) - 1, Number(matchedJpnEra[6])),
-      }
+    return {
+      isValid: true,
+      // 和暦は1年から始まるので - 1 が必要
+      result: new Date(baseYear + Number(matchedJpnEra[2]) - 1, Number(matchedJpnEra[4]) - 1, Number(matchedJpnEra[6])),
     }
   }
 

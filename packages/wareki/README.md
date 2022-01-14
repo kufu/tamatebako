@@ -43,7 +43,11 @@ export const Component = () => {
       <ul>
         {pageItems.map(({ item, checked }) => (
           <li key={item.id}>
-            <input type="checkbox" checked={checked || isPageChecked || isAllChecked} onChange={() => toggleChecked(item.id)} />
+            <input
+              type="checkbox"
+              checked={checked || isPageChecked || isAllChecked}
+              onChange={() => toggleChecked(item.id)}
+            />
             {item.name}
           </li>
         ))}

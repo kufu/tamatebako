@@ -54,7 +54,7 @@ const ERA_RANGE = [
   [TAISHO, 1912, 7, 29, MEIJI],
 ] as const
 
-const separatorReg = '[:\\/\\-\\.\\s．年月日]'
+const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
 
 // TODO: ほかの全角文字も半角に治す必要があるかも？
 const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[ａ-ｚＡ-Ｚ０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
@@ -70,7 +70,7 @@ export function dateToWareki(d: string | Date): Result<string> {
 
   const matcher = dateString.match(
     new RegExp(
-      `^([0-9]{4})(${separatorReg})?([0-9]{1,2})(${separatorReg})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
+      `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
     ),
   )
 
@@ -108,32 +108,41 @@ export function dateToWareki(d: string | Date): Result<string> {
   }
 }
 
-export function warekiToDate(wareki: string): Date {
-  const converted = fullWidthToHalfWidth(wareki)
+export function warekiToDate(wareki: string): Result<Date> {
+  const formattedWareki = fullWidthToHalfWidth(wareki)
+
   // parse as japanese era
-  const matchedJpnEra = converted.match(
+  const matchedJpnEra = formattedWareki.match(
     `^(${jpnEraSigns.join(
       '|',
-    )})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg}?)$`,
+    )})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
   )
 
   if (matchedJpnEra) {
     const jpnEra = jpnEraSignMap.get(matchedJpnEra[1])
 
     if (jpnEra) {
-      return new Date(jpnEra.getADYear(Number(matchedJpnEra[2])), Number(matchedJpnEra[4]) - 1, Number(matchedJpnEra[6]))
+      return {
+        isValid: true,
+        result: new Date(jpnEra.getADYear(Number(matchedJpnEra[2])), Number(matchedJpnEra[4]) - 1, Number(matchedJpnEra[6])),
+      }
     }
   }
 
   // parse as A.D.
-  const matchedAD = converted.match(
-    `^([0-9]{4})(${separatorReg})?([0-9]{1,2})(${separatorReg})?([0-9]{1,2})(${separatorReg})?`,
+  const matchedAD = formattedWareki.match(
+    `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?`,
   )
 
   if (matchedAD) {
-    return new Date(Number(matchedAD[1]), Number(matchedAD[3]) - 1, Number(matchedAD[5]))
+    return {
+      isValid: true,
+      result: new Date(Number(matchedAD[1]), Number(matchedAD[3]) - 1, Number(matchedAD[5])),
+    }
   }
 
-  // TODO テスト追加する&エラー文言や内容を検討する
-  throw Error('hoge')
+  return {
+    isValid: false,
+    result: formattedWareki,
+  }
 }

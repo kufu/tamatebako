@@ -54,7 +54,7 @@ const ERA_RANGE = [
   [TAISHO, 1912, 7, 29, MEIJI],
 ] as const
 
-const dateSeparatorReg = '[:\\/\\-\\.\\s．年月日]'
+const separatorReg = '[:\\/\\-\\.\\s．年月日]'
 
 const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
 
@@ -69,7 +69,7 @@ export function dateToWareki(d: string | Date): Result<string> {
 
   const matcher = dateString.match(
     new RegExp(
-      `^([0-9]{4})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
+      `^([0-9]{4})(${separatorReg})?([0-9]{1,2})(${separatorReg})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
     ),
   )
 
@@ -115,7 +115,7 @@ export function warekiToDate(wareki: string): Date {
   const matchedJpnEra = converted.match(
     `^(${jpnEraSigns.join(
       '|',
-    )})([0-9]{1,2})(${dateSeparatorReg})([0-9]{1,2})(${dateSeparatorReg})([0-9]{1,2})(${dateSeparatorReg}?)$`,
+    )})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg}?)$`,
   )
   if (matchedJpnEra) {
     // parse as japanese era
@@ -131,7 +131,7 @@ export function warekiToDate(wareki: string): Date {
 
   // parse as A.D.
   const matchedAD = converted.match(
-    `^([0-9]{4})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?`,
+    `^([0-9]{4})(${separatorReg})?([0-9]{1,2})(${separatorReg})?([0-9]{1,2})(${separatorReg})?`,
   )
   if (matchedAD) {
     const year = Number(matchedAD[1])

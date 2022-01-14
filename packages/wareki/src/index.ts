@@ -3,6 +3,7 @@ const HEISEI = '平成' as const
 const SHOWA = '昭和' as const
 const TAISHO = '大正' as const
 const MEIJI = '明治' as const
+type Geongo = typeof REIWA | typeof HEISEI | typeof SHOWA | typeof TAISHO | typeof MEIJI
 
 const ERA_RANGE = [
   [REIWA, 2019, 4, 30, HEISEI],
@@ -10,7 +11,7 @@ const ERA_RANGE = [
   [SHOWA, 1926, 12, 24, TAISHO],
   [TAISHO, 1912, 7, 29, MEIJI],
 ] as const
-const HASH_CONVERTER_ERA_SIGN = {
+const WAREKI_START_YEARS = {
   't': 1912,
   'T': 1912,
   [TAISHO]: 1912,
@@ -29,10 +30,24 @@ const HASH_CONVERTER_ERA_SIGN = {
 } as const
 const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
 const adDateStringReg = new RegExp(`^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`)
-const warekiReg = new RegExp(`^(${Object.keys(HASH_CONVERTER_ERA_SIGN).join('|')})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`)
+const warekiReg = new RegExp(`^(${Object.keys(WAREKI_START_YEARS).join('|')})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`)
 
 // TODO: ほかの全角文字も半角に治す必要があるかも？
 const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[ａ-ｚＡ-Ｚ０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
+const selectGengo = (year: number, month: number, date: number): Geongo => {
+  for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of ERA_RANGE) {
+    if (year > boundaryYear) {
+      return modern
+    } else if (year === boundaryYear) {
+      if (month > boundaryMonth || (month === boundaryMonth && date > boundaryDay)) {
+        return modern
+      }
+      return ancient
+    }
+  }
+
+  return MEIJI
+}
 
 type Result<T> = {
   isValid: boolean
@@ -54,22 +69,9 @@ export function dateToWareki(d: string | Date): Result<string> {
   const month = Number(matcher[3])
   const date = Number(matcher[5])
 
-  const gengo = (() => {
-    for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of ERA_RANGE) {
-      if (year > boundaryYear) {
-        return modern
-      } else if (year === boundaryYear) {
-        if (month > boundaryMonth || (month === boundaryMonth && date > boundaryDay)) {
-          return modern
-        }
-        return ancient
-      }
-    }
-
-    return MEIJI
-  })()
+  const gengo = selectGengo(year, month, date)
   // 和暦は1年から始まるので + 1 が必要
-  const warekiYear = year - HASH_CONVERTER_ERA_SIGN[gengo]! + 1
+  const warekiYear = year - WAREKI_START_YEARS[gengo]! + 1
 
   return {
     isValid: true,
@@ -84,7 +86,7 @@ export function warekiToDate(wareki: string): Result<Date> {
   const matchedJpnEra = formattedWareki.match(warekiReg)
 
   if (matchedJpnEra) {
-    const baseYear = HASH_CONVERTER_ERA_SIGN[(matchedJpnEra[1] as keyof typeof HASH_CONVERTER_ERA_SIGN)]
+    const baseYear = WAREKI_START_YEARS[(matchedJpnEra[1] as keyof typeof WAREKI_START_YEARS)]
 
     if (baseYear) {
       return {

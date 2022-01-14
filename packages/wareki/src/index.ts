@@ -56,7 +56,8 @@ const ERA_RANGE = [
 
 const separatorReg = '[:\\/\\-\\.\\s．年月日]'
 
-const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
+// TODO: ほかの全角文字も半角に治す必要があるかも？
+const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[ａ-ｚＡ-Ｚ０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
 
 type Result<T> = {
   isValid: boolean
@@ -108,17 +109,15 @@ export function dateToWareki(d: string | Date): Result<string> {
 }
 
 export function warekiToDate(wareki: string): Date {
-  // convert number from full-width to half-width
-  // TODO: ほかの全角文字も半角に治すようにしたほうが良さそう
   const converted = fullWidthToHalfWidth(wareki)
 
+  // parse as japanese era
   const matchedJpnEra = converted.match(
     `^(${jpnEraSigns.join(
       '|',
     )})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg})([0-9]{1,2})(${separatorReg}?)$`,
   )
   if (matchedJpnEra) {
-    // parse as japanese era
     const eraSign = matchedJpnEra[1]
     const year = Number(matchedJpnEra[2])
     const month = Number(matchedJpnEra[4])

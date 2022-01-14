@@ -55,6 +55,8 @@ const ERA_RANGE = [
 ] as const
 
 const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
+const adDateStringReg = new RegExp(`^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`)
+const warekiReg = new RegExp(`^(${jpnEraSigns.join('|')})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`)
 
 // TODO: ほかの全角文字も半角に治す必要があるかも？
 const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[ａ-ｚＡ-Ｚ０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
@@ -67,12 +69,7 @@ type Result<T> = {
 export function dateToWareki(d: string | Date): Result<string> {
   const rawDateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
   const dateString = fullWidthToHalfWidth(rawDateString)
-
-  const matcher = dateString.match(
-    new RegExp(
-      `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
-    ),
-  )
+  const matcher = dateString.match(adDateStringReg)
 
   if (!matcher) {
     return {
@@ -112,11 +109,7 @@ export function warekiToDate(wareki: string): Result<Date> {
   const formattedWareki = fullWidthToHalfWidth(wareki)
 
   // parse as japanese era
-  const matchedJpnEra = formattedWareki.match(
-    `^(${jpnEraSigns.join(
-      '|',
-    )})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
-  )
+  const matchedJpnEra = formattedWareki.match(warekiReg)
 
   if (matchedJpnEra) {
     const jpnEra = jpnEraSignMap.get(matchedJpnEra[1])
@@ -130,9 +123,7 @@ export function warekiToDate(wareki: string): Result<Date> {
   }
 
   // parse as A.D.
-  const matchedAD = formattedWareki.match(
-    `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?`,
-  )
+  const matchedAD = formattedWareki.match(adDateStringReg)
 
   if (matchedAD) {
     return {
@@ -143,6 +134,6 @@ export function warekiToDate(wareki: string): Result<Date> {
 
   return {
     isValid: false,
-    result: formattedWareki,
+    result: new Date(formattedWareki),
   }
 }

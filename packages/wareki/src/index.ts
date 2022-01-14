@@ -54,44 +54,18 @@ const ERA_RANGE = [
   [TAISHO, 1912, 7, 29, MEIJI],
 ] as const
 
-// this regexp includes [:], [/], [-], [.], [\s], [．], [年], [月], [日]
 const dateSeparatorReg = '[:\\/\\-\\.\\s．年月日]'
 
-// to 令和2年1月1日
-// 2022/12/25 10:20
-
-/*
-{
-  isValidWareki: boolean,
-  formatted: string
-}
-*/
-
-// export function isValidDateString(str: string): boolean {
-//   const rawDateString =
-//     date instanceof Date ? `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}` : date
-//   const dateString = rawDateString.replace(/[０-９．]/g, (s) =>
-//     String.fromCharCode(s.charCodeAt(0) - 0xfee0),
-//   )
-
-//   const matcher = dateString.match(
-//     new RegExp(
-//       `^([0-9]{4})(${dateSeparatorReg})?([0-9]{1,2})(${dateSeparatorReg})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
-//     ),
-//   )
-// }
+const fullWidthToHalfWidth = (dateString: string) => dateString.replace(/[０-９．]/g, ((s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0)))
 
 type Result<T> = {
   isValid: boolean
   result: T
 }
 
-export function dateToWareki(date: string | Date): Result<string> {
-  const rawDateString =
-    date instanceof Date ? `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}` : date
-  const dateString = rawDateString.replace(/[０-９．]/g, (s) =>
-    String.fromCharCode(s.charCodeAt(0) - 0xfee0),
-  )
+export function dateToWareki(d: string | Date): Result<string> {
+  const rawDateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
+  const dateString = fullWidthToHalfWidth(rawDateString)
 
   const matcher = dateString.match(
     new RegExp(
@@ -108,44 +82,35 @@ export function dateToWareki(date: string | Date): Result<string> {
 
   const year = Number(matcher[1])
   const month = Number(matcher[3])
-  const day = Number(matcher[5])
+  const date = Number(matcher[5])
 
-  const gengo = adDate2EraSign(year, month, day)
+  const gengo = (() => {
+    for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of ERA_RANGE) {
+      if (year > boundaryYear) {
+        return modern
+      } else if (year === boundaryYear) {
+        if (month > boundaryMonth || (month === boundaryMonth && date > boundaryDay)) {
+          return modern
+        }
+        return ancient
+      }
+    }
+
+    return MEIJI
+  })()
   // 和暦は1年から始まるので + 1 が必要
-  const warekiYear = year - eraSign2ADYear(gengo) + 1
+  const warekiYear = year - jpnEraSignMap.get(gengo)!.from.getFullYear() + 1
 
   return {
     isValid: true,
-    result: `${gengo}${warekiYear === 1 ? '元' : warekiYear}年${month}月${day}日`,
+    result: `${gengo}${warekiYear === 1 ? '元' : warekiYear}年${month}月${date}日`,
   }
-}
-
-const adDate2EraSign = (year: number, month: number, day: number): Gengo => {
-  for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of ERA_RANGE) {
-    if (year > boundaryYear) {
-      return modern
-    } else if (year === boundaryYear) {
-      if (month > boundaryMonth || (month === boundaryMonth && day > boundaryDay)) {
-        return modern
-      }
-      return ancient
-    }
-  }
-
-  return MEIJI
-}
-
-// 日本の年号から西暦に変換します。
-const eraSign2ADYear = (gengo: Gengo): number => {
-  return (jpnEraSignMap.get(gengo)?.from || meiji.from).getFullYear()
 }
 
 export function warekiToDate(wareki: string): Date {
   // convert number from full-width to half-width
   // TODO: ほかの全角文字も半角に治すようにしたほうが良さそう
-  const converted = wareki.replace(/[０-９．]/g, (s) =>
-    String.fromCharCode(s.charCodeAt(0) - 0xfee0),
-  )
+  const converted = fullWidthToHalfWidth(wareki)
 
   const matchedJpnEra = converted.match(
     `^(${jpnEraSigns.join(

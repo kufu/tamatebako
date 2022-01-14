@@ -1,4 +1,4 @@
-const { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo } = (() => {
+const { WAREKI_START_YEARS, reg, selectGengo } = (() => {
   const REIWA = '令和' as const
   const HEISEI = '平成' as const
   const SHOWA = '昭和' as const
@@ -6,13 +6,14 @@ const { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo } = (() => {
   const MEIJI = '明治' as const
   type Geongo = typeof REIWA | typeof HEISEI | typeof SHOWA | typeof TAISHO | typeof MEIJI
 
+  const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
   const WAREKI_BOUNDARYS = [
     [REIWA, 2019, 4, 30, HEISEI],
     [HEISEI, 1989, 1, 7, SHOWA],
     [SHOWA, 1926, 12, 24, TAISHO],
     [TAISHO, 1912, 7, 29, MEIJI],
   ] as const
-  const WAREKI_START_YEARS = {
+  const YEARS = {
     t: 1912,
     T: 1912,
     [TAISHO]: 1912,
@@ -30,32 +31,33 @@ const { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo } = (() => {
     [MEIJI]: 1868,
   } as const
 
-  const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
-  const adDateStringReg = new RegExp(
-    `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
-  )
-  const warekiReg = new RegExp(
-    `^(${Object.keys(WAREKI_START_YEARS).join(
-      '|',
-    )})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
-  )
-
-  const selectGengo = (year: number, month: number, date: number): Geongo => {
-    for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of WAREKI_BOUNDARYS) {
-      if (year > boundaryYear) {
-        return modern
-      } else if (year === boundaryYear) {
-        if (month > boundaryMonth || (month === boundaryMonth && date > boundaryDay)) {
+  return {
+    WAREKI_START_YEARS: YEARS,
+    reg: {
+      dateString: new RegExp(
+        `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
+      ),
+      wareki: new RegExp(
+        `^(${Object.keys(YEARS).join(
+          '|',
+        )})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
+      ),
+    },
+    selectGengo: (year: number, month: number, date: number): Geongo => {
+      for (const [modern, boundaryYear, boundaryMonth, boundaryDay, ancient] of WAREKI_BOUNDARYS) {
+        if (year > boundaryYear) {
           return modern
+        } else if (year === boundaryYear) {
+          if (month > boundaryMonth || (month === boundaryMonth && date > boundaryDay)) {
+            return modern
+          }
+          return ancient
         }
-        return ancient
       }
-    }
 
-    return MEIJI
+      return MEIJI
+    },
   }
-
-  return { WAREKI_START_YEARS, adDateStringReg, warekiReg, selectGengo }
 })()
 // TODO: ほかの全角文字も半角に治す必要があるかも？
 const fullWidthToHalfWidth = (dateString: string) =>
@@ -68,7 +70,7 @@ type Result<T> = {
 
 export function dateToWareki(d: string | Date): Result<string> {
   const dateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
-  const matcher = fullWidthToHalfWidth(dateString).match(adDateStringReg)
+  const matcher = fullWidthToHalfWidth(dateString).match(reg.dateString)
 
   if (!matcher) {
     return {
@@ -95,7 +97,7 @@ export function warekiToDate(wareki: string): Result<Date> {
   const formattedWareki = fullWidthToHalfWidth(wareki)
 
   // parse as japanese era
-  const matchedJpnEra = formattedWareki.match(warekiReg)
+  const matchedJpnEra = formattedWareki.match(reg.wareki)
 
   if (matchedJpnEra) {
     const baseYear = WAREKI_START_YEARS[matchedJpnEra[1] as keyof typeof WAREKI_START_YEARS]
@@ -112,7 +114,7 @@ export function warekiToDate(wareki: string): Result<Date> {
   }
 
   // parse as A.D.
-  const matchedAD = formattedWareki.match(adDateStringReg)
+  const matchedAD = formattedWareki.match(reg.dateString)
 
   if (matchedAD) {
     return {

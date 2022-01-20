@@ -1,3 +1,4 @@
+.DS_Store
 packages/*/lib/
 node_modules/
 tsconfig.tsbuildinfo

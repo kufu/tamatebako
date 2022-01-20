@@ -24,10 +24,6 @@
   "scripts": {
     "clean": "rimraf lib"
   },
-  "peerDependencies": {
-    "react": ">=16.13.0"
-  },
-  "dependencies": {
-    "dayjs": "^1.10.7"
-  }
+  "peerDependencies": {},
+  "dependencies": {}
 }

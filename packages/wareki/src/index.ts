@@ -6,29 +6,35 @@ const { WAREKI_START_YEARS, reg, selectGengo } = (() => {
   const MEIJI = '明治' as const
   type Geongo = typeof REIWA | typeof HEISEI | typeof SHOWA | typeof TAISHO | typeof MEIJI
 
+  const REIWA_START_YEAR = 2019
+  const HEISEI_START_YEAR = 1989
+  const SHOWA_START_YEAR = 1926
+  const TAISHO_START_YEAR = 1912
+  const MEIJI_START_YEAR = 1868
+
   const SEPARATOR = '[:\\/\\-\\.\\s．年月日]'
   const WAREKI_BOUNDARYS = [
-    [REIWA, 2019, 4, 30, HEISEI],
-    [HEISEI, 1989, 1, 7, SHOWA],
-    [SHOWA, 1926, 12, 24, TAISHO],
-    [TAISHO, 1912, 7, 29, MEIJI],
+    [REIWA, REIWA_START_YEAR, 4, 30, HEISEI],
+    [HEISEI, HEISEI_START_YEAR, 1, 7, SHOWA],
+    [SHOWA, SHOWA_START_YEAR, 12, 24, TAISHO],
+    [TAISHO, TAISHO_START_YEAR, 7, 29, MEIJI],
   ] as const
   const YEARS = {
-    t: 1912,
-    T: 1912,
-    [TAISHO]: 1912,
-    s: 1926,
-    S: 1926,
-    [SHOWA]: 1926,
-    h: 1989,
-    H: 1989,
-    [HEISEI]: 1989,
-    r: 2019,
-    R: 2019,
-    [REIWA]: 2019,
-    m: 1868,
-    M: 1868,
-    [MEIJI]: 1868,
+    r: REIWA_START_YEAR,
+    R: REIWA_START_YEAR,
+    [REIWA]: REIWA_START_YEAR,
+    h: HEISEI_START_YEAR,
+    H: HEISEI_START_YEAR,
+    [HEISEI]: HEISEI_START_YEAR,
+    s: SHOWA_START_YEAR,
+    S: SHOWA_START_YEAR,
+    [SHOWA]: SHOWA_START_YEAR,
+    t: TAISHO_START_YEAR,
+    T: TAISHO_START_YEAR,
+    [TAISHO]: TAISHO_START_YEAR,
+    m: MEIJI_START_YEAR,
+    M: MEIJI_START_YEAR,
+    [MEIJI]: MEIJI_START_YEAR,
   } as const
 
   return {

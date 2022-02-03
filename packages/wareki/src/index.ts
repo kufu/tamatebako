@@ -120,12 +120,12 @@ export function warekiToDate(wareki: string): Result<Date> {
   }
 
   // parse as A.D.
-  const matchedAD = formattedWareki.match(reg.dateString)
+  const matchedDate = formattedWareki.match(reg.dateString)
 
-  if (matchedAD) {
+  if (matchedDate) {
     return {
       isValid: true,
-      result: new Date(Number(matchedAD[1]), Number(matchedAD[3]) - 1, Number(matchedAD[5])),
+      result: new Date(Number(matchedDate[1]), Number(matchedDate[3]) - 1, Number(matchedDate[5])),
     }
   }
 

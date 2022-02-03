@@ -103,18 +103,18 @@ export function warekiToDate(wareki: string): Result<Date> {
   const formattedWareki = fullWidthToHalfWidth(wareki)
 
   // parse as japanese era
-  const matchedJpnEra = formattedWareki.match(reg.wareki)
+  const matchedWareki = formattedWareki.match(reg.wareki)
 
-  if (matchedJpnEra) {
-    const baseYear = WAREKI_START_YEARS[matchedJpnEra[1] as keyof typeof WAREKI_START_YEARS]
+  if (matchedWareki) {
+    const baseYear = WAREKI_START_YEARS[matchedWareki[1] as keyof typeof WAREKI_START_YEARS]
 
     return {
       isValid: true,
       // 和暦は1年から始まるので - 1 が必要
       result: new Date(
-        baseYear + Number(matchedJpnEra[2]) - 1,
-        Number(matchedJpnEra[4]) - 1,
-        Number(matchedJpnEra[6]),
+        baseYear + Number(matchedWareki[2]) - 1,
+        Number(matchedWareki[4]) - 1,
+        Number(matchedWareki[6]),
       ),
     }
   }

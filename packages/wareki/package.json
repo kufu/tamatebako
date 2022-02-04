@@ -1,0 +1,29 @@
+{
+  "name": "@smarthr/wareki",
+  "version": "1.0.0",
+  "description": "japan 'wareki' formatter.",
+  "author": "SmartHR",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/wareki"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib"
+  },
+  "peerDependencies": {},
+  "dependencies": {}
+}

@@ -3,7 +3,7 @@ import { dateToWareki, warekiToDate } from '../index'
 describe('wareki', () => {
   describe('dateToWareki', () => {
     it('Date を和暦に変換できること', () => {
-      [
+      ;[
         ['令和4年1月1日', new Date(2022, 1 - 1, 1)],
         ['令和元年5月1日', new Date(2019, 5 - 1, 1)],
         ['平成31年4月30日', new Date(2019, 4 - 1, 30)],
@@ -28,7 +28,7 @@ describe('wareki', () => {
     })
 
     it('StringDate を和暦に変換できること', () => {
-      [
+      ;[
         ['令和4年1月1日', '2022/1/1'],
         ['令和4年1月1日', '2022/01/01'],
         ['令和4年1月1日', '20220101'],

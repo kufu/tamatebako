@@ -1,0 +1,46 @@
+{
+  "name": "@smarthr/virtual-scroll",
+  "version": "1.0.0",
+  "description": "React hooks for virtual scroll",
+  "author": "SmartHR",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/virtual-scroll"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "peerDependencies": {
+    "react": ">=16.13.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.7",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-interactions": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/react": "^6.4.19",
+    "@storybook/testing-library": "^0.0.9",
+    "@types/react": "^16.9.55",
+    "babel-loader": "^8.2.3",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.2"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,8 @@
+rules:
+  preset-smarthr: true
+plugins:
+  jsx:
+    extensions:
+      - ".jsx"
+      - ".tsx"
+      - ".ts"

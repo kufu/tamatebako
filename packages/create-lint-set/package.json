@@ -1,0 +1,37 @@
+{
+  "name": "@smarthr/create-lint-set",
+  "version": "1.0.0",
+  "description": "",
+  "author": "SmartHR",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/create-lint-set"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "copy-templates": "mkdir lib && cp -r src/templates lib/templates",
+    "clean": "rimraf lib && yarn copy-templates"
+  },
+  "dependencies": {
+    "chalk": "4.1.2",
+    "commander": "^9.1.0",
+    "cross-spawn": "^7.0.3",
+    "fs-extra": "^10.0.1"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.2"
+  }
+}

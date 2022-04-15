@@ -3,6 +3,7 @@
   "include": [],
   "references": [
     { "path": "./use-bulk-check" },
+    { "path": "./use-virtual-scroll" },
     { "path": "./wareki" }
   ]
 }

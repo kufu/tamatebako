@@ -1,9 +1,9 @@
 {
   "name": "@smarthr/create-lint-set",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lint installer",
   "author": "SmartHR",
-  "homepage": "",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/create-lint-set",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufu/tamatebako.git",

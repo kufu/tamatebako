@@ -8,7 +8,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "yarn tsc",
+    "build": "lerna run prebuild --stream && yarn tsc",
     "prebuild": "lerna run clean --stream",
     "lint": "eslint '**/*.{ts,tsx}'",
     "release": "lerna publish --conventional-commits",

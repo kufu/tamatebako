@@ -22,8 +22,9 @@
     "access": "public"
   },
   "scripts": {
+    "prebuild": "yarn copy-templates",
     "copy-templates": "mkdir lib && cp -r src/templates lib/templates",
-    "clean": "rimraf lib && yarn copy-templates"
+    "clean": "rimraf lib"
   },
   "dependencies": {
     "chalk": "4.1.2",

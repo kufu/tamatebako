@@ -2,7 +2,5 @@ rules:
   preset-smarthr: true
 plugins:
   jsx:
-    extensions:
-      - ".jsx"
-      - ".tsx"
+    extensions: # .jsx and .tsx are supported by default
       - ".ts"

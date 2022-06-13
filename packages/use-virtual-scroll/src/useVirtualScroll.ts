@@ -7,7 +7,7 @@ type Options = {
 export const useVirtualScroll = <
   Item,
   List extends HTMLElement,
-  ScrollContainer extends HTMLElement | Window = Window
+  ScrollContainer extends HTMLElement | Window = Window,
 >(
   items: Item[],
   itemHeight: number,

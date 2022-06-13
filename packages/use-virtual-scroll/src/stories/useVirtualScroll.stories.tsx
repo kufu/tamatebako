@@ -40,16 +40,11 @@ const ScrollOnContainer = () => {
   const itemHeight = 20
   const [containerHeight, setContainerHeight] = useState(300)
 
-  const {
-    items,
-    listRef,
-    scrollableContainerRef,
-    createListStyle,
-    createItemStyle,
-  } = useVirtualScroll<typeof originalItems[number], HTMLUListElement, HTMLDivElement>(
-    originalItems,
-    itemHeight,
-  )
+  const { items, listRef, scrollableContainerRef, createListStyle, createItemStyle } =
+    useVirtualScroll<typeof originalItems[number], HTMLUListElement, HTMLDivElement>(
+      originalItems,
+      itemHeight,
+    )
 
   return (
     <>

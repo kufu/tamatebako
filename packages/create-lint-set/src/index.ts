@@ -1,4 +1,4 @@
-import chalk from 'chalk/index'
+import chalk from 'chalk'
 
 import { init } from './createLintSet'
 

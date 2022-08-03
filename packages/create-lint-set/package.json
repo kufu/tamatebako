@@ -13,7 +13,7 @@
     "url": "https://github.com/kufu/tamatebako/issues"
   },
   "license": "MIT",
-  "main": "lib/index.js",
+  "bin": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib"

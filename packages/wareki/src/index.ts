@@ -72,16 +72,19 @@ const fullWidthToHalfWidth = (dateString: string) =>
 type Result<T> = {
   isValid: boolean
   result: T
+  formatted: string
 }
 
 export function dateToWareki(d: string | Date): Result<string> {
   const dateString = d instanceof Date ? `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}` : d
-  const matcher = fullWidthToHalfWidth(dateString).match(reg.dateString)
+  const formatted = fullWidthToHalfWidth(dateString)
+  const matcher = formatted.match(reg.dateString)
 
   if (!matcher) {
     return {
       isValid: false,
       result: dateString,
+      formatted,
     }
   }
 
@@ -96,14 +99,15 @@ export function dateToWareki(d: string | Date): Result<string> {
   return {
     isValid: true,
     result: `${gengo}${warekiYear === 1 ? '元' : warekiYear}年${month}月${date}日`,
+    formatted,
   }
 }
 
 export function warekiToDate(wareki: string): Result<Date> {
-  const formattedWareki = fullWidthToHalfWidth(wareki)
+  const formatted = fullWidthToHalfWidth(wareki)
 
   // parse as japanese era
-  const matchedWareki = formattedWareki.match(reg.wareki)
+  const matchedWareki = formatted.match(reg.wareki)
 
   if (matchedWareki) {
     const baseYear = WAREKI_START_YEARS[matchedWareki[1] as keyof typeof WAREKI_START_YEARS]
@@ -116,21 +120,24 @@ export function warekiToDate(wareki: string): Result<Date> {
         Number(matchedWareki[4]) - 1,
         Number(matchedWareki[6]),
       ),
+      formatted,
     }
   }
 
   // parse as A.D.
-  const matchedDate = formattedWareki.match(reg.dateString)
+  const matchedDate = formatted.match(reg.dateString)
 
   if (matchedDate) {
     return {
       isValid: true,
       result: new Date(Number(matchedDate[1]), Number(matchedDate[3]) - 1, Number(matchedDate[5])),
+      formatted,
     }
   }
 
   return {
     isValid: false,
-    result: new Date(formattedWareki),
+    result: new Date(formatted),
+    formatted,
   }
 }

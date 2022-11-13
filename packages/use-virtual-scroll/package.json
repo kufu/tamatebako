@@ -1,6 +1,6 @@
 {
   "name": "@smarthr/use-virtual-scroll",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "React hooks for virtual scroll",
   "author": "SmartHR",
   "homepage": "",

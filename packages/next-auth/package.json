@@ -1,0 +1,44 @@
+{
+  "name": "@smarthr/next-auth",
+  "version": "0.0.1",
+  "description": "SmartHR's next-auth utility",
+  "author": "SmartHR",
+  "homepage": "https://github.com/kufu/tamatebako#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/next-auth"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/uuid": "^9.0.0",
+    "ioredis": "^5.2.5",
+    "next-auth": "^4.18.8"
+  },
+  "peerDependencies": {
+    "ioredis": ">=5.2.4",
+    "next-auth": ">=4.18.8"
+  }
+}

@@ -10,9 +10,9 @@ type Arguments = {
 
 export const SmarthrProvider = ({
   smarthrUrl,
+  redirectUri,
   clientId,
   clientSecret,
-  redirectUri,
 }: Arguments): Provider => ({
   id: 'smarthr',
   name: 'SmartHR',

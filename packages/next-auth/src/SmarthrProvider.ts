@@ -8,12 +8,7 @@ type Arguments = {
   clientSecret: string
 }
 
-export const SmarthrProvider = ({
-  smarthrUrl,
-  redirectUri,
-  clientId,
-  clientSecret,
-}: Arguments): Provider => ({
+export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecret }: Arguments): Provider => ({
   id: 'smarthr',
   name: 'SmartHR',
   type: 'oauth',
@@ -44,8 +39,8 @@ export const SmarthrProvider = ({
       }
     },
   },
-  clientId: clientId,
-  clientSecret: clientSecret,
+  clientId,
+  clientSecret,
   userinfo: `${smarthrUrl}/api/v1/users/me`,
   issuer: 'https://authlete.com',
   httpOptions: {

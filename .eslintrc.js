@@ -1,8 +1,8 @@
 module.exports = {
-  extends: 'smarthr',
-  settings: {
-    react: {
-      version: 'latest',
-    },
+  extends: ['smarthr'],
+  plugins: ['import'],
+  rules: {
+    'smarthr/require-barrel-import': 'off',
+    'smarthr/best-practice-for-date': 'off',
   },
 }

@@ -124,17 +124,13 @@ export function RedisAdapter(redis: Redis): Adapter {
     },
     async createVerificationToken(verificationToken) {
       await setObjectAsJson(
-        prefixes.verificationTokenKey +
-          verificationToken.identifier +
-          ':' +
-          verificationToken.token,
+        prefixes.verificationTokenKey + verificationToken.identifier + ':' + verificationToken.token,
         verificationToken,
       )
       return verificationToken
     },
     async useVerificationToken(verificationToken) {
-      const tokenKey =
-        prefixes.verificationTokenKey + verificationToken.identifier + ':' + verificationToken.token
+      const tokenKey = prefixes.verificationTokenKey + verificationToken.identifier + ':' + verificationToken.token
 
       const token = await redis.get(tokenKey)
       if (!token) return null

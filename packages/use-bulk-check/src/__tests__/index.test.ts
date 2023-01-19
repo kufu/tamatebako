@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks'
 
-import { useBulkCheck } from '../'
+import { useBulkCheck } from '..'
 
 describe('useBulkCheck', () => {
   const list = [{ id: 'item-1' }, { id: 'item-2' }, { id: 'item-3' }]
@@ -24,9 +24,7 @@ describe('useBulkCheck', () => {
 
     describe('defaultCheckedIds がある場合', () => {
       it('チェックした item の ID が反映される', () => {
-        const { result } = renderHook(() =>
-          useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-3'] }),
-        )
+        const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-3'] }))
 
         expect(result.current.pageItems).toEqual([
           { item: { id: 'item-1' }, checked: true },
@@ -42,9 +40,7 @@ describe('useBulkCheck', () => {
 
     describe('defaultIsAllChecked がある場合', () => {
       it('全件チェックが反映される', () => {
-        const { result } = renderHook(() =>
-          useBulkCheck({ pageItems: list, defaultIsAllChecked: true }),
-        )
+        const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultIsAllChecked: true }))
 
         expect(result.current.pageItems).toEqual([
           { item: { id: 'item-1' }, checked: true },
@@ -162,9 +158,7 @@ describe('useBulkCheck', () => {
 
       describe('checkedItemsInCurrentPage の length が1以上の場合', () => {
         it('checkedSet 内にある ID のうち pageItems 内にあるものが削除される', () => {
-          const { result } = renderHook(() =>
-            useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-5'] }),
-          )
+          const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-5'] }))
 
           act(() => {
             result.current.togglePageChecked()
@@ -184,9 +178,7 @@ describe('useBulkCheck', () => {
 
       describe('isPageChecked が false かつ checkedItemsInCurrentPage の length が0の場合', () => {
         it('checkedSet に pageItems 内にある ID が全て追加される', () => {
-          const { result } = renderHook(() =>
-            useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-5'] }),
-          )
+          const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-5'] }))
 
           act(() => {
             result.current.togglePageChecked()
@@ -209,9 +201,7 @@ describe('useBulkCheck', () => {
   describe('toggleAllChecked', () => {
     describe('isAllChecked が true の場合', () => {
       it('isAllChecked が false になる', () => {
-        const { result } = renderHook(() =>
-          useBulkCheck({ pageItems: list, defaultIsAllChecked: true }),
-        )
+        const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultIsAllChecked: true }))
 
         act(() => {
           result.current.toggleAllChecked()
@@ -235,9 +225,7 @@ describe('useBulkCheck', () => {
 
     describe('選択状態の item がすでにある場合', () => {
       it('checkedIds には影響しない', () => {
-        const { result } = renderHook(() =>
-          useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-3'] }),
-        )
+        const { result } = renderHook(() => useBulkCheck({ pageItems: list, defaultCheckedIds: ['item-1', 'item-3'] }))
 
         act(() => {
           result.current.toggleAllChecked()

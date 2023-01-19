@@ -40,13 +40,9 @@ const { WAREKI_START_YEARS, reg, selectGengo } = (() => {
   return {
     WAREKI_START_YEARS: YEARS,
     reg: {
-      dateString: new RegExp(
-        `^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`,
-      ),
+      dateString: new RegExp(`^([0-9]{4})(${SEPARATOR})?([0-9]{1,2})(${SEPARATOR})?([0-9]{1,2})([\\s．]([0-9]{2}):([0-9]{2})$)?`),
       wareki: new RegExp(
-        `^(${Object.keys(YEARS).join(
-          '|',
-        )})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
+        `^(${Object.keys(YEARS).join('|')})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR})([0-9]{1,2})(${SEPARATOR}?)$`,
       ),
     },
     selectGengo: (year: number, month: number, date: number): Geongo => {
@@ -115,11 +111,7 @@ export function warekiToDate(wareki: string): Result<Date> {
     return {
       isValid: true,
       // 和暦は1年から始まるので - 1 が必要
-      result: new Date(
-        baseYear + Number(matchedWareki[2]) - 1,
-        Number(matchedWareki[4]) - 1,
-        Number(matchedWareki[6]),
-      ),
+      result: new Date(baseYear + Number(matchedWareki[2]) - 1, Number(matchedWareki[4]) - 1, Number(matchedWareki[6])),
       formatted,
     }
   }

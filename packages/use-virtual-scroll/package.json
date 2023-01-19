@@ -30,14 +30,14 @@
     "react": ">=16.13.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.7",
+    "@babel/core": "^7.20.12",
     "@storybook/addon-actions": "^6.5.15",
     "@storybook/addon-essentials": "^6.5.15",
     "@storybook/addon-interactions": "^6.5.15",
     "@storybook/addon-links": "^6.5.15",
     "@storybook/react": "^6.5.15",
     "@storybook/testing-library": "^0.0.13",
-    "@types/react": "^18.0.25",
+    "@types/react": "^18.0.26",
     "babel-loader": "^9.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

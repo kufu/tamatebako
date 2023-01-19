@@ -19,10 +19,10 @@ const ScrollOnWindow = () => {
   const originalItems = [...Array(1000)].map((_, i) => i)
   const itemHeight = 20
 
-  const { items, listRef, createListStyle, createItemStyle } = useVirtualScroll<
-    typeof originalItems[number],
-    HTMLUListElement
-  >(originalItems, itemHeight)
+  const { items, listRef, createListStyle, createItemStyle } = useVirtualScroll<(typeof originalItems)[number], HTMLUListElement>(
+    originalItems,
+    itemHeight,
+  )
 
   return (
     <ul ref={listRef} style={createListStyle()}>
@@ -40,11 +40,11 @@ const ScrollOnContainer = () => {
   const itemHeight = 20
   const [containerHeight, setContainerHeight] = useState(300)
 
-  const { items, listRef, scrollableContainerRef, createListStyle, createItemStyle } =
-    useVirtualScroll<typeof originalItems[number], HTMLUListElement, HTMLDivElement>(
-      originalItems,
-      itemHeight,
-    )
+  const { items, listRef, scrollableContainerRef, createListStyle, createItemStyle } = useVirtualScroll<
+    (typeof originalItems)[number],
+    HTMLUListElement,
+    HTMLDivElement
+  >(originalItems, itemHeight)
 
   return (
     <>
@@ -52,6 +52,7 @@ const ScrollOnContainer = () => {
         <label htmlFor="scroll-container-height">Scroll Container Height</label>
       </div>
       <input
+        name="height"
         id="scroll-container-height"
         type="number"
         value={containerHeight}

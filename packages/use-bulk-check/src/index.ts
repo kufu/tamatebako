@@ -76,18 +76,11 @@ export const useBulkCheck = <T>({
   }
 }
 
-const getPageItemsWithChecked = <T>(
-  pageItems: Array<ListItem<T>>,
-  checkedSet: Set<string>,
-  isAllChecked: boolean,
-) =>
+const getPageItemsWithChecked = <T>(pageItems: Array<ListItem<T>>, checkedSet: Set<string>, isAllChecked: boolean) =>
   pageItems.map((item) => ({
     item,
     checked: checkedSet.has(item.id) || isAllChecked,
   }))
-const getHasCheckedItemInPage = <T>(pageItems: Array<CheckedListItem<T>>) =>
-  pageItems.some(({ checked }) => checked)
-const getIsPageChecked = <T>(pageItems: Array<CheckedListItem<T>>) =>
-  pageItems.every(({ checked }) => checked)
-const getCheckedItems = <T>(pageItems: Array<CheckedListItem<T>>) =>
-  pageItems.filter(({ checked }) => checked)
+const getHasCheckedItemInPage = <T>(pageItems: Array<CheckedListItem<T>>) => pageItems.some(({ checked }) => checked)
+const getIsPageChecked = <T>(pageItems: Array<CheckedListItem<T>>) => pageItems.every(({ checked }) => checked)
+const getCheckedItems = <T>(pageItems: Array<CheckedListItem<T>>) => pageItems.filter(({ checked }) => checked)

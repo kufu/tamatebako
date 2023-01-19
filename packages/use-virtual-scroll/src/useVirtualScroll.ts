@@ -4,11 +4,7 @@ type Options = {
   marginItemCount?: number
 }
 
-export const useVirtualScroll = <
-  Item,
-  List extends HTMLElement,
-  ScrollContainer extends HTMLElement | Window = Window,
->(
+export const useVirtualScroll = <Item, List extends HTMLElement, ScrollContainer extends HTMLElement | Window = Window>(
   items: Item[],
   itemHeight: number,
   options?: Options,
@@ -98,8 +94,7 @@ export const useVirtualScroll = <
         scrollableContainer.removeEventListener('resize', onResize)
       }
     } else {
-      const onResizeHTMLElement = () =>
-        setScrollableContainerHeight(scrollableContainer.clientHeight)
+      const onResizeHTMLElement = () => setScrollableContainerHeight(scrollableContainer.clientHeight)
       const observer = new ResizeObserver(onResizeHTMLElement)
       observer.observe(scrollableContainer)
       return () => {

@@ -1,10 +1,12 @@
-import { program } from 'commander'
 import chalk from 'chalk'
+import { program } from 'commander'
 import spawn from 'cross-spawn'
-const path = require('path')
-const fs = require('fs-extra')
 
 import { Item, items } from './items'
+
+const path = require('path')
+
+const fs = require('fs-extra')
 
 // CLI 実行時のオプションを取得
 const getOptions = () => {
@@ -31,10 +33,7 @@ const filterInstallPackages = (targetDir: string, itemList: Item[]) => {
     process.exit(1)
   }
   const packageJson = require(packageJsonPath)
-  const installedPackages = [
-    ...Object.keys(packageJson.dependencies ?? {}),
-    ...Object.keys(packageJson.devDependencies ?? {}),
-  ]
+  const installedPackages = [...Object.keys(packageJson.dependencies ?? {}), ...Object.keys(packageJson.devDependencies ?? {})]
 
   return itemList.map((item) => ({
     ...item,
@@ -43,11 +42,7 @@ const filterInstallPackages = (targetDir: string, itemList: Item[]) => {
 }
 
 // インストール
-const installPackages = async (
-  targetDir: string,
-  itemList: Item[],
-  useYarn: boolean,
-): Promise<void> => {
+const installPackages = async (targetDir: string, itemList: Item[], useYarn: boolean): Promise<void> => {
   const targetPackages = itemList.map((item) => item.packages).flat()
   let command: string
   let args: string[]
@@ -80,12 +75,7 @@ const shouldCreateConfigFile = (regex: RegExp, fileNames: string[]) => {
 }
 
 // 設定ファイルの作成
-const createConfigFiles = (
-  scriptDir: string,
-  targetDir: string,
-  targetDirFiles: string[],
-  itemList: Item[],
-) => {
+const createConfigFiles = (scriptDir: string, targetDir: string, targetDirFiles: string[], itemList: Item[]) => {
   itemList.forEach((item) => {
     if (shouldCreateConfigFile(item.configFilePattern, targetDirFiles)) {
       const templateDir = scriptDir + '/templates/' + item.templateDirName
@@ -106,11 +96,7 @@ const printMessage = (itemList: Item[]) => {
         isFirst = false
       }
     })
-    console.info(
-      chalk.green(
-        'Packages were successfully installed!🍺\nAdd something like below to your package.json.\n',
-      ),
-    )
+    console.info(chalk.green('Packages were successfully installed!🍺\nAdd something like below to your package.json.\n'))
     // 下記のような文字列の出力
     // "scripts": {
     //   "eslint": "eslint './**/*.ts{,x}'"

@@ -5,7 +5,7 @@
 
 Frontend packages for projects at SmartHR
 
-### Package Index
+## Package Index
 
 | Package            | Version                                                                                                                                  | Description                                              |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
@@ -14,3 +14,25 @@ Frontend packages for projects at SmartHR
 | wareki             | [![npm version](https://badge.fury.io/js/%40smarthr%2Fwareki.svg)](https://badge.fury.io/js/%40smarthr%2Fwareki)                         | Japanese 'wareki' formatter                              |
 | create-lint-set    | [![npm version](https://badge.fury.io/js/%40smarthr%2Fcreate-lint-set.svg)](https://badge.fury.io/js/%40smarthr%2Fcreate-lint-set)       | Lint installer                                           |
 | next-auth          | [![npm version](https://badge.fury.io/js/%40smarthr%2Fnext-auth.svg)](https://badge.fury.io/js/%40smarthr%2Fnext-auth)                   | SmartHR's next-auth utility                              |
+
+## リリース手順
+
+### 1. バージョンを更新する
+
+```bash
+$ yarn versionup
+```
+
+以下のことが行われます。
+
+- commit log を元に各パッケージの version を更新
+- 各パッケージのディレクトリに `CHANGELOG.md` を出力(更新)
+- バージョンを git tag する
+
+### 2. publish する
+
+```bash
+$ yarn release
+```
+
+現在のバージョンが npm registry に公開されていなければ、npm publish します。

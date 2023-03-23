@@ -27,7 +27,7 @@
     "eslint-config-smarthr": "^6.7.0",
     "jest": "^29.5.0",
     "lerna": "^6.5.1",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.5",
     "prettier-config-smarthr": "^1.0.0",
     "rimraf": "^4.0.7",
     "ts-jest": "^29.0.5",

@@ -1,26 +1,18 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Story } from '@storybook/react'
 import React, { useState } from 'react'
 
 import { useVirtualScroll } from '../useVirtualScroll'
 
-const meta = {
+export default {
   title: 'useVirtualScroll',
-} satisfies Meta
-
-export default meta
-
-type Story = StoryObj<typeof meta>
-
-export const scrollOnWindow: Story = {
-  render() {
-    return <ScrollOnWindow />
-  },
 }
 
-export const scrollOnContainer: Story = {
-  render() {
-    return <ScrollOnContainer />
-  },
+export const scrollOnWindow: Story = () => {
+  return <ScrollOnWindow />
+}
+
+export const scrollOnContainer: Story = () => {
+  return <ScrollOnContainer />
 }
 
 const ScrollOnWindow = () => {

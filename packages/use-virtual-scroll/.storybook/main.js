@@ -1,6 +1,4 @@
-import { StorybookConfig } from '@storybook/react-webpack5'
-
-const config: StorybookConfig = {
+module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions'],
   framework: {
@@ -8,5 +6,3 @@ const config: StorybookConfig = {
     options: {},
   },
 }
-
-export default config

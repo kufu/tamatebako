@@ -35,6 +35,7 @@ export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecre
         tokens: {
           access_token: data.access_token,
           refresh_token: data.refresh_token,
+          expires_in: data.expires_in,
         },
       }
     },

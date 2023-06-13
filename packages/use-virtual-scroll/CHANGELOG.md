@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.3](https://github.com/kufu/tamatebako/compare/@smarthr/use-virtual-scroll@1.1.2...@smarthr/use-virtual-scroll@1.1.3) (2023-06-13)
+
+### Reverts
+
+- Revert "Storybook v7 の書式に対応" ([c94bc3f](https://github.com/kufu/tamatebako/commit/c94bc3ff93e7bc5a1efb7915b4587ec96aead2f2))
+
 ## [1.1.2](https://github.com/kufu/tamatebako/compare/@smarthr/use-virtual-scroll@1.1.1...@smarthr/use-virtual-scroll@1.1.2) (2023-01-23)
 
 **Note:** Version bump only for package @smarthr/use-virtual-scroll

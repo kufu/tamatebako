@@ -5106,10 +5106,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cross-spawn@^6.0.4":
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/@types/cross-spawn/-/cross-spawn-6.0.4.tgz#e658d29e2308a01f48b7b30fd8cdf07aeb2e5a82"
-  integrity sha512-GGLpeThc2Bu8FBGmVn76ZU3lix17qZensEI4/MPty0aZpm2CHfgEMis31pf5X5EiudYKcPAsWciAsCALoPo5dw==
+"@types/cross-spawn@^6.0.5":
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/@types/cross-spawn/-/cross-spawn-6.0.5.tgz#1f9a5311e0e54d6f88017ba6d564a958d1aa359f"
+  integrity sha512-wsIMP68FvGXk+RaWhraz6Xp4v7sl4qwzHAmtPaJEN2NRTXXI9LtFawUpeTsBNL/pd6QoLStdytCaAyiK7AEd/Q==
   dependencies:
     "@types/node" "*"
 

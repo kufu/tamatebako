@@ -112,6 +112,4 @@ export const useVirtualScroll = <Item, List extends HTMLElement, ScrollContainer
   }
 }
 
-const isWindow = (target: HTMLElement | Window): target is Window => {
-  return target === window
-}
+const isWindow = (target: HTMLElement | Window): target is Window => target === window

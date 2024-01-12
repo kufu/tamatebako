@@ -7,13 +7,9 @@ export default {
   title: 'useVirtualScroll',
 }
 
-export const scrollOnWindow: Story = () => {
-  return <ScrollOnWindow />
-}
+export const scrollOnWindow: Story = () => <ScrollOnWindow />
 
-export const scrollOnContainer: Story = () => {
-  return <ScrollOnContainer />
-}
+export const scrollOnContainer: Story = () => <ScrollOnContainer />
 
 const ScrollOnWindow = () => {
   const originalItems = [...Array(1000)].map((_, i) => i)

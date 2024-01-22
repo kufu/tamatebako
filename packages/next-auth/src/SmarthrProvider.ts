@@ -6,9 +6,10 @@ type Arguments = {
   redirectUri: string
   clientId: string
   clientSecret: string
+  useUuidForEmail?: boolean
 }
 
-export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecret }: Arguments): Provider => ({
+export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecret, useUuidForEmail }: Arguments): Provider => ({
   id: 'smarthr',
   name: 'SmartHR',
   type: 'oauth',
@@ -51,7 +52,9 @@ export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecre
   profile(profile) {
     return {
       id: profile.id,
-      email: profile.email ?? uuid(), // next-auth ではこの email を使って redis に値を入れるので、社員番号ログインで email がない場合は uuid を代わりとする
+      // email の重複による OAuthAccountNotLinked エラー避けるため、useUuidForEmail が true の場合は uuid を email として扱う
+      // 社員番号ログインで email がない場合も uuid を代わりとする
+      email: useUuidForEmail ? uuid() : profile.email ?? uuid(),
       uid: profile.id,
     }
   },

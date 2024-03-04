@@ -3819,7 +3819,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typescript-eslint/eslint-plugin@^7.0.2":
+"@typescript-eslint/eslint-plugin@^7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-7.1.0.tgz#22bb999a8d59893c0ea07923e8a21f9d985ad740"
   integrity sha512-j6vT/kCulhG5wBmGtstKeiVr1rdXE4nk+DT1k6trYkwlrvW9eOF5ZbgKnd/YR6PcM4uTEXa0h6Fcvf6X7Dxl0w==
@@ -3836,7 +3836,7 @@
     semver "^7.5.4"
     ts-api-utils "^1.0.1"
 
-"@typescript-eslint/parser@^7.0.2":
+"@typescript-eslint/parser@^7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-7.1.0.tgz#b89dab90840f7d2a926bf4c23b519576e8c31970"
   integrity sha512-V1EknKUubZ1gWFjiOZhDSNToOjs63/9O0puCgGS8aDOgpZY326fzFu15QAUjwaXzRZjf/qdsdBrckYdv9YxB8w==
@@ -6160,19 +6160,19 @@ eslint-config-prettier@^9.1.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-9.1.0.tgz#31af3d94578645966c082fcb71a5846d3c94867f"
   integrity sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==
 
-eslint-config-smarthr@^6.20.0:
-  version "6.20.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-smarthr/-/eslint-config-smarthr-6.20.0.tgz#ae1ebb25b81e8b0412e8b0eec95076781da89e30"
-  integrity sha512-ZrCbzafxunXiGoowFnNRAlyzsrBNMIgF4P460UwcNccBBdX8qb6Fkcx71gJd98v+a1LRBinGHl33qLezWmIQnw==
+eslint-config-smarthr@^6.21.0:
+  version "6.21.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-smarthr/-/eslint-config-smarthr-6.21.0.tgz#591073afcb969b5ced391bb3e7c06ed9566a399f"
+  integrity sha512-NNenRQs2t6ykl8gxWapRYP53xD6QtvNfgjIPYyHJaYWa3ZqYLzg1XZUYnrDjrdyi55lMkBs3BIZB4PQvXN9HrA==
   dependencies:
-    "@typescript-eslint/eslint-plugin" "^7.0.2"
-    "@typescript-eslint/parser" "^7.0.2"
+    "@typescript-eslint/eslint-plugin" "^7.1.0"
+    "@typescript-eslint/parser" "^7.1.0"
     eslint-config-prettier "^9.1.0"
     eslint-plugin-import "^2.29.1"
     eslint-plugin-jsx-a11y "^6.8.0"
     eslint-plugin-react "^7.33.2"
     eslint-plugin-react-hooks "^4.6.0"
-    eslint-plugin-smarthr "^0.4.1"
+    eslint-plugin-smarthr "^0.4.2"
 
 eslint-import-resolver-node@^0.3.9:
   version "0.3.9"
@@ -6262,10 +6262,10 @@ eslint-plugin-react@^7.33.2:
     semver "^6.3.1"
     string.prototype.matchall "^4.0.8"
 
-eslint-plugin-smarthr@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-smarthr/-/eslint-plugin-smarthr-0.4.1.tgz#85221f72458b3fce0160cb3016ea1a1a7e8ee2fa"
-  integrity sha512-ZZF5bG2lf9F3prZSIi6BMTKvX6VENrzzIx7oObSf5ZQQsQp88jnb3iC+DbVuBnUpAdHiT+DOZFLym5jxM+0KnQ==
+eslint-plugin-smarthr@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-smarthr/-/eslint-plugin-smarthr-0.4.2.tgz#436196df3ff81806ba66a8b258bee6a452a6d66b"
+  integrity sha512-hdUobmlvVsXf7spRZBhoFbgp8kX9btTlZelcy805KeoWF+4ui3s9nvj2uBITSzaUhr2g0WM5KOOhNDhxmV8g6Q==
   dependencies:
     json5 "^2.2.0"
 

@@ -4184,10 +4184,10 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@types/node@^18.19.15":
-  version "18.19.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.15.tgz#313a9d75435669a57fc28dc8694e7f4c4319f419"
-  integrity sha512-AMZ2UWx+woHNfM11PyAEQmfSxi05jm9OlkxczuHeEqmvwPkYj6MWv44gbzDPefYOLysTOFyI3ziiy2ONmUZfpA==
+"@types/node@^18.19.26":
+  version "18.19.26"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.26.tgz#18991279d0a0e53675285e8cf4a0823766349729"
+  integrity sha512-+wiMJsIwLOYCvUqSdKTrfkS8mpTp+MPINe6+Np4TAGFWWRWiBQ5kSq9nZGCSPkzx9mvT+uEukzpX4MOSCydcvw==
   dependencies:
     undici-types "~5.26.4"
 

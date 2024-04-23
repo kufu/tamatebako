@@ -8,14 +8,14 @@ on:
 
 jobs:
   build:
-    name: Node.js ubuntu-latest 18.x
+    name: Node.js ubuntu-latest 20.x
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 18.x
+    - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: 20.x
     - name: yarn install, and yarn lint
       run: |
         yarn install

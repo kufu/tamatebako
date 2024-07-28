@@ -25,12 +25,10 @@ export const items: Item[] = [
     templateDirName: 'stylelint',
     packages: [
       'stylelint',
-      'stylelint-config-prettier',
       'stylelint-config-smarthr',
       'stylelint-config-standard',
       'stylelint-config-styled-components',
-      'postcss-jsx',
-      'postcss-syntax',
+      'postcss-styled-syntax'
     ],
     configFilePattern: /\.stylelintrc.*?/,
     npmScriptsSample: '"stylelint": "stylelint \'./**/*.ts{,x}\'',

@@ -42,6 +42,7 @@ const isoDateRE =
 function isDate(value: any) {
   return value && isoDateRE.test(value) && !isNaN(Date.parse(value))
 }
+const expireSec = 604800 // 7日間
 
 function hydrateDates(jsonStr: string) {
   const json = JSON.parse(jsonStr)
@@ -52,12 +53,19 @@ function hydrateDates(jsonStr: string) {
 }
 
 export function RedisAdapter(redis: Redis): Adapter {
-  const setObjectAsJson = async (key: string, obj: any) => redis.set(key, JSON.stringify(obj))
+  const set = async (key: string, value: string | number) => {
+    await redis.set(key, value)
+    await redis.expire(key, expireSec)
+  }
+  const setObjectAsJson = async (key: string, obj: any) => {
+    await redis.set(key, JSON.stringify(obj))
+    await redis.expire(key, expireSec)
+  }
 
   const setAccount = async (id: string, account: AdapterAccount) => {
     const accountKey = prefixes.accountKey + id
     await setObjectAsJson(accountKey, account)
-    await redis.set(prefixes.accountByUserId + account.userId, accountKey)
+    await set(prefixes.accountByUserId + account.userId, accountKey)
     return account
   }
 
@@ -70,7 +78,7 @@ export function RedisAdapter(redis: Redis): Adapter {
   const setSession = async (id: string, session: AdapterSession): Promise<AdapterSession> => {
     const sessionKey = prefixes.sessionKey + id
     await setObjectAsJson(sessionKey, session)
-    await redis.set(prefixes.sessionByUserIdKey + session.userId, sessionKey)
+    await set(prefixes.sessionByUserIdKey + session.userId, sessionKey)
     return session
   }
 
@@ -82,7 +90,7 @@ export function RedisAdapter(redis: Redis): Adapter {
 
   const setUser = async (id: string, user: AdapterUser): Promise<AdapterUser> => {
     await setObjectAsJson(prefixes.userKey + id, user)
-    await redis.set(`${prefixes.emailKey}${user.email as string}`, id)
+    await set(`${prefixes.emailKey}${user.email as string}`, id)
     return user
   }
 

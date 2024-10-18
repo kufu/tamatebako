@@ -54,12 +54,10 @@ function hydrateDates(jsonStr: string) {
 
 export function RedisAdapter(redis: Redis): Adapter {
   const set = async (key: string, value: string | number) => {
-    await redis.set(key, value)
-    await redis.expire(key, expireSec)
+    await redis.setex(key, expireSec, value)
   }
   const setObjectAsJson = async (key: string, obj: any) => {
-    await redis.set(key, JSON.stringify(obj))
-    await redis.expire(key, expireSec)
+    await redis.setex(key, expireSec, JSON.stringify(obj))
   }
 
   const setAccount = async (id: string, account: AdapterAccount) => {

@@ -23,9 +23,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - name: yarn install, and yarn test
+    - name: pnpm install, and pnpm test
       run: |
-        yarn install
-        yarn test
+        corepack enable && corepack prepare --activate
+        pnpm install
+        pnpm test
       env:
         CI: true

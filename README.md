@@ -20,7 +20,7 @@ Frontend packages for projects at SmartHR
 ### 1. バージョンを更新する
 
 ```bash
-$ yarn versionup
+$ pnpm versionup
 ```
 
 以下のことが行われます。
@@ -32,7 +32,7 @@ $ yarn versionup
 ### 2. publish する
 
 ```bash
-$ yarn release
+$ pnpm release
 ```
 
 現在のバージョンが npm registry に公開されていなければ、npm publish します。

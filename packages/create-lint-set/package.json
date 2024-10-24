@@ -22,7 +22,7 @@
     "access": "public"
   },
   "scripts": {
-    "prebuild": "yarn copy-templates",
+    "prebuild": "pnpm copy-templates",
     "copy-templates": "mkdir lib && cp -r src/templates lib/templates",
     "clean": "rimraf lib"
   },

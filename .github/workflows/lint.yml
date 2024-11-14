@@ -16,9 +16,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
-    - name: yarn install, and yarn lint
+    - name: pnpm install, and pnpm lint
       run: |
-        yarn install
-        yarn lint
+        corepack enable && corepack prepare --activate
+        pnpm install
+        pnpm lint
       env:
         CI: true

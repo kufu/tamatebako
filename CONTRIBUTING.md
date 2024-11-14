@@ -10,21 +10,21 @@ This repository is a monorepo using Lerna and Yarn Workspaces.
 
 ```sh
 % cd tamatebako
-% yarn install
+% pnpm install
 ```
 
 ### Develop
 
 ```sh
-% yarn start
+% pnpm start
 ```
 
 ### Test
 
 ```sh
 % cd tamatebako
-% yarn test
-% yarn lint
+% pnpm test
+% pnpm lint
 ```
 
 ## For Maintainers
@@ -37,12 +37,12 @@ After you have approved a PR, please merge the PR using Squash and merge with Co
 
 ```sh
 % cd tamatebako
-% yarn release
+% pnpm release
 ```
 
 If you'd like to release a new package.
 
 ```sh
 % cd tamatebako
-% yarn initial:release
+% pnpm initial:release
 ```

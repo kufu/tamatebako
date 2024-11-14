@@ -42,16 +42,27 @@ const filterInstallPackages = (targetDir: string, itemList: Item[]) => {
 }
 
 // インストール
-const installPackages = async (targetDir: string, itemList: Item[], useYarn: boolean): Promise<void> => {
+const installPackages = async (targetDir: string, itemList: Item[], pmName: 'pnpm' | 'yarn' | 'npm'): Promise<void> => {
   const targetPackages = itemList.map((item) => item.packages).flat()
   let command: string
   let args: string[]
-  if (useYarn) {
-    command = 'yarn'
-    args = ['add', '--dev', '--exact', '--cwd', targetDir, ...targetPackages]
-  } else {
-    command = 'npm'
-    args = ['install', '--save-dev', '--save-exact', '--prefix', targetDir, ...targetPackages]
+
+  switch (pmName) {
+    case 'pnpm':
+      command = 'pnpm'
+      args = ['add', '--save-dev', '--save-exact', '--dir', targetDir, ...targetPackages]
+
+      break
+    case 'yarn':
+      command = 'yarn'
+      args = ['add', '--dev', '--exact', '--cwd', targetDir, ...targetPackages]
+
+      break
+    case 'npm':
+      command = 'npm'
+      args = ['install', '--save-dev', '--save-exact', '--prefix', targetDir, ...targetPackages]
+
+      break
   }
 
   return new Promise<void>((resolve, reject) => {
@@ -113,10 +124,19 @@ export const init = async () => {
   const currentDir: string = path.resolve() // npx が実行されているディレクトリ
   const targetDir: string = path.join(currentDir, projectPath) // 対象プロジェクトのディレクトリ
   const targetDirFiles: string[] = fs.readdirSync(targetDir) // 対象プロジェクトの直下のファイル名配列
-  const isUsingYarn: boolean = targetDirFiles.includes('yarn.lock')
+  const pmName: 'pnpm' | 'yarn' | 'npm' = (() => {
+    if (targetDirFiles.includes('pnpm-lock.yaml')) {
+      return 'pnpm'
+    }
+    if (targetDirFiles.includes('yarn.lock')) {
+      return 'yarn'
+    }
+
+    return 'npm'
+  })()
 
   const itemsWithFilteredPackages = filterInstallPackages(targetDir, items)
-  await installPackages(targetDir, itemsWithFilteredPackages, isUsingYarn)
+  await installPackages(targetDir, itemsWithFilteredPackages, pmName)
   createConfigFiles(scriptDir, targetDir, targetDirFiles, items)
   printMessage(itemsWithFilteredPackages)
 }

@@ -14,14 +14,18 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "versionup": "lerna version --conventional-commits",
     "prerelease": "pnpm build && pnpm lint && pnpm test",
-    "release": "lerna publish from-package"
+    "release": "lerna publish from-package",
+    "prepare": "husky"
   },
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
     "@types/jest": "^29.5.12",
     "eslint": "^8.57.0",
     "eslint-config-smarthr": "^6.33.2",
+    "husky": "^9.1.6",
     "jest": "^29.7.0",
     "lerna": "^8.1.8",
     "prettier": "^3.3.2",
@@ -30,6 +34,5 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3"
   },
-  "dependencies": {},
   "packageManager": "pnpm@9.12.2"
 }

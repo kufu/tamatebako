@@ -16,7 +16,7 @@ This repository is a monorepo using Lerna and Yarn Workspaces.
 ### Develop
 
 ```sh
-% pnpm start
+% pnpm dev
 ```
 
 ### Test

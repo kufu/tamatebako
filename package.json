@@ -5,7 +5,7 @@
   "description": "Frontend packages for projects at SmartHR",
   "main": "index.js",
   "scripts": {
-    "start": "pnpm build --watch",
+    "dev": "pnpm build --watch",
     "build": "lerna run prebuild --stream && pnpm tsc",
     "pretest": "pnpm build",
     "test": "jest",

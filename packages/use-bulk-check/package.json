@@ -22,6 +22,7 @@
     "access": "public"
   },
   "scripts": {
+    "prebuild": "pnpm clean",
     "clean": "rimraf lib"
   },
   "peerDependencies": {

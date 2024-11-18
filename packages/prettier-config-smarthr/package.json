@@ -1,0 +1,20 @@
+{
+  "name": "prettier-config-smarthr",
+  "version": "1.0.0",
+  "description": "A sharable prettier config for SmartHR",
+  "main": "index.json",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/prettier-config-smarthr"
+  },
+  "homepage": "https://github.com/kufu/tamatebako/packages/prettier-config-smarthr#readme",
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "keywords": [
+    "prettier"
+  ],
+  "author": "SmartHR",
+  "license": "MIT"
+}

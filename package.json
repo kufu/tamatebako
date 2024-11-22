@@ -8,7 +8,7 @@
     "dev": "pnpm build --watch",
     "build": "lerna run prebuild --stream && pnpm tsc",
     "pretest": "pnpm build",
-    "test": "jest",
+    "test": "jest && lerna run test",
     "tsc": "tsc --build packages --force",
     "lint": "eslint '**/*.{ts,tsx}'",
     "versionup": "lerna version --conventional-commits",

@@ -1,0 +1,68 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fixtures > should match the snapshot 1`] = `
+{
+  "index.tsx": [
+    {
+      "rule": "alpha-value-notation",
+      "severity": "error",
+      "text": "Expected "50%" to be "0.5" (alpha-value-notation)",
+    },
+    {
+      "rule": "block-no-empty",
+      "severity": "error",
+      "text": "Unexpected empty block (block-no-empty)",
+    },
+    {
+      "rule": "color-function-notation",
+      "severity": "error",
+      "text": "Expected legacy color-function notation (color-function-notation)",
+    },
+    {
+      "rule": "color-hex-length",
+      "severity": "error",
+      "text": "Expected "#ffffff" to be "#fff" (color-hex-length)",
+    },
+    {
+      "rule": "comment-empty-line-before",
+      "severity": "error",
+      "text": "Expected empty line before comment (comment-empty-line-before)",
+    },
+    {
+      "rule": "declaration-block-no-redundant-longhand-properties",
+      "severity": "error",
+      "text": "Expected shorthand property "flex" (declaration-block-no-redundant-longhand-properties)",
+    },
+    {
+      "rule": "font-family-name-quotes",
+      "severity": "error",
+      "text": "Unexpected quotes around "Arial" (font-family-name-quotes)",
+    },
+    {
+      "rule": "length-zero-no-unit",
+      "severity": "error",
+      "text": "Unexpected unit (length-zero-no-unit)",
+    },
+    {
+      "rule": "number-max-precision",
+      "severity": "error",
+      "text": "Expected "0.55555" to be "0.5555" (number-max-precision)",
+    },
+    {
+      "rule": "selector-attribute-quotes",
+      "severity": "error",
+      "text": "Expected quotes around "blank" (selector-attribute-quotes)",
+    },
+    {
+      "rule": "selector-pseudo-element-colon-notation",
+      "severity": "error",
+      "text": "Expected double colon pseudo-element notation (selector-pseudo-element-colon-notation)",
+    },
+    {
+      "rule": "shorthand-property-no-redundant-values",
+      "severity": "error",
+      "text": "Expected "0 0 0 0" to be "0" (shorthand-property-no-redundant-values)",
+    },
+  ],
+}
+`;

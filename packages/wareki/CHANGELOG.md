@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.3.0) (2024-11-29)
+
+### Features
+
+- warekiの各メソッドのfallbackを書きやすくするため半角変換された日付テキストを常に返す ([4b8b1c8](https://github.com/kufu/tamatebako/commit/4b8b1c83bd71088bc3132ad679a6d51cf3591842))
+
 # [1.2.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.2.0) (2023-01-19)
 
 ### Features

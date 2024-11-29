@@ -1,6 +1,6 @@
 {
   "name": "stylelint-config-smarthr",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A sharable stylelint config for SmartHR",
   "main": "index.js",
   "files": [

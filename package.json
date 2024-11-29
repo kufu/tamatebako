@@ -11,7 +11,7 @@
     "test": "jest && lerna run test",
     "tsc": "tsc --build packages --force",
     "lint": "eslint '**/*.{ts,tsx}'",
-    "versionup": "lerna version --conventional-commits",
+    "versionup": "HUSKY_SKIP=true lerna version --conventional-commits",
     "prerelease": "pnpm build && pnpm lint && pnpm test",
     "release": "lerna publish from-package",
     "prepare": "husky"

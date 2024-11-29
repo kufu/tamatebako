@@ -1,1 +1,7 @@
+SKIP_BRANCH="main"
+
+if [ "$HUSKY_SKIP" = "true" ]; then
+  exit 0
+fi
+
 pnpm dlx commitlint --edit $1

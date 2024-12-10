@@ -1,0 +1,37 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release_please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      releases_created: ${{ steps.release_please.outputs.releases_created }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release_please
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: release_please
+    if: ${{ needs.release_please.outputs.releases_created == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm release --no-push --no-private --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

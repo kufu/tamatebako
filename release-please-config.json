@@ -5,6 +5,7 @@
   "bump-patch-for-minor-pre-major": true,
   "packages": {
     "packages/create-lint-set": {},
+    "packages/eslint-config-smarthr": {},
     "packages/next-auth": {},
     "packages/prettier-config-smarthr": {},
     "packages/stylelint-config-smarthr": {},

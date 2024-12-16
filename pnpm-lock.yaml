@@ -33,7 +33,7 @@ importers:
         specifier: ^8.1.9
         version: 8.1.9(@swc/core@1.7.39(@swc/helpers@0.5.5))(encoding@0.1.13)
       prettier:
-        specifier: ^3.3.2
+        specifier: ^3.3.3
         version: 3.3.3
       prettier-config-smarthr:
         specifier: ^1.0.0

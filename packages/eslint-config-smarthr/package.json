@@ -1,0 +1,57 @@
+{
+  "name": "eslint-config-smarthr",
+  "version": "8.0.0",
+  "description": "A sharable ESLint config for SmartHR",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:update-snapshot": "vitest --updateSnapshot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:kufu/tamatebako.git"
+  },
+  "keywords": [
+    "eslint"
+  ],
+  "author": "SmartHR",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "homepage": "https://github.com/kufu/tamatebako/packages/eslint-config-smarthr#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "devDependencies": {
+    "eslint": "9.15.0",
+    "vitest": "^2.1.8",
+    "@types/react": "^19.0.1",
+    "jest": "^29.7.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "react": "^16.8.6 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "typescript": "^3.4.5 || ^4.0.0 || ^5.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "9.16.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-smarthr": "1.0.0",
+    "globals": "^15.13.0",
+    "typescript-eslint": "^8.18.0",
+    "vitest": "^2.1.8"
+  }
+}

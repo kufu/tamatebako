@@ -1,3 +1,4 @@
 # https://help.github.com/en/articles/about-code-owners
 
 * @kufu/group-dev-tamatebako-reviewers
+/packages/eslint-config-smarthr/ @kufu/group-dev-front-linter-reviewers

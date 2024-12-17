@@ -2,3 +2,4 @@
 
 * @kufu/group-dev-tamatebako-reviewers
 /packages/eslint-config-smarthr/ @kufu/group-dev-front-linter-reviewers
+/packages/eslint-plugin-smarthr/ @kufu/group-dev-front-linter-reviewers

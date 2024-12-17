@@ -3,8 +3,8 @@
 - 対象ファイルに宣言してほしい、変数・関数・class・型などを定義するルールです
 - コードの規約などを決める際に便利です
 - import, exportを強制したい場合は以下を利用してください
-  - https://github.com/kufu/eslint-plugin-smarthr/tree/main/rules/require-import
-  - https://github.com/kufu/eslint-plugin-smarthr/tree/main/rules/require-export
+  - https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import
+  - https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export
 
 ## rules
 

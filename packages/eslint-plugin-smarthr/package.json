@@ -1,0 +1,40 @@
+{
+  "name": "eslint-plugin-smarthr",
+  "version": "1.0.0",
+  "author": "SmartHR",
+  "license": "MIT",
+  "description": "A sharable ESLint plugin for SmartHR",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:kufu/tamatebako.git"
+  },
+  "homepage": "https://github.com/kufu/tamatebako/packages/eslint-plugin-smarthr",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "dependencies": {
+    "json5": "^2.2.3"
+  },
+  "devDependencies": {
+    "typescript-eslint": "^8.14.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "eslintplugin",
+    "smarthr"
+  ]
+}

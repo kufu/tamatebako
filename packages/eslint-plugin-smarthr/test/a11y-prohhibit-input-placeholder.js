@@ -20,6 +20,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: `import { HogeTextarea as FugaHogeTextarea } from './hoge'` },
     { code: `import { ComboBox as FugaHogeComboBox } from './hoge'` },
     { code: `import { AbcDatePicker as StyledDatePicker } from './hoge'` },
+    { code: `import { AbcWarekiPicker as StyledWarekiPicker } from './hoge'` },
     { code: 'const HogeInput = styled.input``' },
     { code: 'const HogeTextarea = styled.textarea``' },
     { code: 'const HogeInput = styled(Input)``' },
@@ -39,6 +40,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: `<CustomComboBox />` },
     { code: `<SearchInput />` },
     { code: `<DatePicker />` },
+    { code: `<WarekiPicker />` },
     { code: `<TimePicker />` },
     { code: `<CustomSearchInput tooltipMessage="hoge" />` },
     { code: `<CustomSearchInput tooltipMessage="hoge" placeholder="fuga" />` },
@@ -57,8 +59,10 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
  - HogeTextareaが型の場合、'import type { HogeTextarea as HogeTextareaFuga }' もしくは 'import { type HogeTextarea as HogeTextareaFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeComboBox as ComboBoxFuga } from './hoge'`, errors: [ { message: `ComboBoxFugaを正規表現 "/ComboBox$/" がmatchする名称に変更してください。
  - HogeComboBoxが型の場合、'import type { HogeComboBox as ComboBoxFuga }' もしくは 'import { type HogeComboBox as ComboBoxFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
-    { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/DatePicker$/" がmatchする名称に変更してください。
+    { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
  - DatePickerが型の場合、'import type { DatePicker as HogeDatePickerFuga }' もしくは 'import { type DatePicker as HogeDatePickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
+    { code: `import { WarekiPicker as HogeWarekiPickerFuga } from './hoge'`, errors: [ { message: `HogeWarekiPickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
+ - WarekiPickerが型の場合、'import type { WarekiPicker as HogeWarekiPickerFuga }' もしくは 'import { type WarekiPicker as HogeWarekiPickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: 'const Hoge = styled.input``', errors: [ { message: `Hogeを正規表現 "/Input$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(StyledInput)``', errors: [ { message: `Hogeを正規表現 "/Input$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled.textarea``', errors: [ { message: `Hogeを正規表現 "/Textarea$/" がmatchする名称に変更してください。` } ] },
@@ -78,6 +82,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: `<HogeTextarea placeholder="any" />`, errors: [ { message: `HogeTextarea にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeTextarea /><Hint>ヒント</Hint></div>')` } ] },
     { code: `<HogeFieldSet placeholder="any" />`, errors: [ { message: `HogeFieldSet にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeFieldSet /><Hint>ヒント</Hint></div>')` } ] },
     { code: `<HogeDatePicker placeholder="any" />`, errors: [ { message: `HogeDatePicker にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeDatePicker /><Hint>ヒント</Hint></div>')` } ] },
+    { code: `<HogeWarekiPicker placeholder="any" />`, errors: [ { message: `HogeWarekiPicker にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeWarekiPicker /><Hint>ヒント</Hint></div>')` } ] },
     { code: `<HogeComboBox placeholder="any" />`, errors: [ { message: `HogeComboBox にはplaceholder属性は設定せず、以下のいずれか、もしくは組み合わせての対応を検討してください。
  - 選択肢をどんな値で絞り込めるかの説明をしたい場合は dropdownHelpMessage 属性に変更してください。
  - 空の値の説明のためにplaceholderを利用している場合は defaultItem 属性に変更してください。

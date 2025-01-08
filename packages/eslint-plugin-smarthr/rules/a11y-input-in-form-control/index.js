@@ -15,7 +15,7 @@ const EXPECTED_INPUT_NAMES = {
   '(S|^s)elect$': '(Select)$',
   'InputFile$': '(InputFile)$',
   'Combo(b|B)ox$': '(ComboBox)$',
-  'DatePicker$': '(DatePicker)$',
+  '(Date|Wareki)Picker$': '((Date|Wareki)Picker)$',
   'TimePicker$': '(TimePicker)$',
   ...EXPECTED_LABELED_INPUT_NAMES,
 }

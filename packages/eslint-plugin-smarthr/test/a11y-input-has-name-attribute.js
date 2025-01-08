@@ -30,6 +30,7 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
     { code: `import { CheckBox as FugaCheckBox } from './hoge'` },
     { code: `import { HogeComboBox as FugaComboBox } from './hoge'` },
     { code: `import { DatePicker as HogeDatePicker } from './hoge'` },
+    { code: `import { WarekiPicker as HogeWarekiPicker } from './hoge'` },
     { code: `import { HogeDropZone as HogeFugaDropZone } from './hoge'` },
     { code: 'const HogeInput = styled.input``' },
     { code: 'const HogeInput = styled(Input)``' },
@@ -65,8 +66,10 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
  - CheckBoxが型の場合、'import type { CheckBox as FugaCheckBoxHoge }' もしくは 'import { type CheckBox as FugaCheckBoxHoge }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeComboBox as ComboBoxFuga } from './hoge'`, errors: [ { message: `ComboBoxFugaを正規表現 "/ComboBox$/" がmatchする名称に変更してください。
  - HogeComboBoxが型の場合、'import type { HogeComboBox as ComboBoxFuga }' もしくは 'import { type HogeComboBox as ComboBoxFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
-    { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/DatePicker$/" がmatchする名称に変更してください。
+    { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
  - DatePickerが型の場合、'import type { DatePicker as HogeDatePickerFuga }' もしくは 'import { type DatePicker as HogeDatePickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
+    { code: `import { WarekiPicker as HogeWarekiPickerFuga } from './hoge'`, errors: [ { message: `HogeWarekiPickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
+ - WarekiPickerが型の場合、'import type { WarekiPicker as HogeWarekiPickerFuga }' もしくは 'import { type WarekiPicker as HogeWarekiPickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeDropZone as HogeFugaDropZoneAbc } from './hoge'`, errors: [ { message: `HogeFugaDropZoneAbcを正規表現 "/DropZone$/" がmatchする名称に変更してください。
  - HogeDropZoneが型の場合、'import type { HogeDropZone as HogeFugaDropZoneAbc }' もしくは 'import { type HogeDropZone as HogeFugaDropZoneAbc }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: 'const Hoge = styled.input``', errors: [ { message: `Hogeを正規表現 "/Input$/" がmatchする名称に変更してください。` } ] },

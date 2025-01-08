@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.0.0...eslint-plugin-smarthr-v1.1.0) (2025-01-08)
+
+
+### Features
+
+* a11y-input-in-form-controlでtype="hidden"の場合の判定を追加 ([#455](https://github.com/kufu/tamatebako/issues/455)) ([4ff63b9](https://github.com/kufu/tamatebako/commit/4ff63b90b5cba5df34fe5ffc0fb25cbd1ed8a2b3))
+
 ## [1.0.0](https://github.com/kufu/eslint-plugin-smarthr/compare/v0.5.20...v1.0.0) (2024-12-12)
 
 

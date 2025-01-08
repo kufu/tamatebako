@@ -15,7 +15,7 @@ importers:
         specifier: ^19.5.0
         version: 19.5.0
       '@types/jest':
-        specifier: ^29.5.12
+        specifier: ^29.5.14
         version: 29.5.14
       eslint:
         specifier: 9.15.0

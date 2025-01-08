@@ -143,6 +143,9 @@ module.exports = {
                       case 'checkbox':
                         isTypeCheck = true
                         break
+                      case 'hidden':
+                        // HINT: hiddenの場合はラベルなしを許容するため、breakではなくreturnで処理終了させる
+                        return
                     }
 
                     break

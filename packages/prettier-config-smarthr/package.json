@@ -8,7 +8,7 @@
     "url": "git+https://github.com/kufu/tamatebako.git",
     "directory": "packages/prettier-config-smarthr"
   },
-  "homepage": "https://github.com/kufu/tamatebako/packages/prettier-config-smarthr#readme",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/prettier-config-smarthr",
   "bugs": {
     "url": "https://github.com/kufu/tamatebako/issues"
   },

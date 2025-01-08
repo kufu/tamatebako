@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git+git@github.com:kufu/tamatebako.git"
   },
-  "homepage": "https://github.com/kufu/tamatebako/packages/eslint-plugin-smarthr",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },

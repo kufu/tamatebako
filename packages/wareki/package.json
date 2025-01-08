@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "japan 'wareki' formatter.",
   "author": "SmartHR",
-  "homepage": "",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/wareki",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufu/tamatebako.git",

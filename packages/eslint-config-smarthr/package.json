@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/kufu/tamatebako/issues"
   },
-  "homepage": "https://github.com/kufu/tamatebako/packages/eslint-config-smarthr#readme",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/eslint-config-smarthr",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },

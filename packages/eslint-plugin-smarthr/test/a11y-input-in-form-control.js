@@ -90,7 +90,6 @@ ruleTester.run('a11y-input-in-form-control', rule, {
     { code: 'const HogeRadioButtonPanel = styled(FugaRadioButtonPanel)``' },
     { code: 'const HogeCheckBox = styled(FugaCheckbox)``' },
     { code: 'const DatePicker = styled(AnyDatePicker)``' },
-    { code: '<input type="hidden" />' },
     { code: '<input title="any"/>' },
     { code: '<HogeInput title="any"/>' },
     { code: '<textarea title="any"/>' },

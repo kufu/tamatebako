@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.1.0...eslint-plugin-smarthr-v1.2.0) (2025-01-09)
+
+
+### Features
+
+* a11y系のルールをsmarthr-ui/WarekiPickerに対応させる ([#471](https://github.com/kufu/tamatebako/issues/471)) ([a52995c](https://github.com/kufu/tamatebako/commit/a52995cb999de2942989eac00bbc299922cf6208))
+
 ## [1.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.0.0...eslint-plugin-smarthr-v1.1.0) (2025-01-08)
 
 

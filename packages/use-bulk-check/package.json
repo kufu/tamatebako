@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "React hooks for managing the values ​​in the checkbox list",
   "author": "SmartHR",
-  "homepage": "",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/use-bulk-check",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kufu/tamatebako.git",

@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+git@github.com:kufu/tamatebako.git"
   },
-  "homepage": "https://github.com/kufu/tamatebako/packages/stylelint-config-smarthr#readme",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/stylelint-config-smarthr",
   "publishConfig": {
     "access": "public"
   },

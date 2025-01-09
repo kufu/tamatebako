@@ -8,7 +8,7 @@ const EXPECTED_NAMES = {
   'RadioButtonPanel$': 'RadioButtonPanel$',
   'Check(b|B)ox$': 'CheckBox$',
   'Combo(b|B)ox$': 'ComboBox$',
-  'DatePicker$': 'DatePicker$',
+  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
   'TimePicker$': 'TimePicker$',
   'DropZone$': 'DropZone$',
   'Switch$': 'Switch$',

@@ -70,16 +70,16 @@
 </Fieldset>
 
 <FormControl title="any heading" role="group">
-  <DatePicker />
+  <WarekiPicker />
   ~
-  <DatePicker />
+  <WarekiPicker />
 </FormControl>
 
 <Fieldset title="any heading">
   <FormControl role="group">
-    <DatePicker />
+    <WarekiPicker />
     ~
-    <DatePicker />
+    <WarekiPicker />
   </FormControl>>
 </Fieldset>
 

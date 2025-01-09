@@ -6,10 +6,10 @@ const EXPECTED_NAMES = {
   '(t|T)extarea$': 'Textarea$',
   'FieldSet$': 'FieldSet$',
   'ComboBox$': 'ComboBox$',
-  'DatePicker$': 'DatePicker$',
+  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
   'TimePicker$': 'TimePicker$',
 }
-const INPUT_TAG_REGEX = /((i|I)nput|(t|T)extarea|FieldSet|ComboBox|(Date|Time)Picker)$/
+const INPUT_TAG_REGEX = /((i|I)nput|(t|T)extarea|FieldSet|ComboBox|(Date|Wareki|Time)Picker)$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

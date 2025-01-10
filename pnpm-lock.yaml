@@ -103,8 +103,8 @@ importers:
         specifier: 1.2.0
         version: 1.2.0(eslint@9.15.0(jiti@2.4.2))
       globals:
-        specifier: ^15.13.0
-        version: 15.13.0
+        specifier: ^15.14.0
+        version: 15.14.0
       react:
         specifier: ^16.8.6 || ^17.0.0 || ^18.0.0 || ^19.0.0
         version: 19.0.0
@@ -4828,8 +4828,8 @@ packages:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
     engines: {node: '>=18'}
 
-  globals@15.13.0:
-    resolution: {integrity: sha512-49TewVEz0UxZjr1WYYsWpPrhyC/B/pA8Bq0fUmet2n+eR7yn0IvNzNaoBwnK6mdkzcN+se7Ez9zUgULTz2QH4g==}
+  globals@15.14.0:
+    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -13291,7 +13291,7 @@ snapshots:
       eslint-plugin-react: 7.37.3(eslint@9.15.0(jiti@2.4.2))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.15.0(jiti@2.4.2))
       eslint-plugin-smarthr: 1.0.0(eslint@9.15.0(jiti@2.4.2))
-      globals: 15.13.0
+      globals: 15.14.0
       react: 19.0.0
       typescript: 5.6.3
       typescript-eslint: 8.19.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.6.3)
@@ -14007,7 +14007,7 @@ snapshots:
 
   globals@14.0.0: {}
 
-  globals@15.13.0: {}
+  globals@15.14.0: {}
 
   globalthis@1.0.4:
     dependencies:

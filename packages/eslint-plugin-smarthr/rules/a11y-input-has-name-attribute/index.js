@@ -1,4 +1,24 @@
+const JSON5 = require('json5');
+const fs = require('fs');
 const { generateTagFormatter } = require('../../libs/format_styled_components');
+
+const OPTION = (() => {
+  const file = `${process.cwd()}/package.json`;
+
+  if (!fs.existsSync(file)) {
+    return {};
+  }
+
+  const json = JSON5.parse(fs.readFileSync(file));
+  const dependencies = [
+    ...Object.keys(json.dependencies || {}),
+    ...Object.keys(json.devDependencies || {}),
+  ];
+
+  return {
+    react_hook_form: dependencies.includes('react-hook-form'),
+  };
+})();
 
 const EXPECTED_NAMES = {
   '(i|I)nput$': 'Input$',
@@ -21,6 +41,7 @@ const RADIO_BUTTON_REGEX = /RadioButton(Panel)?$/
 const findNameAttr = (a) => a?.name?.name === 'name'
 const findSpreadAttr = (a) => a.type === 'JSXSpreadAttribute'
 const findRadioInput = (a) => a.name?.name === 'type' && a.value.value === 'radio'
+const findReactHookFormRegisterSpreadAttr = (a) => a.type === 'JSXSpreadAttribute' && a.argument?.callee?.name === 'register'
 
 const MESSAGE_PART_FORMAT = `"${INPUT_NAME_REGEX.toString()}"にmatchするフォーマットで命名してください`
 const MESSAGE_UNDEFINED_NAME_PART = `
@@ -56,20 +77,26 @@ module.exports = {
     return {
       ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
-        const nodeName = node.name.name || '';
+        const { name, attributes } = node;
+        const nodeName = name.name || '';
 
         if (nodeName.match(TARGET_TAG_NAME_REGEX)) {
-          const nameAttr = node.attributes.find(findNameAttr)
+          const nameAttr = attributes.find(findNameAttr)
 
           if (!nameAttr) {
             if (
-              node.attributes.length === 0 ||
-              checkType !== 'allow-spread-attributes' ||
-              !node.attributes.some(findSpreadAttr)
+              !(
+                OPTION.react_hook_form &&
+                attributes.some(findReactHookFormRegisterSpreadAttr)
+              ) &&
+              (attributes.length === 0 ||
+                checkType !== 'allow-spread-attributes' ||
+                !attributes.some(findSpreadAttr))
             ) {
               const isRadio =
                 nodeName.match(RADIO_BUTTON_REGEX) ||
-                (nodeName.match(INPUT_TAG_REGEX) && node.attributes.some(findRadioInput));
+                (nodeName.match(INPUT_TAG_REGEX) &&
+                  attributes.some(findRadioInput));
 
               context.report({
                 node,

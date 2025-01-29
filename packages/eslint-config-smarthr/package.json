@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "test:update-snapshot": "vitest --updateSnapshot"
+    "test:update-snapshot": "vitest -u"
   },
   "repository": {
     "type": "git",

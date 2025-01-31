@@ -1906,6 +1906,20 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "no-reserved-keys": [
       0,
     ],
+    "no-restricted-imports": [
+      2,
+      {
+        "paths": [
+          {
+            "importNames": [
+              "default",
+            ],
+            "message": "React 17+ では default import は不要なので削除してください。",
+            "name": "react",
+          },
+        ],
+      },
+    ],
     "no-return-assign": [
       2,
       "except-parens",

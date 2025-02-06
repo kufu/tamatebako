@@ -26,7 +26,7 @@ jobs:
     if: ${{ needs.release_please.outputs.releases_created == 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - run: corepack enable
+      - run: npm install -g corepack@latest
       - uses: actions/setup-node@v4
         with:
           node-version: 20

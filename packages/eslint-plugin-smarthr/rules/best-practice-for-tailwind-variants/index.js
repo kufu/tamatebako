@@ -2,7 +2,7 @@ const SCHEMA = []
 
 const TV_COMPONENTS_METHOD = 'tv'
 const TV_COMPONENTS = 'tailwind-variants'
-const TV_RESULT_CONST_NAME_REGEX = /(S|s)tyleGenerator$/
+const TV_RESULT_CONST_NAME_REGEX = /(C|c)lassNameGenerator$/
 
 const findValidImportNameNode = (s) => s.type === 'ImportSpecifier' && s.local.name === TV_COMPONENTS_METHOD
 

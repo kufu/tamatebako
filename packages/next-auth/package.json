@@ -33,7 +33,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.19.70",
+    "@types/node": "^18.19.74",
     "@types/uuid": "^10.0.0",
     "ioredis": "^5.4.2",
     "next-auth": "^4.24.7"

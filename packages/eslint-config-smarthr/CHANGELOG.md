@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v8.0.0...eslint-config-smarthr-v9.0.0) (2025-02-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **eslint-config-smarthr:** react 17+以降のルールに対応した ([#499](https://github.com/kufu/tamatebako/issues/499))
+
+### Features
+
+* **eslint-config-smarthr:** react 17+以降のルールに対応した ([#499](https://github.com/kufu/tamatebako/issues/499)) ([62adc79](https://github.com/kufu/tamatebako/commit/62adc7984fd598ab9feb510d2d2056525f34af6a))
+
 ## [8.0.0](https://github.com/kufu/eslint-config-smarthr/compare/v7.3.0...v8.0.0) (2024-12-12)
 
 

@@ -21,6 +21,9 @@
 
 ```jsx
 import { tv as hoge } from 'tailwind-variants'
+```
+```jsx
+import { tv } from 'tailwind-variants'
 
 const xxx = tv({
   ...

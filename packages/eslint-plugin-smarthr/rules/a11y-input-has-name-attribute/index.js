@@ -1,26 +1,41 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components');
+const fs = require('fs')
+
+const JSON5 = require('json5')
+
+const { generateTagFormatter } = require('../../libs/format_styled_components')
+
+const OPTION = (() => {
+  const file = `${process.cwd()}/package.json`
+
+  if (!fs.existsSync(file)) {
+    return {}
+  }
+
+  const json = JSON5.parse(fs.readFileSync(file))
+  const dependencies = [...Object.keys(json.dependencies || {}), ...Object.keys(json.devDependencies || {})]
+
+  return {
+    react_hook_form: dependencies.includes('react-hook-form'),
+  }
+})()
 
 const EXPECTED_NAMES = {
   '(i|I)nput$': 'Input$',
   '(t|T)extarea$': 'Textarea$',
   '(s|S)elect$': 'Select$',
-  'InputFile$': 'InputFile$',
-  'RadioButton$': 'RadioButton$',
-  'RadioButtonPanel$': 'RadioButtonPanel$',
+  InputFile$: 'InputFile$',
+  RadioButton$: 'RadioButton$',
+  RadioButtonPanel$: 'RadioButtonPanel$',
   'Check(b|B)ox$': 'CheckBox$',
   'Combo(b|B)ox$': 'ComboBox$',
   '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
-  'TimePicker$': 'TimePicker$',
-  'DropZone$': 'DropZone$',
+  TimePicker$: 'TimePicker$',
+  DropZone$: 'DropZone$',
 }
 const TARGET_TAG_NAME_REGEX = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|')})`)
 const INPUT_NAME_REGEX = /^[a-zA-Z0-9_\[\]]+$/
 const INPUT_TAG_REGEX = /(i|I)nput$/
 const RADIO_BUTTON_REGEX = /RadioButton(Panel)?$/
-
-const findNameAttr = (a) => a?.name?.name === 'name'
-const findSpreadAttr = (a) => a.type === 'JSXSpreadAttribute'
-const findRadioInput = (a) => a.name?.name === 'type' && a.value.value === 'radio'
 
 const MESSAGE_PART_FORMAT = `"${INPUT_NAME_REGEX.toString()}"にmatchするフォーマットで命名してください`
 const MESSAGE_UNDEFINED_NAME_PART = `
@@ -38,7 +53,7 @@ const SCHEMA = [
       checkType: { type: 'string', enum: ['always', 'allow-spread-attributes'], default: 'always' },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 /**
@@ -56,25 +71,49 @@ module.exports = {
     return {
       ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
-        const nodeName = node.name.name || '';
+        const { name, attributes } = node
+        const nodeName = name.name || ''
 
         if (nodeName.match(TARGET_TAG_NAME_REGEX)) {
-          const nameAttr = node.attributes.find(findNameAttr)
+          let nameAttr = null
+          let hasSpreadAttr = false
+          let hasReactHookFormRegisterSpreadAttr = false
+          let hasRadioInput = false
+
+          attributes.forEach((a) => {
+            if (a.type === 'JSXSpreadAttribute') {
+              hasSpreadAttr = true
+
+              if (hasReactHookFormRegisterSpreadAttr === false && a.argument?.callee?.name === 'register') {
+                hasReactHookFormRegisterSpreadAttr = true
+              }
+            } else {
+              switch (a.name?.name) {
+                case 'name': {
+                  nameAttr = a
+                  break
+                }
+                case 'type': {
+                  if (a.value.value === 'radio') {
+                    hasRadioInput = true
+                  }
+                  break
+                }
+              }
+            }
+          })
 
           if (!nameAttr) {
             if (
-              node.attributes.length === 0 ||
-              checkType !== 'allow-spread-attributes' ||
-              !node.attributes.some(findSpreadAttr)
+              !(OPTION.react_hook_form && hasReactHookFormRegisterSpreadAttr) &&
+              (attributes.length === 0 || checkType !== 'allow-spread-attributes' || !hasSpreadAttr)
             ) {
-              const isRadio =
-                nodeName.match(RADIO_BUTTON_REGEX) ||
-                (nodeName.match(INPUT_TAG_REGEX) && node.attributes.some(findRadioInput));
+              const isRadio = nodeName.match(RADIO_BUTTON_REGEX) || (nodeName.match(INPUT_TAG_REGEX) && hasRadioInput)
 
               context.report({
                 node,
                 message: `${nodeName} ${isRadio ? MESSAGE_UNDEFINED_FOR_RADIO : MESSAGE_UNDEFINED_FOR_NOT_RADIO}`,
-              });
+              })
             }
           } else {
             const nameValue = nameAttr.value?.value || ''
@@ -83,12 +122,12 @@ module.exports = {
               context.report({
                 node,
                 message: `${nodeName} のname属性の値(${nameValue})${MESSAGE_NAME_FORMAT_SUFFIX}`,
-              });
+              })
             }
           }
         }
       },
-    };
+    }
   },
-};
-module.exports.schema = SCHEMA;
+}
+module.exports.schema = SCHEMA

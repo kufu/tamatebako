@@ -30,10 +30,10 @@
     "test": "__tests__"
   },
   "dependencies": {
-    "uuid": "^10.0.0"
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@types/node": "^18.19.70",
+    "@types/node": "^18.19.76",
     "@types/uuid": "^10.0.0",
     "ioredis": "^5.4.2",
     "next-auth": "^4.24.7"

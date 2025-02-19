@@ -20,8 +20,10 @@ export default [
     languageOptions: {
       parserOptions: {
         ecmaFeatures: {
-          jax: true,
+          jsx: true,
         },
+        // https://github.com/jsx-eslint/eslint-plugin-react/blob/e6b5b41191690ee166d0cca1e9db27092b910f03/index.js#L86
+        jsxPragma: null, // for @typescript/eslint-parser
       },
     },
     settings: {
@@ -82,6 +84,9 @@ export default [
       'react/prop-types': 'off',
       'react/style-prop-object': 'error',
       'react/void-dom-elements-no-children': 'error',
+      // https://github.com/jsx-eslint/eslint-plugin-react/blob/e6b5b41191690ee166d0cca1e9db27092b910f03/index.js#L89
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-uses-react': 'off'
     }
   }
 ]

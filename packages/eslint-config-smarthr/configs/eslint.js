@@ -131,6 +131,19 @@ export default [
       'vars-on-top': 'warn',
       'wrap-iife': ['error', 'any'],
       'yield-star-spacing': ['error', 'after'],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              // `import React from 'react';` を禁止する
+              name: 'react',
+              importNames: ['default'],
+              message: 'React 17+ では default import は不要なので削除してください。',
+            },
+          ],
+        },
+      ],
     },
   }
 ]

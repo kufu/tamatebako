@@ -19,8 +19,8 @@
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@types/jest": "^29.5.14",
     "eslint": "9.15.0",
     "eslint-config-smarthr": "8.0.0",

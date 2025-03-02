@@ -46,35 +46,52 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
       `,
     },
     // shr-min などの他のクラス名
-    {
-      code: `
-        const Button = () => {
-          return <button className="shr-min-w-100">Click me</button>
-        }
-      `,
-    },
+    { code: `const Button = () => <button className="shr-min-w-100">Click me</button>` },
+    { code: `const Button = () => <button className="shr-min-h-100">Click me</button>` },
+    { code: `const Button = () => <button className="shr-max-w-100">Click me</button>` },
+    { code: `const Button = () => <button className="shr-max-h-100">Click me</button>` },
   ],
   invalid: [
     // マージンクラスを持つコンポーネント
     {
-      code: `
-        const Button = () => {
-          return <button className="shr-mt-4">Click me</button>
-        }
-      `,
+      code: `const Button = () => { return <button className="shr-m-4">Click me</button> }`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => <button className="shr-mt-4">Click me</button>`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => { return <button className="shr-mb-4">Click me</button> }`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => <button className="shr-ml-4">Click me</button>`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => { return <button className="shr-mr-4">Click me</button> }`,
       errors: [{ message: errorMessage }],
     },
     // パディングクラスを持つコンポーネント
     {
-      code: `
-        const Box = () => {
-          return (
-            <div className="shr-p-4">
-              <p>Content</p>
-            </div>
-          )
-        }
-      `,
+      code: `const Button = () => { return <button className="shr-p-4">Click me</button> }`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => <button className="shr-pt-4">Click me</button>`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => { return <button className="shr-pb-4">Click me</button> }`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => <button className="shr-pl-4">Click me</button>`,
+      errors: [{ message: errorMessage }],
+    },
+    {
+      code: `const Button = () => { return <button className="shr-pr-4">Click me</button> }`,
       errors: [{ message: errorMessage }],
     },
     // 複数の余白クラスを持つコンポーネント
@@ -93,13 +110,11 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
     // 他のクラスと組み合わせた余白
     {
       code: `
-        const Box = () => {
-          return (
+        const Box = () => (
             <div className="shr-bg-gray-100 shr-ml-2">
               <p>Content</p>
             </div>
-          )
-        }
+        )
       `,
       errors: [{ message: errorMessage }],
     },

@@ -19,30 +19,29 @@ const findJSXElement = (node) => {
   return current
 }
 
-const isInsideReturnStatement = (node) => {
+const isArrowFunctionBody = (node) => {
   let current = node
   while (current) {
-    if (current.type === AST_NODE_TYPES.ReturnStatement) {
-      return current
+    if (current.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      // アロー関数の本体が直接JSXの場合
+      if (current.body === node) {
+        return current
+      }
+      // return文を含むブロックの場合
+      if (
+        current.body.type === AST_NODE_TYPES.BlockStatement &&
+        current.body.body.some((stmt) => stmt.type === AST_NODE_TYPES.ReturnStatement && stmt.argument === node)
+      ) {
+        return current
+      }
     }
     current = current.parent
   }
   return null
 }
 
-const isComponentDefinition = (node) => {
-  let current = node
-  while (current) {
-    if (
-      current.type === AST_NODE_TYPES.ArrowFunctionExpression &&
-      current.parent &&
-      current.parent.type === AST_NODE_TYPES.VariableDeclarator
-    ) {
-      return true
-    }
-    current = current.parent
-  }
-  return false
+const isComponentDefinition = (arrowFunction) => {
+  return arrowFunction && arrowFunction.parent && arrowFunction.parent.type === AST_NODE_TYPES.VariableDeclarator
 }
 
 const isComponentRootElement = (node) => {
@@ -54,12 +53,12 @@ const isComponentRootElement = (node) => {
   const parentElement = findJSXElement(jsxElement.parent)
   if (parentElement) return false
 
-  // return文の中にあることを確認
-  const returnStatement = isInsideReturnStatement(jsxElement)
-  if (!returnStatement) return false
+  // アロー関数の本体として直接返される、またはreturn文で返されることを確認
+  const arrowFunction = isArrowFunctionBody(jsxElement)
+  if (!arrowFunction) return false
 
   // コンポーネントの定義内にあることを確認
-  return isComponentDefinition(returnStatement)
+  return isComponentDefinition(arrowFunction)
 }
 
 /**

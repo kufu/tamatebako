@@ -15,21 +15,16 @@
 
 以下のパターンのクラス名が検出対象となります：
 
-### Margin系
-
-- `shr-m-`: 全方向のマージン
-- `shr-mt-`: 上方向のマージン
-- `shr-mr-`: 右方向のマージン
-- `shr-mb-`: 下方向のマージン
-- `shr-ml-`: 左方向のマージン
-
-### Padding系
-
-- `shr-p-`: 全方向のパディング
-- `shr-pt-`: 上方向のパディング
-- `shr-pr-`: 右方向のパディング
-- `shr-pb-`: 下方向のパディング
-- `shr-pl-`: 左方向のパディング
+- `shr-m-`
+- `shr-mt-`
+- `shr-mr-`
+- `shr-mb-`
+- `shr-ml-`
+- `shr-p-`
+- `shr-pt-`
+- `shr-pr-`
+- `shr-pb-`
+- `shr-pl-`
 
 ## NG例
 
@@ -50,8 +45,16 @@ const Card = () => {
 ## OK例
 
 ```jsx
-const Button = () => {
-  return <button className="shr-bg-blue-500">Click me</button>
+const Button = ({ className }) => {
+  return <button className={className}>Click me</button>
+}
+
+const Card = () => {
+  return (
+    <div>
+      <p>Content</p>
+    </div>
+  )
 }
 
 // 使用する側で余白を制御
@@ -60,7 +63,7 @@ const Page = () => {
     <div>
       <Button className="shr-mt-4" />
       <div className="shr-p-4">
-        <Button />
+        <Card />
       </div>
     </div>
   )

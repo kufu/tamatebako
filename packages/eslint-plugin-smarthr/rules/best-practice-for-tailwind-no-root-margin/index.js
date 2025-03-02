@@ -1,7 +1,10 @@
 const { AST_NODE_TYPES } = require('@typescript-eslint/utils')
 
 const SCHEMA = []
-const MARGIN_CLASS_PATTERN = /shr-m/
+const SPACING_CLASS_PATTERNS = {
+  margin: /shr-m[trbl]?-/, // mt-, mr-, mb-, ml-, m-
+  padding: /shr-p[trbl]?-/, // pt-, pr-, pb-, pl-, p-
+}
 
 /**
  * コンポーネントのルート要素であるかを判定する
@@ -67,8 +70,8 @@ module.exports = {
     type: 'problem',
     schema: SCHEMA,
     messages: {
-      noRootMargin:
-        'コンポーネントのルート要素に余白（margin）を設定しないでください。コンポーネントは余白を持たず、使用する側で余白を制御するべきです。',
+      noRootSpacing:
+        'コンポーネントのルート要素に余白（margin/padding）を設定しないでください。コンポーネントは余白を持たず、使用する側で余白を制御するべきです。',
     },
   },
   create(context) {
@@ -84,8 +87,9 @@ module.exports = {
           return
         }
 
-        // マージンクラスを含まない場合はスキップ
-        if (!MARGIN_CLASS_PATTERN.test(node.value.value)) {
+        // マージンまたはパディングクラスを含まない場合はスキップ
+        const hasSpacingClass = Object.values(SPACING_CLASS_PATTERNS).some((pattern) => pattern.test(node.value.value))
+        if (!hasSpacingClass) {
           return
         }
 
@@ -96,7 +100,7 @@ module.exports = {
 
         context.report({
           node: node.value,
-          messageId: 'noRootMargin',
+          messageId: 'noRootSpacing',
         })
       },
     }

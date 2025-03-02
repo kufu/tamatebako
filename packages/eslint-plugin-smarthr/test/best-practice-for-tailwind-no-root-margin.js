@@ -37,14 +37,6 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
         }
       `,
     },
-    // 非コンポーネントでの余白使用（関数内のJSX）
-    {
-      code: `
-        function renderContent() {
-          return <div className="shr-mt-4 shr-pb-2">Content</div>
-        }
-      `,
-    },
     // shr-min などの他のクラス名
     { code: `const Button = () => <button className="shr-min-w-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-min-h-100">Click me</button>` },
@@ -118,6 +110,17 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
               <p>Content</p>
             </div>
         )
+      `,
+      errors: [{ message: errorMessage }],
+    },
+  ],
+  // function でのコンポーネント定義
+  invalid: [
+    {
+      code: `
+        function Button() {
+          return <button className="shr-m-4">Click me</button>
+        }
       `,
       errors: [{ message: errorMessage }],
     },

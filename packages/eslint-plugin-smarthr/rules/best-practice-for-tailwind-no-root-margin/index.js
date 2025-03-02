@@ -7,23 +7,27 @@ const SPACING_CLASS_PATTERNS = {
 }
 
 /**
- * コンポーネントのルート要素から余白のクラス名を探す
+ * コンポーネントのルート要素を渡し、該当の余白クラスが存在すればそれを、なければNULLを返す
  * @param {import('@typescript-eslint/utils').TSESTree.Node} node
  * @returns {import('@typescript-eslint/utils').TSESTree.Literal | null}
  */
 const findSpacingClassInRootElement = (node) => {
-  if (node.type === AST_NODE_TYPES.JSXElement) {
-    const classNameAttr = node.openingElement.attributes.find(
-      (attr) => attr.type === AST_NODE_TYPES.JSXAttribute && attr.name.name === 'className',
-    )
-    if (classNameAttr?.value?.type === AST_NODE_TYPES.Literal && typeof classNameAttr.value.value === 'string') {
-      const hasSpacingClass = Object.values(SPACING_CLASS_PATTERNS).some((pattern) => pattern.test(classNameAttr.value.value))
-      if (hasSpacingClass) {
-        return classNameAttr.value
-      }
-    }
-  }
-  return null
+  // JSX でなければ対象外
+  if (node.type !== AST_NODE_TYPES.JSXElement) return null
+
+  // className属性がなければ対象外
+  const classNameAttr = node.openingElement.attributes.find(
+    (a) => a.type === AST_NODE_TYPES.JSXAttribute && a.name.name === 'className',
+  )
+  if (!classNameAttr) return null
+
+  // className属性の値がリテラルでなければ対象外
+  if (classNameAttr?.value?.type !== AST_NODE_TYPES.Literal) return null
+  if (typeof classNameAttr.value.value !== 'string') return null
+
+  // className属性の値に余白クラスが含まれていればそれを返す
+  const hasSpacingClass = Object.values(SPACING_CLASS_PATTERNS).some((pattern) => pattern.test(classNameAttr.value.value))
+  return hasSpacingClass ? classNameAttr.value : null
 }
 
 /**
@@ -53,39 +57,49 @@ module.exports = {
     },
   },
   create(context) {
-    return {
-      // アロー関数式のコンポーネントをチェック
-      ArrowFunctionExpression: (node) => {
-        // コンポーネント定義かチェック
-        if (!(node.parent?.type === AST_NODE_TYPES.VariableDeclarator)) {
-          return
+    /**
+     * 関数のbodyからJSX要素を検索し、余白クラスがあれば報告する
+     * @param {import('@typescript-eslint/utils').TSESTree.Node} body
+     */
+    const checkFunctionBody = (body) => {
+      // JSX要素を直接返す場合
+      if (body.type === AST_NODE_TYPES.JSXElement) {
+        const spacingClass = findSpacingClassInRootElement(body)
+        if (spacingClass) {
+          context.report({
+            node: spacingClass,
+            messageId: 'noRootSpacing',
+          })
         }
+        return
+      }
 
-        // JSX要素を直接返す場合
-        if (node.body.type === AST_NODE_TYPES.JSXElement) {
-          const spacingClass = findSpacingClassInRootElement(node.body)
+      // ブロック内でJSX要素を返す場合
+      if (body.type === AST_NODE_TYPES.BlockStatement) {
+        const returnStatement = findJSXReturnStatement(body)
+        if (returnStatement?.argument) {
+          const spacingClass = findSpacingClassInRootElement(returnStatement.argument)
           if (spacingClass) {
             context.report({
               node: spacingClass,
               messageId: 'noRootSpacing',
             })
           }
-          return
         }
+      }
+    }
 
-        // ブロック内でJSX要素を返す場合
-        if (node.body.type === AST_NODE_TYPES.BlockStatement) {
-          const returnStatement = findJSXReturnStatement(node.body)
-          if (returnStatement?.argument) {
-            const spacingClass = findSpacingClassInRootElement(returnStatement.argument)
-            if (spacingClass) {
-              context.report({
-                node: spacingClass,
-                messageId: 'noRootSpacing',
-              })
-            }
-          }
+    return {
+      // アロー関数式のコンポーネントをチェック
+      ArrowFunctionExpression: (node) => {
+        if (node.parent?.type === AST_NODE_TYPES.VariableDeclarator) {
+          checkFunctionBody(node.body)
         }
+      },
+
+      // function宣言のコンポーネントをチェック
+      FunctionDeclaration: (node) => {
+        checkFunctionBody(node.body)
       },
     }
   },

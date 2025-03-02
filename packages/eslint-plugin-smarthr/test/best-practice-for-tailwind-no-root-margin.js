@@ -50,6 +50,9 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
     { code: `const Button = () => <button className="shr-min-h-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-max-w-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-max-h-100">Click me</button>` },
+    // リテラルでないクラス名
+    { code: `const Button = () => <button className={shr-mt-2}>Click me</button>` },
+    { code: `const Button = () => <button className={shr-pb-4}>Click me</button>` },
   ],
   invalid: [
     // マージンクラスを持つコンポーネント

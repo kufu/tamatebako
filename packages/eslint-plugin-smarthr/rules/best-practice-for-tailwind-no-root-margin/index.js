@@ -75,8 +75,11 @@ module.exports = {
   },
   create(context) {
     return {
+      /**
+       * JSXの属性に対してチェックを行う
+       */
       JSXAttribute: (node) => {
-        // クラス名の属性でない場合はスキップ
+        // クラス名でない場合はスキップ
         if (node.name.name !== 'className') {
           return
         }
@@ -86,7 +89,7 @@ module.exports = {
           return
         }
 
-        // マージンまたはパディングクラスを含まない場合はスキップ
+        // margin または padding でない場合はスキップ
         const hasSpacingClass = Object.values(SPACING_CLASS_PATTERNS).some((pattern) => pattern.test(node.value.value))
         if (!hasSpacingClass) {
           return

@@ -22,6 +22,7 @@
 - [best-practice-for-layouts](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts)
 - [best-practice-for-remote-trigger-dialog](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog)
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)
+- [best-practice-for-tailwind-no-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-no-root-margin)
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [format-import-path](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path)
 - [format-translate-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-translate-component)

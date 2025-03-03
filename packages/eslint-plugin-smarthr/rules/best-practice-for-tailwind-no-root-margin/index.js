@@ -17,7 +17,7 @@ const findSpacingClassInRootElement = (node) => {
 
   // className属性がなければ対象外
   const classNameAttr = node.openingElement.attributes.find(
-    (a) => a.type === AST_NODE_TYPES.JSXAttribute && a.name.name === 'className',
+    (attr) => attr.type === AST_NODE_TYPES.JSXAttribute && attr.name.name === 'className',
   )
   if (!classNameAttr) return null
 
@@ -31,7 +31,7 @@ const findSpacingClassInRootElement = (node) => {
 }
 
 /**
- * JSX要素を返すreturn文を探す
+ * ブロックステートメント内から、JSX要素を返す ReturnStatement を返す
  * @param {import('@typescript-eslint/utils').TSESTree.BlockStatement} block
  * @returns {import('@typescript-eslint/utils').TSESTree.ReturnStatement | null}
  */
@@ -58,11 +58,11 @@ module.exports = {
   },
   create(context) {
     /**
-     * 関数のbodyからJSX要素を検索し、余白クラスがあれば報告する
+     * 関数本体をチェックし、ルート要素で余白クラスが設定されたJSXを返している場合、エラーを報告する
      * @param {import('@typescript-eslint/utils').TSESTree.Node} body
      */
     const checkFunctionBody = (body) => {
-      // JSX要素を直接返す場合
+      // 関数がブロックを持たずに直接JSXを返すパターン
       if (body.type === AST_NODE_TYPES.JSXElement) {
         const spacingClass = findSpacingClassInRootElement(body)
         if (spacingClass) {
@@ -74,7 +74,7 @@ module.exports = {
         return
       }
 
-      // ブロック内でJSX要素を返す場合
+      // 関数がブロック内で JSX を return するパターン
       if (body.type === AST_NODE_TYPES.BlockStatement) {
         const returnStatement = findJSXReturnStatement(body)
         if (returnStatement?.argument) {

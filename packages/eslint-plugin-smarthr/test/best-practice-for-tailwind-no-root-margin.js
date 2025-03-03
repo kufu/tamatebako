@@ -12,7 +12,7 @@ const ruleTester = new RuleTester({
 })
 
 const errorMessage =
-  'コンポーネントのルート要素に余白（margin/padding）を設定しないでください。コンポーネントは余白を持たず、使用する側で余白を制御するべきです。'
+  'コンポーネントのルート要素に外側への余白（margin）を設定しないでください。外側の余白は使用する側で制御するべきです。'
 
 ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
   valid: [
@@ -37,11 +37,17 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
         }
       `,
     },
-    // shr-min などの他のクラス名
+    // shr-min などの、shr-m から始まるほかのクラス
     { code: `const Button = () => <button className="shr-min-w-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-min-h-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-max-w-100">Click me</button>` },
     { code: `const Button = () => <button className="shr-max-h-100">Click me</button>` },
+    // padding は許可
+    { code: `const Button = () => <button className="shr-p-4">Click me</button>` },
+    { code: `const Button = () => <button className="shr-pt-4">Click me</button>` },
+    { code: `const Button = () => <button className="shr-pb-4">Click me</button>` },
+    { code: `const Button = () => <button className="shr-pl-4">Click me</button>` },
+    { code: `const Button = () => <button className="shr-pr-4">Click me</button>` },
     // リテラルでないクラス名
     { code: `const Button = () => <button className={shr-mt-2}>Click me</button>` },
     { code: `const Button = () => <button className={shr-pb-4}>Click me</button>` },
@@ -68,33 +74,12 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
       code: `const Button = () => { return <button className="shr-mr-4">Click me</button> }`,
       errors: [{ message: errorMessage }],
     },
-    // パディングクラスを持つコンポーネント
-    {
-      code: `const Button = () => { return <button className="shr-p-4">Click me</button> }`,
-      errors: [{ message: errorMessage }],
-    },
-    {
-      code: `const Button = () => <button className="shr-pt-4">Click me</button>`,
-      errors: [{ message: errorMessage }],
-    },
-    {
-      code: `const Button = () => { return <button className="shr-pb-4">Click me</button> }`,
-      errors: [{ message: errorMessage }],
-    },
-    {
-      code: `const Button = () => <button className="shr-pl-4">Click me</button>`,
-      errors: [{ message: errorMessage }],
-    },
-    {
-      code: `const Button = () => { return <button className="shr-pr-4">Click me</button> }`,
-      errors: [{ message: errorMessage }],
-    },
     // 複数の余白クラスを持つコンポーネント
     {
       code: `
         const Card = () => {
           return (
-            <div className="shr-mt-4 shr-pb-2 shr-bg-white">
+            <div className="shr-mt-4 shr-mb-2 shr-ml-2 shr-mr-2">
               <p>Content</p>
             </div>
           )
@@ -113,9 +98,7 @@ ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
       `,
       errors: [{ message: errorMessage }],
     },
-  ],
-  // function でのコンポーネント定義
-  invalid: [
+    // function 宣言によるコンポーネント
     {
       code: `
         function Button() {

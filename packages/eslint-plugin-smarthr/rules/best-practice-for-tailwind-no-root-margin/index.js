@@ -1,7 +1,7 @@
 const { AST_NODE_TYPES } = require('@typescript-eslint/utils')
 
 const SCHEMA = []
-const SPACING_CLASS_PATTERNS = /shr-m[trbl]?-/ // mt-, mr-, mb-, ml-, m-
+const MARGIN_CLASS_PATTERNS = /shr-m[trbl]?-/ // mt-, mr-, mb-, ml-, m-
 
 /**
  * コンポーネントのルート要素を渡し、該当の余白クラスが存在すればそれを、なければNULLを返す
@@ -23,7 +23,7 @@ const findSpacingClassInRootElement = (node) => {
   if (typeof classNameAttr.value.value !== 'string') return null
 
   // className属性の値に余白クラスが含まれていればそれを返す
-  const hasSpacingClass = SPACING_CLASS_PATTERNS.test(classNameAttr.value.value)
+  const hasSpacingClass = MARGIN_CLASS_PATTERNS.test(classNameAttr.value.value)
   return hasSpacingClass ? classNameAttr.value : null
 }
 

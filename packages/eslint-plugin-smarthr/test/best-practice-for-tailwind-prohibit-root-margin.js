@@ -1,4 +1,4 @@
-const rule = require('../rules/best-practice-for-tailwind-no-root-margin')
+const rule = require('../rules/best-practice-for-tailwind-prohibit-root-margin')
 const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
@@ -14,7 +14,7 @@ const ruleTester = new RuleTester({
 const errorMessage =
   'コンポーネントのルート要素に外側への余白（margin）を設定しないでください。外側の余白は使用する側で制御するべきです。'
 
-ruleTester.run('best-practice-for-tailwind-no-root-margin', rule, {
+ruleTester.run('best-practice-for-tailwind-prohibit-root-margin', rule, {
   valid: [
     // 余白のないコンポーネント
     {

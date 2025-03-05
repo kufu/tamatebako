@@ -1,4 +1,4 @@
-# best-practice-for-tailwind-no-root-margin
+# best-practice-for-tailwind-prohibit-root-margin
 
 tailwindcss を使用したコンポーネントのルート要素に外側の余白（margin）を設定することを禁止します。
 

@@ -19,12 +19,10 @@ const findSpacingClassInRootElement = (node) => {
   if (!classNameAttr) return null
 
   // className属性の値がリテラルでなければ対象外
-  if (classNameAttr?.value?.type !== AST_NODE_TYPES.Literal) return null
-  if (typeof classNameAttr.value.value !== 'string') return null
+  if (classNameAttr?.value?.type !== AST_NODE_TYPES.Literal || typeof classNameAttr.value.value !== 'string') return null
 
   // className属性の値に余白クラスが含まれていればそれを返す
-  const hasSpacingClass = MARGIN_CLASS_PATTERNS.test(classNameAttr.value.value)
-  return hasSpacingClass ? classNameAttr.value : null
+  return MARGIN_CLASS_PATTERNS.test(classNameAttr.value.value) ? classNameAttr.value : null
 }
 
 /**

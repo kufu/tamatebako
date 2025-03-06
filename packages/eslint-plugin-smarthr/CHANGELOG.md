@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.3.0...eslint-plugin-smarthr-v1.4.0) (2025-03-06)
+
+
+### Features
+
+* best-practice-for-tailwind-prohibit-root-margin ([#523](https://github.com/kufu/tamatebako/issues/523)) ([b14700a](https://github.com/kufu/tamatebako/commit/b14700a17b1c5496e50c6c920f0281bf3ec1d7da))
+
 ## [1.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.2.0...eslint-plugin-smarthr-v1.3.0) (2025-02-21)
 
 

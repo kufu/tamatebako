@@ -4,11 +4,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [9.0.1](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.0.0...eslint-config-smarthr-v9.0.1) (2025-03-12)
 
-
-### Bug Fixes
-
-* eslint-config-smarthr のリリースをトリガーする ([#529](https://github.com/kufu/tamatebako/issues/529)) ([c60d788](https://github.com/kufu/tamatebako/commit/c60d788daaf2650df3bbaad7562b8a88b5f09818))
-
 ## [9.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v8.0.0...eslint-config-smarthr-v9.0.0) (2025-02-03)
 
 

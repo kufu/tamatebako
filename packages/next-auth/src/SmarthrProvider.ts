@@ -54,8 +54,11 @@ export const SmarthrProvider = ({ smarthrUrl, redirectUri, clientId, clientSecre
       id: profile.id,
       // email の重複による OAuthAccountNotLinked エラー避けるため、useUuidForEmail が true の場合は uuid を email として扱う
       // 社員番号ログインで email がない場合も uuid を代わりとする
-      email: useUuidForEmail ? uuid() : profile.email ?? uuid(),
+      email: useUuidForEmail ? uuid() : (profile.email ?? uuid()),
       uid: profile.id,
+      role: {
+        session_timeout_in: profile.role?.session_timeout_in ?? null,
+      },
     }
   },
 })

@@ -151,8 +151,8 @@ importers:
         specifier: ^5.5.0
         version: 5.5.0
       next-auth:
-        specifier: ^4.24.7
-        version: 4.24.7(next@14.2.16(@babel/core@7.26.9)(react-dom@18.3.1(react@19.0.0))(react@19.0.0))(react-dom@18.3.1(react@19.0.0))(react@19.0.0)
+        specifier: ^4.24.11
+        version: 4.24.11(next@14.2.16(@babel/core@7.26.9)(react-dom@18.3.1(react@19.0.0))(react@19.0.0))(react-dom@18.3.1(react@19.0.0))(react@19.0.0)
 
   packages/prettier-config-smarthr: {}
 
@@ -3821,10 +3821,6 @@ packages:
   cookie-signature@1.0.6:
     resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
 
-  cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
-    engines: {node: '>= 0.6'}
-
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
     engines: {node: '>= 0.6'}
@@ -6093,14 +6089,17 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  next-auth@4.24.7:
-    resolution: {integrity: sha512-iChjE8ov/1K/z98gdKbn2Jw+2vLgJtVV39X+rCP5SGnVQuco7QOr19FRNGMIrD8d3LYhHWV9j9sKLzq1aDWWQQ==}
+  next-auth@4.24.11:
+    resolution: {integrity: sha512-pCFXzIDQX7xmHFs4KVH4luCjaCbuPRtZ9oBUjUhOk84mZ9WVPf94n87TxYI4rSRf9HmfHEF8Yep3JrYDVOo3Cw==}
     peerDependencies:
-      next: ^12.2.5 || ^13 || ^14
+      '@auth/core': 0.34.2
+      next: ^12.2.5 || ^13 || ^14 || ^15
       nodemailer: ^6.6.5
-      react: ^17.0.2 || ^18
-      react-dom: ^17.0.2 || ^18
+      react: ^17.0.2 || ^18 || ^19
+      react-dom: ^17.0.2 || ^18 || ^19
     peerDependenciesMeta:
+      '@auth/core':
+        optional: true
       nodemailer:
         optional: true
 
@@ -12642,8 +12641,6 @@ snapshots:
 
   cookie-signature@1.0.6: {}
 
-  cookie@0.5.0: {}
-
   cookie@0.7.1: {}
 
   core-js-compat@3.40.0:
@@ -15606,11 +15603,11 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-auth@4.24.7(next@14.2.16(@babel/core@7.26.9)(react-dom@18.3.1(react@19.0.0))(react@19.0.0))(react-dom@18.3.1(react@19.0.0))(react@19.0.0):
+  next-auth@4.24.11(next@14.2.16(@babel/core@7.26.9)(react-dom@18.3.1(react@19.0.0))(react@19.0.0))(react-dom@18.3.1(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.25.9
       '@panva/hkdf': 1.2.1
-      cookie: 0.5.0
+      cookie: 0.7.1
       jose: 4.15.9
       next: 14.2.16(@babel/core@7.26.9)(react-dom@18.3.1(react@19.0.0))(react@19.0.0)
       oauth: 0.9.15

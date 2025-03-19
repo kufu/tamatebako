@@ -4,7 +4,7 @@ const TV_COMPONENTS_METHOD = 'tv'
 const TV_COMPONENTS = 'tailwind-variants'
 const TV_RESULT_CONST_NAME_REGEX = /(C|c)lassNameGenerator$/
 
-const findValidImportNameNode = (s) => s.type === 'ImportSpecifier' && s.local.name === TV_COMPONENTS_METHOD
+const findValidImportNameNode = (s) => s.type === 'ImportSpecifier' && s.imported.name === TV_COMPONENTS_METHOD && s.local.name !== TV_COMPONENTS_METHOD
 
 const checkImportTailwindVariants = (node, context) => {
 }
@@ -43,7 +43,7 @@ module.exports = {
     return {
       ImportDeclaration: (node) => {
         if (node.source.value === TV_COMPONENTS) {
-          if (!node.specifiers.some(findValidImportNameNode)) {
+          if (node.specifiers.some(findValidImportNameNode)) {
             context.report({
               node,
               message: `${TV_COMPONENTS} をimportする際は、名称が"${TV_COMPONENTS_METHOD}" となるようにしてください。例: "import { ${TV_COMPONENTS_METHOD} } from '${TV_COMPONENTS}'"`,

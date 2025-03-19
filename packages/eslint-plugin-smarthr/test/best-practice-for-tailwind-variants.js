@@ -14,6 +14,7 @@ const ruleTester = new RuleTester({
 ruleTester.run('best-practice-for-button-element', rule, {
   valid: [
     { code: `import { tv } from 'tailwind-variants'` },
+    { code: `import { defaultConfig } from 'tailwind-variants'` },
     { code: `const classNameGenerator = tv()` },
     { code: `const xxxClassNameGenerator = tv()` },
     { code: `const hoge = useMemo(() => classNameGenerator(), [])` },

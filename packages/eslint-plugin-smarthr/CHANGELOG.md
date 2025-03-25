@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.0...eslint-plugin-smarthr-v1.4.1) (2025-03-25)
+
+
+### Bug Fixes
+
+* tailwind-variantsでtv以外のimportを行った際、エラーになる問題を修正する ([#536](https://github.com/kufu/tamatebako/issues/536)) ([83efcf6](https://github.com/kufu/tamatebako/commit/83efcf671938ca471265af9c05bd47fbcce55fb9))
+
 ## [1.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.3.0...eslint-plugin-smarthr-v1.4.0) (2025-03-06)
 
 

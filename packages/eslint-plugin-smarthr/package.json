@@ -1,12 +1,12 @@
 {
   "name": "eslint-plugin-smarthr",
-  "version": "1.2.0",
+  "version": "1.4.1",
   "author": "SmartHR",
   "license": "MIT",
   "description": "A sharable ESLint plugin for SmartHR",
   "main": "index.js",
   "engines": {
-    "node": ">=20.18.2"
+    "node": ">=20.18.3"
   },
   "scripts": {
     "test": "jest"

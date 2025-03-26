@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.0...eslint-plugin-smarthr-v1.4.1) (2025-03-25)
+
+
+### Bug Fixes
+
+* tailwind-variantsでtv以外のimportを行った際、エラーになる問題を修正する ([#536](https://github.com/kufu/tamatebako/issues/536)) ([83efcf6](https://github.com/kufu/tamatebako/commit/83efcf671938ca471265af9c05bd47fbcce55fb9))
+
+## [1.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.3.0...eslint-plugin-smarthr-v1.4.0) (2025-03-06)
+
+
+### Features
+
+* best-practice-for-tailwind-prohibit-root-margin ([#523](https://github.com/kufu/tamatebako/issues/523)) ([b14700a](https://github.com/kufu/tamatebako/commit/b14700a17b1c5496e50c6c920f0281bf3ec1d7da))
+
+## [1.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.2.0...eslint-plugin-smarthr-v1.3.0) (2025-02-21)
+
+
+### Features
+
+* tailwind-variantsの使い方をチェックするルールを追加 ([#480](https://github.com/kufu/tamatebako/issues/480)) ([1501f05](https://github.com/kufu/tamatebako/commit/1501f05e84492e7671a4dc95ef08b15360a1c309))
+
+
+### Bug Fixes
+
+* [a11y-input-has-name-attribute]Inputにreact-hook-formのregisterが指定されている場合はエラーにならないようにする ([#490](https://github.com/kufu/tamatebako/issues/490)) ([2fc6abe](https://github.com/kufu/tamatebako/commit/2fc6abe9515a06dbf7e823da556e045402298a1b))
+
 ## [1.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.1.0...eslint-plugin-smarthr-v1.2.0) (2025-01-09)
 
 

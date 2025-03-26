@@ -1,6 +1,6 @@
 {
   "name": "@smarthr/next-auth",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "SmartHR's next-auth utility",
   "author": "SmartHR",
   "homepage": "https://github.com/kufu/tamatebako#readme",
@@ -30,12 +30,12 @@
     "test": "__tests__"
   },
   "dependencies": {
-    "uuid": "^10.0.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/node": "^18.19.74",
+    "@types/node": "^20.17.27",
     "@types/uuid": "^10.0.0",
-    "ioredis": "^5.4.2",
+    "ioredis": "^5.6.0",
     "next-auth": "^4.24.7"
   },
   "peerDependencies": {

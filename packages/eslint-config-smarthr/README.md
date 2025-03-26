@@ -2,7 +2,6 @@
 
 [![npm version](https://badge.fury.io/js/eslint-config-smarthr.svg)](https://badge.fury.io/js/eslint-config-smarthr)
 
-
 A sharable ESLint config for SmartHR.
 This is intended to use at a project for React + TypeScript.
 

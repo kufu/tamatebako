@@ -27,8 +27,8 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
     { code: `import { Select as HogeSelect } from './hoge'` },
     { code: `import { InputFile as HogeInputFile } from './hoge'` },
     { code: `import { HogeRadioButton as FugaRadioButton } from './hoge'` },
-    { code: `import { CheckBox as FugaCheckBox } from './hoge'` },
-    { code: `import { HogeComboBox as FugaComboBox } from './hoge'` },
+    { code: `import { Checkbox as FugaCheckbox } from './hoge'` },
+    { code: `import { HogeCombobox as FugaCombobox } from './hoge'` },
     { code: `import { DatePicker as HogeDatePicker } from './hoge'` },
     { code: `import { WarekiPicker as HogeWarekiPicker } from './hoge'` },
     { code: `import { HogeDropZone as HogeFugaDropZone } from './hoge'` },
@@ -62,9 +62,9 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
  - InputFileが型の場合、'import type { InputFile as HogeInputFileFuga }' もしくは 'import { type InputFile as HogeInputFileFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeRadioButton as FugaRadioButtonAbc } from './hoge'`, errors: [ { message: `FugaRadioButtonAbcを正規表現 "/RadioButton$/" がmatchする名称に変更してください。
  - HogeRadioButtonが型の場合、'import type { HogeRadioButton as FugaRadioButtonAbc }' もしくは 'import { type HogeRadioButton as FugaRadioButtonAbc }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
-    { code: `import { CheckBox as FugaCheckBoxHoge } from './hoge'`, errors: [ { message: `FugaCheckBoxHogeを正規表現 "/CheckBox$/" がmatchする名称に変更してください。
+    { code: `import { CheckBox as FugaCheckBoxHoge } from './hoge'`, errors: [ { message: `FugaCheckBoxHogeを正規表現 "/Checkbox$/" がmatchする名称に変更してください。
  - CheckBoxが型の場合、'import type { CheckBox as FugaCheckBoxHoge }' もしくは 'import { type CheckBox as FugaCheckBoxHoge }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
-    { code: `import { HogeComboBox as ComboBoxFuga } from './hoge'`, errors: [ { message: `ComboBoxFugaを正規表現 "/ComboBox$/" がmatchする名称に変更してください。
+    { code: `import { HogeComboBox as ComboBoxFuga } from './hoge'`, errors: [ { message: `ComboBoxFugaを正規表現 "/Combobox$/" がmatchする名称に変更してください。
  - HogeComboBoxが型の場合、'import type { HogeComboBox as ComboBoxFuga }' もしくは 'import { type HogeComboBox as ComboBoxFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
  - DatePickerが型の場合、'import type { DatePicker as HogeDatePickerFuga }' もしくは 'import { type DatePicker as HogeDatePickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },

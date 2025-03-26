@@ -5,11 +5,13 @@ const EXPECTED_NAMES = {
   'SearchInput$': 'SearchInput$',
   '(t|T)extarea$': 'Textarea$',
   'FieldSet$': 'FieldSet$',
-  'ComboBox$': 'ComboBox$',
+  'Combo(b|B)ox$': 'Combobox$',
   '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
   'TimePicker$': 'TimePicker$',
 }
-const INPUT_TAG_REGEX = /((i|I)nput|(t|T)extarea|FieldSet|ComboBox|(Date|Wareki|Time)Picker)$/
+const INPUT_TAG_REGEX = /((i|I)nput|(t|T)extarea|FieldSet|Combo(b|B)ox|(Date|Wareki|Time)Picker)$/
+const SEARCH_INPUT_REGEX = /SearchInput$/
+const COMBOBOX_REGEX = /Combo(b|B)ox$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -36,7 +38,7 @@ module.exports = {
         const placeholder = node.attributes.find((a) => a.name?.name === 'placeholder')
 
         if (placeholder) {
-          if (name.match(/SearchInput$/)) {
+          if (SEARCH_INPUT_REGEX.test(name)) {
             const tooltipMessage = node.attributes.find((a) => a.name?.name === 'tooltipMessage')
 
             if (!tooltipMessage) {
@@ -45,7 +47,7 @@ module.exports = {
                 message: `${name} にはplaceholder属性を単独で利用せず、tooltipMessageオプションのみ、もしくはplaceholderとtooltipMessageの併用を検討してください。 (例: '<${name} tooltipMessage="ヒント" />', '<${name} tooltipMessage={hint} placeholder={hint} />')`,
               })
             }
-          } else if (name.match(/ComboBox$/)) {
+          } else if (COMBOBOX_REGEX.test(name)) {
             let defaultItem
             let dropdownHelpMessage
 

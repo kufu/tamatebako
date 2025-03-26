@@ -5,8 +5,8 @@ const EXPECTED_LABELED_INPUT_NAMES = {
   'RadioButtons$': '(RadioButtons)$',
   'RadioButtonPanel$': '(RadioButtonPanel)$',
   'RadioButtonPanels$': '(RadioButtonPanels)$',
-  'Check(B|b)ox$': '(CheckBox)$',
-  'Check(B|b)ox(e)?s$': '(CheckBoxes)$',
+  'Check(b|B)ox$': '(Checkbox)$',
+  'Check(b|B)ox(e)?s$': '(Checkboxes)$',
 }
 const EXPECTED_INPUT_NAMES = {
   '(I|^i)nput$': '(Input)$',
@@ -14,7 +14,7 @@ const EXPECTED_INPUT_NAMES = {
   '(T|^t)extarea$': '(Textarea)$',
   '(S|^s)elect$': '(Select)$',
   'InputFile$': '(InputFile)$',
-  'Combo(b|B)ox$': '(ComboBox)$',
+  'Combo(b|B)ox$': '(Combobox)$',
   '(Date|Wareki)Picker$': '((Date|Wareki)Picker)$',
   'TimePicker$': '(TimePicker)$',
   ...EXPECTED_LABELED_INPUT_NAMES,
@@ -236,7 +236,7 @@ module.exports = {
                     const layoutSectionAttribute = !isSection && name.match(LAYOUT_COMPONENT_REGEX) && openingElement.attributes.find(findAsSectioning)
 
                     if (isSection || layoutSectionAttribute) {
-                      // HINT: smarthr-ui/CheckBoxはlabelを単独で持つため、FormControl系でラップをする必要はない
+                      // HINT: smarthr-ui/Checkboxはlabelを単独で持つため、FormControl系でラップをする必要はない
                       // HINT: 擬似的にラベルが設定されている場合、無視する
                       if (!isCheckbox && !isPseudoLabel) {
                         const actualName = isSection ? name : `<${name} ${layoutSectionAttribute.name.name}="${layoutSectionAttribute.value.value}">`
@@ -288,7 +288,7 @@ module.exports = {
                 }
               }
               case 'Program': {
-                // HINT: smarthr-ui/CheckBoxはlabelを単独で持つため、FormControl系でラップをする必要はない
+                // HINT: smarthr-ui/Checkboxはlabelを単独で持つため、FormControl系でラップをする必要はない
                 // HINT: 擬似的にラベルが設定されている場合、無視する
                 if (!isCheckbox && !isPseudoLabel) {
                   const isSelect = !isRadio && nodeName.match(SELECT_REGEX)

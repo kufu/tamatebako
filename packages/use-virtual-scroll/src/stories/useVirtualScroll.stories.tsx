@@ -1,5 +1,5 @@
 import { Story } from '@storybook/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { useVirtualScroll } from '../useVirtualScroll'
 

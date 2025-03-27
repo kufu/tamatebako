@@ -32,7 +32,7 @@
   <Select />
 </Section>
 
-// RadioButton, CheckBoxはFieldsetでグルーピングする必要があるためNG
+// RadioButton, CheckboxはFieldsetでグルーピングする必要があるためNG
 <FormControl title="any heading">
   <RadioButton>{a.label}</RadioButton>
 </FormControl>
@@ -40,14 +40,14 @@
 // FormControlが複数の入力要素を持ってしまっているのでNG
 <FormControl title="any heading">
   <Input />
-  <ComboBox />
+  <Combobox />
 </FormControl>
 
 
 // FormControlがネストしてしまっているのでNG
 <FormControl>
   <SubFormControl>
-    <CheckBox />
+    <Checkbox />
   </SubFormControl>
 </FormControl>
 
@@ -97,7 +97,7 @@
   </FormControl>
 </Section>
 
-// smarthr-ui/CheckBox はlabelを含むため、なんの入力要素かが単独で伝えられるので
+// smarthr-ui/Checkbox はlabelを含むため、なんの入力要素かが単独で伝えられるので
 // FormControl・Fieldsetで囲む必要はない (囲んでも問題はない)
-<CheckBox />
+<Checkbox />
 ```

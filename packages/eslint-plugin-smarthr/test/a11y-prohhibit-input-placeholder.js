@@ -18,7 +18,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: `import { Input as HogeInput } from './hoge'` },
     { code: `import { HogeSearchInput as FugaSearchInput } from './hoge'` },
     { code: `import { HogeTextarea as FugaHogeTextarea } from './hoge'` },
-    { code: `import { ComboBox as FugaHogeComboBox } from './hoge'` },
+    { code: `import { Combobox as FugaHogeCombobox } from './hoge'` },
     { code: `import { AbcDatePicker as StyledDatePicker } from './hoge'` },
     { code: `import { AbcWarekiPicker as StyledWarekiPicker } from './hoge'` },
     { code: 'const HogeInput = styled.input``' },
@@ -28,7 +28,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: 'const HogeTextarea = styled(Textarea)``' },
     { code: 'const hoge = styled.fieldset``' },
     { code: 'const HogeFieldSet = styled(FieldSet)``' },
-    { code: 'const HogeComboBox = styled(ComboBox)``' },
+    { code: 'const HogeCombobox = styled(ComboBox)``' },
     { code: 'const HogeSearchInput = styled(SearchInput)``' },
     { code: `<input />` },
     { code: `<textarea />` },
@@ -57,8 +57,8 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
  - SearchInputが型の場合、'import type { SearchInput as Hoge }' もしくは 'import { type SearchInput as Hoge }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeTextarea as HogeTextareaFuga } from './hoge'`, errors: [ { message: `HogeTextareaFugaを正規表現 "/Textarea$/" がmatchする名称に変更してください。
  - HogeTextareaが型の場合、'import type { HogeTextarea as HogeTextareaFuga }' もしくは 'import { type HogeTextarea as HogeTextareaFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
-    { code: `import { HogeComboBox as ComboBoxFuga } from './hoge'`, errors: [ { message: `ComboBoxFugaを正規表現 "/ComboBox$/" がmatchする名称に変更してください。
- - HogeComboBoxが型の場合、'import type { HogeComboBox as ComboBoxFuga }' もしくは 'import { type HogeComboBox as ComboBoxFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
+    { code: `import { HogeCombobox as ComboboxFuga } from './hoge'`, errors: [ { message: `ComboboxFugaを正規表現 "/Combobox$/" がmatchする名称に変更してください。
+ - HogeComboboxが型の場合、'import type { HogeCombobox as ComboboxFuga }' もしくは 'import { type HogeCombobox as ComboboxFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { DatePicker as HogeDatePickerFuga } from './hoge'`, errors: [ { message: `HogeDatePickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
  - DatePickerが型の場合、'import type { DatePicker as HogeDatePickerFuga }' もしくは 'import { type DatePicker as HogeDatePickerFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { WarekiPicker as HogeWarekiPickerFuga } from './hoge'`, errors: [ { message: `HogeWarekiPickerFugaを正規表現 "/(Date|Wareki)Picker$/" がmatchする名称に変更してください。
@@ -68,7 +68,7 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: 'const Hoge = styled.textarea``', errors: [ { message: `Hogeを正規表現 "/Textarea$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(StyledTextarea)``', errors: [ { message: `Hogeを正規表現 "/Textarea$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(FieldSet)``', errors: [ { message: `Hogeを正規表現 "/FieldSet$/" がmatchする名称に変更してください。` } ] },
-    { code: 'const Hoge = styled(ComboBox)``', errors: [ { message: `Hogeを正規表現 "/ComboBox$/" がmatchする名称に変更してください。` } ] },
+    { code: 'const Hoge = styled(Combobox)``', errors: [ { message: `Hogeを正規表現 "/Combobox$/" がmatchする名称に変更してください。` } ] },
     {
       code: 'const Hoge = styled(SearchInput)``',
       errors: [

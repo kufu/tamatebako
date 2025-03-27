@@ -15,7 +15,7 @@ jobs:
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
-        node-version: 20.x
+        node-version: 22.x
     - name: pnpm install, and pnpm lint
       run: |
         corepack enable && corepack prepare --activate

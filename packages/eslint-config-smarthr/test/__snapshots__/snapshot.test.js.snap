@@ -1208,7 +1208,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "@",
     "import",
     "react",
-    "react-hooks",
+    "react-hooks:eslint-plugin-react-hooks",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
     "@typescript-eslint:@typescript-eslint/eslint-plugin@8.28.0",
     "typescript:@typescript-eslint/eslint-plugin@8.28.0",

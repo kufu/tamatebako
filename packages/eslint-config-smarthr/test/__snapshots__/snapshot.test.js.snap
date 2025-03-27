@@ -1208,7 +1208,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "@",
     "import",
     "react",
-    "react-hooks:eslint-plugin-react-hooks",
+    "react-hooks",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
     "@typescript-eslint:@typescript-eslint/eslint-plugin@8.28.0",
     "typescript:@typescript-eslint/eslint-plugin@8.28.0",
@@ -1783,6 +1783,12 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "@typescript-eslint/comma-spacing": [
       0,
     ],
+    "@typescript-eslint/consistent-type-imports": [
+      2,
+      {
+        "fixStyle": "inline-type-imports",
+      },
+    ],
     "@typescript-eslint/explicit-member-accessibility": [
       0,
     ],
@@ -1830,6 +1836,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "@typescript-eslint/no-extra-semi": [
       0,
+    ],
+    "@typescript-eslint/no-import-type-side-effects": [
+      2,
     ],
     "@typescript-eslint/no-inferrable-types": [
       0,

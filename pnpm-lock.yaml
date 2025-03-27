@@ -21,8 +21,8 @@ importers:
         specifier: 9.15.0
         version: 9.15.0(jiti@2.4.2)
       eslint-config-smarthr:
-        specifier: 8.0.0
-        version: 8.0.0(@types/node@20.17.27)(eslint@9.15.0(jiti@2.4.2))(react@19.0.0)(typescript@5.8.2)
+        specifier: 9.0.1
+        version: 9.0.1(eslint@9.15.0(jiti@2.4.2))(react@19.0.0)(typescript@5.8.2)
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -4337,11 +4337,11 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-smarthr@8.0.0:
-    resolution: {integrity: sha512-dsk9x7IIMJo3aQy0qz2sYETZbJFjac47tmc9SJJ/rlFLFmBdHZAbCpQ45u5a/MlWOLYQ+SnngxZ21Y3ZLBBeLQ==}
+  eslint-config-smarthr@9.0.1:
+    resolution: {integrity: sha512-Bcj4gmaovTXY51QGWhJk9WVyBqV8Os8bTSHpK4mUlRr7bByeGUA1hCe7J7SWcaT6viW+jQq0T0MprvdDC9MoqA==}
     peerDependencies:
       eslint: ^9.0.0
-      react: ^16.8.6 || ^17.0.0 || ^18.0.0
+      react: ^16.8.6 || ^17.0.0 || ^18.0.0 || ^19.0.0
       typescript: ^3.4.5 || ^4.0.0 || ^5.0.0
 
   eslint-import-resolver-node@0.3.9:
@@ -4396,9 +4396,9 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-smarthr@1.0.0:
-    resolution: {integrity: sha512-iwfCXyjbW2BexdV3bDtuteHmDc1U5QDTUAIuAiwyOoQjfcvBSyhxC9megMCdsmeEOnupA7d/wXjHGUX7kDI8fw==}
-    engines: {node: '>=20.9.0'}
+  eslint-plugin-smarthr@1.4.0:
+    resolution: {integrity: sha512-2/rV5BqEsZXG+OzyI4eRQn3gXPenZttu94YKB+O4tusdRnW0QzeaRsJyfaKPB9K1ix11YrpcIzsgR8/CVOiEsA==}
+    engines: {node: '>=20.18.3'}
     peerDependencies:
       eslint: ^9
 
@@ -11735,7 +11735,7 @@ snapshots:
       chai: 5.1.2
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@20.17.27))':
+  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@20.17.27)(terser@5.36.0))':
     dependencies:
       '@vitest/spy': 2.1.9
       estree-walker: 3.0.3
@@ -13367,7 +13367,7 @@ snapshots:
     dependencies:
       eslint: 9.15.0(jiti@2.4.2)
 
-  eslint-config-smarthr@8.0.0(@types/node@20.17.27)(eslint@9.15.0(jiti@2.4.2))(react@19.0.0)(typescript@5.8.2):
+  eslint-config-smarthr@9.0.1(eslint@9.15.0(jiti@2.4.2))(react@19.0.0)(typescript@5.8.2):
     dependencies:
       '@eslint/js': 9.17.0
       '@typescript-eslint/eslint-plugin': 8.19.1(@typescript-eslint/parser@8.19.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
@@ -13378,30 +13378,15 @@ snapshots:
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.15.0(jiti@2.4.2))
       eslint-plugin-react: 7.37.4(eslint@9.15.0(jiti@2.4.2))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.15.0(jiti@2.4.2))
-      eslint-plugin-smarthr: 1.0.0(eslint@9.15.0(jiti@2.4.2))
+      eslint-plugin-smarthr: 1.4.0(eslint@9.15.0(jiti@2.4.2))
       globals: 15.15.0
       react: 19.0.0
       typescript: 5.8.2
       typescript-eslint: 8.19.1(eslint@9.15.0(jiti@2.4.2))(typescript@5.8.2)
-      vitest: 2.1.9(@types/node@20.17.27)(terser@5.36.0)
     transitivePeerDependencies:
-      - '@edge-runtime/vm'
-      - '@types/node'
-      - '@vitest/browser'
-      - '@vitest/ui'
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
-      - happy-dom
-      - jsdom
-      - less
-      - lightningcss
-      - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
       - supports-color
-      - terser
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
@@ -13534,7 +13519,7 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-smarthr@1.0.0(eslint@9.15.0(jiti@2.4.2)):
+  eslint-plugin-smarthr@1.4.0(eslint@9.15.0(jiti@2.4.2)):
     dependencies:
       eslint: 9.15.0(jiti@2.4.2)
       json5: 2.2.3
@@ -17774,7 +17759,7 @@ snapshots:
   vitest@2.1.9(@types/node@20.17.27)(terser@5.36.0):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@20.17.27))
+      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@20.17.27)(terser@5.36.0))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9

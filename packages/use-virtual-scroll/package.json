@@ -43,7 +43,7 @@
     "@storybook/react-webpack5": "^7.6.20",
     "@storybook/testing-library": "^0.2.2",
     "@types/react": "^18.3.20",
-    "babel-loader": "^9.2.1",
+    "babel-loader": "^10.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "storybook": "^7.6.20"

@@ -240,8 +240,8 @@ importers:
         specifier: ^18.3.20
         version: 18.3.20
       babel-loader:
-        specifier: ^9.2.1
-        version: 9.2.1(@babel/core@7.26.10)(webpack@5.95.0(@swc/core@1.7.39(@swc/helpers@0.5.5))(esbuild@0.18.20))
+        specifier: ^10.0.0
+        version: 10.0.0(@babel/core@7.26.10)(webpack@5.95.0(@swc/core@1.7.39(@swc/helpers@0.5.5))(esbuild@0.18.20))
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -3341,6 +3341,13 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       '@babel/core': ^7.8.0
+
+  babel-loader@10.0.0:
+    resolution: {integrity: sha512-z8jt+EdS61AMw22nSfoNJAZ0vrtmhPRVi6ghL3rCeRZI8cdNYFiV5xeV3HbE7rlZZNmGH8BVccwWt8/ED0QOHA==}
+    engines: {node: ^18.20.0 || ^20.10.0 || >=22.0.0}
+    peerDependencies:
+      '@babel/core': ^7.12.0
+      webpack: '>=5.61.0'
 
   babel-loader@9.2.1:
     resolution: {integrity: sha512-fqe8naHt46e0yIdkjUZYqddSXfej3AHajX+CSO5X7oy0EmPc6o5Xh+RClNoHjnieWz9AW4kZxW9yyFMhVB1QLA==}
@@ -12071,6 +12078,12 @@ snapshots:
       slash: 3.0.0
     transitivePeerDependencies:
       - supports-color
+
+  babel-loader@10.0.0(@babel/core@7.26.10)(webpack@5.95.0(@swc/core@1.7.39(@swc/helpers@0.5.5))(esbuild@0.18.20)):
+    dependencies:
+      '@babel/core': 7.26.10
+      find-up: 5.0.0
+      webpack: 5.95.0(@swc/core@1.7.39(@swc/helpers@0.5.5))(esbuild@0.18.20)
 
   babel-loader@9.2.1(@babel/core@7.26.10)(webpack@5.95.0(@swc/core@1.7.39(@swc/helpers@0.5.5))(esbuild@0.18.20)):
     dependencies:

@@ -20,6 +20,14 @@ export default [
     rules: {
       '@typescript-eslint/no-shadow': ['error'],
       '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          fixStyle: 'inline-type-imports',
+        }
+      ],
+      '@typescript-eslint/no-import-type-side-effects': 'error',
+
       // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-shadow.md
       'no-shadow': 'off',
 

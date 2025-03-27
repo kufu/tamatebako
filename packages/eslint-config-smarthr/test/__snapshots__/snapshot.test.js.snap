@@ -1783,6 +1783,12 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "@typescript-eslint/comma-spacing": [
       0,
     ],
+    "@typescript-eslint/consistent-type-imports": [
+      2,
+      {
+        "fixStyle": "inline-type-imports",
+      },
+    ],
     "@typescript-eslint/explicit-member-accessibility": [
       0,
     ],
@@ -1830,6 +1836,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "@typescript-eslint/no-extra-semi": [
       0,
+    ],
+    "@typescript-eslint/no-import-type-side-effects": [
+      2,
     ],
     "@typescript-eslint/no-inferrable-types": [
       0,

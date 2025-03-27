@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.1...eslint-plugin-smarthr-v1.4.2) (2025-03-27)
+
+
+### Bug Fixes
+
+* smarthr-uiのCheckbox,Comboboxに対応する ([#550](https://github.com/kufu/tamatebako/issues/550)) ([3978a12](https://github.com/kufu/tamatebako/commit/3978a120e4be158a4e9bd602bb1055b55600a41b))
+
 ## [1.4.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.0...eslint-plugin-smarthr-v1.4.1) (2025-03-25)
 
 

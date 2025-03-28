@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.1.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.0.1...eslint-config-smarthr-v9.1.0) (2025-03-28)
+
+
+### Features
+
+* import時、型ならtype識別子をautofixする設定を追加 ([#560](https://github.com/kufu/tamatebako/issues/560)) ([af2f504](https://github.com/kufu/tamatebako/commit/af2f504c9dde585f42df658ea8b2b3a08796bd07))
+
 ## [9.0.1](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.0.0...eslint-config-smarthr-v9.0.1) (2025-03-12)
 
 ## [9.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v8.0.0...eslint-config-smarthr-v9.0.0) (2025-02-03)

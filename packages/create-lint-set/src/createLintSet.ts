@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import { program } from 'commander'
 import spawn from 'cross-spawn'
 
-import { Item, items } from './items'
+import { type Item, items } from './items'
 
 const path = require('path')
 

@@ -1,7 +1,8 @@
-import { Story } from '@storybook/react'
 import { useState } from 'react'
 
 import { useVirtualScroll } from '../useVirtualScroll'
+
+import type { Story } from '@storybook/react'
 
 export default {
   title: 'useVirtualScroll',

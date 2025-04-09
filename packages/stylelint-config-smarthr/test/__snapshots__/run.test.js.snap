@@ -4,6 +4,36 @@ exports[`fixtures > should match the snapshot 1`] = `
 {
   "index.tsx": [
     {
+      "rule": "color-function-alias-notation",
+      "severity": "error",
+      "text": "Unknown rule color-function-alias-notation. Did you mean color-function-notation?",
+    },
+    {
+      "rule": "color-function-alias-notation",
+      "severity": "error",
+      "text": "Unknown rule color-function-alias-notation. Did you mean color-function-notation?",
+    },
+    {
+      "rule": "color-function-alias-notation",
+      "severity": "error",
+      "text": "Unknown rule color-function-alias-notation. Did you mean color-function-notation?",
+    },
+    {
+      "rule": "container-name-pattern",
+      "severity": "error",
+      "text": "Unknown rule container-name-pattern. Did you mean layer-name-pattern?",
+    },
+    {
+      "rule": "container-name-pattern",
+      "severity": "error",
+      "text": "Unknown rule container-name-pattern. Did you mean layer-name-pattern?",
+    },
+    {
+      "rule": "container-name-pattern",
+      "severity": "error",
+      "text": "Unknown rule container-name-pattern. Did you mean layer-name-pattern?",
+    },
+    {
       "rule": "alpha-value-notation",
       "severity": "error",
       "text": "Expected "50%" to be "0.5" (alpha-value-notation)",

@@ -14,6 +14,16 @@ exports[`fixtures > should match the snapshot 1`] = `
       "text": "Unexpected empty block (block-no-empty)",
     },
     {
+      "rule": "color-function-alias-notation",
+      "severity": "error",
+      "text": "Expected "rgba" to be "rgb" (color-function-alias-notation)",
+    },
+    {
+      "rule": "color-function-alias-notation",
+      "severity": "error",
+      "text": "Expected "rgba" to be "rgb" (color-function-alias-notation)",
+    },
+    {
       "rule": "color-function-notation",
       "severity": "error",
       "text": "Expected legacy color-function notation (color-function-notation)",

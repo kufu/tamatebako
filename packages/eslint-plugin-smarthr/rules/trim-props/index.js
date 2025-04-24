@@ -1,22 +1,23 @@
+const SCHEMA = []
+const EXTRA_SPACE_REGES = /(^\s+|\s+$)/
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
 module.exports = {
   meta: {
     type: 'suggestion',
-    schema: [],
+    schema: SCHEMA,
     fixable: 'whitespace',
   },
   create(context) {
     return {
       JSXOpeningElement: (node) =>
-        node.attributes.reduce((prev, current) => {
+        node.attributes.forEach((current) => {
           const attribute = current.value?.type === 'JSXExpressionContainer' ? current.value.expression : current.value
           const props = attribute?.value
 
-          if (typeof props !== 'string') return prev
-
-          if (props.match(/(^\s+|\s+$)/)) {
+          if (typeof props === 'string' && EXTRA_SPACE_REGES.test(props)) {
             return context.report({
               node,
               loc: current.loc,
@@ -26,9 +27,9 @@ module.exports = {
               },
             })
           }
-          return prev
-        }, []),
+        })
     }
   },
 }
-module.exports.schema = []
+
+module.exports.schema = SCHEMA

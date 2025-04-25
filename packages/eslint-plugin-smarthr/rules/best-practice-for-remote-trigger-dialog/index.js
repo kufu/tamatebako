@@ -22,9 +22,9 @@ module.exports = {
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name || '';
 
-        const regexRemoteTriggerDialog = nodeName.match(REGEX_REMOTE_TRIGGER_DIALOG)
+        const regexRemoteTriggerDialog = REGEX_REMOTE_TRIGGER_DIALOG.test(nodeName)
 
-        if (regexRemoteTriggerDialog || nodeName.match(REGEX_REMOTE_DIALOG_TRIGGER)) {
+        if (regexRemoteTriggerDialog || REGEX_REMOTE_DIALOG_TRIGGER.test(nodeName)) {
           const attrName = regexRemoteTriggerDialog ? 'id' : 'targetId'
           const id = node.attributes.find((a) => a.name?.name === attrName)
 

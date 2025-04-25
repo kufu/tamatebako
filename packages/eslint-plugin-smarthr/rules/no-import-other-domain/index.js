@@ -46,7 +46,7 @@ module.exports = {
     const calcContext = calculateDomainContext(context)
 
     // 対象外ファイル
-    if (!calcContext.isTarget || calcContext.option.ignores && calcContext.option.ignores.some((i) => !!calcContext.filename.match(new RegExp(i)))) {
+    if (!calcContext.isTarget || calcContext.option.ignores && calcContext.option.ignores.some((i) => (new RegExp(i)).test(calcContext.filename))) {
       return {}
     }
 
@@ -55,8 +55,8 @@ module.exports = {
       humanizeParentDir,
     } = calcContext
 
-    const targetPathRegexs = Object.keys(option?.allowedImports || {})
-    const targetAllowedImports = targetPathRegexs.filter((regex) => !!calcContext.filename.match(new RegExp(regex)))
+    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) : []
+    const targetAllowedImports = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(calcContext.filename))
 
     return {
       ImportDeclaration: (node) => {
@@ -90,11 +90,11 @@ module.exports = {
           })
         })
 
-        if (isDenyPath && deniedModules[0] === true) {
-          return
-        }
-
-        if (!isDenyPath && deniedModules.length === 1 && deniedModules[0].length === 0) {
+        if (isDenyPath) {
+          if (deniedModules[0] === true) {
+            return
+          }
+        } else if (deniedModules.length === 1 && deniedModules[0].length === 0) {
           return
         }
 

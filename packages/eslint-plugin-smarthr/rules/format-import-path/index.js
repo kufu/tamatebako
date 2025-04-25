@@ -21,6 +21,14 @@ const SCHEMA = [
   }
 ]
 
+const CWD = process.cwd()
+const REPLACE_PATH_ENTRIES = Object.entries(replacePaths)
+const REPLACE_PATH_KEY_REGEX = new RegExp(`^(${Object.keys(replacePaths).join('|')})`)
+const DIR_SEPARATE_REGEX = /\//g
+const MULTIPLE_DIR_SEPARATE_REGEX =/(\/)+/g
+
+const dirCount = (dir) => dir.match(DIR_SEPARATE_REGEX).length
+
 const convertType = (calcContext, calcDomainNode) => {
   const { option: { format: { all, outside, globalModule, module, domain, lower } } } = calcContext
   const { isGlobalModuleImport, isModuleImport, isDomainImport, isLowerImport } = calcDomainNode
@@ -49,14 +57,14 @@ const calculateAbsoluteImportPath = ({ importPath, resolvedImportPath }) => {
     return importPath
   }
 
-  return Object.entries(replacePaths).reduce((prev, [key, values]) => {
+  return REPLACE_PATH_ENTRIES.reduce((prev, [key, values]) => {
     if (resolvedImportPath === prev) {
       return values.reduce((p, v) => {
         if (prev === p) {
-          const regexp = new RegExp(`^${path.resolve(`${process.cwd()}/${v}`)}(.+)$`)
+          const regexp = new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`)
 
-          if (prev.match(regexp)) {
-            return p.replace(regexp, `${key}/$1`).replace(/(\/)+/g, '/')
+          if (regexp.test(prev)) {
+            return p.replace(regexp, `${key}/$1`).replace(MULTIPLE_DIR_SEPARATE_REGEX, '/')
           }
         }
 
@@ -71,7 +79,7 @@ const calculateRelativeImportPath = ({ importPath, filteredDirs, filteredPaths }
   // HINT: 相対パスの場合でも、余計にさかのぼっていたりする場合もあるので修正対象とする
   if (
     importPath[0] !== '.' &&
-    !importPath.match(new RegExp(`^(${Object.keys(replacePaths).join('|')})`))
+    !REPLACE_PATH_KEY_REGEX.test(importPath)
   ) {
     return importPath
   }
@@ -113,7 +121,7 @@ module.exports = {
 
               // HINT: 記述するdirの数でより近い方を選択する。
               // 相対・絶対記法が同一の場合、おそらくimport元から距離はあるため、たどりやすくするために絶対記法を選択する
-              return (absoluted.split('/').length <= relatived.split('/').length) ? absoluted : relatived
+              return (dirCount(absoluted) <= dirCount(relatived)) ? absoluted : relatived
           }
 
           return importPath

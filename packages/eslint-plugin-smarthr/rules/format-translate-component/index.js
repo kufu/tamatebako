@@ -13,6 +13,8 @@ const SCHEMA = [
   }
 ]
 
+const NOOP = () => {}
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -23,7 +25,7 @@ module.exports = {
   },
   create(context) {
     const { componentPath, componentName, prohibitAttributies } = context.options[0]
-    let JSXAttribute = () => {}
+    let JSXAttribute = NOOP
 
     if (prohibitAttributies) {
       JSXAttribute = (node) => {

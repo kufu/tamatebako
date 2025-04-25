@@ -1,8 +1,4 @@
-const getParentDir = (filename) => {
-  const dir = filename.match(/^(.+?)\..+?$/)[1].split('/')
-  dir.pop()
-
-  return dir.join('/')
-}
+const PARENT_DIR_REGEX = /^(.+)\/.+?$/
+const getParentDir = (filename) => filename.match(PARENT_DIR_REGEX)?.[1] || ''
 
 module.exports = { getParentDir }

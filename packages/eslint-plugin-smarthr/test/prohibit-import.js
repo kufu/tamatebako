@@ -15,7 +15,7 @@ ruleTester.run('prohibit-import', rule, {
   valid: [
     {
       code: `import _ from 'lodash-es'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -28,7 +28,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash-es'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -41,7 +41,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqaul } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -54,7 +54,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import _ from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -67,7 +67,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import _ from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^fuga.js$': {
@@ -80,7 +80,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from './module/validator'`,
-      filename: 'page/hoge.js',
+      filename: '/page/hoge.js',
       options: [
         {
           '^.+$': {
@@ -95,7 +95,7 @@ ruleTester.run('prohibit-import', rule, {
   invalid: [
     {
       code: `import _ from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -109,7 +109,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -123,7 +123,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -137,7 +137,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -152,7 +152,7 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
           '^.+$': {
@@ -170,10 +170,10 @@ ruleTester.run('prohibit-import', rule, {
     },
     {
       code: `import { isEqual } from 'lodash'`,
-      filename: 'hoge.js',
+      filename: '/a/hoge.js',
       options: [
         {
-          '^hoge.js$': {
+          '/hoge.js$': {
             'example': {
               imported: true,
             },

@@ -11,8 +11,14 @@ const EXPECTED_NAMES = {
   '^a$': '(Anchor|Link)$',
 }
 
+const TRIGGER_REGEX = /(Dropdown|Dialog)Trigger$/
+const HELP_DIALOG_TRIGGER_REGEX = /HelpDialogTrigger$/
+const BUTTON_REGEX = /(b|B)utton$/
+const ANCHOR_BUTTON_REGEX = /AnchorButton$/
+const FALSY_TEXT_REGEX = /^\s*\n+\s*$/
+
 const filterFalsyJSXText = (cs) => cs.filter((c) => (
-  !(c.type === 'JSXText' && c.value.match(/^\s*\n+\s*$/))
+  !(c.type === 'JSXText' && FALSY_TEXT_REGEX.test(c.value))
 ))
 
 /**
@@ -40,9 +46,9 @@ module.exports = {
           return
         }
 
-        const match = node.name.name.match(/(Dropdown|Dialog)Trigger$/)
+        const match = node.name.name.match(TRIGGER_REGEX)
 
-        if (!match || node.name.name.match(/HelpDialogTrigger$/)) {
+        if (!match || HELP_DIALOG_TRIGGER_REGEX.test(node.name.name)) {
           return
         }
 
@@ -65,8 +71,8 @@ module.exports = {
 
           if (
             c.type !== 'JSXElement' ||
-            !c.openingElement.name.name.match(/(b|B)utton$/) ||
-            c.openingElement.name.name.match(/AnchorButton$/)
+            !BUTTON_REGEX.test(c.openingElement.name.name) ||
+            ANCHOR_BUTTON_REGEX.test(c.openingElement.name.name)
           ) {
             context.report({
               node: c,

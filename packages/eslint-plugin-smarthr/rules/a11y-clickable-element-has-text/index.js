@@ -33,9 +33,7 @@ const REGEX_TEXT_COMPONENT = /(Text|Message)$/
 const REGEX_JSX_TYPE = /^(JSXText|JSXExpressionContainer)$/
 
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
-const checkFalsyJSXText = (c) => (
-  !(c.type === 'JSXText' && c.value.match(REGEX_NLSP))
-)
+const checkFalsyJSXText = (c) => c.type !== 'JSXText' || !REGEX_NLSP.test(c.value)
 
 const message = `a, buttonなどのクリッカブルな要素内にはテキストを設定してください
  - 要素内にアイコン、画像のみを設置する場合はaltなどの代替テキスト用属性を指定してください
@@ -64,7 +62,7 @@ module.exports = {
 
         const node = parentNode.openingElement
 
-        if (!node.name.name || !node.name.name.match(REGEX_CLICKABLE_ELEMENT)) {
+        if (!node.name.name || !REGEX_CLICKABLE_ELEMENT.test(node.name.name)) {
           return
         }
 
@@ -79,13 +77,13 @@ module.exports = {
             }
             case 'JSXElement': {
               // // HINT: SmartHRLogo コンポーネントは内部でaltを持っているため対象外にする
-              if (c.openingElement.name.name.match(REGEX_SMARTHR_LOGO)) {
+              if (REGEX_SMARTHR_LOGO.test(c.openingElement.name.name)) {
                 return true
               }
 
               const tagName = c.openingElement.name.name
 
-              if (tagName.match(REGEX_TEXT_COMPONENT) || componentsWithText.includes(tagName)) {
+              if (REGEX_TEXT_COMPONENT.test(tagName) || componentsWithText.includes(tagName)) {
                 return true
               }
 

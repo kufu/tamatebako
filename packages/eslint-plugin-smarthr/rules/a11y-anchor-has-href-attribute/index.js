@@ -12,14 +12,39 @@ const OPTION = (() => {
 
   const json = JSON5.parse(fs.readFileSync(file))
   const dependencies = [
-    ...Object.keys(json.dependencies || {}),
-    ...Object.keys(json.devDependencies || {}),
+    ...(json.dependencies ? Object.keys(json.dependencies) : []),
+    ...(json.devDependencies ? Object.keys(json.devDependencies) : []),
   ]
 
-  return {
-    nextjs: dependencies.includes('next'),
-    react_router: dependencies.includes('react-router-dom'),
+  let nextjs = false
+  let react_router = false
+  const result = () => ({
+    nextjs,
+    react_router,
+  })
+
+  for (let i = 0; i < dependencies.length; i++) {
+    switch (dependencies[i]) {
+      case 'next':
+        nextjs = true
+
+        if (react_router) {
+          return result()
+        }
+
+        break
+      case 'react-router-dom':
+        react_router = true
+
+        if (nextjs) {
+          return result()
+        }
+
+        break
+    }
   }
+
+  return result()
 })()
 
 const EXPECTED_NAMES = {
@@ -43,7 +68,7 @@ const baseCheck = (node, checkType) => {
   const nodeName = node.name.name || ''
 
   if (
-    nodeName.match(REGEX_TARGET) &&
+    REGEX_TARGET.test(nodeName) &&
     checkExistAttribute(node, findHrefAttribute) &&
     (checkType !== 'allow-spread-attributes' || !node.attributes.some(findSpreadAttr))
   ) {

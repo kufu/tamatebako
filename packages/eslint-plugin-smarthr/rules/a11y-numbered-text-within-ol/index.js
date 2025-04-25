@@ -18,12 +18,12 @@ const searchOrderedList = (node) => {
   if (node.type === 'JSXElement' && node.openingElement.name?.name) {
     const name = node.openingElement.name.name
 
-    if (name.match(SELECT_REGEX)) {
+    if (SELECT_REGEX.test(name)) {
       // HINT: select要素の場合、optionのラベルに連番がついている場合がありえるのでignoreする
       // 通常と処理を分けるためnullではなく0を返す
       return 0
     } else if (
-      name.match(ORDERED_LIST_REGEX) ||
+      ORDERED_LIST_REGEX.test(name) ||
       node.openingElement.attributes.find(findAsOlAttr)
     ) {
       return node.openingElement

@@ -1,4 +1,5 @@
 const path = require('path')
+const { getParentDir } = require('../../libs/util')
 
 const SCHEMA = [{
   type: 'object',
@@ -45,9 +46,7 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const dir = context.filename.match(FILENAME_EXT_REGEX)[1].split('/')
-    dir.pop()
-    const parentDir = dir.join('/')
+    const parentDir = getParentDir(context.filename)
     const targetPathRegexs = Object.keys(options)
     const targetProhibits = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 

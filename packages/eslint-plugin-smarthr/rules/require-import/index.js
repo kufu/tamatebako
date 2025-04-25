@@ -1,4 +1,6 @@
 const path = require('path')
+const { getParentDir } = require('../../libs/util')
+
 const SCHEMA = [{
   type: 'object',
   patternProperties: {
@@ -32,12 +34,6 @@ const SCHEMA = [{
 
 const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} をimportしてください`
 const filterImportDeclaration = (item) => item.type === 'ImportDeclaration'
-const getParentDir = (filename) => {
-  const dir = filename.match(/^(.+?)\..+?$/)[1].split('/')
-  dir.pop()
-
-  return dir.join('/')
-}
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

@@ -1,10 +1,18 @@
 const { generateTagFormatter } = require('../../libs/format_styled_components')
 
 const EXPECTED_NAMES = {
+  '(Ordered(.*)List|^ol)$': 'Ordered(.*)List$',
+  '(S|s)elect$': 'Select$',
+  'Anchor$': 'Anchor$',
+  'Link$': 'Link$',
+  '^a$': '(Anchor|Link)$',
+}
+const UNEXPECTED_NAMES = {
   '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
   '(S|s)elect$': '(Select)$',
+  '(Anchor|^a)$': '(Anchor)$',
+  '(Link|^a)$': '(Link)$',
 }
-const UNEXPECTED_NAMES = EXPECTED_NAMES
 
 
 const SCHEMA = []

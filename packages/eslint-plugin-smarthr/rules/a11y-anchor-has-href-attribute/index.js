@@ -1,8 +1,6 @@
 const JSON5 = require('json5')
 const fs = require('fs')
 
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
 const OPTION = (() => {
   const file = `${process.cwd()}/package.json`
 
@@ -46,17 +44,6 @@ const OPTION = (() => {
 
   return result()
 })()
-
-const EXPECTED_NAMES = {
-  'Anchor$': 'Anchor$',
-  'Link$': 'Link$',
-  '^a$': '(Anchor|Link)$',
-}
-
-const UNEXPECTED_NAMES = {
-  '(Anchor|^a)$': '(Anchor)$',
-  '(Link|^a)$': '(Link)$',
-}
 
 const REGEX_TARGET = /(Anchor|Link|^a)$/
 const check = (node, checkType) => {
@@ -131,7 +118,6 @@ module.exports = {
     const checkType = option.checkType || 'always'
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = check(node, checkType)
 

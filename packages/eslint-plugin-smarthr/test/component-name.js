@@ -35,18 +35,32 @@ ruleTester.run('component-name', rule, {
 
     { code: `const HogeSelect = styled.select` },
     { code: `const HogeSelect = styled(FugaSelect)` },
-    { code: `import { HogeSelect } from 'hoge'` },
     { code: `import { HogeSelect as FugaSelect } from 'hoge'` },
+
+    { code: `const HogeAnchor = styled.a` },
+    { code: `const HogeLink = styled.a` },
+    { code: `const HogeAnchor = styled(FugaAnchor)` },
+    { code: `const HogeLink = styled(FugaLink)` },
+    { code: `import { HogeAnchor as FugaAnchor } from 'hoge'` },
+    { code: `import { HogeLink as FugaLink } from 'hoge'` },
   ],
   invalid: [
     { code: `const HogeOrderedFugaList = styled.ul`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: '/(Ordered(.*)List|^ol)$/', suffix: 'OrderedFugaList', base: 'ul' }) } ] },
     { code: `const HogeOrderedFugaList = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: '/(Ordered(.*)List|^ol)$/', suffix: 'OrderedFugaList', base: 'Hoge' }) } ] },
-    { code: `const Hoge = styled.ol`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/(Ordered(.*)List)$/' }) } ] },
-    { code: `import { HogeOrderedFugaList as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/(Ordered(.*)List)$/', base: 'HogeOrderedFugaList' }) } ] },
+    { code: `const Hoge = styled.ol`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Ordered(.*)List$/' }) } ] },
+    { code: `import { HogeOrderedFugaList as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Ordered(.*)List$/', base: 'HogeOrderedFugaList' }) } ] },
 
     { code: `const HogeSelect = styled.div`, errors: [ { message: messageProperName({ extended: 'HogeSelect', matcher: '/(S|s)elect$/', suffix: 'Select', base: 'div' }) } ] },
     { code: `const HogeSelect = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeSelect', matcher: '/(S|s)elect$/', suffix: 'Select', base: 'Hoge' }) } ] },
-    { code: `const Hoge = styled.select`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/(Select)$/' }) } ] },
-    { code: `import { HogeSelect as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/(Select)$/', base: 'HogeSelect' }) } ] },
+    { code: `const Hoge = styled.select`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Select$/' }) } ] },
+    { code: `import { HogeSelect as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Select$/', base: 'HogeSelect' }) } ] },
+
+    { code: `const HogeAnchor = styled.div`, errors: [ { message: messageProperName({ extended: 'HogeAnchor', matcher: '/(Anchor|^a)$/', suffix: 'Anchor', base: 'div' }) } ] },
+    { code: `const HogeLink = styled.div`, errors: [ { message: messageProperName({ extended: 'HogeLink', matcher: '/(Link|^a)$/', suffix: 'Link', base: 'div' }) } ] },
+    { code: `const HogeAnchor = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeAnchor', matcher: '/(Anchor|^a)$/', suffix: 'Anchor', base: 'Hoge' }) } ] },
+    { code: `const HogeLink = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeLink', matcher: '/(Link|^a)$/', suffix: 'Link', base: 'Hoge' }) } ] },
+    { code: `const Hoge = styled.a`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/(Anchor|Link)$/' }) } ] },
+    { code: `import { HogeAnchor as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Anchor$/', base: 'HogeAnchor' }) } ] },
+    { code: `import { HogeLink as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Link$/', base: 'HogeLink' }) } ] },
   ]
 })

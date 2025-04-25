@@ -21,12 +21,12 @@ const SECTIONING_FRAGMENT_REGEX = /^SectioningFragment$/
 const LAYOUT_REGEX = /((C(ent|lust)er)|Reel|Sidebar|Stack|Base(Column)?)$/
 const AS_REGEX = /^(as|forwardedAs)$/
 
-const includeSectioningAsAttr = (a) => a.name?.name?.match(AS_REGEX) && a.value.value?.match(BARE_SECTIONING_TAG_REGEX)
+const includeSectioningAsAttr = (a) => AS_REGEX.test(a.name?.name) && BARE_SECTIONING_TAG_REGEX.test(a.value.value)
 
 const searchSectioningFragment = (node) => {
   switch (node.type) {
     case 'JSXElement':
-      return node.openingElement.name?.name?.match(SECTIONING_FRAGMENT_REGEX) ? node.openingElement : null
+      return SECTIONING_FRAGMENT_REGEX.test(node.openingElement.name?.name) ? node.openingElement : null
     case 'Program':
       return null
   }
@@ -52,10 +52,10 @@ module.exports = {
         let hit = null
         let asAttr = null
 
-        if (name.match(SECTIONING_REGEX)) {
+        if (SECTIONING_REGEX.test(name)) {
           hit = true
         } else {
-          asAttr = name.match(LAYOUT_REGEX) && node.attributes.find(includeSectioningAsAttr)
+          asAttr = LAYOUT_REGEX.test(name) && node.attributes.find(includeSectioningAsAttr)
 
           if (asAttr) {
             hit = true

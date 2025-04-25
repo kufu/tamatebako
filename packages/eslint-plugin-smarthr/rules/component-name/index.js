@@ -6,12 +6,17 @@ const EXPECTED_NAMES = {
   'Anchor$': 'Anchor$',
   'Link$': 'Link$',
   '^a$': '(Anchor|Link)$',
+  'SmartHRLogo$': 'SmartHRLogo$',
+  '(B|b)utton$': 'Button$',
+  'Text$': 'Text$',
+  'Message$': 'Message$',
 }
 const UNEXPECTED_NAMES = {
   '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
   '(S|s)elect$': '(Select)$',
   '(Anchor|^a)$': '(Anchor)$',
   '(Link|^a)$': '(Link)$',
+  '(B|^b)utton$': '(Button)$',
 }
 
 

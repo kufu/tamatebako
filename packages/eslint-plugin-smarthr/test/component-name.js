@@ -28,6 +28,10 @@ const messageImportAs = ({ extended, matcher, base }) => `${extended}を正規�
 
 ruleTester.run('component-name', rule, {
   valid: [
+    { code: `import styled from 'styled-components'` },
+    { code: `import styled, { css } from 'styled-components'` },
+    { code: `import { css } from 'styled-components'` },
+
     { code: `const HogeOrderedFugaList = styled.ol` },
     { code: `const HogeOrderedFugaList = styled(HogeOrderedList)` },
     { code: `import { HogeOrderedFugaList } from 'hoge'` },
@@ -43,8 +47,20 @@ ruleTester.run('component-name', rule, {
     { code: `const HogeLink = styled(FugaLink)` },
     { code: `import { HogeAnchor as FugaAnchor } from 'hoge'` },
     { code: `import { HogeLink as FugaLink } from 'hoge'` },
+
+    { code: `import { SmartHRLogo as HogeSmartHRLogo } from './hoge'` },
+    { code: `import { AbcButton as StyledAbcButton } from './hoge'` },
+    { code: `import { FugaText as HogeFugaText } from './hoge'` },
+    { code: `import { FugaMessage as HogeFugaMessage } from './hoge'` },
+    { code: 'const HogeButton = styled.button``' },
+    { code: 'const HogeButton = styled(Button)``' },
+    { code: 'const FugaSmartHRLogo = styled(SmartHRLogo)``' },
+    { code: 'const FugaText = styled(HogeText)(() => ``)' },
+    { code: 'const FugaMessage = styled(HogeMessage)(() => ``)' },
   ],
   invalid: [
+    { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
+
     { code: `const HogeOrderedFugaList = styled.ul`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: '/(Ordered(.*)List|^ol)$/', suffix: 'OrderedFugaList', base: 'ul' }) } ] },
     { code: `const HogeOrderedFugaList = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: '/(Ordered(.*)List|^ol)$/', suffix: 'OrderedFugaList', base: 'Hoge' }) } ] },
     { code: `const Hoge = styled.ol`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Ordered(.*)List$/' }) } ] },
@@ -62,5 +78,16 @@ ruleTester.run('component-name', rule, {
     { code: `const Hoge = styled.a`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/(Anchor|Link)$/' }) } ] },
     { code: `import { HogeAnchor as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Anchor$/', base: 'HogeAnchor' }) } ] },
     { code: `import { HogeLink as Fuga } from 'hoge'`, errors: [ { message: messageImportAs({ extended: 'Fuga', matcher: '/Link$/', base: 'HogeLink' }) } ] },
+
+    { code: `import { SmartHRLogo as SmartHRLogoHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'SmartHRLogoHoge', matcher: '/SmartHRLogo$/', base: 'SmartHRLogo' }) } ] },
+    { code: `import { AbcButton as AbcButtonFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'AbcButtonFuga', matcher: '/Button$/', base: 'AbcButton' }) } ] },
+    { code: `import { FugaText as FugaTextFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'FugaTextFuga', matcher: '/Text$/', base: 'FugaText' }) } ] },
+    { code: `import { FugaMessage as FugaMessageFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'FugaMessageFuga', matcher: '/Message$/', base: 'FugaMessage' }) } ] },
+    { code: 'const Hoge = styled.button``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Button$/' }) } ]  },
+    { code: 'const Hoge = styled(Button)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Button$/' }) } ]  },
+    { code: 'const Fuga = styled(SmartHRLogo)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: '/SmartHRLogo$/' }) } ]  },
+    { code: 'const Hoge = styled(Text)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Text$/' }) } ]  },
+    { code: 'const Hoge = styled(HogeMessage)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Message$/' }) } ]  },
+    { code: 'const HogeButton = styled.div``', errors: [ { message: messageProperName({ extended: 'HogeButton', matcher: '/(B|^b)utton$/', suffix: 'Button', base: 'div' }) } ]  },
   ]
 })

@@ -11,6 +11,8 @@ const INPUT_COMPONENT_NAMES = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|
 
 const SCHEMA = []
 
+const checkHasMaxLength = (attr) => attr.name?.name === 'maxLength'
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -23,19 +25,15 @@ module.exports = {
     return {
       ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
-        if (node.name.type === 'JSXIdentifier' && INPUT_COMPONENT_NAMES.test(node.name.name)) {
-          const checkHasMaxLength = (attr) => attr.name?.name === 'maxLength'
-          const maxLengthAttr = node.attributes.find(checkHasMaxLength)
-          if (maxLengthAttr) {
-            context.report({
-              node,
-              message: `${node.name.name}にmaxLength属性を設定しないでください。
+        if (node.name.type === 'JSXIdentifier' && INPUT_COMPONENT_NAMES.test(node.name.name) && node.attributes.find(checkHasMaxLength)) {
+          context.report({
+            node,
+            message: `${node.name.name}にmaxLength属性を設定しないでください。
 - maxLength属性がついた要素に、テキストをペーストすると、maxLength属性の値を超えた範囲が意図せず切り捨てられてしまう場合があります
 - 以下のいずれかの方法で修正をおこなってください
   - 方法1: pattern属性とtitle属性を組み合わせ、form要素でラップする
   - 方法2: JavaScriptを用いたバリデーションを実装する`,
-            })
-          }
+          })
         }
       },
     }

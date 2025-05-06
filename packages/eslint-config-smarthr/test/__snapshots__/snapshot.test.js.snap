@@ -2519,6 +2519,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-shadow-restricted-names": [
       2,
+      {
+        "reportGlobalThis": false,
+      },
     ],
     "no-space-before-semi": [
       0,
@@ -2578,6 +2581,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "allowTaggedTemplates": false,
         "allowTernary": true,
         "enforceForJSX": false,
+        "ignoreDirectives": false,
       },
     ],
     "no-unused-labels": [

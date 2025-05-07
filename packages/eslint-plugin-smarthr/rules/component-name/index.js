@@ -30,6 +30,9 @@ const EXPECTED_NAMES = {
   'FormControls$': 'FormControls$',
   'FormDialog$': 'FormDialog$',
   'FormGroup$': 'FormGroup$',
+  'Icon$': 'Icon$',
+  'Image$': 'Image$',
+  'Img$': 'Img$',
   'InputFile$': 'InputFile$',
   'Link$': 'Link$',
   'Message$': 'Message$',
@@ -53,6 +56,7 @@ const EXPECTED_NAMES = {
   'TabItem$': 'TabItem$',
   'Text$': 'Text$',
   'TimePicker$': 'TimePicker$',
+  '^(img|svg)$': '(Img|Image|Icon)$',
   '^a$': '(Anchor|Link)$',
 }
 
@@ -68,6 +72,9 @@ const UNEXPECTED_NAMES = {
   '(F|^f)ieldset$': '(Fieldset)$',
   '(F|^f)orm$': '(Form)$',
   '(Heading|^h(1|2|3|4|5|6))$': '(Heading)$',
+  '(Icon|^(img|svg))$': '(Icon)$',
+  '(Image|^(img|svg))$': '(Image)$',
+  '(Img|^(img|svg))$': '(Img)$',
   '(Link|^a)$': '(Link)$',
   '(N|^n)av$': ['(Nav)$', unexpectedMessageTemplate ],
   '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',

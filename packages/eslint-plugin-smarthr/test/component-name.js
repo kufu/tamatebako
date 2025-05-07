@@ -107,6 +107,10 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeImg = styled(Img)``' },
     { code: 'const HogeImage = styled(Image)``' },
     { code: 'const HogeIcon = styled(Icon)``' },
+
+    { code: 'const HogeRadioButton = styled(FugaRadioButton)``' },
+    { code: 'const HogeRadioButtonPanel = styled(FugaRadioButtonPanel)``' },
+    { code: 'const HogeCheckbox = styled(FugaCheckBox)``' },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
@@ -234,5 +238,21 @@ ruleTester.run('component-name', rule, {
    - 修正例1: const FugaXxxx = styled(Fuga)
    - 修正例2: const FugaIconXxxx = styled(Fuga)
    - 修正例3: const FugaIcon = styled(XxxxIcon)` } ] },
+    { code: `import { ComboBox as ComboBoxHoge } from './hoge'`, errors: [ { message: `ComboBoxHogeを正規表現 "/Combobox$/" がmatchする名称に変更してください。
+ - ComboBoxが型の場合、'import type { ComboBox as ComboBoxHoge }' もしくは 'import { type ComboBox as ComboBoxHoge }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
+    { code: 'const RadioButton = styled(FugaRadioButtonPanel)``', errors: [
+      { message: `RadioButtonを正規表現 "/RadioButtonPanel$/" がmatchする名称に変更してください。` },
+      { message: `RadioButton は /(B|^b)utton$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+ - RadioButton の名称の末尾が"Button" という文字列ではない状態にしつつ、"FugaRadioButtonPanel"を継承していることをわかる名称に変更してください
+ - もしくは"FugaRadioButtonPanel"を"RadioButton"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
+   - 修正例1: const RadioXxxx = styled(FugaRadioButtonPanel)
+   - 修正例2: const RadioButtonXxxx = styled(FugaRadioButtonPanel)
+   - 修正例3: const RadioButton = styled(XxxxButton)` },
+      { message: `RadioButton は /RadioButton$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+ - RadioButton の名称の末尾が"RadioButton" という文字列ではない状態にしつつ、"FugaRadioButtonPanel"を継承していることをわかる名称に変更してください
+ - もしくは"FugaRadioButtonPanel"を"RadioButton"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
+   - 修正例1: const Xxxx = styled(FugaRadioButtonPanel)
+   - 修正例2: const RadioButtonXxxx = styled(FugaRadioButtonPanel)
+   - 修正例3: const RadioButton = styled(XxxxRadioButton)` }] },
   ]
 })

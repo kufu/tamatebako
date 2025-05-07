@@ -1,5 +1,3 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components');
-
 const INTERACTIVE_COMPONENT_NAMES = `(${[
   '(B|b)utton',
   '(Check|Combo)(B|b)ox',

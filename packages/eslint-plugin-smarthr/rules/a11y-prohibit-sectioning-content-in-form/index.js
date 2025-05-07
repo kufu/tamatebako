@@ -1,37 +1,4 @@
 const { rootPath } = require('../../libs/common')
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const SECTIONING_CONTENT_EXPECTED_NAMES = {
-  '(A|^a)rticle$': '(Article)$',
-  '(A|^a)side$': '(Aside)$',
-  '(N|^n)av$': '(Nav)$',
-  '(S|^s)ection$': '(Section)$',
-}
-const FIELDSET_EXPECTED_NAMES = {
-  '(FormControl)$': '(FormControl)$',
-  '(FormControls)$': '(FormControls)$',
-  '((F|^f)ieldset)$': '(Fieldset)$',
-  '(Fieldsets)$': '(Fieldsets)$',
-}
-const FORM_EXPECTED_NAMES = {
-  '((F|^f)orm)$': '(Form)$',
-  '(FormDialog)$': '(FormDialog)$',
-  'RemoteTrigger(.*)FormDialog$': '(RemoteTrigger(.*)FormDialog)$',
-}
-
-const WRAPPER_EXPECTED_NAMES = {
-  ...FIELDSET_EXPECTED_NAMES,
-  ...FORM_EXPECTED_NAMES,
-}
-
-const EXPECTED_NAMES = {
-  ...SECTIONING_CONTENT_EXPECTED_NAMES,
-  ...WRAPPER_EXPECTED_NAMES,
-  'SideNav$': '(SideNav)$',
-  'IndexNav$': '(IndexNav)$',
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
 
 const asRegex = /^(as|forwardedAs)$/
 const asFormRegex = /^(form|fieldset)$/
@@ -41,9 +8,11 @@ const includeAsAttrFormOrFieldset = (a) => a.name?.name.match(asRegex) && asForm
 const includeAsAttrSectioningContent = (a) => a.name?.name.match(asRegex) && asSectioningContentRegex.test(a.value.value)
 const includeWrapper =  (fn) => wrapperRegex.test(fn)
 
-const sectioningContentRegex = new RegExp(`(${Object.keys(SECTIONING_CONTENT_EXPECTED_NAMES).join('|')})`)
-const wrapperRegex = new RegExp(`(${Object.keys(WRAPPER_EXPECTED_NAMES).join('|')})`)
-const formControlRegex = new RegExp(`(${Object.keys(FIELDSET_EXPECTED_NAMES).join('|')})`)
+const sectioningContentRegex = /((A|^a)(rticle|side)|(N|^n)av|(S|^s)ection)$/
+
+const formControlRegexStr = '(FormControl|(F|^f)ieldset)(s)?'
+const formControlRegex = new RegExp(`${formControlRegexStr}$`)
+const wrapperRegex = new RegExp(`(${formControlRegexStr}|(F|^f)orm(Dialog)?)$`)
 const extRegex = /\.[a-z0-9]+?$/
 const ignoreNavRegex = /(Side|Index)Nav$/
 const formPartCheckParentTypeRegex = /^(Program|ExportNamedDeclaration)$/
@@ -146,7 +115,6 @@ module.exports = {
     const notified = []
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const elementName = node.name.name
 

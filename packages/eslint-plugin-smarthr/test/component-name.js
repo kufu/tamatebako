@@ -113,6 +113,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeCheckbox = styled(FugaCheckBox)``' },
 
     { code: `import { HogeSearchInput as FugaSearchInput } from './hoge'` },
+
+    { code: 'const IndexNav = styled(HogeIndexNav)``' },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
@@ -256,5 +258,14 @@ ruleTester.run('component-name', rule, {
    - 修正例1: const Xxxx = styled(FugaRadioButtonPanel)
    - 修正例2: const RadioButtonXxxx = styled(FugaRadioButtonPanel)
    - 修正例3: const RadioButton = styled(XxxxRadioButton)` }] },
+    { code: 'const SideNav = styled(Hoge)``', errors: [ { message: `SideNav は smarthr-ui/Nav をextendすることを期待する名称になっています
+ - childrenにHeadingを含まない場合、コンポーネントの名称から"Nav"を取り除いてください
+ - childrenにHeadingを含み、アウトラインの範囲を指定するためのコンポーネントならば、smarthr-ui/Navをexendしてください
+   - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"Nav"を設定し、そのコンポーネント内でsmarthr-ui/Navを利用してください` }, { message: `SideNav は /SideNav$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+ - SideNav の名称の末尾が"SideNav" という文字列ではない状態にしつつ、"Hoge"を継承していることをわかる名称に変更してください
+ - もしくは"Hoge"を"SideNav"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
+   - 修正例1: const Xxxx = styled(Hoge)
+   - 修正例2: const SideNavXxxx = styled(Hoge)
+   - 修正例3: const SideNav = styled(XxxxSideNav)` } ] },
   ]
 })

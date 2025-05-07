@@ -111,6 +111,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeRadioButton = styled(FugaRadioButton)``' },
     { code: 'const HogeRadioButtonPanel = styled(FugaRadioButtonPanel)``' },
     { code: 'const HogeCheckbox = styled(FugaCheckBox)``' },
+
+    { code: `import { HogeSearchInput as FugaSearchInput } from './hoge'` },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },

@@ -1,13 +1,14 @@
 const { generateTagFormatter } = require('../../libs/format_styled_components')
 
 const EXPECTED_NAMES = {
-  '(B|b)utton$': 'Button$',
+  '(B|^b)utton$': 'Button$',
   '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
-  '(F|f)orm$': 'Form$',
-  '(I|i)nput$': 'Input$',
+  '(F|^f)ieldset$': 'Fieldset$',
+  '(F|^f)orm$': 'Form$',
+  '(I|^i)nput$': 'Input$',
   '(Ordered(.*)List|^ol)$': 'Ordered(.*)List$',
-  '(S|s)elect$': 'Select$',
-  '(T|t)extarea$': 'Textarea$',
+  '(S|^s)elect$': 'Select$',
+  '(T|^t)extarea$': 'Textarea$',
   'AccordionPanel$': 'AccordionPanel$',
   'ActionDialogWithTrigger$': 'ActionDialogWithTrigger$',
   'Anchor$': 'Anchor$',
@@ -15,9 +16,10 @@ const EXPECTED_NAMES = {
   'Combo(B|b)ox$': 'Combobox$',
   'DropZone$': 'DropZone$',
   'FieldSet$': 'FieldSet$',
-  'Fieldset$': 'Fieldset$',
+  'Fieldsets$': 'Fieldsets$',
   'FilterDropdown$': 'FilterDropdown$',
   'FormControl$': 'FormControl$',
+  'FormControls$': 'FormControls$',
   'FormDialog$': 'FormDialog$',
   'FormGroup$': 'FormGroup$',
   'InputFile$': 'InputFile$',
@@ -27,6 +29,7 @@ const EXPECTED_NAMES = {
   'RadioButton$': 'RadioButton$',
   'RadioButtonPanel$': 'RadioButtonPanel$',
   'RemoteDialogTrigger$': 'RemoteDialogTrigger$',
+  'RemoteTrigger(.*)FormDialog$': 'RemoteTrigger(.*)FormDialog$',
   'RemoteTrigger(.+)Dialog$': 'RemoteTrigger(.+)Dialog$',
   'RightFixedNote$': 'RightFixedNote$',
   'SegmentedControl$': 'SegmentedControl$',
@@ -39,11 +42,20 @@ const EXPECTED_NAMES = {
   '^a$': '(Anchor|Link)$',
 }
 const UNEXPECTED_NAMES = {
-  '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
-  '(S|s)elect$': '(Select)$',
   '(Anchor|^a)$': '(Anchor)$',
-  '(Link|^a)$': '(Link)$',
   '(B|^b)utton$': '(Button)$',
+  '(F|^f)ieldset$': '(Fieldset)$',
+  '(F|^f)orm$': '(Form)$',
+  '(Link|^a)$': '(Link)$',
+  '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
+  '(S|^s)elect$': '(Select)$',
+  'Fieldsets$': '(Fieldsets)$',
+  'FilterDropdown$': '(FilterDropdown)$',
+  'FormControl$': '(FormControl)$',
+  'FormControls$': '(FormControls)$',
+  'FormDialog$': '(FormDialog)$',
+  'FormGroup$': '(FormGroup)$',
+  'RemoteTrigger(.*)FormDialog$': '(RemoteTrigger(.*)FormDialog)$',
 }
 
 

@@ -64,6 +64,11 @@ ruleTester.run('component-name', rule, {
     { code: `import { ActionDialogWithTrigger as FugaActionDialogWithTrigger } from 'hoge'` },
     { code: `const FugaRemoteDialogTrigger = styled(RemoteDialogTrigger)` },
     { code: `import { HogeRemoteTriggerActionDialog as FugaRemoteTriggerAnyDialog } from 'hoge'` },
+
+    { code: `const HogeFieldset = styled.fieldset` },
+    { code: `const HogeFieldsets = styled(FugaFieldsets)` },
+    { code: `import { HogeFormControls as FugaFormControls } from 'hoge'` },
+    { code: `const RemoteTriggerFormDialog = styled(RemoteTriggerAnyFormDialog)` },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
@@ -101,5 +106,9 @@ ruleTester.run('component-name', rule, {
     { code: `import { HogeSideNav as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: '/SideNav$/', base: 'HogeSideNav' }) } ] },
     { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [ { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: '/AccordionPanel$/' }) } ]  },
     { code: `import { HogeFilterDropdown as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: '/FilterDropdown$/', base: 'HogeFilterDropdown' }) } ] },
+    { code: `const Hoge = styled.fieldset`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Fieldset$/' }) } ] },
+    { code: `const Hoge = styled(Fieldsets)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/Fieldsets$/' }) } ] },
+    { code: `const Hoge = styled(FormControls)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/FormControls$/' }) } ] },
+    { code: `const Hoge = styled(FilterDropdown)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: '/FilterDropdown$/' }) } ] },
   ]
 })

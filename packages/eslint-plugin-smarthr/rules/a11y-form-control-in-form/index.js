@@ -1,31 +1,7 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const FIELDSET_EXPECTED_NAMES = {
-  '((F|^f)ieldset)$': '(Fieldset)$',
-  '(Fieldsets)$': '(Fieldsets)$',
-}
-const FORM_CONTROL_EXPECTED_NAMES = {
-  ...FIELDSET_EXPECTED_NAMES,
-  '(FormGroup)$': '(FormGroup)$',
-  '(FormControl)$': '(FormControl)$',
-  '(FormControls)$': '(FormControls)$',
-}
-const FORM_EXPECTED_NAMES = {
-  '((F|^f)orm)$': '(Form)$',
-  '(FormDialog)$': '(FormDialog)$',
-  'RemoteTrigger(.*)FormDialog$': 'RemoteTrigger(.*)FormDialog$',
-  'FilterDropdown$': '(FilterDropdown)$',
-}
-const EXPECTED_NAMES = {
-  ...FORM_CONTROL_EXPECTED_NAMES,
-  ...FORM_EXPECTED_NAMES,
-}
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
-const targetRegex = new RegExp(`(${Object.keys(FORM_CONTROL_EXPECTED_NAMES).join('|')})`)
-const wrapperRegex = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|')})`)
+const targetRegex = /((F|^f)ieldset(s)?|(F|^f)orm(Group|Control)(s)?)$/
+const wrapperRegex = /((F|^f)ieldset(s)?|(F|^f)orm((Group|Control)(s)?)?|(RemoteTrigger(.*))?FormDialog|FilterDropdown)$/
 const ignoreCheckParentTypeRegex = /^(Program|ExportNamedDeclaration)$/
-const messageFieldset = `(${Object.values(FORM_CONTROL_EXPECTED_NAMES).join('|')})`
+const messageFieldset = '(Fieldset(s)?|Form(Group|Control)(s)?)$'
 const declaratorTargetRegex = new RegExp(messageFieldset)
 const asRegex = /^(as|forwardedAs)$/
 const bareTagRegex = /^(form|fieldset)$/
@@ -73,7 +49,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const elementName = node.name.name
 

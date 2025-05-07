@@ -1,47 +1,30 @@
 const { generateTagFormatter } = require('../../libs/format_styled_components');
 
-const EXPECTED_NAMES = {
-  '(i|I)nput$': 'Input$',
-  '(t|T)extarea$': 'Textarea$',
-  '(s|S)elect$': 'Select$',
-  'InputFile$': 'InputFile$',
-  'RadioButtonPanel$': 'RadioButtonPanel$',
-  'Check(b|B)ox$': 'Checkbox$',
-  'Combo(b|B)ox$': 'Combobox$',
-  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
-  'TimePicker$': 'TimePicker$',
-  'DropZone$': 'DropZone$',
-  'Switch$': 'Switch$',
-  'SegmentedControl$': 'SegmentedControl$',
-  'RightFixedNote$': 'RightFixedNote$',
-  'FieldSet$': 'FieldSet$',
-  'Fieldset$': 'Fieldset$',
-  'FormControl$': 'FormControl$',
-  'FormGroup$': 'FormGroup$',
-  '(b|B)utton$': 'Button$',
-  'Anchor$': 'Anchor$',
-  'Link$': 'Link$',
-  'TabItem$': 'TabItem$',
-  '^a$': '(Anchor|Link)$',
-
-  '(f|F)orm$': 'Form$',
-  'ActionDialogWithTrigger$': 'ActionDialogWithTrigger$',
-  'RemoteDialogTrigger$': 'RemoteDialogTrigger$',
-  'RemoteTrigger(.+)Dialog$': 'RemoteTrigger(.+)Dialog$',
-  'FormDialog$': 'FormDialog$',
-  'Pagination$': 'Pagination$',
-  'SideNav$': 'SideNav$',
-  'AccordionPanel$': 'AccordionPanel$',
-  'FilterDropdown$': 'FilterDropdown$',
-}
-
-const UNEXPECTED_NAMES = {
-  '(B|^b)utton$': '(Button)$',
-  '(Anchor|^a)$': '(Anchor)$',
-  '(Link|^a)$': '(Link)$',
-}
-
-const INTERACTIVE_COMPONENT_NAMES = Object.keys(EXPECTED_NAMES).join('|')
+const INTERACTIVE_COMPONENT_NAMES = `(${[
+  '(B|b)utton',
+  '(Check|Combo)(B|b)ox',
+  '(Date(timeLocal)?|Time|Month|Wareki)Picker',
+  '(I|i)nput(File)?',
+  '(S|s)elect',
+  '(T|t)extarea',
+  '(ActionDialogWith|RemoteDialog)Trigger',
+  'AccordionPanel',
+  '^a',
+  'Anchor',
+  'Link',
+  'DropZone',
+  'Field(S|s)et',
+  'FilterDropdown',
+  '(F|f)orm(Control|Group|Dialog)?',
+  'Pagination',
+  'RadioButton(Panel)?',
+  'RemoteTrigger(.+)Dialog',
+  'RightFixedNote',
+  'SegmentedControl',
+  'SideNav',
+  'Switch',
+  'TabItem',
+].join('|')})$`
 const INTERACTIVE_ON_REGEX = /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
 const MEANED_ROLE_REGEX = /^(combobox|group|slider|toolbar)$/
 const INTERACTIVE_NODE_TYPE_REGEX = /^(JSXElement|JSXExpressionContainer|ConditionalExpression)$/
@@ -122,7 +105,6 @@ module.exports = {
     }
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name || '';
 

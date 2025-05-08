@@ -1190,7 +1190,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "visualViewport": false,
       "window": false,
     },
-    "parser": "typescript-eslint/parser@8.31.0",
+    "parser": "typescript-eslint/parser@8.32.0",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true,
@@ -1210,8 +1210,8 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "react",
     "react-hooks:eslint-plugin-react-hooks",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
-    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.31.0",
-    "typescript:@typescript-eslint/eslint-plugin@8.31.0",
+    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.32.0",
+    "typescript:@typescript-eslint/eslint-plugin@8.32.0",
     "smarthr:eslint-plugin-smarthr",
   ],
   "processor": undefined,
@@ -2068,7 +2068,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "getter-return": [
       2,
-      {},
+      {
+        "allowImplicit": false,
+      },
     ],
     "implicit-arrow-linebreak": [
       0,
@@ -2310,14 +2312,18 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-empty-pattern": [
       2,
-      {},
+      {
+        "allowObjectPatternsAsParameters": false,
+      },
     ],
     "no-empty-static-block": [
       2,
     ],
     "no-eval": [
       2,
-      {},
+      {
+        "allowIndirect": false,
+      },
     ],
     "no-ex-assign": [
       2,
@@ -2360,7 +2366,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-implicit-globals": [
       2,
-      {},
+      {
+        "lexicalBindings": false,
+      },
     ],
     "no-implied-eval": [
       2,
@@ -2371,6 +2379,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "no-inner-declarations": [
       1,
       "functions",
+      {
+        "blockScopedFunctions": "allow",
+      },
     ],
     "no-invalid-regexp": [
       2,
@@ -2501,11 +2512,16 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       0,
       {
         "allow": [],
+        "builtinGlobals": false,
         "hoist": "functions",
+        "ignoreOnInitialization": false,
       },
     ],
     "no-shadow-restricted-names": [
       2,
+      {
+        "reportGlobalThis": false,
+      },
     ],
     "no-space-before-semi": [
       0,
@@ -2530,7 +2546,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-undef": [
       2,
-      {},
+      {
+        "typeof": false,
+      },
     ],
     "no-unexpected-multiline": [
       0,
@@ -2546,11 +2564,15 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-unsafe-negation": [
       2,
-      {},
+      {
+        "enforceForOrderingRelations": false,
+      },
     ],
     "no-unsafe-optional-chaining": [
       2,
-      {},
+      {
+        "disallowArithmeticOperators": false,
+      },
     ],
     "no-unused-expressions": [
       0,
@@ -2559,6 +2581,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "allowTaggedTemplates": false,
         "allowTernary": true,
         "enforceForJSX": false,
+        "ignoreDirectives": false,
       },
     ],
     "no-unused-labels": [
@@ -2600,14 +2623,20 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-useless-rename": [
       2,
-      {},
+      {
+        "ignoreDestructuring": false,
+        "ignoreExport": false,
+        "ignoreImport": false,
+      },
     ],
     "no-var": [
       2,
     ],
     "no-void": [
       2,
-      {},
+      {
+        "allowAsStatement": false,
+      },
     ],
     "no-whitespace-before-property": [
       0,
@@ -2662,7 +2691,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "prefer-regex-literals": [
       2,
-      {},
+      {
+        "disallowRedundantWrapping": false,
+      },
     ],
     "prefer-rest-params": [
       2,

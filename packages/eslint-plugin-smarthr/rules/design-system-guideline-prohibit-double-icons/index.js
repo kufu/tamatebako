@@ -1,15 +1,6 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  '(Button)$': '(Button)$',
-  '(Link)$': '(Link)$',
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
 const SCHEMA = []
 
-const REGEX_PATTERN = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|')})`)
+const REGEX_PATTERN = /(Button|Link)$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -21,7 +12,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name
 

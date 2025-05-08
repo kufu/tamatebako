@@ -130,6 +130,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeAnchor = styled(FugaAnchor)``' },
     { code: 'const HogeDialogTrigger = styled(DialogTrigger)``' },
     { code: 'const HogeDropdownTrigger = styled(DropdownTrigger)``' },
+
+    { code: 'const RemoteTriggerHogeDialog = styled(RemoteTriggerActionDialog)``' },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
@@ -304,5 +306,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const Hoge = styled(Link)``', errors: [ { message: `Hogeを正規表現 "/Link$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(DropdownTrigger)``', errors: [ { message: `Hogeを正規表現 "/DropdownTrigger$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(DialogTrigger)``', errors: [ { message: `Hogeを正規表現 "/DialogTrigger$/" がmatchする名称に変更してください。` } ] },
+
+    { code: 'const Hoge = styled(RemoteDialogTrigger)``', errors: [ { message: 'Hogeを正規表現 "/DialogTrigger$/" がmatchする名称に変更してください。' }, { message: 'Hogeを正規表現 "/RemoteDialogTrigger$/" がmatchする名称に変更してください。' } ] },
+    { code: 'const Fuga = styled(RemoteTriggerActionDialog)``', errors: [ { message: 'Fugaを正規表現 "/RemoteTrigger(.+)Dialog$/" がmatchする名称に変更してください。' } ] },
   ]
 })

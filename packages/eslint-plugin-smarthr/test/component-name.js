@@ -14,13 +14,14 @@ const ruleTester = new RuleTester({
 const messageProperName = ({ extended, matcher, suffix, base }) => {
   const isComponent = base[0].toUpperCase() === base[0]
   const sampleSuffix = `styled${isComponent ? `(${base})` : `.${base}`}`
+  const prefix = base[0] === base[0].toUpperCase() ? base : 'Hoge'
 
   return `${extended} は ${matcher} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
  - ${extended} の名称の末尾が"${suffix}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isComponent ? '名称に変更するか、適切な別コンポーネントに差し替えてください' : '適切なタグや別コンポーネントに差し替えてください'}
-   - 修正例1: const HogeXxxx = ${sampleSuffix}
-   - 修正例2: const Hoge${suffix}Xxxx = ${sampleSuffix}
-   - 修正例3: const Hoge${suffix} = styled(Xxxx${suffix})`
+   - 修正例1: const ${prefix}Xxxx = ${sampleSuffix}
+   - 修正例2: const ${prefix}${suffix}Xxxx = ${sampleSuffix}
+   - 修正例3: const ${prefix}${suffix} = styled(Xxxx${suffix})`
 }
 const messageInheritance = ({ extended, matcher }) => `${extended}を正規表現 "${matcher}" がmatchする名称に変更してください。`
 const messageImportAs = ({ extended, matcher, base }) => `${extended}を正規表現 "${matcher}" がmatchする名称に変更してください。
@@ -218,18 +219,8 @@ ruleTester.run('component-name', rule, {
  - childrenにHeadingを含まない場合、コンポーネントの名称から"Aside"を取り除いてください
  - childrenにHeadingを含み、アウトラインの範囲を指定するためのコンポーネントならば、smarthr-ui/Asideをexendしてください
    - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"Aside"を設定し、そのコンポーネント内でsmarthr-ui/Asideを利用してください` } ] },
-    { code: 'const StyledHeading = styled(Hoge)``', errors: [ { message: `StyledHeading は /(Heading|^h(1|2|3|4|5|6))$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
- - StyledHeading の名称の末尾が"Heading" という文字列ではない状態にしつつ、"Hoge"を継承していることをわかる名称に変更してください
- - もしくは"Hoge"を"StyledHeading"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
-   - 修正例1: const StyledXxxx = styled(Hoge)
-   - 修正例2: const StyledHeadingXxxx = styled(Hoge)
-   - 修正例3: const StyledHeading = styled(XxxxHeading)` } ] },
-    { code: 'const StyledHeading = styled.div``', errors: [ { message: `StyledHeading は /(Heading|^h(1|2|3|4|5|6))$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
- - StyledHeading の名称の末尾が"Heading" という文字列ではない状態にしつつ、"div"を継承していることをわかる名称に変更してください
- - もしくは"div"を"StyledHeading"の継承元であることがわかるような適切なタグや別コンポーネントに差し替えてください
-   - 修正例1: const StyledXxxx = styled.div
-   - 修正例2: const StyledHeadingXxxx = styled.div
-   - 修正例3: const StyledHeading = styled(XxxxHeading)` } ] },
+    { code: 'const HogeHeading = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeHeading', matcher: '/(Heading|^h(1|2|3|4|5|6))$/', suffix: 'Heading', base: 'Hoge' }) } ] },
+    { code: 'const HogeHeading = styled.div``', errors: [ { message: messageProperName({ extended: 'HogeHeading', matcher: '/(Heading|^h(1|2|3|4|5|6))$/', suffix: 'Heading', base: 'div' }) } ] },
     { code: `import { HogeImg as ImgFuga } from './hoge'`, errors: [ { message: `ImgFugaを正規表現 "/Img$/" がmatchする名称に変更してください。
  - HogeImgが型の場合、'import type { HogeImg as ImgFuga }' もしくは 'import { type HogeImg as ImgFuga }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: `import { HogeImage as HogeImageFuga } from './hoge'`, errors: [ { message: `HogeImageFugaを正規表現 "/Image$/" がmatchする名称に変更してください。
@@ -241,24 +232,9 @@ ruleTester.run('component-name', rule, {
     { code: 'const Hoge = styled(Icon)``', errors: [ { message: `Hogeを正規表現 "/Icon$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(Img)``', errors: [ { message: `Hogeを正規表現 "/Img$/" がmatchする名称に変更してください。` } ] },
     { code: 'const Hoge = styled(Image)``', errors: [ { message: `Hogeを正規表現 "/Image$/" がmatchする名称に変更してください。` } ] },
-    { code: 'const StyledImage = styled.span``', errors: [ { message: `StyledImage は /(Image|^(img|svg))$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
- - StyledImage の名称の末尾が"Image" という文字列ではない状態にしつつ、"span"を継承していることをわかる名称に変更してください
- - もしくは"span"を"StyledImage"の継承元であることがわかるような適切なタグや別コンポーネントに差し替えてください
-   - 修正例1: const StyledXxxx = styled.span
-   - 修正例2: const StyledImageXxxx = styled.span
-   - 修正例3: const StyledImage = styled(XxxxImage)` } ] },
-    { code: 'const StyledImg = styled(Hoge)``', errors: [ { message: `StyledImg は /(Img|^(img|svg))$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
- - StyledImg の名称の末尾が"Img" という文字列ではない状態にしつつ、"Hoge"を継承していることをわかる名称に変更してください
- - もしくは"Hoge"を"StyledImg"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
-   - 修正例1: const StyledXxxx = styled(Hoge)
-   - 修正例2: const StyledImgXxxx = styled(Hoge)
-   - 修正例3: const StyledImg = styled(XxxxImg)` } ] },
-    { code: 'const FugaIcon = styled(Fuga)``', errors: [ { message: `FugaIcon は /(Icon|^(img|svg))$/ にmatchする名前のコンポーネントを拡張することを期待している名称になっています
- - FugaIcon の名称の末尾が"Icon" という文字列ではない状態にしつつ、"Fuga"を継承していることをわかる名称に変更してください
- - もしくは"Fuga"を"FugaIcon"の継承元であることがわかるような名称に変更するか、適切な別コンポーネントに差し替えてください
-   - 修正例1: const FugaXxxx = styled(Fuga)
-   - 修正例2: const FugaIconXxxx = styled(Fuga)
-   - 修正例3: const FugaIcon = styled(XxxxIcon)` } ] },
+    { code: 'const HogeImage = styled.span``', errors: [ { message: messageProperName({ extended: 'HogeImage', matcher: '/(Image|^(img|svg))$/', suffix: 'Image', base: 'span' }) } ] },
+    { code: 'const HogeImg = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeImg', matcher: '/(Img|^(img|svg))$/', suffix: 'Img', base: 'Hoge' }) } ] },
+    { code: 'const HogeIcon = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeIcon', matcher: '/(Icon|^(img|svg))$/', suffix: 'Icon', base: 'Hoge' }) } ] },
     { code: `import { ComboBox as ComboBoxHoge } from './hoge'`, errors: [ { message: `ComboBoxHogeを正規表現 "/Combobox$/" がmatchする名称に変更してください。
  - ComboBoxが型の場合、'import type { ComboBox as ComboBoxHoge }' もしくは 'import { type ComboBox as ComboBoxHoge }' のように明示的に型であることを宣言してください。名称変更が不要になります` } ] },
     { code: 'const RadioButton = styled(FugaRadioButtonPanel)``', errors: [

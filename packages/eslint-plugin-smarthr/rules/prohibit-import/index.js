@@ -33,7 +33,6 @@ const SCHEMA = [{
 
 const CWD = process.cwd()
 
-const FILENAME_EXT_REGEX = /^(.+?)\..+?$/
 const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} は利用しないでください`
 
 /**

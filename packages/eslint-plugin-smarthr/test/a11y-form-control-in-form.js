@@ -14,7 +14,7 @@ const generateErrorText = (elementName) => `${elementName}をform要素で囲む
  - form要素で囲むことでスクリーンリーダーに入力フォームであることが正しく伝わる、入力要素にfocusした状態でEnterを押せばsubmitできる、inputのpattern属性を利用できるなどのメリットがあります
  - 以下のいずれかの方法で修正をおこなってください
    - 方法1: form要素で ${elementName} を囲んでください。smarthr-ui/ActionDialog、もしくはsmarthr-ui/RemoteTriggerActionDialogを利用している場合、smarthr-ui/FormDialog、smarthr-ui/RemoteTriggerFormDialogに置き換えてください
-   - 方法2: ${elementName} がコンポーネント内の一要素であり、かつその親コンポーネントがFormControl、もしくはFieldsetを表現するものである場合、親コンポーネント名を "(Fieldset(s)?|Form(Group|Control)(s)?)$" とマッチするものに変更してください`
+   - 方法2: ${elementName} がコンポーネント内の一要素であり、かつその親コンポーネントがFormControl、もしくはFieldsetを表現するものである場合、親コンポーネント名を "/(Fieldset|Form(Group|Control))(s)?$/" とマッチするものに変更してください`
 
 ruleTester.run('a11y-form-control-in-form', rule, {
   valid: [

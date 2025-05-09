@@ -1,8 +1,7 @@
-const targetRegex = /((F|^f)ieldset(s)?|(F|^f)orm(Group|Control)(s)?)$/
+const targetRegex = /((F|^f)ieldset|(F|^f)orm(Group|Control))(s)?$/
 const wrapperRegex = /((F|^f)ieldset(s)?|(F|^f)orm((Group|Control)(s)?)?|(RemoteTrigger(.*))?FormDialog|FilterDropdown)$/
 const ignoreCheckParentTypeRegex = /^(Program|ExportNamedDeclaration)$/
-const messageFieldset = '(Fieldset(s)?|Form(Group|Control)(s)?)$'
-const declaratorTargetRegex = new RegExp(messageFieldset)
+const declaratorTargetRegex = /(Fieldset|Form(Group|Control))(s)?$/
 const asRegex = /^(as|forwardedAs)$/
 const bareTagRegex = /^(form|fieldset)$/
 
@@ -62,7 +61,7 @@ module.exports = {
  - form要素で囲むことでスクリーンリーダーに入力フォームであることが正しく伝わる、入力要素にfocusした状態でEnterを押せばsubmitできる、inputのpattern属性を利用できるなどのメリットがあります
  - 以下のいずれかの方法で修正をおこなってください
    - 方法1: form要素で ${elementName} を囲んでください。smarthr-ui/ActionDialog、もしくはsmarthr-ui/RemoteTriggerActionDialogを利用している場合、smarthr-ui/FormDialog、smarthr-ui/RemoteTriggerFormDialogに置き換えてください
-   - 方法2: ${elementName} がコンポーネント内の一要素であり、かつその親コンポーネントがFormControl、もしくはFieldsetを表現するものである場合、親コンポーネント名を "${messageFieldset}" とマッチするものに変更してください`,
+   - 方法2: ${elementName} がコンポーネント内の一要素であり、かつその親コンポーネントがFormControl、もしくはFieldsetを表現するものである場合、親コンポーネント名を "${declaratorTargetRegex}" とマッチするものに変更してください`,
             })
           }
         }

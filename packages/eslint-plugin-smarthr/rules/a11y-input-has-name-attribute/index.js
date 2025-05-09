@@ -2,8 +2,6 @@ const fs = require('fs')
 
 const JSON5 = require('json5')
 
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
 const OPTION = (() => {
   const file = `${process.cwd()}/package.json`
 
@@ -19,20 +17,7 @@ const OPTION = (() => {
   }
 })()
 
-const EXPECTED_NAMES = {
-  '(i|I)nput$': 'Input$',
-  '(t|T)extarea$': 'Textarea$',
-  '(s|S)elect$': 'Select$',
-  'InputFile$': 'InputFile$',
-  'RadioButton$': 'RadioButton$',
-  'RadioButtonPanel$': 'RadioButtonPanel$',
-  'Check(b|B)ox$': 'Checkbox$',
-  'Combo(b|B)ox$': 'Combobox$',
-  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
-  TimePicker$: 'TimePicker$',
-  DropZone$: 'DropZone$',
-}
-const TARGET_TAG_NAME_REGEX = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|')})`)
+const TARGET_TAG_NAME_REGEX = /((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/
 const INPUT_NAME_REGEX = /^[a-zA-Z0-9_\[\]]+$/
 const INPUT_TAG_REGEX = /(i|I)nput$/
 const RADIO_BUTTON_REGEX = /RadioButton(Panel)?$/
@@ -69,7 +54,6 @@ module.exports = {
     const checkType = option.checkType || 'always'
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const { name, attributes } = node
         const nodeName = name.name || ''

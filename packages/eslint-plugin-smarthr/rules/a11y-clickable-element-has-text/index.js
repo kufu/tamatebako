@@ -1,5 +1,3 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
 const SCHEMA = [
   {
     type: 'object',
@@ -9,22 +7,6 @@ const SCHEMA = [
     additionalProperties: false,
   }
 ]
-
-const EXPECTED_NAMES = {
-  'SmartHRLogo$': 'SmartHRLogo$',
-  '(b|B)utton$': 'Button$',
-  'Anchor$': 'Anchor$',
-  'Link$': 'Link$',
-  'Text$': 'Text$',
-  'Message$': 'Message$',
-  '^a$': '(Anchor|Link)$',
-}
-
-const UNEXPECTED_NAMES = {
-  '(B|^b)utton$': '(Button)$',
-  '(Anchor|^a)$': '(Anchor)$',
-  '(Link|^a)$': '(Link)$',
-}
 
 const REGEX_NLSP = /^\s*\n+\s*$/
 const REGEX_CLICKABLE_ELEMENT = /^(a|(.*?)Anchor(Button)?|(.*?)Link|(b|B)utton)$/
@@ -53,7 +35,6 @@ module.exports = {
     const componentsWithText = option.componentsWithText || []
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXElement: (parentNode) => {
         // HINT: 閉じタグが存在しない === テキストノードが存在しない
         if (!parentNode.closingElement) {

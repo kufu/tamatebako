@@ -1,27 +1,3 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const LAYOUT_EXPECTED_NAMES = {
-  'Center$': '(Center)$',
-  'Cluster$': '(Cluster)$',
-  'Reel$': '(Reel)$',
-  'Sidebar$': '(Sidebar)$',
-  'Stack$': '(Stack)$',
-  'Base$': '(Base)$',
-  'BaseColumn$': '(BaseColumn)$',
-}
-const EXPECTED_NAMES = {
-  ...LAYOUT_EXPECTED_NAMES,
-  'PageHeading$': '(PageHeading)$',
-  'Heading$': '(Heading)$',
-  '^h1$': '(PageHeading)$',
-  '^h(|2|3|4|5|6)$': '(Heading)$',
-}
-
-const UNEXPECTED_NAMES = {
-  ...LAYOUT_EXPECTED_NAMES,
-  '(Heading|^h(1|2|3|4|5|6))$': '(Heading)$',
-}
-
 const layoutRegex = /((C(ent|lust)er)|Reel|Sidebar|Stack|Base(Column)?)$/
 const headingRegex = /((^h(1|2|3|4|5|6))|Heading)$/
 const asRegex = /^(as|forwardedAs)$/
@@ -65,7 +41,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const name = node.name.name || ''
 

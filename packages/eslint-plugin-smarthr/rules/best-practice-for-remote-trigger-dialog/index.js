@@ -1,11 +1,4 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components');
-
-const EXPECTED_NAMES = {
-  'RemoteDialogTrigger$': 'RemoteDialogTrigger$',
-  'RemoteTrigger(.+)Dialog$': 'RemoteTrigger(.+)Dialog$',
-}
-
-const REGEX_REMOTE_TRIGGER_DIALOG = /RemoteTrigger(Action|Message|Modeless)Dialog$/
+const REGEX_REMOTE_TRIGGER_DIALOG = /RemoteTrigger(Action|Form|Message|Modeless)Dialog$/
 const REGEX_REMOTE_DIALOG_TRIGGER = /RemoteDialogTrigger$/
 
 /**
@@ -18,7 +11,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name || '';
 

@@ -1,13 +1,4 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  '(Input|^input)$': '(Input)$',
-  '(Textarea|^textarea)$': '(Textarea)$',
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
-const INPUT_COMPONENT_NAMES = new RegExp(`(${Object.keys(EXPECTED_NAMES).join('|')})`)
+const INPUT_COMPONENT_NAMES = /((I|^i)nput|(T|^t)extarea)$/
 
 const SCHEMA = []
 
@@ -23,7 +14,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         if (node.name.type === 'JSXIdentifier' && INPUT_COMPONENT_NAMES.test(node.name.name) && node.attributes.find(checkHasMaxLength)) {
           context.report({

@@ -1,11 +1,3 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
-  '(S|s)elect$': '(Select)$',
-}
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
 const NUMBERED_TEXT_REGEX = /^[\s\n]*(([0-9])([^0-9]{2})[^\s\n]*)/
 const ORDERED_LIST_REGEX = /(Ordered(.*)List|^ol)$/
 const SELECT_REGEX = /(S|s)elect$/
@@ -129,7 +121,6 @@ module.exports = {
     }
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXAttribute: (node) => {
         if (node.value?.value && !IGNORE_ATTRIBUTE_VALUE_REGEX.test(node.value.value)) {
           checker(node, node.value.value.match(NUMBERED_TEXT_REGEX))

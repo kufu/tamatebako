@@ -1,55 +1,3 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  'PageHeading$': 'PageHeading$',
-  'Heading$': 'Heading$',
-  '^h1$': 'PageHeading$',
-  '^h(|2|3|4|5|6)$': 'Heading$',
-  'Article$': 'Article$',
-  'Aside$': 'Aside$',
-  'Nav$': 'Nav$',
-  'Section$': 'Section$',
-  'ModelessDialog$': 'ModelessDialog$',
-  'Center$': 'Center$',
-  'Cluster$': '(Cluster)$',
-  'Reel$': 'Reel$',
-  'Sidebar$': 'Sidebar$',
-  'Stack$': 'Stack$',
-  'Base$': 'Base$',
-  'BaseColumn$': 'BaseColumn$',
-}
-
-const unexpectedMessageTemplate = `{{extended}} は smarthr-ui/{{expected}} をextendすることを期待する名称になっています
- - childrenにHeadingを含まない場合、コンポーネントの名称から"{{expected}}"を取り除いてください
- - childrenにHeadingを含み、アウトラインの範囲を指定するためのコンポーネントならば、smarthr-ui/{{expected}}をexendしてください
-   - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"{{expected}}"を設定し、そのコンポーネント内でsmarthr-ui/{{expected}}を利用してください`
-const UNEXPECTED_NAMES = {
-  '(Heading|^h(1|2|3|4|5|6))$': '(Heading)$',
-  '(A|^a)rticle$': [
-    '(Article)$',
-    unexpectedMessageTemplate,
-  ],
-  '(A|^a)side$': [
-    '(Aside)$',
-    unexpectedMessageTemplate,
-  ],
-  '(N|^n)av$': [
-    '(Nav)$',
-    unexpectedMessageTemplate,
-  ],
-  '(S|^s)ection$': [
-    '(Section)$',
-    unexpectedMessageTemplate,
-  ],
-  'Center$': '(Center)$',
-  'Cluster$': '(Cluster)$',
-  'Reel$': '(Reel)$',
-  'Sidebar$': '(Sidebar)$',
-  'Stack$': '(Stack)$',
-  'Base$': '(Base)$',
-  'BaseColumn$': '(BaseColumn)$',
-}
-
 const headingRegex = /((^h(1|2|3|4|5|6))|Heading)$/
 const pageHeadingRegex = /PageHeading$/
 const declaratorHeadingRegex = /Heading$/
@@ -238,15 +186,11 @@ module.exports = {
   create(context) {
     let h1s = []
     let sections = []
-    let { VariableDeclarator, ...formatter } = generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES, unexpectedMessageTemplate })
-
-    formatter.VariableDeclarator = (node) => {
-      VariableDeclarator(node)
-      VariableDeclaratorBareToSHR(context, node)
-    }
 
     return {
-      ...formatter,
+      VariableDeclarator: (node) => {
+        VariableDeclaratorBareToSHR(context, node)
+      },
       JSXOpeningElement: (node) => {
         const elementName = node.name.name || ''
         const message = reportMessageBareToSHR(elementName, false)

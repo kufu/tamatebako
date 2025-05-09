@@ -1,57 +1,12 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_LABELED_INPUT_NAMES = {
-  'RadioButton$': '(RadioButton)$',
-  'RadioButtons$': '(RadioButtons)$',
-  'RadioButtonPanel$': '(RadioButtonPanel)$',
-  'RadioButtonPanels$': '(RadioButtonPanels)$',
-  'Check(b|B)ox$': '(Checkbox)$',
-  'Check(b|B)ox(e)?s$': '(Checkboxes)$',
-}
-const EXPECTED_INPUT_NAMES = {
-  '(I|^i)nput$': '(Input)$',
-  'SearchInput$': '(SearchInput)$',
-  '(T|^t)extarea$': '(Textarea)$',
-  '(S|^s)elect$': '(Select)$',
-  'InputFile$': '(InputFile)$',
-  'Combo(b|B)ox$': '(Combobox)$',
-  '(Date|Wareki)Picker$': '((Date|Wareki)Picker)$',
-  'TimePicker$': '(TimePicker)$',
-  ...EXPECTED_LABELED_INPUT_NAMES,
-}
-
-const EXPECTED_FORM_CONTROL_NAMES = {
-  '(FormGroup)$': '(FormGroup)$',
-  '(FormControl)$': '(FormControl)$',
-  '((F|^f)ieldset)$': '(Fieldset)$',
-}
-
-const EXPECTED_NAMES = {
-  ...EXPECTED_INPUT_NAMES,
-  ...EXPECTED_FORM_CONTROL_NAMES,
-  '(A|^a)rticle$': '(Article)$',
-  '(A|^a)side$': '(Aside)$',
-  '(N|^n)av$': '(Nav)$',
-  '(S|^s)ection$': '(Section)$',
-  'Cluster$': '(Cluster)$',
-  'Center$': '(Center)$',
-  'Reel$': '(Reel)$',
-  'Sidebar$': '(Sidebar)$',
-  'Stack$': '(Stack)$',
-  '(L|^l)abel$': '(Label)$',
-
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
-const FORM_CONTROL_INPUTS_REGEX = new RegExp(`(${Object.keys(EXPECTED_INPUT_NAMES).join('|')})`)
-const LABELED_INPUTS_REGEX = new RegExp(`(${Object.keys(EXPECTED_LABELED_INPUT_NAMES).join('|')})`)
+const LABELED_INPUTS_REGEX_STR = 'RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?'
+const LABELED_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR})$`)
+const FORM_CONTROL_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR}|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$`)
 const SEARCH_INPUT_REGEX = /SearchInput$/
 const INPUT_REGEX = /(i|I)nput$/
 const RADIO_BUTTONS_REGEX = /RadioButton(Panel)?(s)?$/
 const CHECKBOX_REGEX = /Check(B|b)ox(s|es)?$/
 const SELECT_REGEX = /(S|s)elect(s)?$/
-const FROM_CONTROLS_REGEX = new RegExp(`(${Object.keys(EXPECTED_FORM_CONTROL_NAMES).join('|')})`)
+const FROM_CONTROLS_REGEX = /(Form(Control|Group)|(F|^f)ieldset)$/
 const FORM_CONTROL_REGEX = /(Form(Control|Group))$/
 const FIELDSET_REGEX = /Fieldset$/
 const DIALOG_REGEX = /Dialog(WithTrigger)?$/
@@ -100,7 +55,6 @@ module.exports = {
     let checkboxFormControls = []
 
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name || '';
         const isFormControlInput = FORM_CONTROL_INPUTS_REGEX.test(nodeName)

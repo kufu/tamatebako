@@ -1,19 +1,6 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  'DropdownTrigger$': 'DropdownTrigger$',
-  'DialogTrigger$': 'DialogTrigger$',
-  '(b|B)utton$': 'Button$',
-  'AnchorButton$': 'AnchorButton$',
-  'ButtonAnchor$': 'ButtonAnchor$',
-  'Anchor$': 'Anchor$',
-  'Link$': 'Link$',
-  '^a$': '(Anchor|Link)$',
-}
-
 const TRIGGER_REGEX = /(Dropdown|Dialog)Trigger$/
 const HELP_DIALOG_TRIGGER_REGEX = /HelpDialogTrigger$/
-const BUTTON_REGEX = /(b|B)utton$/
+const BUTTON_REGEX = /(B|^b)utton$/
 const ANCHOR_BUTTON_REGEX = /AnchorButton$/
 const FALSY_TEXT_REGEX = /^\s*\n+\s*$/
 
@@ -31,7 +18,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXElement: (parentNode) => {
         // HINT: 閉じタグが存在しない === 子が存在しない
         // 子を持っていない場合はおそらく固定の要素を吐き出すコンポーネントと考えられるため

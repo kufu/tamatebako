@@ -13,11 +13,7 @@ const SCHEMA = [{
 const fetchEdgeDeclaration = (node) => {
   const { declaration } = node
 
-  if (!declaration) {
-    return node
-  }
-
-  return fetchEdgeDeclaration(declaration)
+  return declaration ? fetchEdgeDeclaration(declaration) : node
 }
 
 /**
@@ -31,7 +27,7 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const targetPathRegexs = Object.keys(options)
-    const targetRequires = targetPathRegexs.filter((regex) => !!context.filename.match(new RegExp(regex)))
+    const targetRequires = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 
     if (targetRequires.length === 0) {
       return {}
@@ -42,35 +38,43 @@ module.exports = {
         targetRequires.forEach((requireKey) => {
           const option = options[requireKey]
           let existDefault = false
-          const exports =
-            node.body
-              .filter((i) => {
-                if (i.type == 'ExportDefaultDeclaration') {
-                  existDefault = true
 
-                  return false
-                }
+          const exports = []
 
-                return i.type == 'ExportNamedDeclaration'
-              })
-              .map((i) => {
-                const declaration = fetchEdgeDeclaration(i)
+          for (let i of node.body) {
+            if (i.type == 'ExportDefaultDeclaration') {
+              existDefault = true
 
-                if (declaration.id) {
-                  return declaration.id.name
-                }
-                if (declaration.specifiers) {
-                  return declaration.specifiers.map((s) => s.exported.name)
-                }
-                if (declaration.declarations) {
-                  return declaration.declarations.map((d) => d.id.name || d.id.properties.map((p) => p.key.name))
-                }
+              continue
+            }
 
-                return declaration
-              })
-              .flat(2)
+            if (i.type === 'ExportNamedDeclaration') {
+              const declaration = fetchEdgeDeclaration(i)
 
-          let notExistsExports = [...(!existDefault && option.includes('default') ? ['default'] : []), ...option.filter((o) => o !== 'default' && !exports.includes(o))]
+              if (declaration.id) {
+                exports.push(declaration.id.name)
+              }
+              if (declaration.specifiers) {
+                declaration.specifiers.forEach((s) => {
+                  exports.push(s.exported.name)
+                })
+              }
+              if (declaration.declarations) {
+                declaration.declarations.forEach((d) => {
+                  if (d.id.name) {
+                    exports.push(d.id.name)
+                  } else {
+                    d.id.properties.forEach((p) => {
+                      exports.push(p.key.name)
+                    })
+                  }
+                })
+              }
+            }
+          }
+
+          const exportsRegex = new RegExp(`^(default|${exports.join('|')})$`)
+          const notExistsExports = (!existDefault && option.includes('default') ? ['default'] : []).concat(option.filter((o) => !exportsRegex.test(o)))
 
           if (notExistsExports.length) {
             context.report({

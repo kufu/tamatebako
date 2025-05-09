@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const { replacePaths, rootPath } = require('./common')
+const { getParentDir } = require('./util')
 
 const BASE_SCHEMA_PROPERTIES = {
   globalModuleDir: { type: 'array', items: { type: 'string' } },
@@ -14,11 +15,7 @@ const calculateDomainContext = (context) => {
   }
 
   const filename = context.getFilename()
-  const parentDir = (() => {
-    const dir = filename.split('/')
-    dir.pop()
-    return dir.join('/')
-  })()
+  const parentDir = getParentDir(filename)
   const humanizeParentDir = parentDir.replace(new RegExp(`^${rootPath}/(.+)$`), '$1')
 
   return {
@@ -34,7 +31,7 @@ const calculateDomainNode = (calclatedContext, node) => {
   const importPath = node.source.value
   const { option, parentDir, humanizeParentDir } = calclatedContext
 
-  let replacedPath = importPath 
+  let replacedPath = importPath
 
   if (replacePaths) {
     const exts = ['.ts', '.tsx', '.js', '.jsx', '']
@@ -75,7 +72,7 @@ const calculateDomainNode = (calclatedContext, node) => {
   if (
     !resolvedImportPath ||
     option.globalModuleDir &&
-    option.globalModuleDir.some((global) => 
+    option.globalModuleDir.some((global) =>
       !!resolvedImportPath.match(new RegExp(`^${path.resolve(`${process.cwd()}/${global}`)}`))
     )
   ) {
@@ -137,4 +134,4 @@ const calculateDomainNode = (calclatedContext, node) => {
   }
 }
 
-module.exports = { BASE_SCHEMA_PROPERTIES, calculateDomainContext, calculateDomainNode }
+module.exports = { BASE_SCHEMA_PROPERTIES, calculateDomainContext, calculateDomainNode, getParentDir }

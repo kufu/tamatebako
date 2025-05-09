@@ -30,7 +30,7 @@ const declaratorTargetRegex = new RegExp(messageFieldset)
 const asRegex = /^(as|forwardedAs)$/
 const bareTagRegex = /^(form|fieldset)$/
 
-const includeAsAttrFormOrFieldset = (a) => a.name?.name.match(asRegex) && a.value.value.match(bareTagRegex)
+const includeAsAttrFormOrFieldset = (a) => asRegex.test(a.name?.name) && bareTagRegex.test(a.value.value)
 
 const searchBubbleUp = (node) => {
   switch (node.type) {

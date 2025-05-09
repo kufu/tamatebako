@@ -60,11 +60,12 @@ const BARE_SECTIONING_TAG_REGEX = /^(article|aside|nav|section)$/
 const LAYOUT_COMPONENT_REGEX = /((C(ent|lust)er)|Reel|Sidebar|Stack)$/
 const AS_REGEX = /^(as|forwardedAs)$/
 const SUFFIX_S_REGEX = /s$/
+const az_REGEX = /[a-z]/
 
 const IGNORE_INPUT_CHECK_PARENT_TYPE = /^(Program|ExportNamedDeclaration)$/
 
 const findRoleGroup = (a) => a.name?.name === 'role' && a.value.value === 'group'
-const findAsSectioning = (a) => a.name?.name.match(AS_REGEX) && a.value.value.match(BARE_SECTIONING_TAG_REGEX)
+const findAsSectioning = (a) => AS_REGEX.test(a.name?.name) && BARE_SECTIONING_TAG_REGEX.test(a.value.value)
 const findTitle = (i) => i.key.name === 'title'
 
 const SCHEMA = [
@@ -91,8 +92,8 @@ module.exports = {
     const additionalInputComponents = option.additionalInputComponents?.length > 0 ? new RegExp(`(${option.additionalInputComponents.join('|')})`) : null
     const additionalMultiInputComponents = option.additionalMultiInputComponents?.length > 0 ? new RegExp(`(${option.additionalMultiInputComponents.join('|')})`) : null
 
-    const checkAdditionalInputComponents = (name) => additionalInputComponents && name.match(additionalInputComponents)
-    const checkAdditionalMultiInputComponents = (name) => additionalMultiInputComponents && name.match(additionalMultiInputComponents)
+    const checkAdditionalInputComponents = (name) => additionalInputComponents && additionalInputComponents.test(name)
+    const checkAdditionalMultiInputComponents = (name) => additionalMultiInputComponents && additionalMultiInputComponents.test(name)
 
     let formControls = []
     let conditionalformControls = []
@@ -102,7 +103,7 @@ module.exports = {
       ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name || '';
-        const isFormControlInput = nodeName.match(FORM_CONTROL_INPUTS_REGEX)
+        const isFormControlInput = FORM_CONTROL_INPUTS_REGEX.test(nodeName)
         const isAdditionalMultiInput = checkAdditionalMultiInputComponents(nodeName)
         let conditionalExpressions = []
 
@@ -110,11 +111,11 @@ module.exports = {
           let isInMap = false
 
           // HINT: 検索ボックスの場合、UIの関係上labelを設定出来ないことが多い & smarthr-ui/SearchInputはa11y対策してあるため無視
-          if (nodeName.match(SEARCH_INPUT_REGEX)) {
+          if (SEARCH_INPUT_REGEX.test(nodeName)) {
             return
           }
 
-          const isPureInput = nodeName.match(INPUT_REGEX)
+          const isPureInput = INPUT_REGEX.test(nodeName)
           let isPseudoLabel = false
           let isTypeRadio = false
           let isTypeCheck = false
@@ -154,9 +155,9 @@ module.exports = {
             }
           }
 
-          const isPreMultiple = isAdditionalMultiInput || isFormControlInput && nodeName.match(SUFFIX_S_REGEX)
-          const isRadio = (isPureInput && isTypeRadio) || nodeName.match(RADIO_BUTTONS_REGEX);
-          const isCheckbox = !isRadio && (isPureInput && isTypeCheck || nodeName.match(CHECKBOX_REGEX));
+          const isPreMultiple = isAdditionalMultiInput || isFormControlInput && SUFFIX_S_REGEX.test(nodeName)
+          const isRadio = (isPureInput && isTypeRadio) || RADIO_BUTTONS_REGEX.test(nodeName)
+          const isCheckbox = !isRadio && (isPureInput && isTypeCheck || CHECKBOX_REGEX.test(nodeName))
 
           const wrapComponentName = isRadio ? 'Fieldset' : 'FormControl'
           const search = (n) => {
@@ -166,7 +167,7 @@ module.exports = {
                 const name = openingElement.name.name
 
                 if (name) {
-                  if (name.match(FROM_CONTROLS_REGEX)) {
+                  if (FROM_CONTROLS_REGEX.test(name)) {
                     const hit = formControls.includes(n)
                     let conditionalHit = false
 
@@ -240,7 +241,7 @@ module.exports = {
                       // HINT: 擬似的にラベルが設定されている場合、無視する
                       if (!isCheckbox && !isPseudoLabel) {
                         const actualName = isSection ? name : `<${name} ${layoutSectionAttribute.name.name}="${layoutSectionAttribute.value.value}">`
-                        const isSelect = !isRadio && nodeName.match(SELECT_REGEX)
+                        const isSelect = !isRadio && SELECT_REGEX.test(nodeName)
 
                         context.report({
                           node,
@@ -266,11 +267,11 @@ module.exports = {
                 break
               }
               case 'VariableDeclarator': {
-                if (n.parent.parent?.type && n.parent.parent.type.match(IGNORE_INPUT_CHECK_PARENT_TYPE)) {
+                if (n.parent.parent?.type && IGNORE_INPUT_CHECK_PARENT_TYPE.test(n.parent.parent.type)) {
                   const name = n.id.name
 
                   // 入力要素系コンポーネントの拡張なので対象外
-                  if (name.match(FORM_CONTROL_INPUTS_REGEX) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
+                  if (FORM_CONTROL_INPUTS_REGEX.test(name) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
                     return
                   }
                 }
@@ -278,11 +279,11 @@ module.exports = {
                 break
               }
               case 'FunctionDeclaration': {
-                if (n.parent.type.match(IGNORE_INPUT_CHECK_PARENT_TYPE)) {
+                if (IGNORE_INPUT_CHECK_PARENT_TYPE.test(n.parent.type)) {
                   const name = n.id.name
 
                   // 入力要素系コンポーネントの拡張なので対象外
-                  if (name.match(FORM_CONTROL_INPUTS_REGEX) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
+                  if (FORM_CONTROL_INPUTS_REGEX.test(name) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
                     return
                   }
                 }
@@ -291,7 +292,7 @@ module.exports = {
                 // HINT: smarthr-ui/Checkboxはlabelを単独で持つため、FormControl系でラップをする必要はない
                 // HINT: 擬似的にラベルが設定されている場合、無視する
                 if (!isCheckbox && !isPseudoLabel) {
-                  const isSelect = !isRadio && nodeName.match(SELECT_REGEX)
+                  const isSelect = !isRadio && SELECT_REGEX.test(nodeName)
 
                   context.report({
                     node,
@@ -328,7 +329,7 @@ module.exports = {
 
           if (!nodeName.match(FORM_CONTROL_REGEX) && isRoleGrouop) {
             const component = formControlMatcher[1]
-            const actualComponent = component[0].match(/[a-z]/) ? component : `smarthr-ui/${component}`
+            const actualComponent = az_REGEX.test(component[0]) ? component : `smarthr-ui/${component}`
 
             const message = `${nodeName}に 'role="group" が設定されています。${actualComponent} をつかってマークアップする場合、'role="group"' は不要です
  - ${nodeName} が ${actualComponent}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`
@@ -346,7 +347,7 @@ module.exports = {
                 const name = n.openingElement.name.name || ''
 
                 // Fieldset > Dialog > Fieldset のようにDialogを挟んだFormControl系のネストは許容する(Portalで実際にはネストしていないため)
-                if (name.match(DIALOG_REGEX)) {
+                if (DIALOG_REGEX.test(name)) {
                   return
                 }
 
@@ -354,7 +355,7 @@ module.exports = {
                 if (matcher) {
                   // FormControl > FormControl や FormControl > Fieldset のように複数のFormControl系コンポーネントがネストしてしまっているためエラーにする
                   // Fieldset > Fieldset や Fieldset > FormControl のようにFieldsetが親の場合は許容する
-                  if (name.match(FORM_CONTROL_REGEX)) {
+                  if (FORM_CONTROL_REGEX.test(name)) {
                     context.report({
                       node: n,
                       message: `${name} が、${nodeName} を子要素として持っており、マークアップとして正しくない状態になっています。以下のいずれかの方法で修正を試みてください。
@@ -379,7 +380,7 @@ module.exports = {
 
           searchParent(node.parent.parent)
 
-          if (!node.selfClosing && nodeName.match(FORM_CONTROL_REGEX) && isRoleGrouop) {
+          if (!node.selfClosing && isRoleGrouop && FORM_CONTROL_REGEX.test(nodeName)) {
             const searchChildren = (n, count = 0) => {
               switch (n.type) {
                 case 'BinaryExpression':
@@ -432,11 +433,10 @@ module.exports = {
                 case 'JSXElement': {
                   const name = n.openingElement.name.name || ''
 
-                  if (name.match(FIELDSET_REGEX) || checkAdditionalMultiInputComponents(name)) {
+                  if (FIELDSET_REGEX.test(name) || checkAdditionalMultiInputComponents(name)) {
                     // 複数inputが存在する可能性のあるコンポーネントなので無限カウントとする
                     return Infinity
                   }
-
 
                   let nextCount = forInSearchChildren(n.openingElement.attributes, count)
 
@@ -445,8 +445,8 @@ module.exports = {
                   }
 
                   if (
-                    name.match(FORM_CONTROL_INPUTS_REGEX) ||
-                    name.match(FORM_CONTROL_REGEX) ||
+                    FORM_CONTROL_INPUTS_REGEX.test(name) ||
+                    FORM_CONTROL_REGEX.test(name) ||
                     checkAdditionalInputComponents(name)
                   ) {
                     nextCount = nextCount + 1

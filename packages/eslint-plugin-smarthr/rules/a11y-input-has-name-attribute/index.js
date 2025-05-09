@@ -74,7 +74,7 @@ module.exports = {
         const { name, attributes } = node
         const nodeName = name.name || ''
 
-        if (nodeName.match(TARGET_TAG_NAME_REGEX)) {
+        if (TARGET_TAG_NAME_REGEX.test(nodeName)) {
           let nameAttr = null
           let hasSpreadAttr = false
           let hasReactHookFormRegisterSpreadAttr = false
@@ -103,27 +103,25 @@ module.exports = {
             }
           })
 
-          if (!nameAttr) {
-            if (
-              !(OPTION.react_hook_form && hasReactHookFormRegisterSpreadAttr) &&
-              (attributes.length === 0 || checkType !== 'allow-spread-attributes' || !hasSpreadAttr)
-            ) {
-              const isRadio = nodeName.match(RADIO_BUTTON_REGEX) || (nodeName.match(INPUT_TAG_REGEX) && hasRadioInput)
+          if (nameAttr) {
+            const nameValue = nameAttr.value?.value
 
-              context.report({
-                node,
-                message: `${nodeName} ${isRadio ? MESSAGE_UNDEFINED_FOR_RADIO : MESSAGE_UNDEFINED_FOR_NOT_RADIO}`,
-              })
-            }
-          } else {
-            const nameValue = nameAttr.value?.value || ''
-
-            if (nameValue && !nameValue.match(INPUT_NAME_REGEX)) {
+            if (nameValue && !INPUT_NAME_REGEX.test(nameValue)) {
               context.report({
                 node,
                 message: `${nodeName} のname属性の値(${nameValue})${MESSAGE_NAME_FORMAT_SUFFIX}`,
               })
             }
+          } else if (
+            !(OPTION.react_hook_form && hasReactHookFormRegisterSpreadAttr) &&
+            (attributes.length === 0 || checkType !== 'allow-spread-attributes' || !hasSpreadAttr)
+          ) {
+            const isRadio = RADIO_BUTTON_REGEX.test(nodeName) || INPUT_TAG_REGEX.test(nodeName) && hasRadioInput
+
+            context.report({
+              node,
+              message: `${nodeName} ${isRadio ? MESSAGE_UNDEFINED_FOR_RADIO : MESSAGE_UNDEFINED_FOR_NOT_RADIO}`,
+            })
           }
         }
       },

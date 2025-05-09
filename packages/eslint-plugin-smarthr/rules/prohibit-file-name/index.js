@@ -19,7 +19,7 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const targetPaths = Object.keys(options).filter((regex) => !!context.filename.match(new RegExp(regex)))
+    const targetPaths = Object.keys(options).filter((regex) => (new RegExp(regex)).test(context.filename))
 
 
     if (targetPaths.length === 0) {

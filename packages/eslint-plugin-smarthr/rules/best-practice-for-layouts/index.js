@@ -19,7 +19,7 @@ const FLEX_END_REGEX = /^(flex-)?end$/
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
 const checkFalsyJSXText = (c) => (
   !(
-    c.type === 'JSXText' && c.value.match(REGEX_NLSP) ||
+    c.type === 'JSXText' && REGEX_NLSP.test(c.value) ||
     c.type === 'JSXEmptyExpression'
   )
 )

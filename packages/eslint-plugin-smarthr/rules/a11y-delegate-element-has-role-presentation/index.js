@@ -94,13 +94,13 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const interactiveComponentRegex = new RegExp(`(${INTERACTIVE_COMPONENT_NAMES}${options?.additionalInteractiveComponentRegex ? `|${options.additionalInteractiveComponentRegex.join('|')}` : ''})`)
-    const findInteractiveNode = (ec) => ec && ec.type.match(INTERACTIVE_NODE_TYPE_REGEX) && isHasInteractive(ec)
+    const findInteractiveNode = (ec) => ec && INTERACTIVE_NODE_TYPE_REGEX.test(ec.type) && isHasInteractive(ec)
     const isHasInteractive = (c) => {
       switch (c.type) {
         case 'JSXElement': {
           const name = c.openingElement.name.name
 
-          if (name && name.match(interactiveComponentRegex)) {
+          if (name && interactiveComponentRegex.test(name)) {
             return true
           } else if (c.children.length > 0) {
             return !!c.children.find(isHasInteractive)
@@ -134,7 +134,7 @@ module.exports = {
         node.attributes.forEach((a) => {
           const aName = a.name?.name || ''
 
-          if (aName.match(INTERACTIVE_ON_REGEX)) {
+          if (INTERACTIVE_ON_REGEX.test(aName)) {
             onAttrs.push(aName)
           } else if (AS_REGEX.test(aName) && AS_VALUE_REGEX.test(a.value?.value || '')) {
             isAsInteractive = true
@@ -144,13 +144,13 @@ module.exports = {
             if (v === 'presentation') {
               isRolePresentation = true
               roleMean = v
-            } else if (v.match(MEANED_ROLE_REGEX)) {
+            } else if (MEANED_ROLE_REGEX.test(v)) {
               roleMean = v
             }
           }
         })
 
-        if (isAsInteractive || nodeName.match(interactiveComponentRegex)) {
+        if (isAsInteractive || interactiveComponentRegex.test(nodeName)) {
           if (isRolePresentation) {
             context.report({
               node,
@@ -204,11 +204,10 @@ module.exports = {
                 case 'JSXElement': {
                   const name = n.openingElement.name.name || ''
 
-                  if (name.match(interactiveComponentRegex)) {
-                    return true
-                  }
-
-                  if (forInSearchChildren(n.openingElement.attributes)) {
+                  if (
+                    interactiveComponentRegex.test(name) ||
+                    forInSearchChildren(n.openingElement.attributes)
+                  ) {
                     return true
                   }
 

@@ -33,6 +33,8 @@ const SCHEMA = [
   },
 ]
 
+const DECLARATION_REGEX = /Declaration$/
+
 const find = (type, ds, rd) => ds.find((d) => d.type === type && d.id.name === rd)
 const codeSeparator = '[^a-zA-Z0-1_$]'
 const useRegex = (use) => {
@@ -51,7 +53,7 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const targetPathRegexs = Object.keys(options)
-    const targetRequires = targetPathRegexs.filter((regex) => !!context.filename.match(new RegExp(regex)))
+    const targetRequires = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 
     if (targetRequires.length === 0) {
       return {}
@@ -59,7 +61,7 @@ module.exports = {
 
     return {
       Program: (node) => {
-        const declarations = node.body.filter((i) => i.type.match(/Declaration$/)).map((d) => d.declaration || d)
+        const declarations = node.body.filter((i) => DECLARATION_REGEX.test(i.type)).map((d) => d.declaration || d)
 
         if (declarations.length === 0) {
           return
@@ -108,7 +110,7 @@ module.exports = {
               let reported = false
 
               localOption.use.forEach((u) => {
-                if (!code.match(useRegex(u)) && (!localOption.reportMessage || !reported)) {
+                if (!useRegex(u).test(code) && (!localOption.reportMessage || !reported)) {
                   context.report({
                     node: hit,
                     message: localOption.reportMessage || `${localOption.type} ${requireDeclaration} では ${u} を利用してください`,

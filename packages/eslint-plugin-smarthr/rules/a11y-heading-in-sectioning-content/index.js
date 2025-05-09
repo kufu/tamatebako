@@ -63,7 +63,7 @@ const noHeadingTagNamesRegex = /^(span|legend)$/
 const ignoreHeadingCheckParentTypeRegex = /^(Program|ExportNamedDeclaration)$/
 const headingAttributeRegex = /^(heading|title)$/
 
-const includeSectioningAsAttr = (a) => a.name?.name.match(asRegex) && bareTagRegex.test(a.value.value)
+const includeSectioningAsAttr = (a) => asRegex.test(a.name?.name) && bareTagRegex.test(a.value.value)
 const findHeadingAttribute = (a) => headingAttributeRegex.test(a.name?.name || '')
 
 const headingMessage = `smarthr-ui/Headingと紐づく内容の範囲（アウトライン）が曖昧になっています。
@@ -117,7 +117,7 @@ const searchBubbleUp = (node) => {
 
   if (
     // Headingコンポーネントの拡張なので対象外
-    node.type === 'VariableDeclarator' && node.parent.parent?.type.match(ignoreHeadingCheckParentTypeRegex) && declaratorHeadingRegex.test(node.id.name) ||
+    node.type === 'VariableDeclarator' && ignoreHeadingCheckParentTypeRegex.test(node.parent.parent?.type) && declaratorHeadingRegex.test(node.id.name) ||
     node.type === 'FunctionDeclaration' && ignoreHeadingCheckParentTypeRegex.test(node.parent.type) && declaratorHeadingRegex.test(node.id.name) ||
     // ModelessDialogのheaderにHeadingを設定している場合も対象外
     node.type === 'JSXAttribute' && node.name.name === 'header' && modelessDialogRegex.test(node.parent.name.name)
@@ -197,7 +197,7 @@ const searchChildren = (n) => {
       } else if (
         (
           headingRegex.test(name) &&
-          !n.openingElement.attributes.find(findTagAttr)?.value.value?.match(noHeadingTagNamesRegex)
+          !noHeadingTagNamesRegex.test(n.openingElement.attributes.find(findTagAttr)?.value.value)
         ) ||
         forInSearchChildren(n.openingElement.attributes)
       ) {
@@ -260,7 +260,7 @@ module.exports = {
         } else if (headingRegex.test(elementName)) {
           const tagAttr = node.attributes.find(findTagAttr)
 
-          if (!tagAttr?.value.value?.match(noHeadingTagNamesRegex)) {
+          if (!noHeadingTagNamesRegex.test(tagAttr?.value.value)) {
             const result = searchBubbleUp(node.parent)
             let hit = false
 

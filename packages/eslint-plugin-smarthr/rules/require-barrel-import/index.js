@@ -47,10 +47,8 @@ const calculateAbsoluteImportPath = (source) => {
       const regexp = new RegExp(`^${key}(.+)$`)
 
       return values.reduce((p, v) => {
-        if (prev === p) {
-          if (prev.match(regexp)) {
-            return p.replace(regexp, `${path.resolve(`${CWD}/${v}`)}/$1`)
-          }
+        if (prev === p && regexp.test(regexp)) {
+          return p.replace(regexp, `${path.resolve(`${CWD}/${v}`)}/$1`)
         }
 
         return p
@@ -67,7 +65,7 @@ const calculateReplacedImportPath = (source) => {
         if (prev === p) {
           const regexp = new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`)
 
-          if (prev.match(regexp)) {
+          if (regexp.test(prev)) {
             return p.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
           }
         }
@@ -94,15 +92,15 @@ module.exports = {
   create(context) {
     const option = context.options[0] || {}
 
-    if (option.ignores && option.ignores.some((i) => !!context.filename.match(new RegExp(i)))) {
+    if (option.ignores && option.ignores.some((i) => (new RegExp(i)).test(context.filename))) {
       return {}
     }
 
     let d = context.filename.split('/')
     d.pop()
     const dir = d.join('/')
-    const targetPathRegexs = Object.keys(option?.allowedImports || {})
-    const targetAllowedImports = targetPathRegexs.filter((regex) => !!context.filename.match(new RegExp(regex)))
+    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) || []
+    const targetAllowedImports = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 
     return {
       ImportDeclaration: (node) => {

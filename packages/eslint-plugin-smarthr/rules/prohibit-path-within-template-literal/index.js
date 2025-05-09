@@ -13,7 +13,7 @@ const recursiveFetchName = (obj, chained = '') => {
 const recursiveFetchRootNameIsPath = (obj, regex) => {
   const [name, chained] = recursiveFetchName(obj, '')
 
-  return name.match(regex) ? chained : null
+  return regex.test(name) ? chained : null
 }
 
 const SCHEMA = [

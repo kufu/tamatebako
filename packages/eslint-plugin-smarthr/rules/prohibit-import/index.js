@@ -1,4 +1,5 @@
 const path = require('path')
+const { getParentDir } = require('../../libs/util')
 
 const SCHEMA = [{
   type: 'object',
@@ -30,6 +31,8 @@ const SCHEMA = [{
   additionalProperties: true,
 }]
 
+const CWD = process.cwd()
+
 const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} は利用しないでください`
 
 /**
@@ -42,14 +45,9 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const parentDir = (() => {
-      const dir = context.filename.match(/^(.+?)\..+?$/)[1].split('/')
-      dir.pop()
-
-      return dir.join('/')
-    })()
+    const parentDir = getParentDir(context.filename)
     const targetPathRegexs = Object.keys(options)
-    const targetProhibits = targetPathRegexs.filter((regex) => !!context.filename.match(new RegExp(regex)))
+    const targetProhibits = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 
     if (targetProhibits.length === 0) {
       return {}
@@ -63,32 +61,32 @@ module.exports = {
 
           targetModules.forEach((targetModule) => {
             const { imported, reportMessage } = Object.assign({imported: true}, option[targetModule])
-            const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${process.cwd()}/${targetModule}`)
+            const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             let sourceValue = node.source.value
 
             if (actualTarget[0] === '/') {
               sourceValue = path.resolve(`${parentDir}/${sourceValue}`)
             }
 
-            if (actualTarget !== sourceValue) {
-              return
-            }
+            if (actualTarget === sourceValue) {
+              let useImported = false
 
-            const useImported = (() => {
               if (!Array.isArray(imported)) {
-                return !!imported
+                useImported = !!imported
+              } else {
+                const specifier = node.specifiers.find((s) => s.imported && imported.includes(s.imported.name))
+
+                if (specifier) {
+                  useImported = specifier.imported.name
+                }
               }
 
-              const specifier = node.specifiers.find((s) => s.imported && imported.includes(s.imported.name))
-
-              return specifier ? specifier.imported.name : false
-            })()
-
-            if (useImported) {
-              context.report({
-                node,
-                message: reportMessage ? reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported) : defaultReportMessage(node.source.value, useImported)
-              });
+              if (useImported) {
+                context.report({
+                  node,
+                  message: reportMessage ? reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported) : defaultReportMessage(node.source.value, useImported)
+                });
+              }
             }
           })
         })

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.2...eslint-plugin-smarthr-v1.5.0) (2025-05-12)
+
+
+### Features
+
+* 個別のルールで行っていたコンポーネントの命名規則チェックをcomponent-name ルールとして統一する ([#610](https://github.com/kufu/tamatebako/issues/610)) ([a73b7e7](https://github.com/kufu/tamatebako/commit/a73b7e7e305bbc84fe7001ca9ed040c3889550f4))
+
 ## [1.4.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.4.1...eslint-plugin-smarthr-v1.4.2) (2025-03-27)
 
 

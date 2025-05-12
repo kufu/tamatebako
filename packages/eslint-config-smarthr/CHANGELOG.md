@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.3.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.2.0...eslint-config-smarthr-v9.3.0) (2025-05-12)
+
+
+### Features
+
+* smarthr/component-name ルールをデフォルトでerrorとして設定する ([#618](https://github.com/kufu/tamatebako/issues/618)) ([0e345d1](https://github.com/kufu/tamatebako/commit/0e345d18f3498b785695511407f0b582944fc864))
+
 ## [9.2.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.1.0...eslint-config-smarthr-v9.2.0) (2025-05-12)
 
 

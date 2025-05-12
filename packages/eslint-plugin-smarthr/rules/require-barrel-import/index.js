@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const { replacePaths, rootPath } = require('../../libs/common')
+const { getParentDir } = require('../../libs/util')
 
 const SCHEMA = [
   {
@@ -96,10 +97,8 @@ module.exports = {
       return {}
     }
 
-    let d = context.filename.split('/')
-    d.pop()
-    const dir = d.join('/')
-    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) || []
+    const dir = getParentDir(context.filename)
+    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) : []
     const targetAllowedImports = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
 
     return {

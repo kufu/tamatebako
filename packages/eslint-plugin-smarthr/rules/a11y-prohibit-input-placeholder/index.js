@@ -1,17 +1,6 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  '(i|I)nput$': 'Input$',
-  'SearchInput$': 'SearchInput$',
-  '(t|T)extarea$': 'Textarea$',
-  'FieldSet$': 'FieldSet$',
-  'Combo(b|B)ox$': 'Combobox$',
-  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
-  'TimePicker$': 'TimePicker$',
-}
-const INPUT_TAG_REGEX = /((i|I)nput|(t|T)extarea|FieldSet|Combo(b|B)ox|(Date|Wareki|Time)Picker)$/
+const INPUT_TAG_REGEX = /((I|^i)nput|(T|^t)extarea|FieldSet|Combo(B|b)ox|(Date|Wareki|Time)Picker)$/
 const SEARCH_INPUT_REGEX = /SearchInput$/
-const COMBOBOX_REGEX = /Combo(b|B)ox$/
+const COMBOBOX_REGEX = /Combo(B|b)ox$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -23,7 +12,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const name = node.name.name
 

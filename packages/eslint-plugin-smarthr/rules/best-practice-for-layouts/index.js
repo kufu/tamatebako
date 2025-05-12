@@ -1,18 +1,5 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
+const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
 
-const MULTI_CHILDREN_EXPECTED_NAMES = {
-  'Cluster$': '(Cluster)$',
-  'Stack$': '(Stack)$',
-}
-const EXPECTED_NAMES = {
-  ...MULTI_CHILDREN_EXPECTED_NAMES,
-  'Center$': '(Center)$',
-
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
-const MULTI_CHILDREN_REGEX = new RegExp(`(${Object.keys(MULTI_CHILDREN_EXPECTED_NAMES).join('|')})`)
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
 
@@ -63,7 +50,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const nodeName = node.name.name;
 

@@ -1,23 +1,6 @@
-const { generateTagFormatter } = require('../../libs/format_styled_components')
-
-const EXPECTED_NAMES = {
-  'Article$': '(Article)$',
-  'Aside$': '(Aside)$',
-  'Nav$': '(Nav)$',
-  'Section$': '(Section)$',
-  'Center$': '(Center)$',
-  'Reel$': '(Reel)$',
-  'Sidebar$': '(Sidebar)$',
-  'Stack$': '(Stack)$',
-  'Base$': '(Base)$',
-  'BaseColumn$': '(BaseColumn)$',
-}
-
-const UNEXPECTED_NAMES = EXPECTED_NAMES
-
 const BARE_SECTIONING_TAG_REGEX = /^(article|aside|nav|section)$/
 const SECTIONING_REGEX = /((A(rticle|side))|Nav|Section)$/
-const SECTIONING_FRAGMENT_REGEX = /^SectioningFragment$/
+const SECTIONING_FRAGMENT = 'SectioningFragment'
 const LAYOUT_REGEX = /((C(ent|lust)er)|Reel|Sidebar|Stack|Base(Column)?)$/
 const AS_REGEX = /^(as|forwardedAs)$/
 
@@ -26,7 +9,7 @@ const includeSectioningAsAttr = (a) => AS_REGEX.test(a.name?.name) && BARE_SECTI
 const searchSectioningFragment = (node) => {
   switch (node.type) {
     case 'JSXElement':
-      return SECTIONING_FRAGMENT_REGEX.test(node.openingElement.name?.name) ? node.openingElement : null
+      return SECTIONING_FRAGMENT === node.openingElement.name?.name ? node.openingElement : null
     case 'Program':
       return null
   }
@@ -46,7 +29,6 @@ module.exports = {
   },
   create(context) {
     return {
-      ...generateTagFormatter({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }),
       JSXOpeningElement: (node) => {
         const name = node.name?.name || ''
         let hit = null

@@ -32,7 +32,7 @@ export default [
       'no-shadow': 'off',
 
       // original rules
-      // 'smarthr/component-name': 'error', // TODO: eslint-plugin-smarthrがreleaseされたらコメント解除
+      'smarthr/component-name': 'error',
       'smarthr/a11y-anchor-has-href-attribute': 'error',
       'smarthr/a11y-clickable-element-has-text': 'error',
       'smarthr/a11y-delegate-element-has-role-presentation': 'error',

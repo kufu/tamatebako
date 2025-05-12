@@ -2984,6 +2984,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-remote-trigger-dialog": [
       2,
     ],
+    "smarthr/component-name": [
+      2,
+    ],
     "smarthr/format-import-path": [
       0,
     ],

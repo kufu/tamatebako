@@ -21,8 +21,8 @@ importers:
         specifier: 9.26.0
         version: 9.26.0(jiti@2.4.2)
       eslint-config-smarthr:
-        specifier: 9.1.0
-        version: 9.1.0(eslint@9.26.0(jiti@2.4.2))(react@19.1.0)(typescript@5.8.3)
+        specifier: 9.3.0
+        version: 9.3.0(eslint@9.26.0(jiti@2.4.2))(react@19.1.0)(typescript@5.8.3)
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -1178,10 +1178,6 @@ packages:
 
   '@eslint/eslintrc@3.3.1':
     resolution: {integrity: sha512-gtF186CXhIl1p4pJNGZw8Yc6RlshoePRvE0X91oPGb3vZ8pM3qOS9W9NGPat9LziaBV7XrJWGylNQXkGcnM3IQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@eslint/js@9.23.0':
-    resolution: {integrity: sha512-35MJ8vCPU0ZMxo7zfev2pypqTwWTofFZO6m4KAtdoFhRpLJUpHTZZ+KB3C7Hb1d7bULYwO4lJXGCi5Se+8OMbw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/js@9.26.0':
@@ -3299,8 +3295,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-smarthr@9.1.0:
-    resolution: {integrity: sha512-PpioTgKwIfZaJi2OFftNK3DqnPR6MGOa7k8fzCtMyweAvm6kxhDkoMn1yUo3YBeNVGFert7mQSZdzLNuCjG9Iw==}
+  eslint-config-smarthr@9.3.0:
+    resolution: {integrity: sha512-SUp0pLmebM76tZwaeW1s68NOakgP42/LXXsOi2Dt/IyIkYcbst9PZcs6UqVUeO/1hhVnnPVcbeDXtrn6PRSF5Q==}
     peerDependencies:
       eslint: ^9.0.0
       react: ^16.8.6 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -3357,12 +3353,6 @@ packages:
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
-
-  eslint-plugin-smarthr@1.4.2:
-    resolution: {integrity: sha512-GPGjAyYfE010witIJLrQjaMohHa7an9K9w7T5Bgj+NsNDiy+tZvZy58SwBPY2vy6TcHqxqokHQIQR+NMuK44YA==}
-    engines: {node: '>=20.19.0'}
-    peerDependencies:
-      eslint: ^9
 
   eslint-plugin-smarthr@1.5.1:
     resolution: {integrity: sha512-ALV8KApTyzc1+bE41vlJdybiYfusLpujzSy4hzEatZHvLFq2+KnJyFJ4RZ7ePiBoht064qaK428HwzwjRKf46A==}
@@ -7856,8 +7846,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/js@9.23.0': {}
-
   '@eslint/js@9.26.0': {}
 
   '@eslint/object-schema@2.1.6': {}
@@ -10516,9 +10504,9 @@ snapshots:
     dependencies:
       eslint: 9.26.0(jiti@2.4.2)
 
-  eslint-config-smarthr@9.1.0(eslint@9.26.0(jiti@2.4.2))(react@19.1.0)(typescript@5.8.3):
+  eslint-config-smarthr@9.3.0(eslint@9.26.0(jiti@2.4.2))(react@19.1.0)(typescript@5.8.3):
     dependencies:
-      '@eslint/js': 9.23.0
+      '@eslint/js': 9.26.0
       '@typescript-eslint/eslint-plugin': 8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.3)
       '@typescript-eslint/parser': 8.32.1(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.3)
       eslint: 9.26.0(jiti@2.4.2)
@@ -10527,7 +10515,7 @@ snapshots:
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.26.0(jiti@2.4.2))
       eslint-plugin-react: 7.37.5(eslint@9.26.0(jiti@2.4.2))
       eslint-plugin-react-hooks: 5.2.0(eslint@9.26.0(jiti@2.4.2))
-      eslint-plugin-smarthr: 1.4.2(eslint@9.26.0(jiti@2.4.2))
+      eslint-plugin-smarthr: 1.5.1(eslint@9.26.0(jiti@2.4.2))
       globals: 16.1.0
       react: 19.1.0
       typescript: 5.8.3
@@ -10628,11 +10616,6 @@ snapshots:
       semver: 6.3.1
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
-
-  eslint-plugin-smarthr@1.4.2(eslint@9.26.0(jiti@2.4.2)):
-    dependencies:
-      eslint: 9.26.0(jiti@2.4.2)
-      json5: 2.2.3
 
   eslint-plugin-smarthr@1.5.1(eslint@9.26.0(jiti@2.4.2)):
     dependencies:

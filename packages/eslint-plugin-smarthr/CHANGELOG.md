@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.5.1...eslint-plugin-smarthr-v1.6.0) (2025-05-20)
+
+
+### Features
+
+* best-practice-for-async-current-targetルールを追加 ([#625](https://github.com/kufu/tamatebako/issues/625)) ([8cc72b4](https://github.com/kufu/tamatebako/commit/8cc72b4d4d552ed1efa9cfe7fbec04de0fcc369e))
+
 ## [1.5.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.5.0...eslint-plugin-smarthr-v1.5.1) (2025-05-12)
 
 

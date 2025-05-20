@@ -2975,6 +2975,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-trigger-has-button": [
       2,
     ],
+    "smarthr/best-practice-for-async-current-target": [
+      2,
+    ],
     "smarthr/best-practice-for-button-element": [
       2,
     ],

@@ -2640,6 +2640,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-useless-escape": [
       2,
+      {
+        "allowRegexCharacters": [],
+      },
     ],
     "no-useless-rename": [
       2,

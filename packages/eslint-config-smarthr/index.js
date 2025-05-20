@@ -48,6 +48,7 @@ export default [
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
       'smarthr/a11y-replace-unreadable-symbol': 'error',
       'smarthr/a11y-trigger-has-button': 'error',
+      'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-layouts': 'error',
@@ -66,5 +67,6 @@ export default [
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }
+
   }
 ]

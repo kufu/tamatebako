@@ -16,6 +16,7 @@
 - [a11y-replace-unreadable-symbol](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-replace-unreadable-symbol)
 - [a11y-required-layout-as-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-required-layout-as-attribute)
 - [a11y-trigger-has-button](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-trigger-has-button)
+- [best-practice-for-async-current-target](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-async-current-target)
 - [best-practice-for-button-element](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-button-element)
 - [best-practice-for-data-test-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-data-test-attribute)
 - [best-practice-for-date](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date)

@@ -37,6 +37,7 @@ const EXPECTED_NAMES = {
   'FormControls$': 'FormControls$',
   'FormDialog$': 'FormDialog$',
   'FormGroup$': 'FormGroup$',
+  'HelpLink$': 'HelpLink$',
   'Icon$': 'Icon$',
   'Image$': 'Image$',
   'Img$': 'Img$',

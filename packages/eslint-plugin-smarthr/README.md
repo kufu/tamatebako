@@ -22,6 +22,7 @@
 - [best-practice-for-data-test-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-data-test-attribute)
 - [best-practice-for-date](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date)
 - [best-practice-for-layouts](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts)
+- [best-practice-for-nested-attributes-array-index](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index)
 - [best-practice-for-remote-trigger-dialog](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog)
 - [best-practice-for-tailwind-prohibit-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-prohibit-root-margin)
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)

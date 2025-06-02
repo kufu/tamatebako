@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.6.0...eslint-plugin-smarthr-v1.7.0) (2025-06-02)
+
+
+### Features
+
+* a11y-help-link-with-support-href を追加 ([#646](https://github.com/kufu/tamatebako/issues/646)) ([662ca33](https://github.com/kufu/tamatebako/commit/662ca33120acac3fb9acdc7331d187fba9be86ef))
+* best-practice-for-nested-attributes-array-index ruleを追加 ([#648](https://github.com/kufu/tamatebako/issues/648)) ([8774d84](https://github.com/kufu/tamatebako/commit/8774d84f46fcaff9360aa76cb3773f644d6d5529))
+
 ## [1.6.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.5.1...eslint-plugin-smarthr-v1.6.0) (2025-05-20)
 
 

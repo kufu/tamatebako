@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.5.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.4.0...eslint-config-smarthr-v9.5.0) (2025-06-03)
+
+
+### Features
+
+* a11y-help-link-with-support-href, best-practice-for-nested-attributes-array-indexを有効化 ([#659](https://github.com/kufu/tamatebako/issues/659)) ([4a1a279](https://github.com/kufu/tamatebako/commit/4a1a279c9505daae8db724cba4de89fe95db679c))
+
 ## [9.4.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.3.0...eslint-config-smarthr-v9.4.0) (2025-05-25)
 
 

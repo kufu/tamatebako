@@ -2947,6 +2947,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-heading-in-sectioning-content": [
       2,
     ],
+    "smarthr/a11y-help-link-with-support-href": [
+      1,
+    ],
     "smarthr/a11y-image-has-alt-attribute": [
       2,
     ],
@@ -2988,6 +2991,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/best-practice-for-layouts": [
       2,
+    ],
+    "smarthr/best-practice-for-nested-attributes-array-index": [
+      1,
     ],
     "smarthr/best-practice-for-remote-trigger-dialog": [
       2,

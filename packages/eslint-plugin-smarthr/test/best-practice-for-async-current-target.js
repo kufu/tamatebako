@@ -37,6 +37,11 @@ const ERRORMESSAGE_AWAIT = `currentTargetはイベント処理中以外に参照
       await hoge()
       fuga(value)
     }`
+const callExpressionWithEventErrorMessage = ({ calleeName, eventName }) => `${calleeName} から別関数を呼び出す際、${eventName} をそのまま渡すと、currentTargetの参照を行うとnullになる可能性があります。
+ - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
+ - 関数に渡す ${eventName} を { ...${eventName} } のように別オブジェクトとしてコピーするか、 ${eventName}.currentTarget.value などの直接の値に変更してください
+ - 別関数でcurrentTargetの参照を行っていない場合でも、今後発生する可能性をなくすため上記対応を行うことをおすすめします
+ - ${eventName}がエラーなど、イベントではない値の場合、/^e(v(ent)?)?$/ にマッチしない名称に変更してください`
 
 ruleTester.run('best-practice-for-async-current-target', rule, {
   valid: [
@@ -44,6 +49,10 @@ ruleTester.run('best-practice-for-async-current-target', rule, {
     { code: `const action = function(e) { setValue(e.currentTarget) }` },
     { code: `async (e) => { const value = e.currentTarget.value; await any(); action(value) }` },
     { code: `const action = async function(e) { const value = e.currentTarget.value; await any(); action(value) }` },
+    { code: `function hoge(e) { callee({ ...e }) }` },
+    { code: `function hoge() { callee(e) }` },
+    { code: `const hoge = (ev) => { fuga(ev.currentTarget) }` },
+    { code: `const hoge = (event) => { def(!!event) }` },
   ],
   invalid: [
     { code: `(e) => { setItem(() => { e.currentTarget }) }`, errors: [ { message: ERRORMESSAGE_NORMAL } ] },
@@ -51,5 +60,8 @@ ruleTester.run('best-practice-for-async-current-target', rule, {
     { code: `async (e) => { await any();const value = e.currentTarget.value; action(value) }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
     { code: `const action = async function(e) { await any();const value = e.currentTarget.value;action(value) }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
     { code: `async (e) => { await any(e.currentTarget.value); }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
+    { code: `function hoge(e) { callee(e) }`, errors: [ { message: callExpressionWithEventErrorMessage({ calleeName: 'callee', eventName: 'e' }) } ] },
+    { code: `const hoge = (ev) => { fuga(ev) }`, errors: [ { message: callExpressionWithEventErrorMessage({ calleeName: 'fuga', eventName: 'ev' }) } ] },
+    { code: `const hoge = (event) => { def(event) }`, errors: [ { message: callExpressionWithEventErrorMessage({ calleeName: 'def', eventName: 'event' }) } ] },
   ]
 })

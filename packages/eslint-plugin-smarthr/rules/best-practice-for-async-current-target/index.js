@@ -3,6 +3,7 @@ const SCHEMA = []
 const FUNCTION_EXPRESSION_REGEX = /FunctionExpression$/
 const CURRENT_TARGET_AFTER_AWAIT_REGEX = /(\s|\(|;|^)await\s.+\.currentTarget(\.|;|\?|\s|\)|$)/
 const NL_REGEX = /\n/g
+const EVENT_REGEX = /^e(v(ent)?)?$/
 
 const checkFunctionTopVariable = (node, eventObjectName, getSourceCodeText) => {
   if (FUNCTION_EXPRESSION_REGEX.test(node.type)) {
@@ -30,9 +31,44 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
-    const getSourceCodeText = (node) => context.sourceCode.getText(node)
+    const sourceCode = context.sourceCode
+    const getSourceCodeText = (node) => sourceCode.getText(node)
+    const scopes = new Map()
+
+    const FunctionChecker = (node) => {
+      const scope = sourceCode.getScope ? sourceCode.getScope(node) : context.getScope()
+      const eventParam = node.params.find((p) => EVENT_REGEX.test(p.name))
+
+      if (eventParam) {
+        scopes.set(scope, eventParam.name)
+      }
+    }
 
     return {
+      FunctionDeclaration: FunctionChecker,
+      ArrowFunctionExpression: FunctionChecker,
+      CallExpression: (node) => {
+        const recursiveChecker = (s) => {
+          const e = scopes.get(s)
+
+          if (e && node.arguments.find((a) => a.type === 'Identifier' && a.name === e)) {
+            context.report({
+              node,
+              message: `${node.callee.name} から別関数を呼び出す際、${e} をそのまま渡すと、currentTargetの参照を行うとnullになる可能性があります。
+ - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
+ - 関数に渡す ${e} を { ...${e} } のように別オブジェクトとしてコピーするか、 ${e}.currentTarget.value などの直接の値に変更してください
+ - 別関数でcurrentTargetの参照を行っていない場合でも、今後発生する可能性をなくすため上記対応を行うことをおすすめします
+ - ${e}がエラーなど、イベントではない値の場合、${EVENT_REGEX} にマッチしない名称に変更してください`
+            })
+          } else if (s?.upper) {
+            recursiveChecker(s.upper)
+          }
+        }
+
+        const scope = sourceCode.getScope ? sourceCode.getScope(node) : context.getScope()
+
+        recursiveChecker(scope)
+      },
       MemberExpression: (node) => {
         if (node.property && node.property.name === 'currentTarget') {
           const eventObjectName = node.object.name

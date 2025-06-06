@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.7.0...eslint-plugin-smarthr-v1.8.0) (2025-06-06)
+
+
+### Features
+
+* format-translate-component rule で RangeSeparator を許容する ([#667](https://github.com/kufu/tamatebako/issues/667)) ([951bee2](https://github.com/kufu/tamatebako/commit/951bee2f376ddf48c5e9a0b13eb50b2daeeec7f9))
+
 ## [1.7.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.6.0...eslint-plugin-smarthr-v1.7.0) (2025-06-02)
 
 

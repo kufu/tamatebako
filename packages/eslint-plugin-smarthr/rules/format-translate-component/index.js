@@ -14,6 +14,10 @@ const SCHEMA = [
 ]
 
 const NOOP = () => {}
+const findDangerouslySetInnerHTMLAttr = (a) => a.name.name === 'dangerouslySetInnerHTML'
+
+const WHITESPACE_REGEX = /(\s|\n)+/g
+const ALLOW_ELM_REGEX = /^(br|RangeSeparator)$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -46,43 +50,39 @@ module.exports = {
         // HINT: 翻訳コンポーネントはテキストとbrのみ許容する
         if (node.name.name === componentName) {
           let existValidChild = false
-          let existNotBrElement = false
 
-          node.parent.children.forEach((c) => {
+          for (let i = 0; i < node.parent.children.length; i++) {
+            const c = node.parent.children[i]
+
             switch (c.type) {
               case 'JSXText':
                 // HINT: 空白と改行のみの場合はテキストが存在する扱いにはしない
-                if (c.value.replace(/(\s|\n)+/g, '')) {
-                  existValidChild = true
+                if (existValidChild || !c.value.replace(WHITESPACE_REGEX, '')) {
+                  break
                 }
 
-                break
+                existValidChild = true
               case 'JSXExpressionContainer':
                 // TODO 変数がstringのみか判定できるなら対応したい
                 existValidChild = true
 
                 break
               case 'JSXElement':
-                if (c.openingElement.name.name !== 'br') {
-                  existNotBrElement = true
+                if (ALLOW_ELM_REGEX.test(c.openingElement.name.name)) {
+                  break
                 }
 
-                break
+                return context.report({
+                  node,
+                  message: `${componentName} 内では <br />, <RangeSeparator /> 以外のタグは使えません`,
+                });
             }
-          })
+          }
 
-          const message = (() => {
-            if (existNotBrElement) {
-              return `${componentName} 内では <br /> 以外のタグは使えません`
-            } else if (!existValidChild && !node.attributes.some((a) => a.name.name === 'dangerouslySetInnerHTML')) {
-              return `${componentName} 内には必ずテキストを設置してください`
-            }
-          })()
-
-          if (message) {
+          if (!existValidChild && !node.attributes.some(findDangerouslySetInnerHTMLAttr)) {
             context.report({
               node,
-              message,
+              message: `${componentName} 内には必ずテキストを設置してください`,
             });
           }
         }

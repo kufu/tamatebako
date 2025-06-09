@@ -24,6 +24,11 @@ const searchChildren = (node) => {
   }
 
   switch(node.type) {
+    case 'MemberExpression':
+      return searchChildren(node.object)
+    // {hoge} や {hoge.fuga} の場合、許容する
+    case 'Identifier':
+      return false
     case 'JSXExpressionContainer':
     case 'ChainExpression':
       return searchChildren(node.expression)
@@ -100,7 +105,6 @@ module.exports = {
               if (justifyAttr && FLEX_END_REGEX.test(justifyAttr.value.value)) {
                 return
               }
-
 
               if (searchChildren(children[0])) {
                 context.report({

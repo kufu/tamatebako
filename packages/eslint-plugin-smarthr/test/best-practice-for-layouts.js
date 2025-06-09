@@ -55,10 +55,12 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<HogeCluster justify="end" gap={0}>{a}</HogeCluster>` },
     { code: `<Stack align="flex-end">{a}</Stack>` },
     { code: `<HogeStack align="end">{a}</HogeStack>` },
+    { code: `<Cluster>{a}</Cluster>` },
+    { code: `<Cluster>{a.b}</Cluster>` },
+    { code: `<Cluster>{a ? b : c}</Cluster>` },
   ],
   invalid: [
     { code: `<Stack><Hoge /></Stack>`, errors: [ { message: errorMessage('Stack', 'Stack') } ] },
-    { code: `<Stack>{a}</Stack>`, errors: [ { message: errorMessage('Stack', 'Stack') } ] },
     { code: `<AnyStack>{a.hoge(action)}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<AnyStack>{a && <><Hoge /></>}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<AnyStack>{a && a.hoge(action)}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
@@ -70,7 +72,6 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<AnyStack>{a ? <Hoge /> : a.b.hoge(action)}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<AnyStack>{a ? <Hoge /> : a ? <Hoge /> : a.b.hoge(action)}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<Cluster><Hoge /></Cluster>`, errors: [ { message: errorMessage('Cluster', 'Cluster') } ] },
-    { code: `<Cluster>{a}</Cluster>`, errors: [ { message: errorMessage('Cluster', 'Cluster') } ] },
     { code: `<AnyCluster>{a.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<AnyCluster>{a && <><Hoge /></>}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<AnyCluster>{a && a.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
@@ -81,8 +82,6 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<AnyCluster>{a ? a.b.hoge(action) : <Hoge />}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<AnyCluster>{a ? <Hoge /> : a.b.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<AnyCluster>{a ? <Hoge /> : a ? <Hoge /> : a.b.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
-    { code: `<HogeCluster justify="center">{a}</HogeCluster>`, errors: [ { message: 'HogeCluster は smarthr-ui/Cluster ではなく smarthr-ui/Center でマークアップしてください' } ] },
-    { code: `<HogeStack align="center">{a}</HogeStack>`, errors: [ { message: 'HogeStack は smarthr-ui/Stack ではなく smarthr-ui/Center でマークアップしてください' } ] },
     { code: `<HogeStack gap={0}>{a}{b}</HogeStack>`, errors: [ { message: `HogeStack に "gap={0}" が指定されており、smarthr-ui/Stack の利用方法として誤っている可能性があります。以下の修正方法を検討してください。
  - 方法1: 子要素を一つにまとめられないか検討してください
    - 例: "<Stack gap={0}><p>hoge</p><p>fuga</p></Stack>" を "<p>hoge<br />fuga</p>" にするなど

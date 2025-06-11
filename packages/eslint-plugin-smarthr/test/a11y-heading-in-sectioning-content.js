@@ -19,10 +19,11 @@ const pageMessage = 'smarthr-ui/PageHeading が同一ファイル内に複数存
 const pageInSectionMessage = 'smarthr-ui/PageHeadingはsmarthr-uiのArticle, Aside, Nav, Sectionで囲まないでください。囲んでしまうとページ全体の見出しではなくなってしまいます。'
 const noTagAttrMessage = `tag属性を指定せず、smarthr-uiのArticle, Aside, Nav, Sectionのいずれかの自動レベル計算に任せるよう、tag属性を削除してください。
  - tag属性を指定することで意図しないレベルに固定されてしまう可能性があります。`
-const notHaveHeadingMessage = (elementName) => `${elementName} はHeading要素を含んでいません。
+const notHaveHeadingMessage = (elementName, isNav) => `${elementName} はHeading要素を含んでいません。
  - SectioningContentはHeadingを含むようにマークアップする必要があります
  - ${elementName}に設定しているいずれかの属性がHeading，もしくはHeadingのテキストに該当する場合、その属性の名称を /^(heading|title)$/ にマッチする名称に変更してください
- - Headingにするべき適切な文字列が存在しない場合、 ${elementName} は削除するか、SectioningContentではない要素に差し替えてください`
+ - Headingにするべき適切な文字列が存在しない場合、 ${elementName} は削除するか、SectioningContentではない要素に差し替えてください${isNav ? `
+ - nav要素の場合、aria-label、もしくはaria-labelledby属性を設定し、どんなナビゲーションなのかがわかる名称を設定してください` : ''}`
 
 ruleTester.run('a11y-heading-in-sectioning-content', rule, {
   valid: [
@@ -48,6 +49,8 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<HogeStack forwardedAs="section"><div><Heading>hoge</Heading></div></HogeStack>' },
     { code: '<HogeBase as="aside"><Heading>hoge</Heading></HogeBase>' },
     { code: '<HogeBaseColumn forwardedAs="nav"><Heading>hoge</Heading></HogeBaseColumn>' },
+    { code: '<HogeNav aria-label="any"><Any /></HogeNav>' },
+    { code: '<HogeNav aria-labelledby="any"><Any /></HogeNav>' },
   ],
   invalid: [
     { code: 'const StyledArticle = styled.article``', errors: [ { message: `"article"を利用せず、smarthr-ui/Articleを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.article" -> "styled(Article)")` } ] },
@@ -64,5 +67,7 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<Section></Section>', errors: [ { message: notHaveHeadingMessage('Section') } ] },
     { code: '<Aside><HogeSection></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') }, { message: notHaveHeadingMessage('HogeSection') } ] },
     { code: '<Aside any="hoge"><HogeSection><Heading /></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') } ] },
+    { code: '<HogeNav><Any /></HogeNav>', errors: [ { message: notHaveHeadingMessage('HogeNav', true) } ] },
+    { code: '<HogeNav aria-diabled="true"><Any /></HogeNav>', errors: [ { message: notHaveHeadingMessage('HogeNav', true) } ] },
   ],
 });

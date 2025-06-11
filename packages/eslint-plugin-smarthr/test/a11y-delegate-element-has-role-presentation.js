@@ -11,7 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 
-const defaultInteractiveMessage = '((B|b)utton|(Check|Combo)(B|b)ox|(Date(timeLocal)?|Time|Month|Wareki)Picker|(I|i)nput(File)?|(S|s)elect|(T|t)extarea|(ActionDialogWith|RemoteDialog)Trigger|AccordionPanel|^a|Anchor|Link|DropZone|Field(S|s)et|FilterDropdown|(F|f)orm(Control|Group|Dialog)?|Pagination|RadioButton(Panel)?|RemoteTrigger(.+)Dialog|RightFixedNote|SegmentedControl|SideNav|Switch|TabItem)$'
+const defaultInteractiveMessage = '((B|b)utton(s)?|(Check|Combo)(B|b)ox(es|s)?|(Date(timeLocal)?|Time|Month|Wareki)Picker(s)?|(I|i)nput(File)?(s)?|(S|s)elect(s)?|(T|t)extarea(s)?|(ActionDialogWith|RemoteDialog)Trigger(s)?|AccordionPanel(s)?|^a|Anchor|Link(s)?|DropZone(s)?|Field(S|s)et(s)?|FilterDropdown(s)?|(F|f)orm(Control|Group|Dialog)?(s)?|Pagination(s)?|RadioButton(Panel)?(s)?|RemoteTrigger(.+)Dialog(s)?|RightFixedNote(s)?|SegmentedControl(s)?|SideNav(s)?|Switch(s)?|TabItem(s)?)$'
 const defaultInteractiveRegex = `/(${defaultInteractiveMessage})/`
 const messageNonInteractiveEventHandler = (nodeName, onAttrs, interactiveComponentRegex = defaultInteractiveRegex) => {
   const onAttrsText = onAttrs.join(', ')
@@ -50,7 +50,7 @@ ruleTester.run('smarthr/a11y-delegate-element-has-role-presentation', rule, {
     { code: '<Wrapper onClick={any} role="presentation"><Hoge /></Wrapper>', options: [{ additionalInteractiveComponentRegex: ['^Hoge$'] }] },
     { code: '<Wrapper onClick={any} role="presentation"><any><Link /></any></Wrapper>' },
     { code: '<Wrapper onClick={any} role="presentation">{any && <AnyButton />}</Wrapper>' },
-    { code: '<Wrapper onClick={any} role="presentation">{any || <AnyButton />}</Wrapper>' },
+    { code: '<Wrapper onClick={any} role="presentation">{any || <AnyButtons />}</Wrapper>' },
     { code: '<Wrapper onClick={any} role="presentation">{any1 && (any2 || any3) && <AnyButton />}</Wrapper>' },
     { code: '<Wrapper onClick={any} role="presentation">{any ? <AnyButton /> : null}</Wrapper>' },
     { code: '<Wrapper onClick={any} role="presentation">{any1 ? (any2 ? <HogeLink /> : null) : null}</Wrapper>' },

@@ -31,7 +31,7 @@ const OPTION = (() => {
         }
 
         break
-      case 'react-router-dom':
+      case 'react-router':
         react_router = true
 
         if (nextjs) {

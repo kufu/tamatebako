@@ -1,0 +1,28 @@
+{
+  "name": "@smarthr/i18n",
+  "version": "0.1.0",
+  "description": "SmartHR's i18n utility",
+  "author": "SmartHR",
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/i18n",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/i18n"
+  },
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prebuild": "pnpm clean",
+    "clean": "rimraf lib"
+  }
+}

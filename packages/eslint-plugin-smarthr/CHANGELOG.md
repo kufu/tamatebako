@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.0...eslint-plugin-smarthr-v1.8.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* a11y-anchor-has-href-attribute での特殊分岐条件を react-router-dom から react-router に変更 ([#678](https://github.com/kufu/tamatebako/issues/678)) ([5941384](https://github.com/kufu/tamatebako/commit/59413842b5b7e5ca6ee88a511792ae6a81be988b))
+* a11y-delegate-element-has-role-presentationでインタラクティブな要素を判定する際、コンポーネント名が複数形でも許容する ([#679](https://github.com/kufu/tamatebako/issues/679)) ([67567bd](https://github.com/kufu/tamatebako/commit/67567bde757624ed46649fb0401e24dc904865ba))
+* a11y-heading-in-sectioning-contentでNavにaria-labelが設定されている場合を許容する ([#680](https://github.com/kufu/tamatebako/issues/680)) ([12f26be](https://github.com/kufu/tamatebako/commit/12f26be9d461d1580711263ae974ed948c74fc1d))
+
 ## [1.8.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.7.0...eslint-plugin-smarthr-v1.8.0) (2025-06-09)
 
 

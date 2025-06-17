@@ -8298,7 +8298,7 @@ snapshots:
       '@jest/fake-timers': 30.0.0
       '@jest/types': 30.0.0
       '@types/jsdom': 21.1.7
-      '@types/node': 20.19.0
+      '@types/node': 20.19.1
       jest-mock: 30.0.0
       jest-util: 30.0.0
       jsdom: 26.1.0
@@ -9320,7 +9320,7 @@ snapshots:
 
   '@types/jsdom@21.1.7':
     dependencies:
-      '@types/node': 20.19.0
+      '@types/node': 20.19.1
       '@types/tough-cookie': 4.0.5
       parse5: 7.3.0
 
@@ -12332,7 +12332,7 @@ snapshots:
       '@jest/environment': 30.0.0
       '@jest/environment-jsdom-abstract': 30.0.0(jsdom@26.1.0)
       '@types/jsdom': 21.1.7
-      '@types/node': 20.19.0
+      '@types/node': 20.19.1
       jsdom: 26.1.0
     transitivePeerDependencies:
       - bufferutil

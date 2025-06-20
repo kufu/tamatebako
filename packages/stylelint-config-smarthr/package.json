@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/styled-components": "^5.1.34",
-    "jest": "^30.0.0",
+    "jest": "^30.0.2",
     "postcss-styled-syntax": "^0.7.1",
     "styled-components": "^6.1.19",
     "stylelint": "^16.21.0",

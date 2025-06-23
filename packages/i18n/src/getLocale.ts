@@ -48,12 +48,9 @@ export function getLocale(params: {
   if (locales.includes(locale)) return locale
 
   // cookieから言語コードを取得
-  const cookieLocale = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(`${cookieKey}=`))
-    ?.split('=')[1] as Locale | undefined
+  const cookieLocale = getCookieLocale(cookieKey)
   // cookieに言語コードが存在する場合、対応する言語コードを返す
-  if (cookieLocale !== undefined && locales.includes(cookieLocale)) return cookieLocale
+  if (cookieLocale && locales.includes(cookieLocale)) return cookieLocale
 
   // ブラウザの言語設定を取得し、最も優先度が高い有効な言語を返却する
   const browserLanguages = (navigator.languages && navigator.languages.length > 0)
@@ -98,4 +95,39 @@ const convertLang = (lang: string): Locale => {
   if (lang.startsWith('zh')) return 'zh-Hans-CN'
 
   return DEFAULT_LANGUAGE
+}
+
+/**
+ * cookieから指定されたキーの値を取得し、有効なロケールの場合のみ返す
+ */
+const getCookieLocale = (cookieKey: string): Locale | null => {
+  // サーバーサイドではcookieが利用できないためnullを返す
+  if (typeof document === 'undefined') return null
+
+  // cookieの値を取得
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${cookieKey}=`))
+    ?.split('=')[1]
+
+  // cookieの値が存在しない場合はnullを返す
+  if (!cookieValue) return null
+
+  // 有効なロケールの場合のみ返す
+  return validateLocale(cookieValue) ? cookieValue : null
+}
+
+const validateLocale = (locale: string): locale is Locale => {
+  const validLocales: Locale[] = [
+    'ja-JP',
+    'en-US',
+    'ko-KR',
+    'zh-Hant-TW',
+    'zh-Hans-CN',
+    'vi-VN',
+    'pt-BR',
+    'ja-JP-x-easy',
+    'id-ID',
+  ]
+  return validLocales.some((validLocale) => validLocale === locale)
 }

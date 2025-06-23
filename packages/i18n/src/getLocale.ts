@@ -1,6 +1,17 @@
-const DEFAULT_LANGUAGE = 'ja'
+const DEFAULT_LANGUAGE = 'ja-JP'
 
-export type Locale = 'ja' | 'en-us' | 'id-id' | 'pt' | 'vi' | 'ko' | 'zh-cn' | 'zh-tw'
+/**
+ * ja-JP: 日本語
+ * en-US: 英語
+ * ko-KR: 韓国語
+ * zh-Hant-TW: 繁体中文
+ * zh-Hans-CN: 簡体中文
+ * vi-VN: ベトナム語
+ * pt-BR: ポルトガル語
+ * ja-JP-x-easy: やさしい日本語
+ * id-ID: インドネシア語
+ */
+export type Locale = 'ja-JP' | 'en-US' | 'ko-KR' | 'zh-Hant-TW' | 'zh-Hans-CN' | 'vi-VN' | 'pt-BR' | 'ja-JP-x-easy' | 'id-ID'
 
 /**
  * 対応する言語コードを判定して返します。
@@ -60,31 +71,31 @@ export function getLocale(params: {
 
 const convertLang = (lang: string): Locale => {
   // jaから始まる場合はjaに変換
-  if (lang.startsWith('ja')) return 'ja'
+  if (lang.startsWith('ja')) return 'ja-JP'
 
   // idから始まる場合はidに変換
-  if (lang.startsWith('id')) return 'id-id'
+  if (lang.startsWith('id')) return 'id-ID'
 
   // enから始まる場合はen-usに変換
-  if (lang.startsWith('en')) return 'en-us'
+  if (lang.startsWith('en')) return 'en-US'
 
   // ptから始まる場合はptに変換
-  if (lang.startsWith('pt')) return 'pt'
+  if (lang.startsWith('pt')) return 'pt-BR'
 
   // viから始まる場合はviに変換
-  if (lang.startsWith('vi')) return 'vi'
+  if (lang.startsWith('vi')) return 'vi-VN'
 
   // koから始まる場合はkoに変換
-  if (lang.startsWith('ko')) return 'ko'
+  if (lang.startsWith('ko')) return 'ko-KR'
 
   // zh-cn, zh-hansから始まる場合はzh-cnに変換
-  if (lang.startsWith('zh-cn') || lang.startsWith('zh-hans')) return 'zh-cn'
+  if (lang.startsWith('zh-cn') || lang.startsWith('zh-hans')) return 'zh-Hans-CN'
 
   // zh-tw, zh-hant, zh-hkから始まる場合はzh-twに変換
-  if (lang.startsWith('zh-tw') || lang.startsWith('zh-hant') || lang.startsWith('zh-hk')) return 'zh-tw'
+  if (lang.startsWith('zh-tw') || lang.startsWith('zh-hant') || lang.startsWith('zh-hk')) return 'zh-Hant-TW'
 
   // 上記のチェックに当てはまらなかったzhから始まるものはzh-cnに変換
-  if (lang.startsWith('zh')) return 'zh-cn'
+  if (lang.startsWith('zh')) return 'zh-Hans-CN'
 
   return DEFAULT_LANGUAGE
 }

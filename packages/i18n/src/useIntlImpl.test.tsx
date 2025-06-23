@@ -19,23 +19,14 @@ const jaMessages = {
   },
 } as const
 
-/**
- * strictの動作確認のためテストに使うメッセージで型定義する
- * @see https://next-intl.dev/docs/workflows/typescript
- */
-declare module 'use-intl' {
-  interface AppConfig {
-    Messages: typeof jaMessages
-  }
-}
-
-type UseIntlImpl = typeof useIntlImpl
+type OwnMessages = typeof jaMessages
+type UseIntlImpl = typeof useIntlImpl<OwnMessages>
 
 describe('useIntlImpl', () => {
   /**
    * useIntlImplのテスト用にuse-intlベースのフックを定義
    */
-  const useHook = () => useIntlImpl(useTranslations)
+  const useHook = () => useIntlImpl<OwnMessages>(useTranslations)
 
   describe('formatMessage', () => {
     const renderHook = (c: UseIntlImpl) =>

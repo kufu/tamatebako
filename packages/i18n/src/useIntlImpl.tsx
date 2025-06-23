@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import type { Messages, RichTranslationValues, useTranslations } from 'use-intl'
+import type { RichTranslationValues, useTranslations } from 'use-intl'
 
 type UseTranslations = typeof useTranslations
 
@@ -11,7 +11,7 @@ type TargetKeys<Dictionary> = {
   [Key in keyof Dictionary & string]: Dictionary[Key] extends string ? Key : `${Key}.${TargetKeys<Dictionary[Key]>}`
 }[keyof Dictionary & string]
 
-export const useIntlImpl = (useTranslations: UseTranslations) => {
+export const useIntlImpl = <Messages,>(useTranslations: UseTranslations) => {
   const t = useTranslations()
   const formatMessage = useCallback(
     <TargetKey extends TargetKeys<Messages> = never, Strict extends boolean | undefined = true>(

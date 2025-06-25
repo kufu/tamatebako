@@ -1,8 +1,11 @@
-import { useCallback } from 'react'
+import { type ReactNode, useCallback } from 'react'
 
-import type { RichTranslationValues, useTranslations } from 'use-intl'
-
-type UseTranslations = typeof useTranslations
+/**
+ * next-intl / use-intl のuseTranslationsから利用する rich APIのvaluesの型定義です。
+ */
+type Values = Record<string, string | number | Date>
+type TagFunction = (chunks: ReactNode) => ReactNode
+type OptionValues = Record<string, Values[string] | TagFunction>
 
 /**
  * 与えられた辞書型(Dictionary)の全てのキーを「ドット区切りの文字列」として再帰的に抽出する型です。
@@ -41,7 +44,7 @@ type TargetKeys<Dictionary> = {
  * const { formatMessage } = useIntlImpl<MyMessages>(useTranslations);
  * const message = formatMessage('greeting', { values: { name: 'Alice' } });
  */
-export const useIntlImpl = <Messages,>(useTranslations: UseTranslations) => {
+export const useIntlImpl = <Messages,>(useTranslations: any) => {
   const t = useTranslations()
 
   /**
@@ -58,13 +61,10 @@ export const useIntlImpl = <Messages,>(useTranslations: UseTranslations) => {
       id: [Strict] extends [true] ? TargetKey : string,
       options?: {
         strict?: Strict
-        values?: RichTranslationValues
+        values?: OptionValues
       },
     ) =>
-      /**
-       * strictがfalseの場合に任意の文字列を許容する必要があるため、idをanyとして扱う
-       */
-      t.rich(id as any, {
+      t.rich(id, {
         ...options?.values,
         br: () => <br />,
       }),

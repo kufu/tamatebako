@@ -5,6 +5,24 @@
 import { type Locale, getLocale } from './getLocale'
 
 describe('getLocale (ブラウザ環境)', () => {
+  // 元のnavigator.languagesを保存
+  const originalLanguages = navigator.languages
+
+  afterEach(() => {
+    // 各テスト後にnavigator.languagesを元に戻す
+    Object.defineProperty(navigator, 'languages', {
+      value: originalLanguages,
+      writable: true,
+      configurable: true,
+    })
+    
+    // 全てのcookieをクリア
+    document.cookie.split(';').forEach(cookie => {
+      const name = cookie.split('=')[0].trim()
+      if (name) document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+    })
+  })
+
   describe('必ずデフォルトの言語コードを返したい場合の引数を指定した場合', () => {
     it('日本語の言語コードを返すこと', () => {
       expect(
@@ -70,7 +88,8 @@ describe('getLocale (ブラウザ環境)', () => {
       // ブラウザの言語設定をモック
       Object.defineProperty(navigator, 'languages', {
         value: ['zh-CN', 'en-US'],
-        writable: false,
+        writable: true,
+        configurable: true,
       })
       expect(
         getLocale({
@@ -86,7 +105,8 @@ describe('getLocale (ブラウザ環境)', () => {
       // ブラウザの言語設定をモック
       Object.defineProperty(navigator, 'languages', {
         value: ['fr-FR', 'es-ES'],
-        writable: false,
+        writable: true,
+        configurable: true,
       })
       expect(
         getLocale({

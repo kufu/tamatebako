@@ -1,8 +1,16 @@
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import eslint from './configs/eslint.js'
 import prettier from './configs/prettier.js'
 import react from './configs/react.js'
 import typescript from './configs/typescript.js'
-import smarthr from 'eslint-plugin-smarthr'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const rules = generateRulesMap()
 
 /**
  * @type {import('eslint').Linter.Config[]}
@@ -15,7 +23,9 @@ export default [
   {
     name: 'eslint-config-smarthr/index',
     plugins: {
-      smarthr
+      smarthr: {
+        rules,
+      },
     },
     rules: {
       '@typescript-eslint/no-shadow': ['error'],
@@ -24,7 +34,7 @@ export default [
         'error',
         {
           fixStyle: 'inline-type-imports',
-        }
+        },
       ],
       '@typescript-eslint/no-import-type-side-effects': 'error',
 
@@ -57,7 +67,7 @@ export default [
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
-      'smarthr/jsx-start-with-spread-attributes': [ 'error', { fix: true } ],
+      'smarthr/jsx-start-with-spread-attributes': ['error', { fix: true }],
       'smarthr/no-import-other-domain': 'off',
       'smarthr/prohibit-export-array-type': 'error',
       'smarthr/prohibit-file-name': 'off',
@@ -68,7 +78,19 @@ export default [
       'smarthr/require-export': 'off',
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
-    }
-
-  }
+    },
+  },
 ]
+
+function generateRulesMap() {
+  const rulesPath = path.join(__dirname, 'custom-rules', 'rules')
+  const dirs = fs.readdirSync(rulesPath)
+
+  const rulesMap = {}
+  for (const dir of dirs) {
+    const ruleName = path.parse(dir).name
+    // The reason for using require() is that the rule is written in CommonJS.
+    rulesMap[ruleName] = require(path.join(rulesPath, dir))
+  }
+  return rulesMap
+}

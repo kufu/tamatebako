@@ -1,2 +1,2 @@
-export { getLocale } from './getLocale'
-export { useIntl } from './useIntl'
+export { getLocale } from './get-locale/getLocale'
+export { useIntl } from './use-intl/useIntl'

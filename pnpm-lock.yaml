@@ -160,8 +160,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0
       use-intl:
-        specifier: ^4.3.1
-        version: 4.3.1(react@19.1.0)
+        specifier: ^4.3.3
+        version: 4.3.3(react@19.1.0)
 
   packages/next-auth:
     dependencies:
@@ -6743,8 +6743,8 @@ packages:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
 
-  use-intl@4.3.1:
-    resolution: {integrity: sha512-8Xn5RXzeHZhWqqZimi1wi2pKFqm0NxRUOB41k1QdjbPX+ysoeLW3Ey+fi603D/e5EGb0fYw8WzjgtUagJdlIvg==}
+  use-intl@4.3.3:
+    resolution: {integrity: sha512-nyaEdN+NhnQW38uMPeB2z74T3+Uxslo9FtBToq3xbv1hxwXpjGfvZHu7BElJaaOaBDv5KQTRuHBbpliP8HZSTA==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
@@ -13256,7 +13256,7 @@ snapshots:
       negotiator: 1.0.0
       next: 14.2.16(@babel/core@7.27.7)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
-      use-intl: 4.3.1(react@19.1.0)
+      use-intl: 4.3.3(react@19.1.0)
     optionalDependencies:
       typescript: 5.8.3
 
@@ -15060,7 +15060,7 @@ snapshots:
       punycode: 1.4.1
       qs: 6.14.0
 
-  use-intl@4.3.1(react@19.1.0):
+  use-intl@4.3.3(react@19.1.0):
     dependencies:
       '@formatjs/fast-memoize': 2.2.7
       '@schummar/icu-type-parser': 1.21.5

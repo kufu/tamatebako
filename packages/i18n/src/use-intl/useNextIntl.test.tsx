@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react'
-import { IntlProvider } from 'use-intl'
+import { NextIntlClientProvider } from 'next-intl'
 
-import { useIntl } from './useIntl'
+import { useNextIntl } from './useNextIntl'
 
 const jaMessages = {
   Home: {
@@ -16,20 +16,20 @@ const jaMessages = {
  * declareでMessagesの型定義を行っても型制約を適用できることを確認する
  * @see https://next-intl.dev/docs/workflows/typescript
  */
-declare module 'use-intl' {
+declare module 'next-intl' {
   interface AppConfig {
     Messages: typeof jaMessages
   }
 }
 
-describe('useIntl', () => {
-  it('use-intlのIntlProviderで動作すること', () => {
-    const r = renderHook(useIntl, {
+describe('useNextIntl', () => {
+  it('next-intlのNextIntlClientProviderで動作すること', () => {
+    const r = renderHook(useNextIntl, {
       wrapper({ children }) {
         return (
-          <IntlProvider locale="ja" messages={jaMessages}>
+          <NextIntlClientProvider locale="ja" messages={jaMessages}>
             {children}
-          </IntlProvider>
+          </NextIntlClientProvider>
         )
       },
     })

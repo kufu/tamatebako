@@ -4,7 +4,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
 {
   "language": "@/js",
   "languageOptions": {
-    "ecmaVersion": 2025,
+    "ecmaVersion": 2026,
     "globals": {
       "AI": false,
       "AICreateMonitor": false,

@@ -8,7 +8,7 @@ describe('getLocale (node環境)', () => {
     const result = getLocale({
       locale: 'en-US',
       locales: ['en-US', 'ja-JP'],
-      shouldReturnDefaultLanguage: true,
+      shouldReturnDefaultLanguage: false,
     })
     expect(result).toBe('ja-JP')
   })

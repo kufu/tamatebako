@@ -18,24 +18,24 @@ export type Locale = 'ja-JP' | 'en-US' | 'ko-KR' | 'zh-Hant-TW' | 'zh-Hans-CN' |
  *
  * 判定優先順位:
  * 1. shouldReturnDefaultLanguage が true の場合はデフォルト言語
- * 2. locale が locales に含まれていればそれを返す
- * 3. cookieKey で指定したcookieの値が locales に含まれていればそれを返す
+ * 2. currentLocale が supportedLocales に含まれていればそれを返す
+ * 3. cookieKey で指定したcookieの値が supportedLocales に含まれていればそれを返す
  * 4. ブラウザの言語設定(navigator.languages)に対応するものがあればそれを返す
  * 5. どれにも該当しなければデフォルト言語
  *
- * @param params.locale - 明示的に指定された言語コード（nullの場合はスキップ）
- * @param params.locales - アプリが対応する言語コード配列
+ * @param params.currentLocale - 現在の言語コード（DBの値や固定値など、nullの場合はスキップ）
+ * @param params.supportedLocales - アプリが対応する言語コード配列
  * @param params.shouldReturnDefaultLanguage - 常にデフォルト言語を返す場合にtrue
  * @param params.cookieKey - 取得するcookieのキー（省略時は'selectedLocale'）
  * @returns 判定された言語コード
  */
 export function getLocale(params: {
-  locale: Locale | null
-  locales: Locale[]
+  currentLocale: Locale | null
+  supportedLocales: Locale[]
   shouldReturnDefaultLanguage?: boolean
   cookieKey?: string
 }): Locale {
-  const { locale, locales, shouldReturnDefaultLanguage = false, cookieKey = 'selectedLocale' } = params
+  const { currentLocale, supportedLocales, shouldReturnDefaultLanguage = false, cookieKey = 'selectedLocale' } = params
 
   // サーバーサイドのエラー回避
   if (typeof window === 'undefined') return DEFAULT_LANGUAGE
@@ -43,14 +43,14 @@ export function getLocale(params: {
   // デフォルト言語を返すべき場合
   if (shouldReturnDefaultLanguage) return DEFAULT_LANGUAGE
 
-  if (locale === null) return DEFAULT_LANGUAGE
+  if (currentLocale === null) return DEFAULT_LANGUAGE
 
-  if (locales.includes(locale)) return locale
+  if (supportedLocales.includes(currentLocale)) return currentLocale
 
   // cookieから言語コードを取得
   const cookieLocale = getCookieLocale(cookieKey)
   // cookieに言語コードが存在する場合、対応する言語コードを返す
-  if (cookieLocale && locales.includes(cookieLocale)) return cookieLocale
+  if (cookieLocale && supportedLocales.includes(cookieLocale)) return cookieLocale
 
   // ブラウザの言語設定を取得し、最も優先度が高い有効な言語を返却する
   const browserLanguages = (navigator.languages && navigator.languages.length > 0)
@@ -58,7 +58,7 @@ export function getLocale(params: {
     : [navigator.language?.toLowerCase()].filter(Boolean)
   for (const lang of browserLanguages) {
     const convertedLang = convertLang(lang)
-    if (locales.includes(convertedLang)) {
+    if (supportedLocales.includes(convertedLang)) {
       return convertedLang
     }
   }

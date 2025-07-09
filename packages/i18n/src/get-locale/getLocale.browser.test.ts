@@ -6,7 +6,7 @@ import { type Locale, getLocale } from './getLocale'
 
 describe('getLocale (ブラウザ環境)', () => {
   // 共通のlocales配列を使用することを提案
-  const locales: Locale[] = ['en-US', 'ja-JP', 'ko-KR']
+  const supportedLocales: Locale[] = ['en-US', 'ja-JP', 'ko-KR']
   // 元のnavigator.languagesを保存
   const originalLanguages = navigator.languages
 
@@ -17,7 +17,7 @@ describe('getLocale (ブラウザ環境)', () => {
       writable: true,
       configurable: true,
     })
-    
+
     // 全てのcookieをクリア
     document.cookie.split(';').forEach(cookie => {
       const name = cookie.split('=')[0].trim()
@@ -29,8 +29,8 @@ describe('getLocale (ブラウザ環境)', () => {
     it('デフォルトの言語コード（ja-JP）を返すこと', () => {
       expect(
         getLocale({
-          locale: 'en-US',
-          locales,
+          currentLocale: 'en-US',
+          supportedLocales,
           shouldReturnDefaultLanguage: true,
         }),
       ).toBe('ja-JP')
@@ -40,8 +40,8 @@ describe('getLocale (ブラウザ環境)', () => {
     it('デフォルトの言語コード（ja-JP）を返すこと', () => {
       expect(
         getLocale({
-          locale: null,
-          locales,
+          currentLocale: null,
+          supportedLocales,
         }),
       ).toBe('ja-JP')
     })
@@ -50,8 +50,8 @@ describe('getLocale (ブラウザ環境)', () => {
     it('指定された言語コードを返すこと', () => {
       expect(
         getLocale({
-          locale: 'en-US',
-          locales,
+          currentLocale: 'en-US',
+          supportedLocales,
         }),
       ).toBe('en-US')
     })
@@ -62,8 +62,8 @@ describe('getLocale (ブラウザ環境)', () => {
       document.cookie = 'selectedLocale=ko-KR; path=/; max-age=31536000' // 1年間有効
       expect(
         getLocale({
-          locale: 'vi-VN',
-          locales,
+          currentLocale: 'vi-VN',
+          supportedLocales,
         }),
       ).toBe('ko-KR')
     })
@@ -74,8 +74,8 @@ describe('getLocale (ブラウザ環境)', () => {
       document.cookie = 'customLocale=ko-KR; path=/; max-age=31536000' // 1年間有効
       expect(
         getLocale({
-          locale: 'vi-VN',
-          locales,
+          currentLocale: 'vi-VN',
+          supportedLocales,
           cookieKey: 'customLocale',
         }),
       ).toBe('ko-KR')
@@ -91,8 +91,8 @@ describe('getLocale (ブラウザ環境)', () => {
       })
       expect(
         getLocale({
-          locale: 'zh-Hans-CN',
-          locales,
+          currentLocale: 'zh-Hans-CN',
+          supportedLocales,
         }),
       ).toBe('en-US')
     })
@@ -107,8 +107,8 @@ describe('getLocale (ブラウザ環境)', () => {
       })
       expect(
         getLocale({
-          locale: 'vi-VN',
-          locales,
+          currentLocale: 'vi-VN',
+          supportedLocales,
         }),
       ).toBe('ja-JP')
     })

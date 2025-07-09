@@ -54,19 +54,8 @@ export function getLocale(params: {
   // cookieに言語コードが存在する場合、対応する言語コードを返す
   if (cookieLocale && supportedLocales.includes(cookieLocale)) return cookieLocale
 
-  // ブラウザの言語設定を取得
-  // navigator.languages: ユーザーがブラウザに設定している優先言語リスト。最初の要素が最も優先度が高い
-  // 例: ['ja-JP', 'en-US', 'en'] -> 日本語を優先し、次に英語（米国）、最後に英語全般
-  // navigator.languages が存在しないブラウザの場合は navigator.language（単一の設定）を使用
-  const getBrowserLanguages = () => {
-    if (navigator.languages && navigator.languages.length > 0) {
-      return navigator.languages
-    }
-    return navigator.language ? [navigator.language] : []
-  }
+  // ブラウザの言語設定を取得し、最も優先度が高い有効な言語を返却する
   const browserLanguages = getBrowserLanguages().map((lang) => lang.toLowerCase())
-
-  // 取得したブラウザの言語設定から、最も優先度が高い有効な言語を返却する
   for (const lang of browserLanguages) {
     const convertedLang = convertLang(lang)
     if (supportedLocales.includes(convertedLang)) {
@@ -75,6 +64,17 @@ export function getLocale(params: {
   }
 
   return DEFAULT_LANGUAGE
+}
+
+// ブラウザの言語設定を取得
+// navigator.languages: ユーザーがブラウザに設定している優先言語リスト。最初の要素が最も優先度が高い
+// 例: ['ja-JP', 'en-US', 'en'] -> 日本語を優先し、次に英語（米国）、最後に英語全般
+// navigator.languages が存在しないブラウザの場合は navigator.language（単一の設定）を使用
+const getBrowserLanguages = () => {
+  if (navigator.languages && navigator.languages.length > 0) {
+    return navigator.languages
+  }
+  return navigator.language ? [navigator.language] : []
 }
 
 const convertLang = (lang: string): Locale => {

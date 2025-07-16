@@ -202,14 +202,14 @@ importers:
         specifier: ^6.1.19
         version: 6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       stylelint:
-        specifier: ^16.21.0
-        version: 16.21.0(typescript@5.8.3)
+        specifier: ^16.21.1
+        version: 16.21.1(typescript@5.8.3)
       stylelint-config-sass-guidelines:
         specifier: ^12.1.0
-        version: 12.1.0(postcss@8.5.6)(stylelint@16.21.0(typescript@5.8.3))
+        version: 12.1.0(postcss@8.5.6)(stylelint@16.21.1(typescript@5.8.3))
       stylelint-config-standard:
         specifier: ^38.0.0
-        version: 38.0.0(stylelint@16.21.0(typescript@5.8.3))
+        version: 38.0.0(stylelint@16.21.1(typescript@5.8.3))
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.7)(jsdom@26.1.0)(terser@5.36.0)
@@ -6402,8 +6402,8 @@ packages:
     peerDependencies:
       stylelint: ^16.0.2
 
-  stylelint@16.21.0:
-    resolution: {integrity: sha512-ki3PpJGG7xhm3WtINoWGnlvqAmbqSexoRMbEMJzlwewSIOqPRKPlq452c22xAdEJISVi80r+I7KL9GPUiwFgbg==}
+  stylelint@16.21.1:
+    resolution: {integrity: sha512-WCXdXnYK2tpCbebgMF0Bme3YZH/Rh/UXerj75twYo4uLULlcrLwFVdZTvTEF8idFnAcW21YUDJFyKOfaf6xJRw==}
     engines: {node: '>=18.12.0'}
     hasBin: true
 
@@ -9258,7 +9258,7 @@ snapshots:
     dependencies:
       storybook: 8.6.14(prettier@3.6.2)
 
-  '@stylistic/stylelint-plugin@3.1.1(stylelint@16.21.0(typescript@5.8.3))':
+  '@stylistic/stylelint-plugin@3.1.1(stylelint@16.21.1(typescript@5.8.3))':
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.4(@csstools/css-tokenizer@3.0.3)
       '@csstools/css-tokenizer': 3.0.3
@@ -9267,7 +9267,7 @@ snapshots:
       postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
       style-search: 0.1.0
-      stylelint: 16.21.0(typescript@5.8.3)
+      stylelint: 16.21.1(typescript@5.8.3)
 
   '@swc/core-darwin-arm64@1.11.18':
     optional: true
@@ -10567,12 +10567,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.95.0(@swc/core@1.11.18(@swc/helpers@0.5.5))(esbuild@0.21.5)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.3)
-      postcss: 8.5.3
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.3)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.3)
-      postcss-modules-scope: 3.2.1(postcss@8.5.3)
-      postcss-modules-values: 4.0.0(postcss@8.5.3)
+      icss-utils: 5.1.0(postcss@8.5.6)
+      postcss: 8.5.6
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.6)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
+      postcss-modules-scope: 3.2.1(postcss@8.5.6)
+      postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
       semver: 7.7.2
     optionalDependencies:
@@ -12025,9 +12025,9 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icss-utils@5.1.0(postcss@8.5.3):
+  icss-utils@5.1.0(postcss@8.5.6):
     dependencies:
-      postcss: 8.5.3
+      postcss: 8.5.6
 
   ieee754@1.2.1: {}
 
@@ -13848,26 +13848,26 @@ snapshots:
 
   postcss-media-query-parser@0.2.3: {}
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.5.3):
+  postcss-modules-extract-imports@3.1.0(postcss@8.5.6):
     dependencies:
-      postcss: 8.5.3
+      postcss: 8.5.6
 
-  postcss-modules-local-by-default@4.2.0(postcss@8.5.3):
+  postcss-modules-local-by-default@4.2.0(postcss@8.5.6):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.3)
-      postcss: 8.5.3
+      icss-utils: 5.1.0(postcss@8.5.6)
+      postcss: 8.5.6
       postcss-selector-parser: 7.1.0
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.1(postcss@8.5.3):
+  postcss-modules-scope@3.2.1(postcss@8.5.6):
     dependencies:
-      postcss: 8.5.3
+      postcss: 8.5.6
       postcss-selector-parser: 7.1.0
 
-  postcss-modules-values@4.0.0(postcss@8.5.3):
+  postcss-modules-values@4.0.0(postcss@8.5.6):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.3)
-      postcss: 8.5.3
+      icss-utils: 5.1.0(postcss@8.5.6)
+      postcss: 8.5.6
 
   postcss-resolve-nested-selector@0.1.6: {}
 
@@ -14680,24 +14680,24 @@ snapshots:
     optionalDependencies:
       '@babel/core': 7.28.0
 
-  stylelint-config-recommended@16.0.0(stylelint@16.21.0(typescript@5.8.3)):
+  stylelint-config-recommended@16.0.0(stylelint@16.21.1(typescript@5.8.3)):
     dependencies:
-      stylelint: 16.21.0(typescript@5.8.3)
+      stylelint: 16.21.1(typescript@5.8.3)
 
-  stylelint-config-sass-guidelines@12.1.0(postcss@8.5.6)(stylelint@16.21.0(typescript@5.8.3)):
+  stylelint-config-sass-guidelines@12.1.0(postcss@8.5.6)(stylelint@16.21.1(typescript@5.8.3)):
     dependencies:
-      '@stylistic/stylelint-plugin': 3.1.1(stylelint@16.21.0(typescript@5.8.3))
+      '@stylistic/stylelint-plugin': 3.1.1(stylelint@16.21.1(typescript@5.8.3))
       postcss: 8.5.6
       postcss-scss: 4.0.9(postcss@8.5.6)
-      stylelint: 16.21.0(typescript@5.8.3)
-      stylelint-scss: 6.10.0(stylelint@16.21.0(typescript@5.8.3))
+      stylelint: 16.21.1(typescript@5.8.3)
+      stylelint-scss: 6.10.0(stylelint@16.21.1(typescript@5.8.3))
 
-  stylelint-config-standard@38.0.0(stylelint@16.21.0(typescript@5.8.3)):
+  stylelint-config-standard@38.0.0(stylelint@16.21.1(typescript@5.8.3)):
     dependencies:
-      stylelint: 16.21.0(typescript@5.8.3)
-      stylelint-config-recommended: 16.0.0(stylelint@16.21.0(typescript@5.8.3))
+      stylelint: 16.21.1(typescript@5.8.3)
+      stylelint-config-recommended: 16.0.0(stylelint@16.21.1(typescript@5.8.3))
 
-  stylelint-scss@6.10.0(stylelint@16.21.0(typescript@5.8.3)):
+  stylelint-scss@6.10.0(stylelint@16.21.1(typescript@5.8.3)):
     dependencies:
       css-tree: 3.0.1
       is-plain-object: 5.0.0
@@ -14707,9 +14707,9 @@ snapshots:
       postcss-resolve-nested-selector: 0.1.6
       postcss-selector-parser: 7.0.0
       postcss-value-parser: 4.2.0
-      stylelint: 16.21.0(typescript@5.8.3)
+      stylelint: 16.21.1(typescript@5.8.3)
 
-  stylelint@16.21.0(typescript@5.8.3):
+  stylelint@16.21.1(typescript@5.8.3):
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4

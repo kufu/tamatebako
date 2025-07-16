@@ -101,7 +101,7 @@ function MyComponent() {
 アプリケーションのコードベース内で`useIntlImpl`を利用し、次のように`useNextIntl`を実装します。
 
 ```tsx
-import { useIntlImpl } from '@smarthr/i18n/lib/useIntlImpl'
+import { useIntlImpl } from '@smarthr/i18n'
 import { type Messages, useTranslations } from 'next-intl'
 
 export const useNextIntl = () => useIntlImpl<Messages>(useTranslations)

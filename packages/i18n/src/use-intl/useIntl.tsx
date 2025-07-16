@@ -1,3 +1,4 @@
+'use client'
 import { type Messages, useTranslations } from 'use-intl'
 
 import { useIntlImpl } from './useIntlImpl'

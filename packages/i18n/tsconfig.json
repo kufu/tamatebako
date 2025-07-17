@@ -4,5 +4,6 @@
     "lib": ["esnext", "dom"],
     "outDir": "./lib",
     "rootDir": "./src"
-  }
+  },
+  "exclude": ["./src/**/*.test.*"]
 }

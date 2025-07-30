@@ -4,7 +4,6 @@
 import { type Locale, getLocale } from './getLocale'
 
 describe('getLocale (node環境)', () => {
-  // 共通のlocales配列を使用することを提案
   const supportedLocales: Locale[] = ['en-US', 'ja-JP', 'ko-KR']
 
   describe('shouldReturnDefaultLanguage が true の場合', () => {

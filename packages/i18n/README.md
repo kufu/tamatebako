@@ -24,7 +24,7 @@ npm install @smarthr/i18n
 
 ### Next.jsでの使用例
 
-[next-intlの導入](https://next-intl.dev/docs/getting-started)に従って`next-intl`の環境をセットアップします。
+[next-intlのGetting started](https://next-intl.dev/docs/getting-started)に従って`next-intl`の環境をセットアップします。
 ここではApp Routerでの[i18nルーティングを使わないパターン](https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing)で`@smarthr/i18n`を利用する例を記載します。
 
 `request.ts`ファイルで`getLocale`を利用してアプリケーションがサポートする言語からロケールを決定します。`currentLocale`の取得はアプリケーションごとに実装するものとします。

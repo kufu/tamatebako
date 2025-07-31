@@ -54,6 +54,166 @@ exports[`fixtures > should match the snapshot 1`] = `
       "text": "Unexpected unit (length-zero-no-unit)",
     },
     {
+      "rule": "nesting-selector-no-missing-scoping-root",
+      "severity": "error",
+      "text": "Unexpected missing scoping root (nesting-selector-no-missing-scoping-root)",
+    },
+    {
+      "rule": "nesting-selector-no-missing-scoping-root",
+      "severity": "error",
+      "text": "Unexpected missing scoping root (nesting-selector-no-missing-scoping-root)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
+      "rule": "no-invalid-position-declaration",
+      "severity": "error",
+      "text": "Unexpected invalid position declaration (no-invalid-position-declaration)",
+    },
+    {
       "rule": "number-max-precision",
       "severity": "error",
       "text": "Expected "0.55555" to be "0.5555" (number-max-precision)",

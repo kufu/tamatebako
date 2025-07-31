@@ -2,7 +2,7 @@ const DEFAULT_LANGUAGE = 'ja-JP'
 
 /**
  * サポートされているロケール一覧：
- * 
+ *
  * ja-JP: 日本語
  * en-US: 英語
  * ko-KR: 韓国語
@@ -39,15 +39,15 @@ export function getLocale(params: {
 }): Locale {
   const { currentLocale, supportedLocales, shouldReturnDefaultLanguage = false, cookieKey = 'selectedLocale' } = params
 
-  // サーバーサイドのエラー回避
-  if (typeof window === 'undefined') return DEFAULT_LANGUAGE
-
   // デフォルト言語を返すべき場合
   if (shouldReturnDefaultLanguage) return DEFAULT_LANGUAGE
 
   if (currentLocale === null) return DEFAULT_LANGUAGE
 
   if (supportedLocales.includes(currentLocale)) return currentLocale
+
+  // サーバーサイドのエラー回避
+  if (typeof window === 'undefined') return DEFAULT_LANGUAGE
 
   // cookieから言語コードを取得
   const cookieLocale = getCookieLocale(cookieKey)

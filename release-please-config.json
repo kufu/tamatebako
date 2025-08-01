@@ -8,8 +8,7 @@
     "packages/eslint-config-smarthr": {},
     "packages/eslint-plugin-smarthr": {},
     "packages/i18n": {
-      "last-release-sha": "cc65421dc454cdad0b043c0eb357667103b031f7",
-      "bump-minor-pre-major": true
+      "initial-version": "0.1.0"
     },
     "packages/next-auth": {},
     "packages/prettier-config-smarthr": {},

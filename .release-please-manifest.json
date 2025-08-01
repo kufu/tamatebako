@@ -7,5 +7,6 @@
   "packages/stylelint-config-smarthr": "3.0.2",
   "packages/use-bulk-check": "1.0.7",
   "packages/use-virtual-scroll": "1.1.6",
-  "packages/wareki": "1.3.0"
+  "packages/wareki": "1.3.0",
+  "packages/i18n": "1.0.0"
 }

@@ -21,7 +21,6 @@ const IGNORE_INPUT_CHECK_PARENT_TYPE = /^(Program|ExportNamedDeclaration)$/
 
 const findRoleGroup = (a) => a.name?.name === 'role' && a.value.value === 'group'
 const findAsSectioning = (a) => AS_REGEX.test(a.name?.name) && BARE_SECTIONING_TAG_REGEX.test(a.value.value)
-const findTitle = (i) => i.key.name === 'title'
 
 const SCHEMA = [
   {
@@ -78,18 +77,10 @@ module.exports = {
             for (const i of node.attributes) {
               if (i.name) {
                 // HINT: idが設定されている場合、htmlForでlabelと紐づく可能性が高いため無視する
-                // HINT: titleが設定されている場合、なんの入力要素かはわかるため無視する
                 switch (i.name.name) {
                   case 'id':
-                  case 'title':
                     isPseudoLabel = true
                     break
-                  case 'inputAttributes': {
-                    if (!isPseudoLabel && i.value.expression.type === 'ObjectExpression' && i.value.expression.properties.some(findTitle)) {
-                      isPseudoLabel = true
-                    }
-                    break
-                  }
                   case 'type':
                     switch (i.value.value) {
                       case 'radio':
@@ -155,18 +146,19 @@ module.exports = {
  - Fieldsetで同じname属性のラジオボタン全てを囲むことで正しくグループ化され、適切なタイトル・説明を追加出来ます` : ''}${isPureInput ? `
  - 可能なら${nodeName}は${convertComp}への変更を検討してください。難しい場合は ${nodeName} と結びつくlabel要素が必ず存在するよう、マークアップする必要があることに注意してください。` : ''}`,
                         });
-                      } else if (isMultiInput && !conditionalHit && !openingElement.attributes.find(findRoleGroup)) {
+                      } else if (isMultiInput && !conditionalHit) {
                         context.report({
                           node: n,
                           message: `${name} が複数の入力要素を含んでいます。ラベルと入力要素の紐づけが正しく行われない可能性があるため、以下の方法のいずれかで修正してください。
- - 方法1: 入力要素ごとにラベルを設定できる場合、${name}をsmarthr-ui/Fieldset、もしくはそれを拡張したコンポーネントに変更した上で、入力要素を一つずつsmarthr-ui/FormControlで囲むようにマークアップを変更してください
- - 方法2: 郵便番号や電話番号など、本来一つの概念の入力要素を分割して複数の入力要素にしている場合、一つの入力要素にまとめることを検討してください
+ - 方法1: 郵便番号や電話番号など、本来一つの概念の入力要素を分割して複数の入力要素にしている場合、一つの入力要素にまとめることを検討してください
    - コピーアンドペーストがしやすくなる、ブラウザの自動補完などがより適切に反映されるなど多大なメリットがあります
- - 方法3: ${name} が smarthr-ui/${matcherFormControl[1]}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください
- - 方法4: 上記方法のいずれも対応出来ない場合、${name} に 'role="group"' 属性を設定してください`,
+ - 方法2: ${name}をsmarthr-ui/Fieldset、もしくはそれを拡張したコンポーネントに変更した上で、入力要素を一つずつsmarthr-ui/FormControlで囲むようにマークアップを変更してください
+   - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
+     - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
+ - 方法3: ${name} が smarthr-ui/${matcherFormControl[1]}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`,
                         });
                       }
-                    // HINT: 擬似的にラベルが設定されている場合、無視する
+                    // HINT: 何らかの方法でラベルが設定されている場合、無視する
                     } else if (!isRadio && !isCheckbox && !isPseudoLabel) {
                       const isSelect = nodeName.match(SELECT_REGEX)
 
@@ -174,14 +166,14 @@ module.exports = {
                         node: n,
                         message: `${name} が ラベルを持たない入力要素(${nodeName})を含んでいます。入力要素が何であるかを正しく伝えるため、以下の方法のいずれかで修正してください。
  - 方法1: ${name} を smarthr-ui/FormControl、もしくはそれを拡張したコンポーネントに変更してください
+   - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
+     - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
  - 方法2: ${nodeName} がlabel要素を含むコンポーネントである場合、名称を${FORM_CONTROL_REGEX}にマッチするものに変更してください
    - smarthr-ui/FormControl、smarthr-ui/FormGroup はlabel要素を内包しています
  - 方法3: ${nodeName} がRadioButton、もしくはCheckboxを表すコンポーネントの場合、名称を${LABELED_INPUTS_REGEX}にマッチするものに変更してください
    - smarthr-ui/RadioButton、smarthr-ui/RadioButtonPanel、smarthr-ui/Checkbox はlabel要素を内包しています
  - 方法4: ${name} が smarthr-ui/Fieldset、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FIELDSET_REGEX} にマッチしないものに変更してください
- - 方法5: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります
- - 方法6: 上記のいずれの方法も適切ではない場合、${nodeName}のtitle属性に "どんな値を${isSelect ? '選択' : '入力'}すれば良いのか" の説明を設定してください
-   - 例: <${nodeName} title="${isSelect ? '検索対象を選択してください' : '姓を全角カタカナのみで入力してください'}" />`,
+ - 方法5: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります`,
                       });
                     }
 
@@ -202,10 +194,10 @@ module.exports = {
                           message: `${nodeName}は${actualName}より先に、smarthr-ui/${wrapComponentName}が入力要素を囲むようマークアップを以下のいずれかの方法で変更してください。
  - 方法1: ${actualName} を${wrapComponentName}、もしくはそれを拡張したコンポーネントに変更してください
    - ${actualName} 内のHeading要素は${wrapComponentName}のtitle属性に変更してください
- - 方法2: ${actualName} と ${nodeName} の間に ${wrapComponentName} が存在するようにマークアップを変更してください${isRadio ? '' : `
- - 方法3: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります
- - 方法4: 上記のいずれの方法も適切ではない場合、${nodeName}のtitle属性に "どんな値を${isSelect ? '選択' : '入力'}すれば良いのか" の説明を設定してください
-   - 例: <${nodeName} title="${isSelect ? '検索対象を選択してください' : '姓を全角カタカナのみで入力してください'}" />`}`,
+ - 方法2: ${actualName} と ${nodeName} の間に ${wrapComponentName} が存在するようにマークアップを変更してください
+   - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
+     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)${isRadio ? '' : `
+ - 方法3: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります`}`,
                         });
                       }
 
@@ -252,11 +244,11 @@ module.exports = {
                     node,
                     message: `${nodeName} を、smarthr-ui/${wrapComponentName} もしくはそれを拡張したコンポーネントが囲むようマークアップを変更してください。
  - ${wrapComponentName}で入力要素を囲むことでラベルと入力要素が適切に紐づき、操作性が高まります${isRadio ? `
- - FieldsetでRadioButtonを囲むことでグループ化された入力要素に対して適切なタイトル・説明を追加出来ます` : ``}
+ - FieldsetでRadioButtonを囲むことでグループ化された入力要素に対して適切なタイトル・説明を追加出来ます` : `
+   - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
+     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)`}
  - ${nodeName}が入力要素とラベル・タイトル・説明など含む概念を表示するコンポーネントの場合、コンポーネント名を${FROM_CONTROLS_REGEX}とマッチするように修正してください
- - ${nodeName}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を${FORM_CONTROL_INPUTS_REGEX}とマッチするように修正してください${isRadio ? '' : `
- - 上記のいずれの方法も適切ではない場合、${nodeName}のtitle属性に "どんな値を${isSelect ? '選択' : '入力'}すれば良いのか" の説明を設定してください
-   - 例: <${nodeName} title="${isSelect ? '検索対象を選択してください' : '姓を全角カタカナのみで入力してください'}" />`}`,
+ - ${nodeName}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を${FORM_CONTROL_INPUTS_REGEX}とマッチするように修正してください`,
                   });
                 }
 

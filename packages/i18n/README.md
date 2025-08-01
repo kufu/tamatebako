@@ -76,7 +76,7 @@ export default async function RootLayout({
 React Server Componentsで使う場合は[ワークアラウンド](./src/use-intl/README.md#react-server-componentsで使う場合のワークアラウンド)を利用します。
 
 ```tsx
-import { useNextIntl } from '@/i18n/useNextIntl'
+import { useNextIntl } from '@smarthr/i18n'
 
 export default function Home() {
   const { formatMessage } = useNextIntl()

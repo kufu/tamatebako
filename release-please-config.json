@@ -7,6 +7,7 @@
     "packages/create-lint-set": {},
     "packages/eslint-config-smarthr": {},
     "packages/eslint-plugin-smarthr": {},
+    "packages/i18n": {},
     "packages/next-auth": {},
     "packages/prettier-config-smarthr": {},
     "packages/stylelint-config-smarthr": {},

@@ -6,6 +6,7 @@
     { "path": "./use-virtual-scroll" },
     { "path": "./wareki" },
     { "path": "./create-lint-set" },
-    { "path": "./next-auth" }
+    { "path": "./next-auth" },
+    { "path": "./i18n" }
   ]
 }

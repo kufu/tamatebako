@@ -45,8 +45,8 @@ importers:
         specifier: ^5.0.10
         version: 5.0.10
       ts-jest:
-        specifier: ^29.4.0
-        version: 29.4.0(@babel/core@7.28.0)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.0))(esbuild@0.21.5)(jest-util@30.0.5)(jest@30.0.5(@types/node@20.19.9)(esbuild-register@3.6.0(esbuild@0.21.5)))(typescript@5.8.3)
+        specifier: ^29.4.1
+        version: 29.4.1(@babel/core@7.28.0)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.0))(esbuild@0.21.5)(jest-util@30.0.5)(jest@30.0.5(@types/node@20.19.9)(esbuild-register@3.6.0(esbuild@0.21.5)))(typescript@5.8.3)
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -6557,8 +6557,8 @@ packages:
     resolution: {integrity: sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==}
     engines: {node: '>=6.10'}
 
-  ts-jest@29.4.0:
-    resolution: {integrity: sha512-d423TJMnJGu80/eSgfQ5w/R+0zFJvdtTxwtF9KzFFunOpSeD+79lHJQIiAhluJoyGRbvj9NZJsl9WjCUo0ND7Q==}
+  ts-jest@29.4.1:
+    resolution: {integrity: sha512-SaeUtjfpg9Uqu8IbeDKtdaS0g8lS6FT6OzM3ezrDfErPJPHNDo/Ey+VFGP1bQIDfagYDLyRpd7O15XpG1Es2Uw==}
     engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -14857,11 +14857,11 @@ snapshots:
 
   ts-dedent@2.2.0: {}
 
-  ts-jest@29.4.0(@babel/core@7.28.0)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.0))(esbuild@0.21.5)(jest-util@30.0.5)(jest@30.0.5(@types/node@20.19.9)(esbuild-register@3.6.0(esbuild@0.21.5)))(typescript@5.8.3):
+  ts-jest@29.4.1(@babel/core@7.28.0)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.0))(esbuild@0.21.5)(jest-util@30.0.5)(jest@30.0.5(@types/node@20.19.9)(esbuild-register@3.6.0(esbuild@0.21.5)))(typescript@5.8.3):
     dependencies:
       bs-logger: 0.2.6
-      ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
+      handlebars: 4.7.8
       jest: 30.0.5(@types/node@20.19.9)(esbuild-register@3.6.0(esbuild@0.21.5))
       json5: 2.2.3
       lodash.memoize: 4.1.2

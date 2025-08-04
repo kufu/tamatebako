@@ -1,5 +1,3 @@
-const DEFAULT_LANGUAGE = 'ja-JP'
-
 /**
  * サポートされているロケール一覧：
  *
@@ -13,7 +11,21 @@ const DEFAULT_LANGUAGE = 'ja-JP'
  * ja-JP-x-easy: やさしい日本語
  * id-ID: インドネシア語
  */
-export type Locale = 'ja-JP' | 'en-US' | 'ko-KR' | 'zh-Hant-TW' | 'zh-Hans-CN' | 'vi-VN' | 'pt-BR' | 'ja-JP-x-easy' | 'id-ID'
+const SUPPORTED_LOCALES = [
+  'ja-JP',
+  'en-US',
+  'ko-KR',
+  'zh-Hant-TW',
+  'zh-Hans-CN',
+  'vi-VN',
+  'pt-BR',
+  'ja-JP-x-easy',
+  'id-ID',
+] as const
+
+export type Locale = (typeof SUPPORTED_LOCALES)[number]
+
+const DEFAULT_LANGUAGE: Locale = 'ja-JP'
 
 /**
  * 対応する言語コードを判定して返します。
@@ -128,17 +140,4 @@ const getCookieLocale = (cookieKey: string): Locale | null => {
   return validateLocale(cookieValue) ? cookieValue : null
 }
 
-const validateLocale = (locale: string): locale is Locale => {
-  const validLocales: Locale[] = [
-    'ja-JP',
-    'en-US',
-    'ko-KR',
-    'zh-Hant-TW',
-    'zh-Hans-CN',
-    'vi-VN',
-    'pt-BR',
-    'ja-JP-x-easy',
-    'id-ID',
-  ]
-  return validLocales.some((validLocale) => validLocale === locale)
-}
+const validateLocale = (locale: string): locale is Locale => SUPPORTED_LOCALES.includes(locale as Locale)

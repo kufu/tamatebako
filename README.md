@@ -8,7 +8,7 @@ Frontend packages for projects at SmartHR
 ## Package Index
 
 | Package                  | Version                                                                                                                                  | Description                                              |
-|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | use-bulk-check           | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check)         | React hooks for managing the values in the checkbox list |
 | use-virtual-scroll       | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll) | React hooks for virtual scroll                           |
 | wareki                   | [![npm version](https://badge.fury.io/js/%40smarthr%2Fwareki.svg)](https://badge.fury.io/js/%40smarthr%2Fwareki)                         | Japanese 'wareki' formatter                              |
@@ -18,6 +18,7 @@ Frontend packages for projects at SmartHR
 | eslint-plugin-smarthr    | [![npm version](https://badge.fury.io/js/eslint-plugin-smarthr.svg)](https://badge.fury.io/js/eslint-plugin-smarthr)                     | ESLint plugin for SmartHR                                |
 | prettier-config-smarthr  | [![npm version](https://badge.fury.io/js/prettier-config-smarthr.svg)](https://badge.fury.io/js/prettier-config-smarthr)                 | Prettier config for SmartHR                              |
 | stylelint-config-smarthr | [![npm version](https://badge.fury.io/js/stylelint-config-smarthr.svg)](https://badge.fury.io/js/stylelint-config-smarthr)               | Stylelint config for SmartHR                             |
+| i18n                     | [![npm version](https://badge.fury.io/js/%40smarthr%2Fi18n.svg)](https://badge.fury.io/js/%40smarthr%2Fi18n)                             | Internationalization utility                             |
 
 ## リリース手順
 

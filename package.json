@@ -31,7 +31,7 @@
     "prettier-config-smarthr": "^1.0.1",
     "react": "^19.1.0",
     "rimraf": "^5.0.10",
-    "ts-jest": "^29.4.0",
+    "ts-jest": "^29.4.1",
     "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@10.14.0"

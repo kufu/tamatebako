@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.1...eslint-plugin-smarthr-v1.9.0) (2025-09-08)
+
+
+### Features
+
+* a11y-input-form-controlのラベル設定チェックのロジックを変更する ([#753](https://github.com/kufu/tamatebako/issues/753)) ([f4b5308](https://github.com/kufu/tamatebako/commit/f4b5308911c45862670eca58abffeeb75d20c16e))
+
 ## [1.8.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.0...eslint-plugin-smarthr-v1.8.1) (2025-06-12)
 
 

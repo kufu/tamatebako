@@ -37,5 +37,18 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
       code: `<Td><div><div><Checkbox /></div></div></Td>`,
       errors: [{ message: 'Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。' }],
     },
+
+    {
+      code: `<CustomTd><CustomCheckbox /></CustomTd>`,
+      errors: [{ message: 'Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。' }],
+    },
+    {
+      code: `<CustomTh><CustomCheckbox /></CustomTh>`,
+      errors: [{ message: 'Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。' }],
+    },
+    {
+      code: `<CustomTd><CustomRadioButton /></CustomTd>`,
+      errors: [{ message: 'Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。' }],
+    },
   ],
 })

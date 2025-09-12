@@ -23,7 +23,7 @@ module.exports = {
     const sourceCode = context.sourceCode
 
     return {
-      'JSXElement[openingElement.name.name="Td"] JSXElement[openingElement.name.name="Checkbox"]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Checkbox$/]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -34,7 +34,7 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name="Td"] JSXElement[openingElement.name.name="RadioButton"]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/RadioButton$/]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -45,7 +45,7 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name="Th"] JSXElement[openingElement.name.name="Checkbox"]': (node) => {
+      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Checkbox$/]': (node) => {
         context.report({
           node,
           messageId: 'default',

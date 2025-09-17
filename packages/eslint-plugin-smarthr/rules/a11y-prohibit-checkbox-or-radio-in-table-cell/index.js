@@ -56,13 +56,11 @@ module.exports = {
           },
           *fix(fixer) {
             const th = findClosestThFromAncestor(node)
-            if (!th) {
-              return
+            if (th) {
+              const thCheckbox = sourceCode.getText(node).replace('<Checkbox', '<ThCheckbox')
+              yield fixer.insertTextAfter(th, thCheckbox)
+              yield fixer.remove(th)
             }
-
-            const thCheckbox = sourceCode.getText(node).replace('<Checkbox', '<ThCheckbox')
-            yield fixer.insertTextAfter(th, thCheckbox)
-            yield fixer.remove(th)
           },
         })
       },

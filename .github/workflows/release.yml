@@ -22,11 +22,16 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     needs: release_please
     if: ${{ needs.release_please.outputs.releases_created == 'true' }}
     steps:
       - uses: actions/checkout@v5
-      - run: npm install -g corepack@latest
+      - run: |
+          npm install -g npm@latest
+          echo "Updated npm version: $(npm -v)"
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -34,5 +39,3 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install
       - run: pnpm release --no-push --no-private --yes
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.KUFU_NPM_RELEASE_TOKEN }}

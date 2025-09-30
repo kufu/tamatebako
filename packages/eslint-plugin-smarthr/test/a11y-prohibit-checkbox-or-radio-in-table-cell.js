@@ -56,5 +56,18 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
       code: `<CustomTd><CustomRadioButton /></CustomTd>`,
       errors: [{ message: 'Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。' }],
     },
+    {
+      name: "https://smarthr.atlassian.net/browse/A11Y2-23",
+      code: `
+        <CheckTd onClick={() => toggleChecked(crewEvaluation.id)}>
+          <CheckBox
+            name="checkEvaluation"
+            checked={checked}
+            onChange={() => toggleChecked(crewEvaluation.id)}
+          />
+        </CheckTd> 
+      `,
+      errors: [{ message: 'Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。' }],
+    }
   ],
 })

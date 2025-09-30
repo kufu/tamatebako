@@ -23,7 +23,7 @@ module.exports = {
     const sourceCode = context.sourceCode
 
     return {
-      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Checkbox$/]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -45,7 +45,7 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Checkbox$/]': (node) => {
+      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -57,7 +57,7 @@ module.exports = {
           *fix(fixer) {
             const th = findClosestThFromAncestor(node)
             if (th) {
-              const thCheckbox = sourceCode.getText(node).replace('<Checkbox', '<ThCheckbox')
+              const thCheckbox = sourceCode.getText(node).replace(/<Check(b|B)ox/, '<ThCheckbox')
               yield fixer.insertTextAfter(th, thCheckbox)
               yield fixer.remove(th)
             }

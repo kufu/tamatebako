@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.9.0...eslint-plugin-smarthr-v1.10.0) (2025-10-01)
+
+
+### Features
+
+* セル内のCheckboxおよびRadioButtonを禁止するルールを追加 ([#792](https://github.com/kufu/tamatebako/issues/792)) ([17ab980](https://github.com/kufu/tamatebako/commit/17ab98018c81a81376ac213e3309e60080ed9326))
+
 ## [1.9.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.1...eslint-plugin-smarthr-v1.9.0) (2025-09-08)
 
 

@@ -1,32 +1,14 @@
-name: release
+name: release test
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
-  release_please:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    outputs:
-      releases_created: ${{ steps.release_please.outputs.releases_created }}
-    steps:
-      - uses: googleapis/release-please-action@v4
-        id: release_please
-        with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
-    needs: release_please
-    if: ${{ needs.release_please.outputs.releases_created == 'true' }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -42,4 +24,4 @@ jobs:
       - run: |
           npm install -g npm@latest
           echo "Updated npm version: $(npm -v)"
-      - run: pnpm release --no-push --no-private --yes
+      - run: echo "success"

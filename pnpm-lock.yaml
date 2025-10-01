@@ -100,8 +100,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0(eslint@9.28.0(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 1.8.1
-        version: 1.8.1(eslint@9.28.0(jiti@2.4.2))
+        specifier: 1.9.0
+        version: 1.9.0(eslint@9.28.0(jiti@2.4.2))
       globals:
         specifier: ^16.3.0
         version: 16.3.0
@@ -3590,6 +3590,12 @@ packages:
   eslint-plugin-smarthr@1.8.1:
     resolution: {integrity: sha512-XyIbfhY7P/6ovQ+bjUOJwlFnW1rV6vh5pjEiko23iwrcTiOdv20pNWEZGRVB8z6oc08XvIbkkU/gaJJLHN9oJQ==}
     engines: {node: '>=22.16.0'}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@1.9.0:
+    resolution: {integrity: sha512-Q/WLNLFyxGirvDViU+d/DRdgoQab4fuLRFBne9gnvSVJEm4UfVHCJk/PDC6KE9WNkRl7I0CMYyLqnlcayvNZ+A==}
+    engines: {node: '>=22.17.1'}
     peerDependencies:
       eslint: ^9
 
@@ -11339,14 +11345,14 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-smarthr@1.8.1(eslint@9.28.0(jiti@2.4.2)):
-    dependencies:
-      eslint: 9.28.0(jiti@2.4.2)
-      json5: 2.2.3
-
   eslint-plugin-smarthr@1.8.1(eslint@9.35.0(jiti@2.4.2)):
     dependencies:
       eslint: 9.35.0(jiti@2.4.2)
+      json5: 2.2.3
+
+  eslint-plugin-smarthr@1.9.0(eslint@9.28.0(jiti@2.4.2)):
+    dependencies:
+      eslint: 9.28.0(jiti@2.4.2)
       json5: 2.2.3
 
   eslint-scope@5.1.1:

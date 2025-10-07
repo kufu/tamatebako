@@ -30,7 +30,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
-    "@types/react": "^19.1.17",
+    "@types/react": "^19.2.0",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {

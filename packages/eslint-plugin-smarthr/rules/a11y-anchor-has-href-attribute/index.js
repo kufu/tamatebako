@@ -7,31 +7,49 @@ const OPTION = (() => {
   if (fs.existsSync(file)) {
     const json = JSON5.parse(fs.readFileSync(file))
 
-    if (json.dependencies) {
+    if (json.dependencies){
       const dependencies = Object.keys(json.dependencies)
 
+      let nextjs = false
+      let react_router = false
+      const result = () => ({
+        nextjs,
+        react_router,
+      })
+
       for (let i = 0; i < dependencies.length; i++) {
-        if (dependencies[i] == 'next') {
-          return {
-            nextjs: true,
-          }
+        switch (dependencies[i]) {
+          case 'next':
+            nextjs = true
+
+            if (react_router) {
+              return result()
+            }
+
+            break
+          case 'react-router':
+            react_router = true
+
+            if (nextjs) {
+              return result()
+            }
+
+            break
         }
       }
     }
   }
 
-  return {
-    nextjs: false,
-  }
+  return {}
 })()
 
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
-const HREF_ATTRIBUTE = 'JSXAttribute[name.name="href"]'
+const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
 const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link>a` という構造がありえるので直上のJSXElementを調べる
 const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(NEXT_LINK_REGEX))
 
-const MESSAGE_SUFFIX = ` に href 属性を正しく設定してください
+const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
  - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
    - Cmd + clickなどのキーボードショートカットに対応出来ます
  - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください

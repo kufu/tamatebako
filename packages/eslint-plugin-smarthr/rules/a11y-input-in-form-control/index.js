@@ -77,8 +77,11 @@ module.exports = {
             for (const i of node.attributes) {
               if (i.name) {
                 // HINT: idが設定されている場合、htmlForでlabelと紐づく可能性が高いため無視する
+                // aria-label, aria-labelledbyが設定されている場合は疑似ラベルが設定されているため許容する
                 switch (i.name.name) {
                   case 'id':
+                  case 'aria-label':
+                  case 'aria-labelledby':
                     isPseudoLabel = true
                     break
                   case 'type':

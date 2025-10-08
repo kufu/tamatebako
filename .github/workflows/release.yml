@@ -29,13 +29,17 @@ jobs:
     if: ${{ needs.release_please.outputs.releases_created == 'true' }}
     steps:
       - uses: actions/checkout@v5
-      - run: |
-          npm install -g npm@latest
-          echo "Updated npm version: $(npm -v)"
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: 'package.json'
+          run_install: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install
+      - run: |
+          npm install -g npm@latest
+          echo "Updated npm version: $(npm -v)"
       - run: pnpm release --no-push --no-private --yes

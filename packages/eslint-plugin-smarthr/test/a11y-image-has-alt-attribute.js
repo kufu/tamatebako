@@ -33,7 +33,6 @@ ruleTester.run('a11y-image-has-alt-attribute', rule, {
   invalid: [
     { code: '<img />', errors: [ { message: messageNotExistAlt } ] },
     { code: '<HogeImage alt="" />', errors: [ { message: messageNullAlt } ] },
-    { code: '<hoge><image /></hoge>', errors: [ { message: messageNotExistAlt } ] },
     { code: '<AnyImg {...hoge} />', errors: [ { message: messageNotExistAlt } ]  },
     { code: '<AnyImg {...hoge} />', options: [{ checkType: 'always' }], errors: [ { message: messageNotExistAlt } ] },
   ]

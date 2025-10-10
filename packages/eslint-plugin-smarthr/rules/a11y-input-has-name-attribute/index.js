@@ -5,31 +5,26 @@ const JSON5 = require('json5')
 const OPTION = (() => {
   const file = `${process.cwd()}/package.json`
 
-  if (!fs.existsSync(file)) {
-    return {}
+  if (fs.existsSync(file)) {
+    return {
+      react_hook_form: Object.keys(JSON5.parse(fs.readFileSync(file)).dependencies).includes('react-hook-form'),
+    }
   }
 
-  const json = JSON5.parse(fs.readFileSync(file))
-  const dependencies = [...Object.keys(json.dependencies || {}), ...Object.keys(json.devDependencies || {})]
-
-  return {
-    react_hook_form: dependencies.includes('react-hook-form'),
-  }
+  return {}
 })()
 
-const TARGET_TAG_NAME_REGEX = /((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/
-const INPUT_NAME_REGEX = /^[a-zA-Z0-9_\[\]]+$/
-const INPUT_TAG_REGEX = /(i|I)nput$/
-const RADIO_BUTTON_REGEX = /RadioButton(Panel)?$/
+const INPUT_ELEMENT = 'JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]'
+const INPUT_ELEMENT_WITHOUT_RADIO = 'JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]'
+const RADIO_ELEMENT = 'JSXOpeningElement:matches([name.name=/RadioButton(Panel)?$/],[name.name=/(I|^i)nput?$/]:has(JSXAttribute[name.name="type"][value.value="radio"]))'
+const NAME_ATTRIBUTE = 'JSXAttribute[name.name="name"]'
+
+const INPUT_NAME_REGEX = /^[a-zA-Z0-9_\[\]]+$/.toString()
 
 const MESSAGE_PART_FORMAT = `"${INPUT_NAME_REGEX.toString()}"にmatchするフォーマットで命名してください`
 const MESSAGE_UNDEFINED_NAME_PART = `
  - ブラウザの自動補完が有効化されるなどのメリットがあります
  - より多くのブラウザが自動補完を行える可能性を上げるため、${MESSAGE_PART_FORMAT}`
-const MESSAGE_UNDEFINED_FOR_RADIO = `にグループとなる他のinput[radio]と同じname属性を指定してください
- - 適切に指定することで同じname属性を指定したinput[radio]とグループが確立され、適切なキーボード操作を行えるようになります${MESSAGE_UNDEFINED_NAME_PART}`
-const MESSAGE_UNDEFINED_FOR_NOT_RADIO = `にname属性を指定してください${MESSAGE_UNDEFINED_NAME_PART}`
-const MESSAGE_NAME_FORMAT_SUFFIX = `はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}`
 
 const SCHEMA = [
   {
@@ -53,61 +48,30 @@ module.exports = {
     const option = context.options[0] || {}
     const checkType = option.checkType || 'always'
 
+    const notHasSpreadAttribute =
+      option.checkType == 'allow-spread-attributes'
+        ? ':not(:has(JSXSpreadAttribute))'
+        : OPTION.react_hook_form ? ':not(:has(JSXSpreadAttribute CallExpression[callee.name="register"]))' : ''
+
     return {
-      JSXOpeningElement: (node) => {
-        const { name, attributes } = node
-        const nodeName = name.name || ''
-
-        if (TARGET_TAG_NAME_REGEX.test(nodeName)) {
-          let nameAttr = null
-          let hasSpreadAttr = false
-          let hasReactHookFormRegisterSpreadAttr = false
-          let hasRadioInput = false
-
-          attributes.forEach((a) => {
-            if (a.type === 'JSXSpreadAttribute') {
-              hasSpreadAttr = true
-
-              if (hasReactHookFormRegisterSpreadAttr === false && a.argument?.callee?.name === 'register') {
-                hasReactHookFormRegisterSpreadAttr = true
-              }
-            } else {
-              switch (a.name?.name) {
-                case 'name': {
-                  nameAttr = a
-                  break
-                }
-                case 'type': {
-                  if (a.value.value === 'radio') {
-                    hasRadioInput = true
-                  }
-                  break
-                }
-              }
-            }
-          })
-
-          if (nameAttr) {
-            const nameValue = nameAttr.value?.value
-
-            if (nameValue && !INPUT_NAME_REGEX.test(nameValue)) {
-              context.report({
-                node,
-                message: `${nodeName} のname属性の値(${nameValue})${MESSAGE_NAME_FORMAT_SUFFIX}`,
-              })
-            }
-          } else if (
-            !(OPTION.react_hook_form && hasReactHookFormRegisterSpreadAttr) &&
-            (attributes.length === 0 || checkType !== 'allow-spread-attributes' || !hasSpreadAttr)
-          ) {
-            const isRadio = RADIO_BUTTON_REGEX.test(nodeName) || INPUT_TAG_REGEX.test(nodeName) && hasRadioInput
-
-            context.report({
-              node,
-              message: `${nodeName} ${isRadio ? MESSAGE_UNDEFINED_FOR_RADIO : MESSAGE_UNDEFINED_FOR_NOT_RADIO}`,
-            })
-          }
-        }
+      [`${INPUT_ELEMENT_WITHOUT_RADIO}:not(:has(:matches(${NAME_ATTRIBUTE},JSXAttribute[name.name="type"][value.value="radio"])))${notHasSpreadAttribute}`]: (node) => {
+        context.report({
+          node,
+          message: `${node.name.name} にname属性を指定してください${MESSAGE_UNDEFINED_NAME_PART}`,
+        })
+      },
+      [`${RADIO_ELEMENT}:not(:has(${NAME_ATTRIBUTE}))${notHasSpreadAttribute}`]: (node) => {
+        context.report({
+          node,
+          message: `${node.name.name} にグループとなる他のinput[radio]と同じname属性を指定してください
+ - 適切に指定することで同じname属性を指定したinput[radio]とグループが確立され、適切なキーボード操作を行えるようになります${MESSAGE_UNDEFINED_NAME_PART}`,
+        })
+      },
+      [`${INPUT_ELEMENT}${notHasSpreadAttribute} ${NAME_ATTRIBUTE}:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
+        context.report({
+          node,
+          message: `${node.parent.name.name} のname属性の値(${node.value.value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}`,
+        })
       },
     }
   },

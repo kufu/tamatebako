@@ -11,16 +11,19 @@ const ruleTester = new RuleTester({
   },
 })
 
-const attributeError = (element, attr) => `${element}の${attr}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`
+const attributeError = (element, attr) =>
+  `${element}の${attr}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`
 const childTextError = '子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください'
 
-const options = [{
-  elements: {
-    'img': ['alt', 'title'],
-    'div': ['title'],
-    'Button': ['label'],
-  }
-}]
+const options = [
+  {
+    elements: {
+      img: ['alt', 'title'],
+      div: ['title'],
+      Button: ['label'],
+    },
+  },
+]
 
 ruleTester.run('require-i18n-text', rule, {
   valid: [
@@ -46,83 +49,111 @@ ruleTester.run('require-i18n-text', rule, {
     // 空白のみのテキスト（検査対象外）
     { code: `<div>  </div>`, options },
 
-    // オプション未設定の場合は属性は検査しない
-    { code: `<img alt="test" />` },
+    // デフォルト設定対象外の属性
+    { code: `<img src="image.png" />` },
+    { code: `<div data-testid="test" />` },
 
     // ワイルドカード - 空配列で除外
     {
       code: `<Icon label="Icon text" />`,
-      options: [{
-        elements: {
-          '*': ['label'],
-          'Icon': []
-        }
-      }]
+      options: [
+        {
+          elements: {
+            '*': ['label'],
+            Icon: [],
+          },
+        },
+      ],
+    },
+
+    // デフォルト設定の上書き
+    {
+      code: `<img alt="text" />`,
+      options: [
+        {
+          elements: {
+            '*': ['data-tooltip'],
+          },
+        },
+      ],
     },
   ],
   invalid: [
-    // 属性エラー: 基本
+    // 属性エラー: デフォルト設定
+    {
+      code: `<img alt="Profile picture" />`,
+      errors: [{ message: attributeError('img', 'alt') }],
+    },
+    {
+      code: `<CustomComponent aria-label="Label" />`,
+      errors: [{ message: attributeError('CustomComponent', 'aria-label') }],
+    },
+    {
+      code: `<DefinitionListItem term="Label" />`,
+      errors: [{ message: attributeError('DefinitionListItem', 'term') }],
+    },
+    {
+      code: `<button title="Click me" />`,
+      errors: [{ message: attributeError('button', 'title') }],
+    },
+
+    // 属性エラー: カスタムオプション
     {
       code: `<img alt="Profile picture" />`,
       options,
-      errors: [{ message: attributeError('img', 'alt') }]
+      errors: [{ message: attributeError('img', 'alt') }],
     },
     {
       code: `<img alt={'Profile'} />`,
       options,
-      errors: [{ message: attributeError('img', 'alt') }]
+      errors: [{ message: attributeError('img', 'alt') }],
     },
 
     // 属性エラー: 同一要素の複数属性
     {
       code: `<img alt="Profile" title="User profile" />`,
       options,
-      errors: [
-        { message: attributeError('img', 'alt') },
-        { message: attributeError('img', 'title') }
-      ]
+      errors: [{ message: attributeError('img', 'alt') }, { message: attributeError('img', 'title') }],
     },
 
     // 属性エラー: ワイルドカード
     {
       code: `<CustomComponent label="Text" />`,
-      options: [{
-        elements: {
-          '*': ['label']
-        }
-      }],
-      errors: [{ message: attributeError('CustomComponent', 'label') }]
+      options: [
+        {
+          elements: {
+            '*': ['label'],
+          },
+        },
+      ],
+      errors: [{ message: attributeError('CustomComponent', 'label') }],
     },
 
     // 属性エラー: 個別設定がワイルドカードより優先
     {
       code: `<Button label="Submit" helperText="Help" />`,
-      options: [{
-        elements: {
-          '*': ['label'],
-          'Button': ['label', 'helperText']
-        }
-      }],
-      errors: [
-        { message: attributeError('Button', 'label') },
-        { message: attributeError('Button', 'helperText') }
-      ]
+      options: [
+        {
+          elements: {
+            '*': ['label'],
+            Button: ['label', 'helperText'],
+          },
+        },
+      ],
+      errors: [{ message: attributeError('Button', 'label') }, { message: attributeError('Button', 'helperText') }],
     },
 
     // 子要素エラー（オプション未設定時でもチェックされる）
     {
       code: `<div>Hello World</div>`,
-      errors: [{ message: childTextError }]
+      errors: [{ message: childTextError }],
     },
 
     // 複合エラー: 属性と子要素
     {
       code: `<Button label="Submit">Click here</Button>`,
       options,
-      errors: [
-        { message: attributeError('Button', 'label') },
-        { message: childTextError }
-      ]
+      errors: [{ message: attributeError('Button', 'label') }, { message: childTextError }],
     },
 
     // 複合エラー: 入れ子構造
@@ -132,8 +163,8 @@ ruleTester.run('require-i18n-text', rule, {
       errors: [
         { message: attributeError('div', 'title') },
         { message: attributeError('Button', 'label') },
-        { message: childTextError }
-      ]
+        { message: childTextError },
+      ],
     },
-  ]
+  ],
 })

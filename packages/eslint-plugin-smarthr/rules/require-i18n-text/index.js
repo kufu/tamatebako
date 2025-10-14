@@ -1,5 +1,14 @@
 const NOOP = () => {}
 
+// デフォルトのワイルドカード設定
+const DEFAULT_WILDCARD_ATTRIBUTES = [
+  'alt',
+  'aria-label',
+  // smarthr-ui DefinitionListItem
+  'term',
+  'title',
+]
+
 const SCHEMA = [
   {
     type: 'object',
@@ -18,7 +27,7 @@ const SCHEMA = [
       },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 const isStringLiteral = (node) => {
@@ -60,12 +69,13 @@ module.exports = {
 
     // elementsをMap<string, Set<string>>に変換
     const elementsObj = options.elements || {}
-    const elements = new Map(
-      Object.entries(elementsObj).map(([elementName, attributes]) => [
-        elementName,
-        new Set(attributes)
-      ])
-    )
+
+    // ユーザーが'*'を設定していない場合のみデフォルトを適用
+    if (!elementsObj['*']) {
+      elementsObj['*'] = DEFAULT_WILDCARD_ATTRIBUTES
+    }
+
+    const elements = new Map(Object.entries(elementsObj).map(([elementName, attributes]) => [elementName, new Set(attributes)]))
 
     // ワイルドカード '*' の属性セット
     const wildcardAttributes = elements.get('*')

@@ -1,18 +1,6 @@
-const REGEX_IMG = /(img|image)$/i // HINT: Iconは別途テキストが存在する場合が多いためチェックの対象外とする
-
-const findAltAttr = (a) => a.name?.name === 'alt'
-const findAriaDescribedbyAttr = (a) => a.name?.name === 'aria-describedby'
-const findSpreadAttr = (a) => a.type === 'JSXSpreadAttribute'
-const isWithinSvgJsxElement = (node) => {
-  if (
-    node.type === 'JSXElement' &&
-    node.openingElement.name?.name === 'svg'
-  ) {
-    return true
-  }
-
-  return node.parent ? isWithinSvgJsxElement(node.parent) : false
-}
+const REGEX_IMG = /((i|I)mg|Image)$/ // HINT: Iconは別途テキストが存在する場合が多いためチェックの対象外とする
+const IMG_ELEMENT = 'JSXOpeningElement[name.name=/((i|I)mg|Image)$/]'
+const ALT_LIKE_ATTRIBUTE = 'JSXAttribute[name.name=/^(alt|aria-describedby)$/]'
 
 const MESSAGE_NOT_EXIST_ALT = `画像にはalt属性を指定してください。
  - コンポーネントが画像ではない場合、img or image を末尾に持たない名称に変更してください。
@@ -43,44 +31,20 @@ module.exports = {
   },
   create(context) {
     const option = context.options[0] || {}
-    const checkType = option.checkType || 'always'
+    const notHasSpreadAttr = option.checkType === 'allow-spread-attributes' ? ':not(:has(JSXSpreadAttribute))' : ''
 
     return {
-      JSXOpeningElement: (node) => {
-        if (node.name.name) {
-          const matcher = node.name.name.match(REGEX_IMG)
-
-          if (matcher) {
-            const alt = node.attributes.find(findAltAttr)
-
-            let message = ''
-
-            if (!alt) {
-              if (
-                !node.attributes.find(findAriaDescribedbyAttr) &&
-                (
-                  matcher.input !== 'image' ||
-                  !isWithinSvgJsxElement(node.parent)
-                ) &&
-                (
-                  checkType !== 'allow-spread-attributes' ||
-                  !node.attributes.some(findSpreadAttr)
-                )
-              ) {
-                message = MESSAGE_NOT_EXIST_ALT
-              }
-            } else if (alt.value.value === '') {
-              message = MESSAGE_NULL_ALT
-            }
-
-            if (message) {
-              context.report({
-                node,
-                message,
-              });
-            }
-          }
-        }
+      [`${IMG_ELEMENT}:not(:has(${ALT_LIKE_ATTRIBUTE}))${notHasSpreadAttr}`]: (node) => {
+        context.report({
+          node,
+          message: MESSAGE_NOT_EXIST_ALT,
+        });
+      },
+      [`${IMG_ELEMENT}:has(${ALT_LIKE_ATTRIBUTE}:matches([value.value=""],[value=null]))${notHasSpreadAttr}`]: (node) => {
+        context.report({
+          node,
+          message: MESSAGE_NULL_ALT,
+        });
       },
     }
   },

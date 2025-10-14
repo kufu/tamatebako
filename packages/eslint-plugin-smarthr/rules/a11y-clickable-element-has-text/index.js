@@ -8,14 +8,8 @@ const SCHEMA = [
   }
 ]
 
-const REGEX_NLSP = /^\s*\n+\s*$/
-const REGEX_CLICKABLE_ELEMENT = /^(a|(.*?)Anchor(Button)?|(.*?)Link|(b|B)utton)$/
-const REGEX_SMARTHR_LOGO = /SmartHRLogo$/
-const REGEX_TEXT_COMPONENT = /(Text|Message)$/
-const REGEX_JSX_TYPE = /^(JSXText|JSXExpressionContainer)$/
-
-const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
-const checkFalsyJSXText = (c) => c.type !== 'JSXText' || !REGEX_NLSP.test(c.value)
+const CLICKABLE_ELEMENT = 'JSXElement[openingElement.name.name=/((^b|B)utton|Anchor|Link|^a)/]:has(JSXClosingElement)'
+const TEXT_LIKE_ATTRIBUTE = 'JSXAttribute[name.name=/^(text|alt|aria-label(ledby)?)$/]:not(:matches([value=null],[value.value=""])))'
 
 const message = `a, buttonなどのクリッカブルな要素内にはテキストを設定してください
  - 要素内にアイコン、画像のみを設置する場合はaltなどの代替テキスト用属性を指定してください
@@ -33,76 +27,15 @@ module.exports = {
   create(context) {
     const option = context.options[0] || {}
     const componentsWithText = option.componentsWithText || []
+    // HINT: SmartHRLogo コンポーネントは内部でaltを持っているため対象外にする
+    const elementWithText = `JSXOpeningElement[name.name=/(SmartHRLogo|Text|Message|^(${componentsWithText.join('|')}))$/]`
 
     return {
-      JSXElement: (parentNode) => {
-        // HINT: 閉じタグが存在しない === テキストノードが存在しない
-        if (!parentNode.closingElement) {
-          return
-        }
-
-        const node = parentNode.openingElement
-
-        if (!node.name.name || !REGEX_CLICKABLE_ELEMENT.test(node.name.name)) {
-          return
-        }
-
-        const recursiveSearch = (c) => {
-          if (REGEX_JSX_TYPE.test(c.type)) {
-            return true
-          }
-
-          switch (c.type) {
-            case 'JSXFragment': {
-              return c.children && filterFalsyJSXText(c.children).some(recursiveSearch)
-            }
-            case 'JSXElement': {
-              // // HINT: SmartHRLogo コンポーネントは内部でaltを持っているため対象外にする
-              if (REGEX_SMARTHR_LOGO.test(c.openingElement.name.name)) {
-                return true
-              }
-
-              const tagName = c.openingElement.name.name
-
-              if (REGEX_TEXT_COMPONENT.test(tagName) || componentsWithText.includes(tagName)) {
-                return true
-              }
-
-              // HINT: role & aria-label を同時に設定されている場合か、text属性が設定されている場合許可
-              let existRole = false
-              let existAriaLabel = false
-              const result = c.openingElement.attributes.reduce((prev, a) =>  {
-                const n = a.name?.name
-
-                if (prev || n === 'text') {
-                  return true
-                }
-
-                const v = a.value?.value
-
-                existRole = existRole || (n === 'role' && v === 'img')
-                existAriaLabel = existAriaLabel || n === 'aria-label'
-
-                if (existRole && existAriaLabel) {
-                  return true
-                }
-
-                return n === 'alt' && (v || a.value.type === 'JSXExpressionContainer') || false
-              }, null)
-
-              return result || (c.children && filterFalsyJSXText(c.children).some(recursiveSearch))
-            }
-          }
-
-          return false
-        }
-
-        if (!filterFalsyJSXText(parentNode.children).find(recursiveSearch)) {
-          context.report({
-            node,
-            message,
-          });
-        }
+      [`${CLICKABLE_ELEMENT}:not(:has(:matches(${TEXT_LIKE_ATTRIBUTE},JSXText,JSXExpressionContainer,${elementWithText}))`]: (node) => {
+        context.report({
+          node,
+          message,
+        });
       },
     }
   },

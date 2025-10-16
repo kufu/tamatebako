@@ -2991,9 +2991,6 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-prohibit-useless-sectioning-fragment": [
       2,
     ],
-    "smarthr/a11y-replace-unreadable-symbol": [
-      2,
-    ],
     "smarthr/a11y-trigger-has-button": [
       2,
     ],

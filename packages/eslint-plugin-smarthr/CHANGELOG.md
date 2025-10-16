@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.11.0...eslint-plugin-smarthr-v2.0.0) (2025-10-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850))
+
+### Code Refactoring
+
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850)) ([68336f8](https://github.com/kufu/tamatebako/commit/68336f8df42fcfe0c3a8375671377cc62b2be711))
+
 ## [1.11.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.10.0...eslint-plugin-smarthr-v1.11.0) (2025-10-01)
 
 

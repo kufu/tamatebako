@@ -170,7 +170,7 @@ importers:
         version: 11.1.0
     devDependencies:
       '@types/node':
-        specifier: ^20.19.20
+        specifier: ^20.19.21
         version: 20.19.21
       '@types/uuid':
         specifier: ^10.0.0

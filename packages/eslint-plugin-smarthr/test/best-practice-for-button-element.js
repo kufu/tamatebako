@@ -19,8 +19,6 @@ const ERRORMESSAGE_PROHIBIT_STYLED = `"styled.button" の直接利用をやめ�
 
 ruleTester.run('best-practice-for-button-element', rule, {
   valid: [
-    { code: `import styled from 'styled-components'` },
-    { code: `import styled, { css } from 'styled-components'` },
     { code: `<Button />` },
     { code: `<Button>ほげ</Button>` },
     { code: `<AnyButton>ほげ</AnyButton>` },
@@ -29,7 +27,6 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: 'const HogeButton = styled(HogeButton)``' },
   ],
   invalid: [
-    { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
     { code: `<button>ほげ</button>`, errors: [ { message: ERRORMESSAGE_REQUIRED_TYPE_ATTR } ] },
     { code: 'const HogeButton = styled.button``', errors: [ { message: ERRORMESSAGE_PROHIBIT_STYLED } ] },
   ]

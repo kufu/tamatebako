@@ -123,4 +123,4 @@ const generateTagFormatter = ({ context, EXPECTED_NAMES, UNEXPECTED_NAMES }) => 
   }
 }
 
-module.exports = { generateTagFormatter, checkImportStyledComponents, getStyledComponentBaseName }
+module.exports = { generateTagFormatter }

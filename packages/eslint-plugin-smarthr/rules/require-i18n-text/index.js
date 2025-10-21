@@ -1,5 +1,3 @@
-const NOOP = () => {}
-
 // デフォルトのワイルドカード設定
 const DEFAULT_WILDCARD_ATTRIBUTES = [
   'alt',
@@ -30,31 +28,12 @@ const SCHEMA = [
   },
 ]
 
-const isStringLiteral = (node) => {
-  if (!node) return false
+// 文字列リテラルを持つ属性を選択するセレクタの条件部分
+const STRING_LITERAL_CONDITION =
+  ':matches([value.type="Literal"][value.value=/\\S/], [value.type="JSXExpressionContainer"][value.expression.type="Literal"][value.expression.value=/\\S/])'
 
-  // 直接の文字列リテラル
-  if (node.type === 'Literal' && typeof node.value === 'string') {
-    return node.value !== ''
-  }
-
-  // JSXExpressionContainer内の文字列リテラル
-  if (node.type === 'JSXExpressionContainer') {
-    const expr = node.expression
-    if (expr.type === 'Literal' && typeof expr.value === 'string') {
-      return expr.value !== ''
-    }
-  }
-
-  return false
-}
-
-const getElementName = (node) => {
-  if (node.name.type === 'JSXIdentifier') {
-    return node.name.name
-  }
-  return null
-}
+const generateAttributeSelector = (attributes) =>
+  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${STRING_LITERAL_CONDITION}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -66,8 +45,6 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0] || {}
-
-    // elementsをMap<string, Set<string>>に変換
     const elementsObj = options.elements || {}
 
     // ユーザーが'*'を設定していない場合のみデフォルトを適用
@@ -75,48 +52,47 @@ module.exports = {
       elementsObj['*'] = DEFAULT_WILDCARD_ATTRIBUTES
     }
 
-    const elements = new Map(Object.entries(elementsObj).map(([elementName, attributes]) => [elementName, new Set(attributes)]))
+    const wildcardAttributes = elementsObj['*']
+    const specificElements = Object.keys(elementsObj).filter((k) => k !== '*')
+    const handlers = {}
 
-    // ワイルドカード '*' の属性セット
-    const wildcardAttributes = elements.get('*')
+    const reportAttributeError = (node) => {
+      const elementName = node.parent?.name?.name
+      context.report({
+        node,
+        message: `${elementName}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`,
+      })
+    }
 
-    let JSXOpeningElement = NOOP
+    // 個別要素の設定
+    for (const elementName of specificElements) {
+      const attributes = elementsObj[elementName]
+      if (attributes.length === 0) continue
 
-    if (elements.size > 0) {
-      JSXOpeningElement = (node) => {
-        const elementName = getElementName(node)
-        if (!elementName) return
+      handlers[`JSXOpeningElement[name.name="${elementName}"] > ${generateAttributeSelector(attributes)}`] = reportAttributeError
+    }
 
-        node.attributes.forEach((attr) => {
-          if (attr.type !== 'JSXAttribute') return
-
-          const attrName = attr.name.name
-
-          // 個別の要素設定があればそれを優先、なければワイルドカード
-          const elementAttributes = elements.get(elementName) || wildcardAttributes
-          if (elementAttributes?.has(attrName) && isStringLiteral(attr.value)) {
-            context.report({
-              node: attr,
-              message: `${elementName}の${attrName}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`,
-            })
-          }
-        })
+    // ワイルドカード設定
+    if (wildcardAttributes && wildcardAttributes.length > 0) {
+      const attributeSelector = generateAttributeSelector(wildcardAttributes)
+      if (specificElements.length > 0) {
+        // 個別設定要素を除外
+        handlers[`JSXOpeningElement:not([name.name=/^(${specificElements.join('|')})$/]) > ${attributeSelector}`] =
+          reportAttributeError
+      } else {
+        handlers[attributeSelector] = reportAttributeError
       }
     }
 
-    return {
-      JSXOpeningElement,
-      JSXText: (node) => {
-        // 空白文字のみの場合はスキップ
-        const text = node.value.trim()
-        if (text === '') return
-
-        context.report({
-          node,
-          message: '子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください',
-        })
-      },
+    // 子要素の文字列リテラルチェック（空白のみのテキストは除外）
+    handlers['JSXText[value=/\\S/]'] = (node) => {
+      context.report({
+        node,
+        message: '子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください',
+      })
     }
+
+    return handlers
   },
 }
 

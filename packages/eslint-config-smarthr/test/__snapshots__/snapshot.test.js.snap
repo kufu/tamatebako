@@ -1226,7 +1226,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "when": false,
       "window": false,
     },
-    "parser": "typescript-eslint/parser@8.46.0",
+    "parser": "typescript-eslint/parser@8.46.1",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true,
@@ -1244,10 +1244,10 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "@",
     "import",
     "react",
-    "react-hooks:eslint-plugin-react-hooks",
+    "react-hooks:eslint-plugin-react-hooks@7.0.0",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
-    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.46.0",
-    "typescript:@typescript-eslint/eslint-plugin@8.46.0",
+    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.46.1",
+    "typescript:@typescript-eslint/eslint-plugin@8.46.1",
     "smarthr:eslint-plugin-smarthr",
   ],
   "processor": undefined,
@@ -2989,9 +2989,6 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       1,
     ],
     "smarthr/a11y-prohibit-useless-sectioning-fragment": [
-      2,
-    ],
-    "smarthr/a11y-replace-unreadable-symbol": [
       2,
     ],
     "smarthr/a11y-trigger-has-button": [

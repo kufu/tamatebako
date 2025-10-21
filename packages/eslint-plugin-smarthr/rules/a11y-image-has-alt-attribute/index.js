@@ -1,4 +1,3 @@
-const REGEX_IMG = /((i|I)mg|Image)$/ // HINT: Iconは別途テキストが存在する場合が多いためチェックの対象外とする
 const IMG_ELEMENT = 'JSXOpeningElement[name.name=/((i|I)mg|Image)$/]'
 const ALT_LIKE_ATTRIBUTE = 'JSXAttribute[name.name=/^(alt|aria-describedby)$/]'
 

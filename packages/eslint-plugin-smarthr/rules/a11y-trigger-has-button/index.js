@@ -1,5 +1,4 @@
 const TRIGGER_REGEX = /(Dropdown|Dialog)Trigger$/
-const HELP_DIALOG_TRIGGER_REGEX = /HelpDialogTrigger$/
 const BUTTON_REGEX = /(B|^b)utton$/
 const ANCHOR_BUTTON_REGEX = /AnchorButton$/
 const FALSY_TEXT_REGEX = /^\s*\n+\s*$/
@@ -18,54 +17,37 @@ module.exports = {
   },
   create(context) {
     return {
-      JSXElement: (parentNode) => {
-        // HINT: 閉じタグが存在しない === 子が存在しない
-        // 子を持っていない場合はおそらく固定の要素を吐き出すコンポーネントと考えられるため
-        // その中身をチェックすることで担保できるのでskipする
-        if (!parentNode.closingElement) {
-          return
-        }
-
-        const node = parentNode.openingElement
-
-        if (!node.name.name) {
-          return
-        }
-
-        const match = node.name.name.match(TRIGGER_REGEX)
-
-        if (!match || HELP_DIALOG_TRIGGER_REGEX.test(node.name.name)) {
-          return
-        }
-
+      [`JSXElement[openingElement.name.name=${TRIGGER_REGEX}]:not([openingElement.name.name=/HelpDialogTrigger$/])`]: (parentNode) => {
         const children = filterFalsyJSXText(parentNode.children)
 
         if (children.length > 1) {
+          const node = parentNode.openingElement
+          const match = node.name.name.match(TRIGGER_REGEX)
+
           context.report({
             node,
-            message: `${match[1]}Trigger の直下には複数のコンポーネントを設置することは出来ません。buttonコンポーネントが一つだけ設置されている状態にしてください`,
+            message: `${match[1]}Trigger の直下には複数のコンポーネントを設置することは出来ません。button要素が一つだけ設置されている状態にしてください`,
           })
-
-          return
-        }
-
-        children.forEach((c) => {
-          // `<DialogTrigger>{button}</DialogTrigger>` のような場合は許可する
-          if (c.type === 'JSXExpressionContainer') {
-            return false
-          }
+        } else {
+          const c = children[0]
 
           if (
-            c.type !== 'JSXElement' ||
-            !BUTTON_REGEX.test(c.openingElement.name.name) ||
-            ANCHOR_BUTTON_REGEX.test(c.openingElement.name.name)
+            // `<DialogTrigger>{button}</DialogTrigger>` のような場合は許可する
+            c &&
+            c.type !== 'JSXExpressionContainer' && (
+              c.type !== 'JSXElement' ||
+              !BUTTON_REGEX.test(c.openingElement.name.name) ||
+              ANCHOR_BUTTON_REGEX.test(c.openingElement.name.name)
+            )
           ) {
+            const match = parentNode.openingElement.name.name.match(TRIGGER_REGEX)
+
             context.report({
               node: c,
-              message: `${match[1]}Trigger の直下にはbuttonコンポーネントのみ設置してください`,
+              message: `${match[1]}Trigger の直下にはbutton要素のみ設置してください(AnchorButtonはa要素のため設置できません)`,
             })
           }
-        })
+        }
       },
     }
   },

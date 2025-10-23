@@ -48,19 +48,14 @@ module.exports = {
     const elementsObj = options.elements || {}
 
     // ユーザーが'*'を設定していない場合のみデフォルトを適用
-    if (!elementsObj['*']) {
-      elementsObj['*'] = DEFAULT_WILDCARD_ATTRIBUTES
-    }
-
-    const wildcardAttributes = elementsObj['*']
+    const wildcardAttributes = elementsObj['*'] || DEFAULT_WILDCARD_ATTRIBUTES
     const specificElements = Object.keys(elementsObj).filter((k) => k !== '*')
     const handlers = {}
 
     const reportAttributeError = (node) => {
-      const elementName = node.parent?.name?.name
       context.report({
         node,
-        message: `${elementName}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`,
+        message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`,
       })
     }
 

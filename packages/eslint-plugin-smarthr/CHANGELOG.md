@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.0.0...eslint-plugin-smarthr-v2.1.0) (2025-10-29)
+
+
+### Features
+
+* prohibit-export-array-typeの型チェックをArray&lt;any&gt;の場合も対象にする ([#869](https://github.com/kufu/tamatebako/issues/869)) ([ee4a647](https://github.com/kufu/tamatebako/commit/ee4a64755c36880d8f43c31ebd47244d71ea2fe9))
+* コンポーネントの子要素やプロパティの文字列リテラルを多言語化の観点で検査するルールを追加 ([#815](https://github.com/kufu/tamatebako/issues/815)) ([9dc8bda](https://github.com/kufu/tamatebako/commit/9dc8bda98d1a978dd0e4d61b91c858ef1c117d9c))
+
 ## [2.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.11.0...eslint-plugin-smarthr-v2.0.0) (2025-10-16)
 
 

@@ -6,7 +6,7 @@
   "description": "A sharable ESLint plugin for SmartHR",
   "main": "index.js",
   "engines": {
-    "node": ">=22.21.0"
+    "node": ">=22.21.1"
   },
   "scripts": {
     "test": "jest"

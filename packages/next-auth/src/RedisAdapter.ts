@@ -99,7 +99,7 @@ export function RedisAdapter(redis: Redis): Adapter {
   }
 
   return {
-    async createUser(user) {
+    async createUser(user: AdapterUser) {
       const id = uuid()
       // TypeScript thinks the emailVerified field is missing
       // but all fields are copied directly from user, so it's there
@@ -123,7 +123,7 @@ export function RedisAdapter(redis: Redis): Adapter {
       const user = await getUser(userId)
       return setUser(userId, { ...(user as AdapterUser), ...updates })
     },
-    async linkAccount(account) {
+    async linkAccount(account: AdapterAccount) {
       const id = `${account.provider}:${account.providerAccountId}`
       await setAccount(id, { ...account, id })
     },
@@ -163,7 +163,7 @@ export function RedisAdapter(redis: Redis): Adapter {
       return hydrateDates(token)
       // return reviveFromJson(token)
     },
-    async unlinkAccount(account) {
+    async unlinkAccount(account: AdapterAccount) {
       const id = `${account.provider}:${account.providerAccountId}`
       const dbAccount = await getAccount(id)
       if (!dbAccount) return

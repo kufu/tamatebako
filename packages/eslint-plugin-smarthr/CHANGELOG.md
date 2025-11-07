@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.0.0...eslint-plugin-smarthr-v2.1.0) (2025-10-29)
+
+
+### Features
+
+* prohibit-export-array-typeの型チェックをArray&lt;any&gt;の場合も対象にする ([#869](https://github.com/kufu/tamatebako/issues/869)) ([ee4a647](https://github.com/kufu/tamatebako/commit/ee4a64755c36880d8f43c31ebd47244d71ea2fe9))
+* コンポーネントの子要素やプロパティの文字列リテラルを多言語化の観点で検査するルールを追加 ([#815](https://github.com/kufu/tamatebako/issues/815)) ([9dc8bda](https://github.com/kufu/tamatebako/commit/9dc8bda98d1a978dd0e4d61b91c858ef1c117d9c))
+
+## [2.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.11.0...eslint-plugin-smarthr-v2.0.0) (2025-10-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850))
+
+### Code Refactoring
+
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850)) ([68336f8](https://github.com/kufu/tamatebako/commit/68336f8df42fcfe0c3a8375671377cc62b2be711))
+
+## [1.11.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.10.0...eslint-plugin-smarthr-v1.11.0) (2025-10-01)
+
+
+### Features
+
+* a11y-input-in-form-controlのaria-label,aria-labelledbyが設定されている場合、FormControlでラップしなくてもよしとする ([#795](https://github.com/kufu/tamatebako/issues/795)) ([443892f](https://github.com/kufu/tamatebako/commit/443892ffb39732157d77a179484da3f529e43885))
+
+## [1.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.9.0...eslint-plugin-smarthr-v1.10.0) (2025-10-01)
+
+
+### Features
+
+* セル内のCheckboxおよびRadioButtonを禁止するルールを追加 ([#792](https://github.com/kufu/tamatebako/issues/792)) ([17ab980](https://github.com/kufu/tamatebako/commit/17ab98018c81a81376ac213e3309e60080ed9326))
+
+## [1.9.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.1...eslint-plugin-smarthr-v1.9.0) (2025-09-08)
+
+
+### Features
+
+* a11y-input-form-controlのラベル設定チェックのロジックを変更する ([#753](https://github.com/kufu/tamatebako/issues/753)) ([f4b5308](https://github.com/kufu/tamatebako/commit/f4b5308911c45862670eca58abffeeb75d20c16e))
+
 ## [1.8.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.8.0...eslint-plugin-smarthr-v1.8.1) (2025-06-12)
 
 

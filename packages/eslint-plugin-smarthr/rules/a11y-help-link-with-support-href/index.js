@@ -1,7 +1,7 @@
 const SCHEMA = []
 
 const SUPPORT_URL_PREFIX_REGEX = /(\/|\.)support\./
-const SUPPORT_IDENTIFIER_REGEX = /(S|(^|_)s)upport(.*)(H(ref|REF)|U(rl|URL))$/
+const SUPPORT_IDENTIFIER_REGEX = /(S|(^|_)s)upport(.*)(H(ref|REF)|U(rl|RL))$/
 const PATH_OBJ_REGEX = /^((p|P)ath|PATH)\./
 const SUPPORT_PATH_MEMBER_REGEX = /\.support\./
 

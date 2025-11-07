@@ -45,3 +45,26 @@ $ pnpm release
 ```
 
 [smarthr の organization](https://www.npmjs.com/org/smarthr) に所属していない場合は publish ができないので、申請をするか、すでに所属している人に publish を依頼してください。
+
+## 新しいパッケージの追加方法
+
+1. `packages` ディレクトリに新しいパッケージ用のディレクトリを作成し、必要なファイルを追加します。
+2. Lerna がリリースしてしまわないように、`package.json` に `private: true` を追記します。
+3. tsc のビルド対象に含める場合は、`packages/tsconfig.json` の `references` に追加します。
+4. 通常通り conventional commits でコミットを行い、プルリクエストを作成します。
+5. プルリクエストをマージしても、リリース用のプルリクエストが作成されないことを確認します。
+
+## 新しいパッケージのリリース方法
+
+1. 下記の3つの変更を含んだプルリクエストを作成します。
+   - 新しいパッケージの `package.json` に `version: "1.0.0"` を追記します。
+   - 新しいパッケージの `package.json` から `private: true` を削除します。
+   - release-please がリリース用のプルリクエストを作るように `release-please-config.json` に下記のような行を追加します。 (もし `0.1.0` などのマイナーバージョンでリリースしたい場合は [`initial-version`](https://github.com/googleapis/release-please/blob/a9b82178ce8040af09e55be509911fa36e0c20e7/schemas/config.json#L245-L247) を指定し、該当パッケージの `package.json` の `version` も合わせてください。)
+```
+"packages/new-package-name": {},
+```
+2. プルリクエストをマージすると、リリース用のプルリクエストが作成されます。`.release-please-manifest.json` の差分に表示されているリリースバージョンが正しいことを確認してください。
+3. リリース用のプルリクエストに含まれる `CHANGELOG.md` には、リリースまでのすべてのプルリクエストの内容が記載されています。それらの記載が不要な場合はリリース用プルリクエストに直接コミットする形で `CHANGELOG.md` を修正します。([例](https://github.com/kufu/tamatebako/pull/765/commits/1ae223cc77d8022c499b2ccdf92b4d600c599146))
+4. リリース用のプルリクエストをマージして、Github Actions のリリースのワークフローを見守ります。
+5. リリースが完了したら、npm のパッケージのページで Trusted Publisher と Publishing Access の設定をします。
+  - https://github.com/kufu/tamatebako/pull/793 に貼ってあるキャプチャと内容と同じ設定にしてください。

@@ -31,17 +31,17 @@
     "react": ">=16.13.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.3",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-react": "^7.27.1",
-    "@babel/preset-typescript": "^7.27.1",
-    "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@storybook/addon-webpack5-compiler-swc": "^4.0.1",
     "@storybook/react": "^8.6.14",
     "@storybook/react-webpack5": "^8.6.14",
-    "@types/react": "^19.1.10",
+    "@types/react": "^19.2.2",
     "babel-loader": "^10.0.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "storybook": "^8.6.14"
   }
 }

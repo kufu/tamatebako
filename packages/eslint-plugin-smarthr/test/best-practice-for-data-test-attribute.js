@@ -10,12 +10,13 @@ const ruleTester = new RuleTester({
     },
   },
 })
-const generateErrorMessage = (attr) => `テストのために要素を指定するために、${attr} 属性を利用するのではなく、他の方法で要素を指定することを検討してください。
- - 方法1: click_link, click_button等を利用したりすることで、利用しているテスト環境に準じた方法で要素を指定することを検討してください。
+const ERROR_MESSAGE = `テストしたい要素を指定するためにテスト用の属性は利用せず、他の方法を検討してください
+ - 方法1: click_link, click_button等を利用することで、テスト環境に準じた方法で要素を指定することを検討してください
    - 参考(Testing Library): https://testing-library.com/docs/queries/about
    - 参考(Capybara): https://rubydoc.info/github/jnicklas/capybara/Capybara/Node/Finders
- - 方法2: テスト環境のメソッド等で要素が指定できない場合はrole属性、name属性、id属性等を利用した方法で要素を指定することを検討してください。
- - 方法3: 上記の方法でも要素が指定できない場合は、'eslint-disable-next-line' 等を利用して、このルールを無効化してください。`
+ - 方法2: テスト環境のメソッド等で要素が指定できない場合はrole、name、aria系などユーザーが認識できる属性を利用した方法で要素を指定することを検討してください
+   - 画像の場合、alt属性が利用できます
+   - id, class属性は基本的にユーザーが認識出来ないため利用しないでください`
 
 
 ruleTester.run('best-practice-for-data-test-attribute', rule, {
@@ -25,9 +26,9 @@ ruleTester.run('best-practice-for-data-test-attribute', rule, {
     { code: '<Any data-any="fuga">ほげ</Any>'},
   ],
   invalid: [
-    { code: '<Any data-spec="hijklmn">ほげ</Any>', errors: [{message: generateErrorMessage("data-spec")}] },
-    { code: '<Any data-spec>ほげ</Any>', errors: [{message: generateErrorMessage("data-spec")}] },
-    { code: '<Any data-testid="abcdefg">ほげ</Any>', errors: [{message: generateErrorMessage("data-testid")}] },
-    { code: '<Any data-testid>ほげ</Any>', errors: [{message: generateErrorMessage("data-testid")}] },
+    { code: '<Any data-spec="hijklmn">ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
+    { code: '<Any data-spec>ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
+    { code: '<Any data-testid="abcdefg">ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
+    { code: '<Any data-testid>ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
   ]
 })

@@ -143,10 +143,6 @@ ruleTester.run('a11y-clickable-element-has-text', rule, {
       errors: [{ message: defaultErrorMessage }]
     },
     {
-      code: `<a><div role="article" aria-label="hoge" /></a>`,
-      errors: [{ message: defaultErrorMessage }]
-    },
-    {
       code: `<a><TextWithHoge /></a>`,
       errors: [{ message: defaultErrorMessage }]
     },

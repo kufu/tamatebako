@@ -27,13 +27,22 @@ ruleTester.run('best-practice-for-tailwind-prohibit-root-margin', rule, {
     // コンポーネントのルート以外の要素での余白使用
     {
       code: `
+        const Card = () => (
+          <div className="shr-bg-white">
+            <h2 className="shr-mt-4">Title</h2>
+            <p className="shr-mb-2 shr-pt-2">Content</p>
+          </div>
+        )
+      `,
+    },
+    // returnしない場合
+    {
+      code: `
         const Card = () => {
-          return (
-            <div className="shr-bg-white">
-              <h2 className="shr-mt-4">Title</h2>
-              <p className="shr-mb-2 shr-pt-2">Content</p>
-            </div>
-          )
+          <div className="shr-bg-white">
+            <h2 className="shr-mt-4">Title</h2>
+            <p className="shr-mb-2 shr-pt-2">Content</p>
+          </div>
         }
       `,
     },
@@ -91,7 +100,7 @@ ruleTester.run('best-practice-for-tailwind-prohibit-root-margin', rule, {
     {
       code: `
         const Box = () => (
-            <div className="shr-bg-gray-100 shr-ml-2">
+            <div className="shr-bg-gray-100 shr-ml-2 hoge">
               <p>Content</p>
             </div>
         )

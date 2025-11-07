@@ -11,9 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 const generateErrorText = (name) => `${name} には prefix と suffix は同時に設定できません。
- - prefix または suffix のみを設定してください。
- - どちらにもアイコンをつけられそうな場合は、アイコン付き（右）（サフィックス）を優先し、アイコン付き（左）（プレフィックス）には指定しないでください。
- - 両方設定したい場合は、'eslint-disable-next-line' 等を利用して、このルールを無効化してください。`
+ - どちらにもアイコンをつけられそうな場合は、prefixを優先してください。`
 
 ruleTester.run('design-system-guideline-prohibit-double-icons', rule, {
   valid: [

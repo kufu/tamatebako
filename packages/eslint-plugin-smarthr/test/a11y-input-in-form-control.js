@@ -111,6 +111,8 @@ ruleTester.run('a11y-input-in-form-control', rule, {
     { code: '<Fieldset><HogeCheckBoxs /></Fieldset>' },
     { code: '<Fieldset><HogeCheckBoxes /></Fieldset>' },
     { code: '<HogeFormControl>{ dateInput ? <DateInput /> : <Input /> }</HogeFormControl>'},
+    { code: '<Input aria-label="hoge" />' },
+    { code: '<Select aria-labelledby="hoge" />' },
   ],
   invalid: [
     { code: `<input />`, errors: [ { message: noLabeledInput('input') } ] },

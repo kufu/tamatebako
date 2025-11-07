@@ -33,16 +33,12 @@ module.exports = {
     const getSourceCodeText = (node) => context.sourceCode.getText(node)
 
     return {
-      MemberExpression: (node) => {
-        if (node.property && node.property.name === 'currentTarget') {
-          const eventObjectName = node.object.name
-
-          if (eventObjectName) {
-            switch (checkFunctionTopVariable(node.parent, eventObjectName, getSourceCodeText)) {
-              case 1:
-                context.report({
-                  node,
-                  message: `currentTargetはイベント処理中以外に参照するとnullになる場合があります。awaitの宣言より前にcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
+      [`:matches(FunctionExpression, ArrowFunctionExpression) MemberExpression[property.name="currentTarget"][object.name]`]: (node) => {
+        switch (checkFunctionTopVariable(node.parent, node.object.name, getSourceCodeText)) {
+          case 1:
+            context.report({
+              node,
+              message: `currentTargetはイベント処理中以外に参照するとnullになる場合があります。awaitの宣言より前にcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
  - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
  - NG例:
     const onChange = async (e) => {
@@ -55,13 +51,13 @@ module.exports = {
       await hoge()
       fuga(value)
     }`,
-                })
+            })
 
-                break
-              case 2:
-                context.report({
-                  node,
-                  message: `currentTargetはイベント処理中以外に参照するとnullになる場合があります。イベントハンドラ用関数のスコープ直下でcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
+            break
+          case 2:
+            context.report({
+              node,
+              message: `currentTargetはイベント処理中以外に参照するとnullになる場合があります。イベントハンドラ用関数のスコープ直下でcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
  - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
  - React/useStateのsetterは第一引数に関数を渡すと非同期処理になるためこの問題が起きる可能性があります
  - イベントハンドラ内で関数を定義すると参照タイミングがずれる可能性があるため、イベントハンドラ直下のスコープ内にcurrentTarget関連の参照を変数に残すことをオススメします
@@ -74,12 +70,9 @@ module.exports = {
       const value = e.currentTarget.value
       setItem((current) => ({ ...current, value }))
     }`,
-                })
+            })
 
-                break
-            }
-          }
-
+            break
         }
       },
     }

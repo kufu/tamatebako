@@ -1,32 +1,30 @@
-
 name: test
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
 
 jobs:
   build:
-
     name: Node.js ${{ matrix.os }} ${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [22.x, 24.x]
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: pnpm install, and pnpm test
-      run: |
-        corepack enable && corepack prepare --activate
-        pnpm install
-        pnpm test
-      env:
-        CI: true
+      - uses: actions/checkout@v5
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: pnpm install, and pnpm test
+        run: |
+          corepack enable && corepack prepare --activate
+          pnpm install
+          pnpm test
+        env:
+          CI: true

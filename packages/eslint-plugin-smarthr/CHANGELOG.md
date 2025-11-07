@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.1.0...eslint-plugin-smarthr-v2.2.0) (2025-11-07)
+
+
+### Features
+
+* a11y-help-link-with-support-hrefで対象となる変数名のバグを修正 ([#890](https://github.com/kufu/tamatebako/issues/890)) ([c9c4984](https://github.com/kufu/tamatebako/commit/c9c49848293fd88640e886c6586ae8d92a99f40c))
+* trim-propsでtemplate literalもautofixの対象にする ([#884](https://github.com/kufu/tamatebako/issues/884)) ([4072950](https://github.com/kufu/tamatebako/commit/40729507f5084308128ca39d5887ee81f2f67dd5))
+
 ## [2.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.0.0...eslint-plugin-smarthr-v2.1.0) (2025-10-29)
 
 

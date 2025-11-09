@@ -2987,6 +2987,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-numbered-text-within-ol": [
       2,
     ],
+    "smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell": [
+      1,
+    ],
     "smarthr/a11y-prohibit-input-maxlength-attribute": [
       2,
     ],

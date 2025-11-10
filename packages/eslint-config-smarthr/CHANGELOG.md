@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.1.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v10.0.0...eslint-config-smarthr-v10.1.0) (2025-11-09)
+
+
+### Features
+
+* TdCheckboxの利用を推奨するルールをconfigに追加 ([#794](https://github.com/kufu/tamatebako/issues/794)) ([1dd4de3](https://github.com/kufu/tamatebako/commit/1dd4de3dd25c0dad6f7519bcd72e6f813b33e88b))
+
 ## [10.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v9.6.0...eslint-config-smarthr-v10.0.0) (2025-10-16)
 
 

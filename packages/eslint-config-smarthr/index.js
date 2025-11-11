@@ -66,6 +66,7 @@ export default [
       'smarthr/require-barrel-import': 'error',
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
+      'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

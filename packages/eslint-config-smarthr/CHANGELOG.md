@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.2.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v10.1.0...eslint-config-smarthr-v10.2.0) (2025-11-18)
+
+
+### Features
+
+* require-i18n-textをwarnとして追加 ([#901](https://github.com/kufu/tamatebako/issues/901)) ([ecf2e67](https://github.com/kufu/tamatebako/commit/ecf2e67f16dbf99522cca9e70b9e24eed0748909))
+
 ## [10.1.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v10.0.0...eslint-config-smarthr-v10.1.0) (2025-11-09)
 
 

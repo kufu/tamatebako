@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.0...eslint-plugin-smarthr-v2.2.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* a11y-anchor-has-href-attributeがhrefにメソッドが指定されている場合に誤検知することがある問題を修正 ([#905](https://github.com/kufu/tamatebako/issues/905)) ([6ebd6ec](https://github.com/kufu/tamatebako/commit/6ebd6ecc074a7088652697dcb6bfb60b63a13fc4))
+* a11y-input-has-name-attributeでtemplate literalの場合、誤検知してしまう問題を修正 ([#904](https://github.com/kufu/tamatebako/issues/904)) ([d440e86](https://github.com/kufu/tamatebako/commit/d440e8675bf600dbe8a51e496d7076bcf617336f))
+
 ## [2.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.1.0...eslint-plugin-smarthr-v2.2.0) (2025-11-07)
 
 

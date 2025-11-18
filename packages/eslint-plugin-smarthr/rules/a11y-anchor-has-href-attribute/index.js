@@ -91,7 +91,7 @@ module.exports = {
           reporter(node)
         }
       },
-      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([value=null],:has(Literal[value=/^(|#)$/])))`]: reporter,
+      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([value=null],:has(>Literal[value=/^(|#)$/]),:has(>JSXExpressionContainer[expression.value=/^(|#)$/])))`]: reporter,
     }
   },
 }

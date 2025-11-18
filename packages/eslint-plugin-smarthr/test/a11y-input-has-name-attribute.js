@@ -26,6 +26,7 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
     { code: '<HogeTextarea name="hoge" />' },
     { code: '<select name="hoge" />' },
     { code: '<Select name="hoge[0][Fuga]" />' },
+    { code: '<Select name={`ABC`} />' },
     { code: '<Input {...hoge} />', options: [{ checkType: 'allow-spread-attributes' }] },
     { code: '<Input {...args1} {...args2} />', options: [{ checkType: 'allow-spread-attributes' }] },
     { code: '<Input {...args} hoge="fuga" />', options: [{ checkType: 'allow-spread-attributes' }] },

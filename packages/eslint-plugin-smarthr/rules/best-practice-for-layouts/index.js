@@ -1,7 +1,15 @@
 const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
-
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
+
+const TARGET_INVALID_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Sidebar)$/
+const INVALID_ELEMENT = `JSXOpeningElement[name.name=${TARGET_INVALID_COMPONENT_REGEX}]`
+const HEADING_ELEMENT = 'JSXElement[openingElement.name.name=/Heading$/]'
+const STACK_ELEMENT_NOT_SPAN = 'JSXOpeningElement[name.name=/Stack$/]:not(:has(JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value="span"]))'
+const FORM_CONTROL_LABEL_ATTRIBUTE = 'JSXOpeningElement[name.name=/FormControl$/] JSXAttribute[name.name="label"]'
+const FIELDSET_LEGEND_ATTRIBUTE = 'JSXOpeningElement[name.name=/Fieldset$/] JSXAttribute[name.name="legend"]'
+const ICON_ELEMENT_WITH_TEXT = `JSXOpeningElement[name.name=/Icon$/]:has(JSXAttribute[name.name="text"])`
+const TEXT_ELEMENT_WITH_PREFIX = 'JSXOpeningElement[name.name=/Text$/]:has(JSXAttribute[name.name="prefixIcon"])'
 
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
 const checkFalsyJSXText = (c) => (
@@ -114,6 +122,62 @@ module.exports = {
             })
           }
         }
+      },
+      [`${HEADING_ELEMENT} ${INVALID_ELEMENT}`]: (node) => {
+        const component = node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]
+
+        context.report({
+          node,
+          message: `Headingの子孫に${component}を置くことはできません。Headingの外で${component}を使用するようにマークアップを修正してください。`
+        })
+      },
+      [`${HEADING_ELEMENT} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'Headingの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${HEADING_ELEMENT} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: 'HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください',
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} ${INVALID_ELEMENT}`]: (node) => {
+        context.report({
+          node,
+          message: `FormControlのlabel属性に${node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]}を置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。`,
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'FormControlのlabel属性にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: "FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください",
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} ${INVALID_ELEMENT}`]: (node) => {
+        context.report({
+          node,
+          message: `Fieldsetのlegend属性に${node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]}を置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。`,
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'Fieldsetのlegend属性にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: "Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください",
+        })
       },
     }
   },

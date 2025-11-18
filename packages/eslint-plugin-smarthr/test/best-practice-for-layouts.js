@@ -58,6 +58,12 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<Cluster>{a}</Cluster>` },
     { code: `<Cluster>{a.b}</Cluster>` },
     { code: `<Cluster>{a ? b : c}</Cluster>` },
+    { code: `<Heading><Stack as="span"><Hoge /><Fuga /></Stack></Heading>` },
+    { code: `<AnyHeading icon={<AnyIcon />}>hoge</AnyHeading>` },
+    { code: `<FormControl label={<AnyStack as="span"><span>a</span><span>b</span></AnyStack>} />` },
+    { code: `<AnyFormControl label={{ text: 'hoge', icon: <AnyIcon /> }} />` },
+    { code: `<AnyFieldset legend={{ text: <AnyStack as="span"><span>a</span><span>b</span></AnyStack> }} />` },
+    { code: `<Fieldset legend={{ text: 'hoge', icon: <AnyIcon /> }} />` },
   ],
   invalid: [
     { code: `<Stack><Hoge /></Stack>`, errors: [ { message: errorMessage('Stack', 'Stack') } ] },
@@ -90,6 +96,18 @@ ruleTester.run('best-practice-for-button-element', rule, {
  - 方法3: 別要素でマークアップし直すか、HogeStackを削除してください
    - 親要素に smarthr-ui/Cluster, smarthr-ui/Stack などが存在している場合、div・spanなどで1要素にまとめる必要がある場合があります
    - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください` } ] },
+    { code: `<Heading><Cluster><Hoge /><Fuga /></Cluster></Heading>`, errors: [ { message: `Headingの子孫にClusterを置くことはできません。Headingの外でClusterを使用するようにマークアップを修正してください。` } ] },
+    { code: `<AnyHeading><AnyStack><Hoge /><Fuga /></AnyStack></AnyHeading>`, errors: [ { message: `Headingの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください` } ] },
+    { code: `<Heading><AnyIcon text="hoge" /></Heading>`, errors: [ { message: `HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください` } ] },
+    { code: `<AnyHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyHeading>`, errors: [ { message: `HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください` } ] },
+    { code: `<AnyFormControl label={{ text: <Cluster><Hoge /><Fuga /></Cluster> }} />`, errors: [ { message: `FormControlのlabel属性にClusterを置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。` } ] },
+    { code: `<FormControl label={<AnyStack><Hoge /><Fuga /></AnyStack>} />`, errors: [ { message: `FormControlのlabel属性にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください` } ] },
+    { code: `<AnyFormControl label={{ text: <AnyIcon text="hoge" /> }} />`, errors: [ { message: `FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください` } ] },
+    { code: `<FormControl label={{ text: <Text prefixIcon={<SomeIcon /> }>hoge</Text>}} />`, errors: [ { message: `FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください` } ] },
+    { code: `<Fieldset legend={<Cluster><Hoge /><Fuga /></Cluster>} />`, errors: [ { message: `Fieldsetのlegend属性にClusterを置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。` } ] },
+    { code: `<AnyFieldset legend={{ text: <AnyStack><Hoge /><Fuga /></AnyStack> }} />`, errors: [ { message: `Fieldsetのlegend属性にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください` } ] },
+    { code: `<Fieldset legend={<AnyIcon text="hoge" />} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください` } ] },
+    { code: `<AnyFieldset legend={{ text: <Text prefixIcon={<SomeIcon />}>hoge</Text>}} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください` } ] },
   ]
 })
 

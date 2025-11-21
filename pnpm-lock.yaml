@@ -138,7 +138,7 @@ importers:
   packages/i18n:
     dependencies:
       next:
-        specifier: ^14.0.0 || ^15.0.0
+        specifier: ^14.0.0 || ^15.0.0 || ^16.0.0
         version: 14.2.16(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@testing-library/dom':
@@ -3195,9 +3195,6 @@ packages:
 
   camelize@1.0.1:
     resolution: {integrity: sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==}
-
-  caniuse-lite@1.0.30001697:
-    resolution: {integrity: sha512-GwNPlWJin8E+d7Gxq96jxM6w0w+VFeyyXRsjU58emtkYqnbwHqXm5uT2uCmO0RQE9htWknOP4xtBlLmM/gWxvQ==}
 
   caniuse-lite@1.0.30001727:
     resolution: {integrity: sha512-pB68nIHmbN6L/4C6MH1DokyR3bYqFwjaSs/sWDHGj4CTcFtQUQMuJftVwWkXq7mNWOybD3KhUv3oWHoGxgP14Q==}
@@ -10862,8 +10859,6 @@ snapshots:
 
   camelize@1.0.1: {}
 
-  caniuse-lite@1.0.30001697: {}
-
   caniuse-lite@1.0.30001727: {}
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
@@ -13930,7 +13925,7 @@ snapshots:
       '@next/env': 14.2.16
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001697
+      caniuse-lite: 1.0.30001727
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 19.2.0
@@ -14466,7 +14461,7 @@ snapshots:
 
   postcss@8.4.31:
     dependencies:
-      nanoid: 3.3.8
+      nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
 

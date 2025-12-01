@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.1...eslint-plugin-smarthr-v2.3.0) (2025-12-01)
+
+
+### Features
+
+* best-practice-for-layout にHeading, FormControl, Fieldsetのタイトル部分でLayout系コンポーネントの仕様を制限するチェックを追加 ([#906](https://github.com/kufu/tamatebako/issues/906)) ([631aeca](https://github.com/kufu/tamatebako/commit/631aecaa20c834b6d603e31af95f2aaee9694bd0))
+
 ## [2.2.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.0...eslint-plugin-smarthr-v2.2.1) (2025-11-18)
 
 

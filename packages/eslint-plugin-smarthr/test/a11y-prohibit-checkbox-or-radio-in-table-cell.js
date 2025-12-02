@@ -13,7 +13,20 @@ const ruleTester = new RuleTester({
 })
 
 ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
-  valid: ['<TdCheckbox />', '<ThCheckbox />', '<TdRadioButton />', '<Td>hello</Td>', '<Th>hello</Th>'],
+  valid: [
+    '<TdCheckbox />',
+    '<ThCheckbox />',
+    '<TdRadioButton />',
+    '<Td>hello</Td>',
+    '<Th>hello</Th>',
+    `
+    <Td>
+      <Checkbox>
+        可視ラベル
+      </Checkbox>
+    </Td>
+    `,
+  ],
   invalid: [
     {
       code: `<Td><Checkbox /></Td>`,
@@ -21,12 +34,10 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
     },
     {
       code: `<Th><Checkbox /></Th>`,
-      output: `<ThCheckbox />`,
       errors: [{ message: 'Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。' }],
     },
     {
       code: `<Th><Checkbox id="my-checkbox" name="agree" error /></Th>`,
-      output: `<ThCheckbox id="my-checkbox" name="agree" error />`,
       errors: [{ message: 'Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。' }],
     },
     {
@@ -49,7 +60,6 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
     },
     {
       code: `<CustomTh><CustomCheckbox /></CustomTh>`,
-      output: null,
       errors: [{ message: 'Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。' }],
     },
     {

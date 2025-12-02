@@ -243,5 +243,9 @@ ruleTester.run('component-name', rule, {
 
     { code: 'const Hoge = styled(RemoteDialogTrigger)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DialogTrigger$/ }) }, { message: messageInheritance({ extended: 'Hoge', matcher: /RemoteDialogTrigger$/ }) } ] },
     { code: 'const Fuga = styled(RemoteTriggerActionDialog)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /RemoteTrigger(.+)Dialog$/ }) } ] },
+    { code: 'const HogeModalFuga = any', errors: [ { message: `コンポーネント名や変数名に"Modal"という名称は使わず、"Dialog"に統一してください
+ - Modalとは形容詞であり、かつ"現在の操作から切り離して専用の操作を行わせる" という意味合いを持ちます
+   - そのためDialogでなければ正しくない場合がありえます(smarthr-ui/ModelessDialogのように元々の操作も行えるDialogなどが該当)
+   - DialogはModalなダイアログ、Modelessなダイアログすべてを含有した名称のため、統一することを推奨しています` } ] },
   ]
 })

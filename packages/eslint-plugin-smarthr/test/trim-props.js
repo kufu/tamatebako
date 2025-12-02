@@ -19,6 +19,7 @@ ruleTester.run('trim-props', rule, {
     { code: `<img src={'/sample.jpg'} alt={'sample'} />` },
     { code: '<div data-spec="info-area">....</div>' },
     { code: '<div data-spec={`a${b} c`}>....</div>' },
+    { code: '<div data-spec={`a${b ? ` ${c} ` : "  "} d`}>....</div>' },
   ],
   invalid: [
     {
@@ -85,6 +86,11 @@ ruleTester.run('trim-props', rule, {
     {
       code: '<div data-spec={` a${b} c `}>....</div>',
       output: '<div data-spec={`a${b} c`}>....</div>',
+      errors: [{ message: '属性に設定している文字列から先頭、末尾の空白文字を削除してください' }],
+    },
+    {
+      code: '<div data-spec={` a${b ? ` ${c} ` : "  "} d `}>....</div>',
+      output: '<div data-spec={`a${b ? ` ${c} ` : "  "} d`}>....</div>',
       errors: [{ message: '属性に設定している文字列から先頭、末尾の空白文字を削除してください' }],
     },
   ],

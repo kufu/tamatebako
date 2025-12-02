@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.3.0...eslint-plugin-smarthr-v2.4.0) (2025-12-02)
+
+
+### Features
+
+* Modalというコンポーネントの作成を禁止し、Dialogという名称に統一させる ([#915](https://github.com/kufu/tamatebako/issues/915)) ([208c2a0](https://github.com/kufu/tamatebako/commit/208c2a06034bcf24bfe1a3dd0d8633b0c546db11))
+
+
+### Bug Fixes
+
+* a11y-prohibit-checkbox-or-radio-in-table-cellのautofixを削除 & childrenを持つ場合に警告されないよう修正 ([#914](https://github.com/kufu/tamatebako/issues/914)) ([3962fda](https://github.com/kufu/tamatebako/commit/3962fda01a1966c9624d5cd7056d807f86ccb5bc))
+* trim-props でTemplateLiteralがネストしている場合のチェックを修正 ([#912](https://github.com/kufu/tamatebako/issues/912)) ([2d090c4](https://github.com/kufu/tamatebako/commit/2d090c4ef6d1ac4c9537fdb13a0198552456c10c))
+
 ## [2.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.1...eslint-plugin-smarthr-v2.3.0) (2025-12-01)
 
 

@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.1...eslint-plugin-smarthr-v2.3.0) (2025-12-01)
+
+
+### Features
+
+* best-practice-for-layout にHeading, FormControl, Fieldsetのタイトル部分でLayout系コンポーネントの仕様を制限するチェックを追加 ([#906](https://github.com/kufu/tamatebako/issues/906)) ([631aeca](https://github.com/kufu/tamatebako/commit/631aecaa20c834b6d603e31af95f2aaee9694bd0))
+
+## [2.2.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.0...eslint-plugin-smarthr-v2.2.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* a11y-anchor-has-href-attributeがhrefにメソッドが指定されている場合に誤検知することがある問題を修正 ([#905](https://github.com/kufu/tamatebako/issues/905)) ([6ebd6ec](https://github.com/kufu/tamatebako/commit/6ebd6ecc074a7088652697dcb6bfb60b63a13fc4))
+* a11y-input-has-name-attributeでtemplate literalの場合、誤検知してしまう問題を修正 ([#904](https://github.com/kufu/tamatebako/issues/904)) ([d440e86](https://github.com/kufu/tamatebako/commit/d440e8675bf600dbe8a51e496d7076bcf617336f))
+
+## [2.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.1.0...eslint-plugin-smarthr-v2.2.0) (2025-11-07)
+
+
+### Features
+
+* a11y-help-link-with-support-hrefで対象となる変数名のバグを修正 ([#890](https://github.com/kufu/tamatebako/issues/890)) ([c9c4984](https://github.com/kufu/tamatebako/commit/c9c49848293fd88640e886c6586ae8d92a99f40c))
+* trim-propsでtemplate literalもautofixの対象にする ([#884](https://github.com/kufu/tamatebako/issues/884)) ([4072950](https://github.com/kufu/tamatebako/commit/40729507f5084308128ca39d5887ee81f2f67dd5))
+
+## [2.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.0.0...eslint-plugin-smarthr-v2.1.0) (2025-10-29)
+
+
+### Features
+
+* prohibit-export-array-typeの型チェックをArray&lt;any&gt;の場合も対象にする ([#869](https://github.com/kufu/tamatebako/issues/869)) ([ee4a647](https://github.com/kufu/tamatebako/commit/ee4a64755c36880d8f43c31ebd47244d71ea2fe9))
+* コンポーネントの子要素やプロパティの文字列リテラルを多言語化の観点で検査するルールを追加 ([#815](https://github.com/kufu/tamatebako/issues/815)) ([9dc8bda](https://github.com/kufu/tamatebako/commit/9dc8bda98d1a978dd0e4d61b91c858ef1c117d9c))
+
 ## [2.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v1.11.0...eslint-plugin-smarthr-v2.0.0) (2025-10-16)
 
 

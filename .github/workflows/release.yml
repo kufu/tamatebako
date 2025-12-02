@@ -33,9 +33,9 @@ jobs:
         with:
           package_json_file: 'package.json'
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version-file: '.node-version'
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install

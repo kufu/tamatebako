@@ -67,7 +67,7 @@ module.exports = {
  - 適切に指定することで同じname属性を指定したinput[radio]とグループが確立され、適切なキーボード操作を行えるようになります${MESSAGE_UNDEFINED_NAME_PART}`,
         })
       },
-      [`${INPUT_ELEMENT}${notHasSpreadAttribute} ${NAME_ATTRIBUTE}:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
+      [`${INPUT_ELEMENT}${notHasSpreadAttribute} ${NAME_ATTRIBUTE}[value.value]:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
         context.report({
           node,
           message: `${node.parent.name.name} のname属性の値(${node.value.value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}`,

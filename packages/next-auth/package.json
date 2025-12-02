@@ -33,9 +33,9 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.19.22",
-    "@types/uuid": "^10.0.0",
-    "ioredis": "^5.8.1",
+    "@types/node": "^20.19.24",
+    "@types/uuid": "^11.0.0",
+    "ioredis": "^5.8.2",
     "next-auth": "^4.24.7"
   },
   "peerDependencies": {

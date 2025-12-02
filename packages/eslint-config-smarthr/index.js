@@ -47,6 +47,7 @@ export default [
       'smarthr/a11y-prohibit-input-placeholder': 'error',
       'smarthr/a11y-prohibit-sectioning-content-in-form': 'warn', // TODO: 2024/11にwarn化。問題なければerrorに変更予定
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
+      'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
@@ -65,6 +66,7 @@ export default [
       'smarthr/require-barrel-import': 'error',
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
+      'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

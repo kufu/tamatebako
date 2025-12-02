@@ -4,7 +4,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
 {
   "language": "@/js",
   "languageOptions": {
-    "ecmaVersion": 2025,
+    "ecmaVersion": 2026,
     "globals": {
       "AI": false,
       "AICreateMonitor": false,
@@ -203,6 +203,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "DeviceMotionEventRotationRate": false,
       "DeviceOrientationEvent": false,
       "DevicePosture": false,
+      "DigitalCredential": false,
       "DisposableStack": false,
       "Document": false,
       "DocumentFragment": false,
@@ -404,6 +405,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "IDBKeyRange": false,
       "IDBObjectStore": false,
       "IDBOpenDBRequest": false,
+      "IDBRecord": false,
       "IDBRequest": false,
       "IDBTransaction": false,
       "IDBVersionChangeEvent": false,
@@ -430,6 +432,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "Int32Array": false,
       "Int8Array": false,
       "IntegrityViolationReportBody": false,
+      "InterestEvent": false,
       "IntersectionObserver": false,
       "IntersectionObserverEntry": false,
       "Intl": false,
@@ -511,6 +514,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "NavigationCurrentEntryChangeEvent": false,
       "NavigationDestination": false,
       "NavigationHistoryEntry": false,
+      "NavigationPrecommitController": false,
       "NavigationPreloadManager": false,
       "NavigationTransition": false,
       "Navigator": false,
@@ -777,6 +781,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "SpeechRecognition": false,
       "SpeechRecognitionErrorEvent": false,
       "SpeechRecognitionEvent": false,
+      "SpeechRecognitionPhrase": false,
       "SpeechSynthesis": false,
       "SpeechSynthesisErrorEvent": false,
       "SpeechSynthesisEvent": false,
@@ -1226,7 +1231,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "when": false,
       "window": false,
     },
-    "parser": "typescript-eslint/parser@8.46.1",
+    "parser": "typescript-eslint/parser@8.46.3",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true,
@@ -1246,8 +1251,8 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "react",
     "react-hooks:eslint-plugin-react-hooks@7.0.0",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
-    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.46.1",
-    "typescript:@typescript-eslint/eslint-plugin@8.46.1",
+    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.46.3",
+    "typescript:@typescript-eslint/eslint-plugin@8.46.3",
     "smarthr:eslint-plugin-smarthr",
   ],
   "processor": undefined,
@@ -2451,6 +2456,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "no-misleading-character-class": [
       2,
+      {
+        "allowEscape": false,
+      },
     ],
     "no-mixed-operators": [
       0,
@@ -2979,6 +2987,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-numbered-text-within-ol": [
       2,
     ],
+    "smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell": [
+      1,
+    ],
     "smarthr/a11y-prohibit-input-maxlength-attribute": [
       2,
     ],
@@ -3050,6 +3061,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/require-export": [
       0,
+    ],
+    "smarthr/require-i18n-text": [
+      1,
     ],
     "smarthr/require-import": [
       0,

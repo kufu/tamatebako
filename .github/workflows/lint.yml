@@ -1,9 +1,8 @@
-
 name: lint
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
 
 jobs:
@@ -11,15 +10,15 @@ jobs:
     name: Node.js ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22.x
-    - name: pnpm install, and pnpm lint
-      run: |
-        corepack enable && corepack prepare --activate
-        pnpm install
-        pnpm lint
-      env:
-        CI: true
+      - uses: actions/checkout@v5
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+      - name: pnpm install, and pnpm lint
+        run: |
+          corepack enable && corepack prepare --activate
+          pnpm install
+          pnpm lint
+        env:
+          CI: true

@@ -1,7 +1,15 @@
 const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
-
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
+
+const TARGET_INVALID_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Sidebar)$/
+const INVALID_ELEMENT = `JSXOpeningElement[name.name=${TARGET_INVALID_COMPONENT_REGEX}]`
+const HEADING_ELEMENT = 'JSXElement[openingElement.name.name=/Heading$/]'
+const STACK_ELEMENT_NOT_SPAN = 'JSXOpeningElement[name.name=/Stack$/]:not(:has(JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value="span"]))'
+const FORM_CONTROL_LABEL_ATTRIBUTE = 'JSXOpeningElement[name.name=/FormControl$/] JSXAttribute[name.name="label"]'
+const FIELDSET_LEGEND_ATTRIBUTE = 'JSXOpeningElement[name.name=/Fieldset$/] JSXAttribute[name.name="legend"]'
+const ICON_ELEMENT_WITH_TEXT = `JSXOpeningElement[name.name=/Icon$/]:has(JSXAttribute[name.name="text"])`
+const TEXT_ELEMENT_WITH_PREFIX = 'JSXOpeningElement[name.name=/Text$/]:has(JSXAttribute[name.name="prefixIcon"])'
 
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
 const checkFalsyJSXText = (c) => (
@@ -55,39 +63,35 @@ module.exports = {
   },
   create(context) {
     return {
-      JSXOpeningElement: (node) => {
+      [`JSXOpeningElement[selfClosing=false][name.name=${MULTI_CHILDREN_REGEX}]`]: (node) => {
         const nodeName = node.name.name;
+        const matcher = nodeName.match(MULTI_CHILDREN_REGEX)
+        const layoutType = matcher[1]
+        let justifyAttr = null
+        let alignAttr = null
+        let gapAttr = null
 
-        if (nodeName && !node.selfClosing) {
-          const matcher = nodeName.match(MULTI_CHILDREN_REGEX)
+        node.attributes.forEach((a) => {
+          switch (a.name?.name) {
+            case 'justify':
+              justifyAttr = a
+              break
+            case 'align':
+              alignAttr = a
+              break
+            case 'gap':
+              gapAttr = a
+              break
+          }
+        })
 
-          if (matcher) {
-            const layoutType = matcher[1]
-            let justifyAttr = null
-            let alignAttr = null
-            let gapAttr = null
-
-            node.attributes.forEach((a) => {
-              switch (a.name?.name) {
-                case 'justify':
-                  justifyAttr = a
-                  break
-                case 'align':
-                  alignAttr = a
-                  break
-                case 'gap':
-                  gapAttr = a
-                  break
-              }
-            })
-
-            if (layoutType === 'Stack') {
-              if (alignAttr && FLEX_END_REGEX.test(alignAttr.value.value)) {
-                return
-              } else if (gapAttr?.value.type === 'JSXExpressionContainer' && gapAttr.value.expression.value === 0) {
-                context.report({
-                  node,
-                  message: `${nodeName} に "gap={0}" が指定されており、smarthr-ui/${layoutType} の利用方法として誤っている可能性があります。以下の修正方法を検討してください。
+        if (layoutType === 'Stack') {
+          if (alignAttr && FLEX_END_REGEX.test(alignAttr.value.value)) {
+            return
+          } else if (gapAttr?.value.type === 'JSXExpressionContainer' && gapAttr.value.expression.value === 0) {
+            context.report({
+              node,
+              message: `${nodeName} に "gap={0}" が指定されており、smarthr-ui/${layoutType} の利用方法として誤っている可能性があります。以下の修正方法を検討してください。
  - 方法1: 子要素を一つにまとめられないか検討してください
    - 例: "<Stack gap={0}><p>hoge</p><p>fuga</p></Stack>" を "<p>hoge<br />fuga</p>" にするなど
  - 方法2: 子要素のstyleを確認しgap属性を0以外にできないか検討してください
@@ -95,31 +99,85 @@ module.exports = {
  - 方法3: 別要素でマークアップし直すか、${nodeName}を削除してください
    - 親要素に smarthr-ui/Cluster, smarthr-ui/Stack などが存在している場合、div・spanなどで1要素にまとめる必要がある場合があります
    - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
-                })
-              }
-            }
-
-            const children = node.parent.children.filter(checkFalsyJSXText)
-
-            if (children.length === 1) {
-              if (justifyAttr && FLEX_END_REGEX.test(justifyAttr.value.value)) {
-                return
-              }
-
-              if (searchChildren(children[0])) {
-                context.report({
-                  node,
-                  message:
-                    (justifyAttr?.value.value === 'center' || alignAttr?.value.value === 'center')
-                      ? `${nodeName} は smarthr-ui/${layoutType} ではなく smarthr-ui/Center でマークアップしてください`
-                      : `${nodeName}には子要素が一つしか無いため、${layoutType}でマークアップする意味がありません。
- - styleを確認し、div・spanなど、別要素でマークアップし直すか、${nodeName}を削除してください
- - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
-                })
-              }
-            }
+            })
           }
         }
+
+        const children = node.parent.children.filter(checkFalsyJSXText)
+
+        if (children.length === 1) {
+          if (justifyAttr && FLEX_END_REGEX.test(justifyAttr.value.value)) {
+            return
+          }
+
+          if (searchChildren(children[0])) {
+            context.report({
+              node,
+              message:
+                (justifyAttr?.value.value === 'center' || alignAttr?.value.value === 'center')
+                  ? `${nodeName} は smarthr-ui/${layoutType} ではなく smarthr-ui/Center でマークアップしてください`
+                  : `${nodeName}には子要素が一つしか無いため、${layoutType}でマークアップする意味がありません。
+ - styleを確認し、div・spanなど、別要素でマークアップし直すか、${nodeName}を削除してください
+ - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
+            })
+          }
+        }
+      },
+      [`${HEADING_ELEMENT} ${INVALID_ELEMENT}`]: (node) => {
+        const component = node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]
+
+        context.report({
+          node,
+          message: `Headingの子孫に${component}を置くことはできません。Headingの外で${component}を使用するようにマークアップを修正してください。`
+        })
+      },
+      [`${HEADING_ELEMENT} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'Headingの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${HEADING_ELEMENT} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: 'HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください',
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} ${INVALID_ELEMENT}`]: (node) => {
+        context.report({
+          node,
+          message: `FormControlのlabel属性に${node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]}を置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。`,
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'FormControlのlabel属性にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${FORM_CONTROL_LABEL_ATTRIBUTE} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: "FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください",
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} ${INVALID_ELEMENT}`]: (node) => {
+        context.report({
+          node,
+          message: `Fieldsetのlegend属性に${node.name.name.match(TARGET_INVALID_COMPONENT_REGEX)[1]}を置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。`,
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {
+        context.report({
+          node,
+          message: 'Fieldsetのlegend属性にStackを置く場合、as属性、もしくはforwardedAs属性に `span` を指定してください',
+        })
+      },
+      [`${FIELDSET_LEGEND_ATTRIBUTE} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        context.report({
+          node,
+          message: "Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください",
+        })
       },
     }
   },

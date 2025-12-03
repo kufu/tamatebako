@@ -134,6 +134,7 @@ module.exports = {
                 context.report({
                   node,
                   message: `${isSection ? elementName : `${asAttr.name.name}="${asAttr.value.value}"`}とその内部に存在するHeadingをsmarthr-ui/Fieldsetに置き換えてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-sectioning-content-in-form
  - もしくはform要素を利用していない場合、フォームを構成する入力要素郡すべてを一つのform要素で囲んでください
    - required属性、pattern属性など一部属性はform要素で囲まないと動作しません
    - 送信用ボタンのonClickをform要素のonSubmitに移動し、送信用ボタンのtype属性に "submit" を指定することでより適切にマークアップ出来ます
@@ -153,6 +154,7 @@ module.exports = {
                 context.report({
                   node: sectioningContent.node,
                   message: `${sectioningContent.elementName}とその内部に存在するHeadingをsmarthr-ui/Fieldsetに置き換えてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-sectioning-content-in-form
  - もしくはform要素を利用していない場合、フォームを構成する入力要素郡すべてを一つのform要素で囲んでください
    - required属性、pattern属性など一部属性はform要素で囲まないと動作しません
    - 送信用ボタンのonClickをform要素のonSubmitに移動し、送信用ボタンのtype属性に "submit" を指定することでより適切にマークアップ出来ます

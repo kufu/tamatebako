@@ -22,12 +22,14 @@ ruleTester.run('prohibit-path-within-template-literal', rule, {
   invalid: [
     {
       code: '`${path.hoge}`',
-      errors: [{ message: 'path.hogeは `` で囲まないでください。queryStringを結合するなどのURL生成は path.hoge 内で行います。 (例: path.hoge({ query: { hoge: \'abc\' } })' }]
+      errors: [{ message: `path.hogeは \`\` で囲まないでください。queryStringを結合するなどのURL生成は path.hoge 内で行います。 (例: path.hoge({ query: { hoge: 'abc' } })
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-path-within-template-literal` }]
     },
     {
       code: '`${ABC.hoge()}${hogehoge}`',
       options: [{ pathRegex: '^ABC$' }],
-      errors: [{ message: 'ABC.hogeは `` で囲まないでください。queryStringを結合するなどのURL生成は ABC.hoge 内で行います。 (例: ABC.hoge({ query: { hoge: \'abc\' } })' }]
+      errors: [{ message: `ABC.hogeは \`\` で囲まないでください。queryStringを結合するなどのURL生成は ABC.hoge 内で行います。 (例: ABC.hoge({ query: { hoge: 'abc' } })
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-path-within-template-literal` }]
     },
   ]
 })

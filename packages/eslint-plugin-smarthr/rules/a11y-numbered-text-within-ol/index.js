@@ -34,6 +34,7 @@ const checkNumberedTextInOl = (result, node, context) => {
     context.report({
       node,
       message: `${result.name.name} 内で連番がテキストとして記述されています。連番はol要素で表現できるため、削除してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-numbered-text-within-ol
  - ol要素のデフォルトで表示される連番のフォーマット、スタイルから変更したい場合、counter-reset と counter-increment を利用してください
    - 参考: [MDN CSS カウンターの使用](https://developer.mozilla.org/ja/docs/Web/CSS/CSS_counter_styles/Using_CSS_counters)`,
     })
@@ -76,6 +77,7 @@ module.exports = {
                   context.report({
                     node: firstNumberedNode,
                     message: `連番を含むテキストがol要素でマークアップされていません。ol要素でマークアップすることで関連する順番に意味のある要素を適切にマークアップできるため以下の方法で修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-numbered-text-within-ol
  - ${renderNode(firstNumberedNode, firstNumberedMatcher)} と ${renderNode(node, matcher)} が同じol要素内に存在するように修正してください
  - 上記以外にも関連する連番をふくむ要素が存在する場合、それらも同じol内に存在する必要があります`,
                   })
@@ -83,6 +85,7 @@ module.exports = {
                   context.report({
                     node: firstNumberedNode,
                     message: `連番を含むテキストがol要素でマークアップされていません。ol要素でマークアップすることで関連する順番に意味のある要素を適切にマークアップできるため以下の方法で修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-numbered-text-within-ol
  - ${renderNode(firstNumberedNode, firstNumberedMatcher)} が ${renderNode(node, matcher)} を囲んでいるol要素内(<${result.name.name}>)に存在するように修正してください
  - 上記以外にも関連する連番をふくむ要素が存在する場合、それらも同じol要素内(<${result.name.name}>)に存在する必要があります`,
                   })
@@ -92,6 +95,7 @@ module.exports = {
                   context.report({
                     node,
                     message: `連番を含むテキストがol要素でマークアップされていません。ol要素でマークアップすることで関連する順番に意味のある要素を適切にマークアップできるため以下の方法で修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-numbered-text-within-ol
  - ${renderNode(node, matcher)} が ${renderNode(firstNumberedNode, firstNumberedMatcher)} を囲んでいるol要素内(<${resultFirst.name.name}>)に存在するように修正してください
  - 上記以外にも関連する連番をふくむ要素が存在する場合、それらも同じol要素内(<${resultFirst.name.name}>)に存在する必要があります`,
                   })
@@ -101,6 +105,7 @@ module.exports = {
                   context.report({
                     node,
                     message: `連番を含むテキストが同一のol要素でマークアップされていません。同一のol要素でマークアップすることでリスト内の要素関連性を正しく表せるためマークアップの修正を行ってください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-numbered-text-within-ol
  - ${renderNode(firstNumberedNode, firstNumberedMatcher)} と ${renderNode(node, matcher)} が同じol要素内に存在するように修正してください
  - 上記以外にも関連する連番をふくむ要素が存在する場合、それらも同じol内に存在する必要があります`,
                   })

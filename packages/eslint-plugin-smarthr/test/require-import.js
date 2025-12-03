@@ -66,7 +66,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash/isEqual を絶対使ってください' }],
+      errors: [{ message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: `import { chunk } from 'lodash'`,
@@ -108,7 +109,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash をimportしてください' }],
+      errors: [{ message: `lodash をimportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: ``,
@@ -122,7 +124,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash をimportしてください' }],
+      errors: [{ message: `lodash をimportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: ``,
@@ -137,7 +140,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash を絶対使ってください' }],
+      errors: [{ message: `lodash を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: ``,
@@ -152,7 +156,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash/isEqual を絶対使ってください' }],
+      errors: [{ message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: `import { chunk } from 'lodash'`,
@@ -167,7 +172,8 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash/isEqual を絶対使ってください' }],
+      errors: [{ message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
     },
     {
       code: `import { isEqual } from './module/validator'`,
@@ -181,7 +187,7 @@ ruleTester.run('require-import', rule, {
           },
         }
       ],
-      errors: [{ message: /module\/validator\/isEqual をimportしてください$/ }],
+      errors: [{ message: /module\/validator\/isEqual をimportしてください/ }],
     },
   ]
 })

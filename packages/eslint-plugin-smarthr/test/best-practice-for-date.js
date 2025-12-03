@@ -11,9 +11,11 @@ const ruleTester = new RuleTester({
   },
 })
 const errorNewDate = `'new Date(arg)' のように引数を一つだけ指定したDate instanceの生成は実行環境によって結果が異なるため、以下のいずれかの方法に変更してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date
  - 'new Date(2022, 12 - 1, 31)' のように数値を個別に指定する
  - dayjsなど、日付系ライブラリを利用する (例:  'dayjs(arg).toDate()')`
 const errorDateParse = `Date.parse は実行環境によって結果が異なるため、以下のいずれかの方法に変更してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date
  - 'new Date(2022, 12 - 1, 31).getTime()' のように数値を個別に指定する
  - dayjsなど、日付系ライブラリを利用する (例: 'dayjs(arg).valueOf()')`
 

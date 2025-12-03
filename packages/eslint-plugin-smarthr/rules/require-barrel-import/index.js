@@ -185,7 +185,8 @@ module.exports = {
 
           context.report({
             node,
-            message: deniedModules.length ? `${deniedModules.join(', ')} は ${noExt} からimportしてください` :  `${noExt} からimportするか、${barrel} のbarrelファイルを削除して直接import可能にしてください`,
+            message: `${deniedModules.length ? `${deniedModules.join(', ')} は ${noExt} からimportしてください` :  `${noExt} からimportするか、${barrel} のbarrelファイルを削除して直接import可能にしてください`}
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
           });
         }
       },

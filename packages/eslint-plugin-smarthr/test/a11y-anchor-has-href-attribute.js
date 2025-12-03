@@ -11,6 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 const generateErrorText = (name) => `${name} に href 属性を正しく設定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
  - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
    - Cmd + clickなどのキーボードショートカットに対応出来ます
  - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください

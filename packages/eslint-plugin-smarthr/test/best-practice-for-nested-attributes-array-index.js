@@ -12,6 +12,7 @@ const ruleTester = new RuleTester({
 })
 
 const ERROR_MESSAGE = `入力要素のname属性に対して、配列に当たる部分の連番を指定しない場合（例: a[xxx][][yyy] ）、配列内アイテムの属性が意図せず入れ替わってしまう場合がありえるため、常にindexを設定してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index
  - 例のyyyに当たる値が配列内の別アイテムに紐づいてしまう場合があります。
  - 詳しくは https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index を参照してください`
 

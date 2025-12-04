@@ -105,7 +105,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash は利用しないでください' }]
+      errors: [{ message: `lodash は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -119,7 +120,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{ message: 'lodash は利用しないでください' }]
+      errors: [{ message: `lodash は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -133,7 +135,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{message: 'lodash/isEqual は利用しないでください'}]
+      errors: [{message: `lodash/isEqual は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -148,7 +151,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{message: 'must not use lodash/isEqual'}]
+      errors: [{message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -166,7 +170,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{message: 'must not use lodash/isEqual'}]
+      errors: [{message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -184,7 +189,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{message: 'must not use lodash/isEqual'}]
+      errors: [{message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
     {
       code: `import { isEqual } from './module/validator'`,
@@ -198,7 +204,8 @@ ruleTester.run('prohibit-import', rule, {
           },
         }
       ],
-      errors: [{ message: './module/validator/isEqual は利用しないでください' }]
+      errors: [{ message: `./module/validator/isEqual は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
     },
   ]
 })

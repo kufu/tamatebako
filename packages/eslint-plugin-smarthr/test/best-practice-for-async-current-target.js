@@ -12,7 +12,7 @@ const ruleTester = new RuleTester({
 })
 
 const ERRORMESSAGE_NORMAL = `currentTargetはイベント処理中以外に参照するとnullになる場合があります。イベントハンドラ用関数のスコープ直下でcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
- - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-async-current-target
  - React/useStateのsetterは第一引数に関数を渡すと非同期処理になるためこの問題が起きる可能性があります
  - イベントハンドラ内で関数を定義すると参照タイミングがずれる可能性があるため、イベントハンドラ直下のスコープ内にcurrentTarget関連の参照を変数に残すことをオススメします
  - NG例:
@@ -25,7 +25,7 @@ const ERRORMESSAGE_NORMAL = `currentTargetはイベント処理中以外に参�
       setItem((current) => ({ ...current, value }))
     }`
 const ERRORMESSAGE_AWAIT = `currentTargetはイベント処理中以外に参照するとnullになる場合があります。awaitの宣言より前にcurrentTarget、もしくはcurrentTarget以下の属性を含む値を変数として宣言してください
- - 参考: https://developer.mozilla.org/ja/docs/Web/API/Event/currentTarget
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-async-current-target
  - NG例:
     const onChange = async (e) => {
       await hoge()

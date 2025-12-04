@@ -1,4 +1,5 @@
 const ERRORMESSAGE_SUFFIX = `
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-button-element
  - button要素のtype属性のデフォルトは "submit" のため、button要素がformでラップされていると意図しないsubmitを引き起こす可能性があります
  - smarthr-ui/Button, smarthr-ui/UnstyledButtonのtype属性のデフォルトは "button" になっているため、buttonから置き換えることをおすすめします`
 

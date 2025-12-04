@@ -7,7 +7,8 @@ module.exports = {
     fixable: 'code',
     schema: [],
     messages: {
-      default: '{{cell}} の子孫に {{component}} を置くことはできません。代わりに {{preferred}} を使用してください。',
+      default: `{{cell}} の子孫に {{component}} を置くことはできません。代わりに {{preferred}} を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
     },
   },
   create(context) {

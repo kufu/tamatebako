@@ -11,6 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 const generateErrorText = (name) => `${name} には prefix と suffix は同時に設定できません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons
  - どちらにもアイコンをつけられそうな場合は、prefixを優先してください。`
 
 ruleTester.run('design-system-guideline-prohibit-double-icons', rule, {

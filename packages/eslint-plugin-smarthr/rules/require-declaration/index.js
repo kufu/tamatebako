@@ -103,7 +103,8 @@ module.exports = {
             if (!hit) {
               context.report({
                 node,
-                message: localOption.reportMessage || `${localOption.type} ${requireDeclaration}が宣言されていません`,
+                message: `${localOption.reportMessage || `${localOption.type} ${requireDeclaration}が宣言されていません`}
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration`,
               })
             } else if (localOption.use) {
               const code = context.sourceCode.getText(hit)
@@ -113,7 +114,8 @@ module.exports = {
                 if (!useRegex(u).test(code) && (!localOption.reportMessage || !reported)) {
                   context.report({
                     node: hit,
-                    message: localOption.reportMessage || `${localOption.type} ${requireDeclaration} では ${u} を利用してください`,
+                    message: `${localOption.reportMessage || `${localOption.type} ${requireDeclaration} では ${u} を利用してください`}
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration`,
                   })
                   reported = true
                 }

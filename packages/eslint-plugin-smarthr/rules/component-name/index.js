@@ -13,7 +13,8 @@ const checkImportStyledComponents = (node, context) => {
   if (invalidNameNode) {
     context.report({
       node: invalidNameNode,
-      message: `${STYLED_COMPONENTS} をimportする際は、名称が"${STYLED_COMPONENTS_METHOD}" となるようにしてください。例: "import ${STYLED_COMPONENTS_METHOD} from '${STYLED_COMPONENTS}'"`,
+      message: `${STYLED_COMPONENTS} をimportする際は、名称が"${STYLED_COMPONENTS_METHOD}" となるようにしてください。例: "import ${STYLED_COMPONENTS_METHOD} from '${STYLED_COMPONENTS}'"
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name`,
     });
   }
 }
@@ -127,6 +128,7 @@ const EXPECTED_NAMES = {
 }
 
 const unexpectedMessageTemplate = `{{extended}} は smarthr-ui/{{expected}} をextendすることを期待する名称になっています
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - childrenにHeadingを含まない場合、コンポーネントの名称から"{{expected}}"を取り除いてください
  - childrenにHeadingを含み、アウトラインの範囲を指定するためのコンポーネントならば、smarthr-ui/{{expected}}をexendしてください
    - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"{{expected}}"を設定し、そのコンポーネント内でsmarthr-ui/{{expected}}を利用してください`
@@ -203,7 +205,8 @@ module.exports = {
         if (base.match(b) && !extended.match(e)) {
           context.report({
             node,
-            message: `${extended}を正規表現 "${e.toString()}" がmatchする名称に変更してください。${isImport ? `
+            message: `${extended}を正規表現 "${e.toString()}" がmatchする名称に変更してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name${isImport ? `
  - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります` : ''}`,
           });
         }
@@ -243,6 +246,7 @@ module.exports = {
                 message: m ? m
                 .replaceAll('{{extended}}', extended)
                 .replaceAll('{{expected}}', expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - ${extended} の名称の末尾が"${expected}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isBareTag ? '適切なタグや別コンポーネントに差し替えてください' : '名称に変更するか、適切な別コンポーネントに差し替えてください'}
    - 修正例1: const ${extended.replace(expected, '')}Xxxx = ${sampleFixBase}
@@ -257,6 +261,7 @@ module.exports = {
         context.report({
           node,
           message: `コンポーネント名や変数名に"Modal"という名称は使わず、"Dialog"に統一してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - Modalとは形容詞であり、かつ"現在の操作から切り離して専用の操作を行わせる" という意味合いを持ちます
    - そのためDialogでなければ正しくない場合がありえます(smarthr-ui/ModelessDialogのように元々の操作も行えるDialogなどが該当)
    - DialogはModalなダイアログ、Modelessなダイアログすべてを含有した名称のため、統一することを推奨しています`

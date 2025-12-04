@@ -10,7 +10,8 @@ const ruleTester = new RuleTester({
     },
   },
 })
-const ERROR = `無意味なSectioningFragmentが記述されています。子要素で問題なくセクションは設定されているため、このSectioningFragmentは削除してください`
+const ERROR = `無意味なSectioningFragmentが記述されています。子要素で問題なくセクションは設定されているため、このSectioningFragmentは削除してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-useless-sectioning-fragment`
 
 ruleTester.run('a11y-prohibit-useless-sectioning-fragment', rule, {
   valid: [

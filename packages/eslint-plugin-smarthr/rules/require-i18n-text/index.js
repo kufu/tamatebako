@@ -55,7 +55,8 @@ module.exports = {
     const reportAttributeError = (node) => {
       context.report({
         node,
-        message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`,
+        message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`,
       })
     }
 
@@ -83,7 +84,8 @@ module.exports = {
     handlers['JSXText[value=/\\S/]'] = (node) => {
       context.report({
         node,
-        message: '子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください',
+        message: `子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`,
       })
     }
 

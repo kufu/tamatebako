@@ -90,7 +90,8 @@ ruleTester.run('format-translate-component', rule, {
           },
         }
       ],
-      errors: [{ message: 'const fugaが宣言されていません' }],
+      errors: [{ message: `const fugaが宣言されていません
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }],
     },
     {
       code: 'const hoge = any',
@@ -105,7 +106,8 @@ ruleTester.run('format-translate-component', rule, {
           },
         }
       ],
-      errors: [{ message: 'fugaを定義しろ！' }],
+      errors: [{ message: `fugaを定義しろ！
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }],
     },
     {
       code: 'const hoge = abc',
@@ -120,7 +122,8 @@ ruleTester.run('format-translate-component', rule, {
           },
         }
       ],
-      errors: [{ message: 'const hoge では fuga を利用してください' }],
+      errors: [{ message: `const hoge では fuga を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }],
     },
     {
       code: 'let hoge = () => undefined',
@@ -135,7 +138,9 @@ ruleTester.run('format-translate-component', rule, {
           },
         }
       ],
-      errors: [{ message: 'arrow-function hoge では num を利用してください' }, { message: 'arrow-function hoge では parseInt(num, 10) を利用してください' }],
+      errors: [{ message: `arrow-function hoge では num を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }, { message: `arrow-function hoge では parseInt(num, 10) を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }],
     },
     {
       code: 'let hoge = () => undefined',
@@ -151,7 +156,8 @@ ruleTester.run('format-translate-component', rule, {
           },
         }
       ],
-      errors: [{ message: 'hoge関数は `const hoge = (num) => { const temp = parseInt(num, 10); /* any code. */ }` のように定義してください' }],
+      errors: [{ message: `hoge関数は \`const hoge = (num) => { const temp = parseInt(num, 10); /* any code. */ }\` のように定義してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-declaration` }],
     },
   ]
 })

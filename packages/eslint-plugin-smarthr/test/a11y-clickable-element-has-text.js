@@ -11,6 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 const defaultErrorMessage = `a, buttonなどのクリッカブルな要素内にはテキストを設定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-clickable-element-has-text
  - 要素内にアイコン、画像のみを設置する場合はaltなどの代替テキスト用属性を指定してください
   - SVG component の場合、altを属性として受け取れるようにした上で '<svg role="img" aria-label={alt}>' のように指定してください
  - クリッカブルな要素内に設置しているコンポーネントがテキストを含んでいる場合、"XxxxText" のように末尾に "Text" もしくは "Message" という名称を設定してください`

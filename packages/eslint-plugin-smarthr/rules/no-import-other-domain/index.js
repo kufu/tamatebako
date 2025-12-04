@@ -122,7 +122,8 @@ module.exports = {
 
           context.report({
             node,
-            message: `別ドメインから ${importPath}${deniedModules.length ? ` の ${deniedModules.join(', ')}` : ''} がimportされています。`,
+            message: `別ドメインから ${importPath}${deniedModules.length ? ` の ${deniedModules.join(', ')}` : ''} がimportされています。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/no-import-other-domain`,
           })
         }
       },

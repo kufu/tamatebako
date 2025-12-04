@@ -33,7 +33,8 @@ const SCHEMA = [{
 
 const CWD = process.cwd()
 
-const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} は利用しないでください`
+const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -84,7 +85,8 @@ module.exports = {
               if (useImported) {
                 context.report({
                   node,
-                  message: reportMessage ? reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported) : defaultReportMessage(node.source.value, useImported)
+                  message: reportMessage ? `${reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported)}
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` : defaultReportMessage(node.source.value, useImported)
                 });
               }
             }

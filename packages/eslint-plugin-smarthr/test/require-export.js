@@ -62,7 +62,8 @@ ruleTester.run('require-export', rule, {
           '^.+$': ['fuga'],
         }
       ],
-      errors: [{ message: 'fuga をexportしてください' }],
+      errors: [{ message: `fuga をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
     },
     {
       code: `export const hoge = {}`,
@@ -71,7 +72,8 @@ ruleTester.run('require-export', rule, {
           '^.+$': ['fuga'],
         }
       ],
-      errors: [{ message: 'fuga をexportしてください' }],
+      errors: [{ message: `fuga をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
     },
     {
       code: `const hoge = {}; export { hoge }`,
@@ -80,7 +82,8 @@ ruleTester.run('require-export', rule, {
           '^.+$': ['default'],
         }
       ],
-      errors: [{ message: 'default をexportしてください' }],
+      errors: [{ message: `default をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
     },
   ]
 })

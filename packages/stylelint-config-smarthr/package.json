@@ -27,7 +27,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/styled-components": "^5.1.35",
+    "@types/styled-components": "^5.1.36",
     "jest": "^30.2.0",
     "postcss-styled-syntax": "^0.7.1",
     "styled-components": "^6.1.19",

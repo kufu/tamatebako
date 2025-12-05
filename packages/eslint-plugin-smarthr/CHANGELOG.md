@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.4.0...eslint-plugin-smarthr-v2.5.0) (2025-12-04)
+
+
+### Features
+
+* lintのエラーメッセージに仕様詳細へのリンクを追加 ([#918](https://github.com/kufu/tamatebako/issues/918)) ([4f6dd2f](https://github.com/kufu/tamatebako/commit/4f6dd2fdca759b7b04c885196fe2b2e2a05c0c96))
+
 ## [2.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.3.0...eslint-plugin-smarthr-v2.4.0) (2025-12-02)
 
 

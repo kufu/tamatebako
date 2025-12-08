@@ -54,6 +54,14 @@ ruleTester.run('require-i18n-text', rule, {
     { code: `<img src="image.png" />` },
     { code: `<div data-testid="test" />` },
 
+    // 数値のみ、.と演算記号のみの場合は許容
+    { code: `<Any aria-label="1234" />` },
+    { code: `<div>.</div>` },
+    { code: `<a> +</a>` },
+    { code: `<img alt="-" />` },
+    { code: `<i>*</i>` },
+    { code: `<i>/</i>` },
+
     // ワイルドカード - 空配列で除外
     {
       code: `<Icon label="Icon text" />`,
@@ -97,6 +105,14 @@ ruleTester.run('require-i18n-text', rule, {
       code: `<button title="Click me" />`,
       errors: [{ message: attributeError('button', 'title') }],
     },
+
+    // 数値、.と演算記号の場合でも他の文字列が含まれていればエラー
+    { code: `<Any aria-label="1234 あ" />`, errors: [{ message: attributeError('Any', 'aria-label') }] },
+    { code: `<div>a.</div>`, errors: [{ message: childTextError }] },
+    { code: `<a> + b</a>`, errors: [{ message: childTextError }] },
+    { code: `<img alt="-zod" />`, errors: [{ message: attributeError('img', 'alt') }] },
+    { code: `<i>*1</i>`, errors: [{ message: childTextError }] },
+    { code: `<i>a/</i>`, errors: [{ message: childTextError }] },
 
     // 属性エラー: カスタムオプション
     {

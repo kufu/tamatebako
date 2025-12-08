@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.5.0...eslint-plugin-smarthr-v3.0.0) (2025-12-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* a11y-required-layout-as-attributeを削除する ([#919](https://github.com/kufu/tamatebako/issues/919))
+
+### Features
+
+* a11y-required-layout-as-attributeを削除する ([#919](https://github.com/kufu/tamatebako/issues/919)) ([fbf6897](https://github.com/kufu/tamatebako/commit/fbf68978c6b2590cf031cdea6badb9edf7faab96))
+
+
+### Bug Fixes
+
+* require-i18n-textで特定の文字列の場合、修正対象にしないように調整 ([#924](https://github.com/kufu/tamatebako/issues/924)) ([ddfb24b](https://github.com/kufu/tamatebako/commit/ddfb24b82a784312eb4750e87fbcd7c1374d6fcf))
+
 ## [2.5.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.4.0...eslint-plugin-smarthr-v2.5.0) (2025-12-04)
 
 

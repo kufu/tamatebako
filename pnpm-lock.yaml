@@ -76,10 +76,10 @@ importers:
         specifier: 9.39.1
         version: 9.39.1
       '@typescript-eslint/eslint-plugin':
-        specifier: ^8.46.4
+        specifier: ^8.48.1
         version: 8.48.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.4.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.4.2))(typescript@5.9.3)
       '@typescript-eslint/parser':
-        specifier: ^8.46.4
+        specifier: ^8.48.1
         version: 8.48.1(eslint@9.39.1(jiti@2.4.2))(typescript@5.9.3)
       eslint:
         specifier: ^9.0.0
@@ -112,7 +112,7 @@ importers:
         specifier: ^3.4.5 || ^4.0.0 || ^5.0.0
         version: 5.9.3
       typescript-eslint:
-        specifier: ^8.46.4
+        specifier: ^8.48.1
         version: 8.48.1(eslint@9.39.1(jiti@2.4.2))(typescript@5.9.3)
     devDependencies:
       '@types/react':
@@ -132,7 +132,7 @@ importers:
         version: 2.2.3
     devDependencies:
       typescript-eslint:
-        specifier: ^8.46.4
+        specifier: ^8.48.1
         version: 8.48.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.9.3)
 
   packages/i18n:

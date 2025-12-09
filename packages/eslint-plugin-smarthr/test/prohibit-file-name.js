@@ -32,7 +32,8 @@ ruleTester.run('prohibit-file-name', rule, {
           'hoge\.js': 'any message.',
         }
       ],
-      errors: [{ message: 'any message.' }]
+      errors: [{ message: `any message.
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-file-name` }]
     },
     {
       code: 'const any = "code"',
@@ -42,7 +43,8 @@ ruleTester.run('prohibit-file-name', rule, {
           '(hoge|fuga)\.js': '$1.jsは作成しないで！',
         }
       ],
-      errors: [{ message: 'hoge.jsは作成しないで！' }]
+      errors: [{ message: `hoge.jsは作成しないで！
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-file-name` }]
     },
   ]
 })

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.2](https://github.com/kufu/tamatebako/compare/i18n-v0.2.1...i18n-v0.2.2) (2025-12-04)
+
+
+### Bug Fixes
+
+* i18nパッケージのpeerDependenciesのnextのバージョンに16を追加 ([#907](https://github.com/kufu/tamatebako/issues/907)) ([67e3dca](https://github.com/kufu/tamatebako/commit/67e3dca819d3ba8dfb92d0dd4825133c3b3236e0))
+
 ## [0.2.1](https://github.com/kufu/tamatebako/compare/i18n-v0.2.0...i18n-v0.2.1) (2025-08-04)
 
 

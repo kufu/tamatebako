@@ -11,9 +11,10 @@ const ruleTester = new RuleTester({
   },
 })
 
-const attributeError = (element, attr) =>
-  `${element}の${attr}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください`
-const childTextError = '子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください'
+const attributeError = (element, attr) => `${element}の${attr}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
+const childTextError = `子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
 
 const options = [
   {
@@ -52,6 +53,14 @@ ruleTester.run('require-i18n-text', rule, {
     // デフォルト設定対象外の属性
     { code: `<img src="image.png" />` },
     { code: `<div data-testid="test" />` },
+
+    // 数値のみ、.と演算記号のみの場合は許容
+    { code: `<Any aria-label="1234" />` },
+    { code: `<div>.</div>` },
+    { code: `<a> +</a>` },
+    { code: `<img alt="-" />` },
+    { code: `<i>*</i>` },
+    { code: `<i>/</i>` },
 
     // ワイルドカード - 空配列で除外
     {
@@ -96,6 +105,14 @@ ruleTester.run('require-i18n-text', rule, {
       code: `<button title="Click me" />`,
       errors: [{ message: attributeError('button', 'title') }],
     },
+
+    // 数値、.と演算記号の場合でも他の文字列が含まれていればエラー
+    { code: `<Any aria-label="1234 あ" />`, errors: [{ message: attributeError('Any', 'aria-label') }] },
+    { code: `<div>a.</div>`, errors: [{ message: childTextError }] },
+    { code: `<a> + b</a>`, errors: [{ message: childTextError }] },
+    { code: `<img alt="-zod" />`, errors: [{ message: attributeError('img', 'alt') }] },
+    { code: `<i>*1</i>`, errors: [{ message: childTextError }] },
+    { code: `<i>a/</i>`, errors: [{ message: childTextError }] },
 
     // 属性エラー: カスタムオプション
     {

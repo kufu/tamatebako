@@ -145,7 +145,8 @@ module.exports = {
 
                         context.report({
                           node: n,
-                          message: `${name} が ${nodeName} を含んでいます。smarthr-ui/${matcherFormControl[1]} を smarthr-ui/Fieldset に変更し、正しくグルーピングされるように修正してください。${isRadio ? `
+                          message: `${name} が ${nodeName} を含んでいます。smarthr-ui/${matcherFormControl[1]} を smarthr-ui/Fieldset に変更し、正しくグルーピングされるように修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control${isRadio ? `
  - Fieldsetで同じname属性のラジオボタン全てを囲むことで正しくグループ化され、適切なタイトル・説明を追加出来ます` : ''}${isPureInput ? `
  - 可能なら${nodeName}は${convertComp}への変更を検討してください。難しい場合は ${nodeName} と結びつくlabel要素が必ず存在するよう、マークアップする必要があることに注意してください。` : ''}`,
                         });
@@ -153,6 +154,7 @@ module.exports = {
                         context.report({
                           node: n,
                           message: `${name} が複数の入力要素を含んでいます。ラベルと入力要素の紐づけが正しく行われない可能性があるため、以下の方法のいずれかで修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - 方法1: 郵便番号や電話番号など、本来一つの概念の入力要素を分割して複数の入力要素にしている場合、一つの入力要素にまとめることを検討してください
    - コピーアンドペーストがしやすくなる、ブラウザの自動補完などがより適切に反映されるなど多大なメリットがあります
  - 方法2: ${name}をsmarthr-ui/Fieldset、もしくはそれを拡張したコンポーネントに変更した上で、入力要素を一つずつsmarthr-ui/FormControlで囲むようにマークアップを変更してください
@@ -168,6 +170,7 @@ module.exports = {
                       context.report({
                         node: n,
                         message: `${name} が ラベルを持たない入力要素(${nodeName})を含んでいます。入力要素が何であるかを正しく伝えるため、以下の方法のいずれかで修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - 方法1: ${name} を smarthr-ui/FormControl、もしくはそれを拡張したコンポーネントに変更してください
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
      - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
@@ -195,6 +198,7 @@ module.exports = {
                         context.report({
                           node,
                           message: `${nodeName}は${actualName}より先に、smarthr-ui/${wrapComponentName}が入力要素を囲むようマークアップを以下のいずれかの方法で変更してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - 方法1: ${actualName} を${wrapComponentName}、もしくはそれを拡張したコンポーネントに変更してください
    - ${actualName} 内のHeading要素は${wrapComponentName}のtitle属性に変更してください
  - 方法2: ${actualName} と ${nodeName} の間に ${wrapComponentName} が存在するようにマークアップを変更してください
@@ -246,6 +250,7 @@ module.exports = {
                   context.report({
                     node,
                     message: `${nodeName} を、smarthr-ui/${wrapComponentName} もしくはそれを拡張したコンポーネントが囲むようマークアップを変更してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - ${wrapComponentName}で入力要素を囲むことでラベルと入力要素が適切に紐づき、操作性が高まります${isRadio ? `
  - FieldsetでRadioButtonを囲むことでグループ化された入力要素に対して適切なタイトル・説明を追加出来ます` : `
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
@@ -280,11 +285,11 @@ module.exports = {
             const component = formControlMatcher[1]
             const actualComponent = az_REGEX.test(component[0]) ? component : `smarthr-ui/${component}`
 
-            const message = `${nodeName}に 'role="group" が設定されています。${actualComponent} をつかってマークアップする場合、'role="group"' は不要です
- - ${nodeName} が ${actualComponent}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`
             context.report({
               node,
-              message,
+              message: `${nodeName}に 'role="group" が設定されています。${actualComponent} をつかってマークアップする場合、'role="group"' は不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
+ - ${nodeName} が ${actualComponent}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`,
             });
 
             return
@@ -308,6 +313,7 @@ module.exports = {
                     context.report({
                       node: n,
                       message: `${name} が、${nodeName} を子要素として持っており、マークアップとして正しくない状態になっています。以下のいずれかの方法で修正を試みてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - 方法1: 親要素である${name}をsmarthr-ui/${matcher[1]}、もしくはそれを拡張していないコンポーネントでマークアップしてください
    - ${matcher[1]}ではなく、smarthr-ui/Fieldset、もしくはsmarthr-ui/Section + smarthr-ui/Heading などでのマークアップを検討してください
  - 方法2: 親要素である${name}がsmarthr-ui/${matcher[1]}を拡張したコンポーネントではない場合、コンポーネント名を${FORM_CONTROL_REGEX}と一致しない名称に変更してください`,
@@ -432,6 +438,7 @@ module.exports = {
               context.report({
                 node,
                 message: `${nodeName}内に入力要素が2個以上存在しないため、'role="group"'を削除してください。'role="group"'は複数の入力要素を一つのグループとして扱うための属性です。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - ${nodeName}内に2つ以上の入力要素が存在する場合、入力要素を含むコンポーネント名全てを${FORM_CONTROL_INPUTS_REGEX}、もしくは${FROM_CONTROLS_REGEX}にマッチする名称に変更してください`,
               });
             }

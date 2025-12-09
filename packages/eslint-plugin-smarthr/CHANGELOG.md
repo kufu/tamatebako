@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.5.0...eslint-plugin-smarthr-v3.0.0) (2025-12-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* a11y-required-layout-as-attributeを削除する ([#919](https://github.com/kufu/tamatebako/issues/919))
+
+### Features
+
+* a11y-required-layout-as-attributeを削除する ([#919](https://github.com/kufu/tamatebako/issues/919)) ([fbf6897](https://github.com/kufu/tamatebako/commit/fbf68978c6b2590cf031cdea6badb9edf7faab96))
+
+
+### Bug Fixes
+
+* require-i18n-textで特定の文字列の場合、修正対象にしないように調整 ([#924](https://github.com/kufu/tamatebako/issues/924)) ([ddfb24b](https://github.com/kufu/tamatebako/commit/ddfb24b82a784312eb4750e87fbcd7c1374d6fcf))
+
+## [2.5.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.4.0...eslint-plugin-smarthr-v2.5.0) (2025-12-04)
+
+
+### Features
+
+* lintのエラーメッセージに仕様詳細へのリンクを追加 ([#918](https://github.com/kufu/tamatebako/issues/918)) ([4f6dd2f](https://github.com/kufu/tamatebako/commit/4f6dd2fdca759b7b04c885196fe2b2e2a05c0c96))
+
+## [2.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.3.0...eslint-plugin-smarthr-v2.4.0) (2025-12-02)
+
+
+### Features
+
+* Modalというコンポーネントの作成を禁止し、Dialogという名称に統一させる ([#915](https://github.com/kufu/tamatebako/issues/915)) ([208c2a0](https://github.com/kufu/tamatebako/commit/208c2a06034bcf24bfe1a3dd0d8633b0c546db11))
+
+
+### Bug Fixes
+
+* a11y-prohibit-checkbox-or-radio-in-table-cellのautofixを削除 & childrenを持つ場合に警告されないよう修正 ([#914](https://github.com/kufu/tamatebako/issues/914)) ([3962fda](https://github.com/kufu/tamatebako/commit/3962fda01a1966c9624d5cd7056d807f86ccb5bc))
+* trim-props でTemplateLiteralがネストしている場合のチェックを修正 ([#912](https://github.com/kufu/tamatebako/issues/912)) ([2d090c4](https://github.com/kufu/tamatebako/commit/2d090c4ef6d1ac4c9537fdb13a0198552456c10c))
+
+## [2.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.1...eslint-plugin-smarthr-v2.3.0) (2025-12-01)
+
+
+### Features
+
+* best-practice-for-layout にHeading, FormControl, Fieldsetのタイトル部分でLayout系コンポーネントの仕様を制限するチェックを追加 ([#906](https://github.com/kufu/tamatebako/issues/906)) ([631aeca](https://github.com/kufu/tamatebako/commit/631aecaa20c834b6d603e31af95f2aaee9694bd0))
+
+## [2.2.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.2.0...eslint-plugin-smarthr-v2.2.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* a11y-anchor-has-href-attributeがhrefにメソッドが指定されている場合に誤検知することがある問題を修正 ([#905](https://github.com/kufu/tamatebako/issues/905)) ([6ebd6ec](https://github.com/kufu/tamatebako/commit/6ebd6ecc074a7088652697dcb6bfb60b63a13fc4))
+* a11y-input-has-name-attributeでtemplate literalの場合、誤検知してしまう問題を修正 ([#904](https://github.com/kufu/tamatebako/issues/904)) ([d440e86](https://github.com/kufu/tamatebako/commit/d440e8675bf600dbe8a51e496d7076bcf617336f))
+
+## [2.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.1.0...eslint-plugin-smarthr-v2.2.0) (2025-11-07)
+
+
+### Features
+
+* a11y-help-link-with-support-hrefで対象となる変数名のバグを修正 ([#890](https://github.com/kufu/tamatebako/issues/890)) ([c9c4984](https://github.com/kufu/tamatebako/commit/c9c49848293fd88640e886c6586ae8d92a99f40c))
+* trim-propsでtemplate literalもautofixの対象にする ([#884](https://github.com/kufu/tamatebako/issues/884)) ([4072950](https://github.com/kufu/tamatebako/commit/40729507f5084308128ca39d5887ee81f2f67dd5))
+
 ## [2.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.0.0...eslint-plugin-smarthr-v2.1.0) (2025-10-29)
 
 

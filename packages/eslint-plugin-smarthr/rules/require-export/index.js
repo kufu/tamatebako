@@ -79,7 +79,8 @@ module.exports = {
           if (notExistsExports.length) {
             context.report({
               node,
-              message: `${notExistsExports.join(', ')} をexportしてください`,
+              message: `${notExistsExports.join(', ')} をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export`,
             })
           }
         })

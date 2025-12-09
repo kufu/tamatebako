@@ -130,7 +130,8 @@ module.exports = {
         if (importPath !== fixedImportPath) {
           context.report({
             node,
-            message: `${fixedImportPath} に修正してください`,
+            message: `${fixedImportPath} に修正してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path`,
             fix: (fixer) => fixer.replaceText(
               node,
               context.sourceCode.getText(node).replace(new RegExp(`from '${importPath}'$`), `from '${fixedImportPath}'`)

@@ -26,7 +26,8 @@ module.exports = {
 
           context.report({
             node,
-            message: `${match[1]}Trigger の直下には複数のコンポーネントを設置することは出来ません。button要素が一つだけ設置されている状態にしてください`,
+            message: `${match[1]}Trigger の直下には複数のコンポーネントを設置することは出来ません。button要素が一つだけ設置されている状態にしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-trigger-has-button`,
           })
         } else {
           const c = children[0]
@@ -44,7 +45,8 @@ module.exports = {
 
             context.report({
               node: c,
-              message: `${match[1]}Trigger の直下にはbutton要素のみ設置してください(AnchorButtonはa要素のため設置できません)`,
+              message: `${match[1]}Trigger の直下にはbutton要素のみ設置してください(AnchorButtonはa要素のため設置できません)
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-trigger-has-button`,
             })
           }
         }

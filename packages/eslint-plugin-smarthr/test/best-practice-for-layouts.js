@@ -11,6 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 const errorMessage = (type, name) => `${name}には子要素が一つしか無いため、${type}でマークアップする意味がありません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${name}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
 
@@ -58,6 +59,12 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<Cluster>{a}</Cluster>` },
     { code: `<Cluster>{a.b}</Cluster>` },
     { code: `<Cluster>{a ? b : c}</Cluster>` },
+    { code: `<Heading><Stack as="span"><Hoge /><Fuga /></Stack></Heading>` },
+    { code: `<AnyHeading icon={<AnyIcon />}>hoge</AnyHeading>` },
+    { code: `<FormControl label={<AnyStack as="span"><span>a</span><span>b</span></AnyStack>} />` },
+    { code: `<AnyFormControl label={{ text: 'hoge', icon: <AnyIcon /> }} />` },
+    { code: `<AnyFieldset legend={{ text: <AnyStack as="span"><span>a</span><span>b</span></AnyStack> }} />` },
+    { code: `<Fieldset legend={{ text: 'hoge', icon: <AnyIcon /> }} />` },
   ],
   invalid: [
     { code: `<Stack><Hoge /></Stack>`, errors: [ { message: errorMessage('Stack', 'Stack') } ] },
@@ -83,6 +90,7 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `<AnyCluster>{a ? <Hoge /> : a.b.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<AnyCluster>{a ? <Hoge /> : a ? <Hoge /> : a.b.hoge(action)}</AnyCluster>`, errors: [ { message: errorMessage('Cluster', 'AnyCluster') } ] },
     { code: `<HogeStack gap={0}>{a}{b}</HogeStack>`, errors: [ { message: `HogeStack に "gap={0}" が指定されており、smarthr-ui/Stack の利用方法として誤っている可能性があります。以下の修正方法を検討してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts
  - 方法1: 子要素を一つにまとめられないか検討してください
    - 例: "<Stack gap={0}><p>hoge</p><p>fuga</p></Stack>" を "<p>hoge<br />fuga</p>" にするなど
  - 方法2: 子要素のstyleを確認しgap属性を0以外にできないか検討してください
@@ -90,6 +98,30 @@ ruleTester.run('best-practice-for-button-element', rule, {
  - 方法3: 別要素でマークアップし直すか、HogeStackを削除してください
    - 親要素に smarthr-ui/Cluster, smarthr-ui/Stack などが存在している場合、div・spanなどで1要素にまとめる必要がある場合があります
    - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください` } ] },
+    { code: `<Heading><Cluster><Hoge /><Fuga /></Cluster></Heading>`, errors: [ { message: `Headingの子孫にClusterを置くことはできません。Headingの外でClusterを使用するようにマークアップを修正してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyHeading><AnyStack><Hoge /><Fuga /></AnyStack></AnyHeading>`, errors: [ { message: `Headingの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<Heading><AnyIcon text="hoge" /></Heading>`, errors: [ { message: `HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyHeading>`, errors: [ { message: `HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyFormControl label={{ text: <Cluster><Hoge /><Fuga /></Cluster> }} />`, errors: [ { message: `FormControlのlabel属性にClusterを置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<FormControl label={<AnyStack><Hoge /><Fuga /></AnyStack>} />`, errors: [ { message: `FormControlのlabel属性にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyFormControl label={{ text: <AnyIcon text="hoge" /> }} />`, errors: [ { message: `FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<FormControl label={{ text: <Text prefixIcon={<SomeIcon /> }>hoge</Text>}} />`, errors: [ { message: `FormControlのlabel属性にアイコンを設定する場合 <FormControl label={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlabel.icon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<Fieldset legend={<Cluster><Hoge /><Fuga /></Cluster>} />`, errors: [ { message: `Fieldsetのlegend属性にClusterを置くことはできません。ラベル用テキスト以外をstatusLabels、subActionArea、もしくはlabel属性のObjectとして '{ text: テキスト, icon: <XxxIcon /> }'に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyFieldset legend={{ text: <AnyStack><Hoge /><Fuga /></AnyStack> }} />`, errors: [ { message: `Fieldsetのlegend属性にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<Fieldset legend={<AnyIcon text="hoge" />} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
+    { code: `<AnyFieldset legend={{ text: <Text prefixIcon={<SomeIcon />}>hoge</Text>}} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts` } ] },
   ]
 })
 

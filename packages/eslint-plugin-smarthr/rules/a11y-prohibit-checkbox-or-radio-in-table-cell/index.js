@@ -1,12 +1,3 @@
-const findClosestThFromAncestor = (node) => {
-  if (node.type === 'JSXElement' && node.openingElement.name.name === 'Th') {
-    return node
-  }
-  if (node.parent) {
-    return findClosestThFromAncestor(node.parent)
-  }
-}
-
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -16,14 +7,13 @@ module.exports = {
     fixable: 'code',
     schema: [],
     messages: {
-      default: '{{cell}} の子孫に {{component}} を置くことはできません。代わりに {{preferred}} を使用してください。',
+      default: `{{cell}} の子孫に {{component}} を置くことはできません。代わりに {{preferred}} を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
     },
   },
   create(context) {
-    const sourceCode = context.sourceCode
-
     return {
-      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -34,7 +24,7 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/RadioButton$/]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/RadioButton$/][children.length=0]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -45,7 +35,7 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/]': (node) => {
+      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (node) => {
         context.report({
           node,
           messageId: 'default',
@@ -53,14 +43,6 @@ module.exports = {
             cell: 'Th',
             component: 'Checkbox',
             preferred: 'ThCheckbox',
-          },
-          *fix(fixer) {
-            const th = findClosestThFromAncestor(node)
-            if (th) {
-              const thCheckbox = sourceCode.getText(node).replace(/<Check(b|B)ox/, '<ThCheckbox')
-              yield fixer.insertTextAfter(th, thCheckbox)
-              yield fixer.remove(th)
-            }
           },
         })
       },

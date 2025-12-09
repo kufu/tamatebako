@@ -39,7 +39,8 @@ module.exports = {
 
           context.report({
             node,
-            message: `"${attributeCode}" は意図しない上書きを防ぐため、spread attributesでない属性より先に記述してください`,
+            message: `"${attributeCode}" は意図しない上書きを防ぐため、spread attributesでない属性より先に記述してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/jsx-start-with-spread-attributes`,
             fix: option?.fix ? (fixer) => {
               const elementNode = node.parent
               const sortedAttributes = [...elementNode.attributes].reduce((p, a, i) => {

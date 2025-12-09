@@ -72,7 +72,8 @@ module.exports = {
         if (node.name.name === 'href' && ANCHER_LIKE_REGEX.test(node.parent.name.name) && !HELP_LINK_REGEX.test(node.parent.name.name) && checkSupportURL(node.value, context)) {
           context.report({
             node,
-            message: `ヘルプページ用のリンクは smarthr-ui/HelpLink コンポーネントを利用してください`,
+            message: `ヘルプページ用のリンクは smarthr-ui/HelpLink コンポーネントを利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-help-link-with-support-href`,
           });
         }
       },

@@ -50,6 +50,7 @@ const NEXT_LINK_REGEX = /Link$/
 const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(NEXT_LINK_REGEX))
 
 const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
  - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
    - Cmd + clickなどのキーボードショートカットに対応出来ます
  - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください
@@ -91,7 +92,7 @@ module.exports = {
           reporter(node)
         }
       },
-      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([value=null],:has(Literal[value=/^(|#)$/])))`]: reporter,
+      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([value=null],:has(>Literal[value=/^(|#)$/]),:has(>JSXExpressionContainer[expression.value=/^(|#)$/])))`]: reporter,
     }
   },
 }

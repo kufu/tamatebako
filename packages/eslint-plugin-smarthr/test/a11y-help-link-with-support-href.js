@@ -10,7 +10,8 @@ const ruleTester = new RuleTester({
     },
   },
 })
-const errorText = `ヘルプページ用のリンクは smarthr-ui/HelpLink コンポーネントを利用してください`
+const errorText = `ヘルプページ用のリンクは smarthr-ui/HelpLink コンポーネントを利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-help-link-with-support-href`
 
 ruleTester.run('a11y-help-link-with-support-href', rule, {
   valid: [

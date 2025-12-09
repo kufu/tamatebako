@@ -14,6 +14,7 @@ module.exports = {
         context.report({
           node,
           message: `${node.name.name} には prefix と suffix は同時に設定できません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons
  - どちらにもアイコンをつけられそうな場合は、prefixを優先してください。`,
         })
       }

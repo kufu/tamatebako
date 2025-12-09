@@ -17,16 +17,19 @@ const messageProperName = ({ extended, matcher, sampleMatcher, suffix, base }) =
   const actualPrefix = sampleMatcher ? extended.replace(sampleMatcher, '') : (base[0] === base[0].toUpperCase() ? base.replace(matcher, '') : 'Hoge')
 
   return `${extended} は ${matcher} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - ${extended} の名称の末尾が"${suffix}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isComponent ? '名称に変更するか、適切な別コンポーネントに差し替えてください' : '適切なタグや別コンポーネントに差し替えてください'}
    - 修正例1: const ${actualPrefix}Xxxx = ${sampleSuffix}
    - 修正例2: const ${actualPrefix}${suffix}Xxxx = ${sampleSuffix}
    - 修正例3: const ${actualPrefix}${suffix} = styled(Xxxx${suffix})`
 }
-const messageInheritance = ({ extended, matcher }) => `${extended}を正規表現 "${matcher}" がmatchする名称に変更してください。`
+const messageInheritance = ({ extended, matcher }) => `${extended}を正規表現 "${matcher}" がmatchする名称に変更してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name`
 const messageImportAs = ({ extended, matcher, base }) => `${messageInheritance({ extended, matcher })}
  - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります`
 const messageExtendSectioningContent = ({ extended, expected }) => `${extended} は smarthr-ui/${expected} をextendすることを期待する名称になっています
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - childrenにHeadingを含まない場合、コンポーネントの名称から"${expected}"を取り除いてください
  - childrenにHeadingを含み、アウトラインの範囲を指定するためのコンポーネントならば、smarthr-ui/${expected}をexendしてください
    - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"${expected}"を設定し、そのコンポーネント内でsmarthr-ui/${expected}を利用してください`
@@ -139,7 +142,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const RemoteTriggerHogeDialog = styled(RemoteTriggerActionDialog)``' },
   ],
   invalid: [
-    { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"` } ] },
+    { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name` } ] },
 
     { code: `const HogeOrderedFugaList = styled.ul`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: /(Ordered(.*)List|^ol)$/, suffix: 'OrderedFugaList', base: 'ul' }) } ] },
     { code: `const HogeOrderedFugaList = styled(Hoge)`, errors: [ { message: messageProperName({ extended: 'HogeOrderedFugaList', matcher: /(Ordered(.*)List|^ol)$/, suffix: 'OrderedFugaList', base: 'Hoge' }) } ] },
@@ -243,5 +247,10 @@ ruleTester.run('component-name', rule, {
 
     { code: 'const Hoge = styled(RemoteDialogTrigger)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DialogTrigger$/ }) }, { message: messageInheritance({ extended: 'Hoge', matcher: /RemoteDialogTrigger$/ }) } ] },
     { code: 'const Fuga = styled(RemoteTriggerActionDialog)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /RemoteTrigger(.+)Dialog$/ }) } ] },
+    { code: 'const HogeModalFuga = any', errors: [ { message: `コンポーネント名や変数名に"Modal"という名称は使わず、"Dialog"に統一してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
+ - Modalとは形容詞であり、かつ"現在の操作から切り離して専用の操作を行わせる" という意味合いを持ちます
+   - そのためDialogでなければ正しくない場合がありえます(smarthr-ui/ModelessDialogのように元々の操作も行えるDialogなどが該当)
+   - DialogはModalなダイアログ、Modelessなダイアログすべてを含有した名称のため、統一することを推奨しています` } ] },
   ]
 })

@@ -1231,7 +1231,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       "when": false,
       "window": false,
     },
-    "parser": "typescript-eslint/parser@8.46.3",
+    "parser": "typescript-eslint/parser@8.48.1",
     "parserOptions": {
       "ecmaFeatures": {
         "jsx": true,
@@ -1251,8 +1251,8 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "react",
     "react-hooks:eslint-plugin-react-hooks@7.0.0",
     "jsx-a11y:eslint-plugin-jsx-a11y@6.10.2",
-    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.46.3",
-    "typescript:@typescript-eslint/eslint-plugin@8.46.3",
+    "@typescript-eslint:@typescript-eslint/eslint-plugin@8.48.1",
+    "typescript:@typescript-eslint/eslint-plugin@8.48.1",
     "smarthr:eslint-plugin-smarthr",
   ],
   "processor": undefined,
@@ -2987,6 +2987,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-numbered-text-within-ol": [
       2,
     ],
+    "smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell": [
+      1,
+    ],
     "smarthr/a11y-prohibit-input-maxlength-attribute": [
       2,
     ],
@@ -3058,6 +3061,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/require-export": [
       0,
+    ],
+    "smarthr/require-i18n-text": [
+      1,
     ],
     "smarthr/require-import": [
       0,

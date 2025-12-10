@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.0.0...eslint-plugin-smarthr-v3.1.0) (2025-12-10)
+
+
+### Features
+
+* best-practice-for-layoutsにradio, checkに対するチェックを追加 ([#937](https://github.com/kufu/tamatebako/issues/937)) ([97a393a](https://github.com/kufu/tamatebako/commit/97a393a9ae2a4cdfbfe8b82aba8cf15f22991e45))
+
 ## [3.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v2.5.0...eslint-plugin-smarthr-v3.0.0) (2025-12-08)
 
 

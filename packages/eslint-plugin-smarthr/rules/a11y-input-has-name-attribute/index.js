@@ -6,8 +6,10 @@ const OPTION = (() => {
   const file = `${process.cwd()}/package.json`
 
   if (fs.existsSync(file)) {
+    const packageConfig = JSON5.parse(fs.readFileSync(file)).dependencies
+
     return {
-      react_hook_form: Object.keys(JSON5.parse(fs.readFileSync(file)).dependencies).includes('react-hook-form'),
+      react_hook_form: packageConfig ? Object.keys(packageConfig).includes('react-hook-form') : false,
     }
   }
 

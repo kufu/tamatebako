@@ -37,6 +37,11 @@
     <SubText />
   </Stack>
 } />
+
+// Checkbox, RadioButtonのchildrenにLayout系コンポーネントを設置する場合、as・forwardedAs属性にspanを指定していないければエラー
+<AnyRadioButton><Cluster><A /><B /></Cluster></AnyRadioButton>
+<RadioButtonPanel><AnyStack><A /><B /></AnyStack></RadioButtonPanel>
+<AnyCheckbox><Sidebar><A /><B /></Sidebar></AnyCheckbox>
 ```
 
 ## ✅ Correct
@@ -94,4 +99,9 @@
   statusLabels={<RequiredLabel />}
   subActionArea={<HelpLink />}
 />
+
+// Checkbox, RadioButtonのchildrenにLayout系コンポーネントを設置する場合、as・forwardedAs属性にspanを指定する
+<AnyRadioButton><Cluster as="span"><A /><B /></Cluster></AnyRadioButton>
+<RadioButtonPanel><AnyStack forwardedAs="span"><A /><B /></AnyStack></RadioButtonPanel>
+<AnyCheckbox><Sidebar as="span"><A /><B /></Sidebar></AnyCheckbox>
 ```

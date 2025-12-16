@@ -32,29 +32,29 @@ export default [
       'no-shadow': 'off',
 
       // original rules
-      'smarthr/component-name': 'error',
       'smarthr/a11y-anchor-has-href-attribute': 'error',
       'smarthr/a11y-clickable-element-has-text': 'error',
       'smarthr/a11y-delegate-element-has-role-presentation': 'error',
-      'smarthr/a11y-form-control-in-form': 'warn', // TODO: 2024/11にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-form-control-in-form': 'error',
       'smarthr/a11y-heading-in-sectioning-content': 'error',
-      'smarthr/a11y-help-link-with-support-href': 'warn', // TODO: 2024/06にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-help-link-with-support-href': 'error',
       'smarthr/a11y-image-has-alt-attribute': 'error',
       'smarthr/a11y-input-has-name-attribute': 'error',
       'smarthr/a11y-input-in-form-control': 'error',
       'smarthr/a11y-numbered-text-within-ol': 'error',
+      'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
       'smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
       'smarthr/a11y-prohibit-input-placeholder': 'error',
-      'smarthr/a11y-prohibit-sectioning-content-in-form': 'warn', // TODO: 2024/11にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-      'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-layouts': 'error',
-      'smarthr/best-practice-for-nested-attributes-array-index': 'warn', // TODO: 2025/06にwarn化。問題なければerrorに変更予定
+      'smarthr/best-practice-for-nested-attributes-array-index': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
+      'smarthr/component-name': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/jsx-start-with-spread-attributes': [ 'error', { fix: true } ],

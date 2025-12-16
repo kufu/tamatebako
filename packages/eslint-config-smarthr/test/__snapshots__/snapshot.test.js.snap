@@ -3020,6 +3020,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-nested-attributes-array-index": [
       1,
     ],
+    "smarthr/best-practice-for-prohibit-import-smarthr-ui-local": [
+      1,
+    ],
     "smarthr/best-practice-for-remote-trigger-dialog": [
       2,
     ],

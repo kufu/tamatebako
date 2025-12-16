@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.1.0...eslint-plugin-smarthr-v3.2.0) (2025-12-15)
+
+
+### Features
+
+* best-practice-for-prohibit-import-smarthr-ui-local を追加 ([#946](https://github.com/kufu/tamatebako/issues/946)) ([1be8bf8](https://github.com/kufu/tamatebako/commit/1be8bf82aa97ccca9dba60277f50c5247ad2b664))
+
 ## [3.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.0.0...eslint-plugin-smarthr-v3.1.0) (2025-12-10)
 
 

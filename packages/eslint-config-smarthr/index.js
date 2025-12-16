@@ -53,6 +53,7 @@ export default [
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
+      'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'warn', // TODO: 2025/12にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/component-name': 'error',
       'smarthr/format-import-path': 'off',

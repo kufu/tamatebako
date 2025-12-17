@@ -23,6 +23,7 @@
 - [best-practice-for-nested-attributes-array-index](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index)
 - [best-practice-for-prohibit-import-smarthr-ui-local](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-prohibit-import-smarthr-ui-local)
 - [best-practice-for-remote-trigger-dialog](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog)
+- [best-practice-for-rest-parameters](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters)
 - [best-practice-for-tailwind-prohibit-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-prohibit-root-margin)
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)

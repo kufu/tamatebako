@@ -2967,13 +2967,13 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-form-control-in-form": [
-      1,
+      2,
     ],
     "smarthr/a11y-heading-in-sectioning-content": [
       2,
     ],
     "smarthr/a11y-help-link-with-support-href": [
-      1,
+      2,
     ],
     "smarthr/a11y-image-has-alt-attribute": [
       2,
@@ -2988,7 +2988,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell": [
-      1,
+      2,
     ],
     "smarthr/a11y-prohibit-input-maxlength-attribute": [
       2,
@@ -2997,7 +2997,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-prohibit-sectioning-content-in-form": [
-      1,
+      2,
     ],
     "smarthr/a11y-prohibit-useless-sectioning-fragment": [
       2,
@@ -3018,7 +3018,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-nested-attributes-array-index": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-prohibit-import-smarthr-ui-local": [
       1,

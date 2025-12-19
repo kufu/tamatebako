@@ -9,6 +9,15 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
+    const restAction = (node) => {
+      context.report({
+        node,
+        message: `残余引数以外に 'rest' という名称を利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters
+ - 残余引数(rest parameters)と混同する可能性があるため別の名称に修正してください`,
+      });
+    }
+
     return {
       [`RestElement[argument.name='props']`]: (node) => {
         context.report({
@@ -18,14 +27,8 @@ module.exports = {
  - 'rest' という名称を推奨します`,
         });
       },
-      [`:not(RestElement)>Identifier[name='rest']`]: (node) => {
-        context.report({
-          node,
-          message: `残余引数以外に 'rest' という名称を利用しないでください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters
- - 残余引数(rest parameters)と混同する可能性があるため別の名称に修正してください`,
-        });
-      },
+      [`:not(:matches(RestElement,JSXSpreadAttribute,ObjectPattern>Property,ObjectExpression>Property))>Identifier[name='rest']`]: restAction,
+      [`:matches(ObjectPattern>Property[value.name='rest'],ObjectExpression>Property[key.name='rest'])`]: restAction,
     }
   },
 }

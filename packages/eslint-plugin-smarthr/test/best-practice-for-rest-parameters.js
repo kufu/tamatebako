@@ -27,13 +27,18 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
     { code: `const hoge = (props) => {}` },
     { code: `const props = {}` },
     { code: `const hogeRest = {}` },
+    { code: `const hoge = { fuga: rest }` },
+    { code: `<Any {...rest} />` },
   ],
   invalid: [
     { code: `const hoge = (a, b, ...props) => {}`, errors: [ { message: ERROR_PROPS } ] },
     { code: `const hoge = ({ a, b, ...props }) => {}`, errors: [ { message: ERROR_PROPS } ] },
     { code: `const hoge = (rest) => {}`, errors: [ { message: ERROR_REST } ] },
     { code: `const hoge = (a, b, rest) => {}`, errors: [ { message: ERROR_REST } ] },
+    { code: `const hoge = ({ a: rest, b }) => {}`, errors: [ { message: ERROR_REST } ] },
     { code: `const rest = {}`, errors: [ { message: ERROR_REST } ] },
+    { code: `const hoge = { rest }`, errors: [ { message: ERROR_REST } ] },
+    { code: `const hoge = { rest: fuga }`, errors: [ { message: ERROR_REST } ] },
   ]
 })
 

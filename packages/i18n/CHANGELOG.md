@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.3](https://github.com/kufu/tamatebako/compare/i18n-v0.2.2...i18n-v0.2.3) (2025-12-23)
+
+
+### Bug Fixes
+
+* i18n useIntlImplのformatMessageの返り値の型を明示 ([#966](https://github.com/kufu/tamatebako/issues/966)) ([b4d6913](https://github.com/kufu/tamatebako/commit/b4d6913c64f7efef89de8324cf3ec98470b2fdbb))
+
 ## [0.2.2](https://github.com/kufu/tamatebako/compare/i18n-v0.2.1...i18n-v0.2.2) (2025-12-04)
 
 

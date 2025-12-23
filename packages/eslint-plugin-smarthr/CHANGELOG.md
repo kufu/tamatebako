@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.3.1...eslint-plugin-smarthr-v3.3.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* best-practice-for-rest-parametersの誤検知を修正し、エラー文言を条件に合わせて出し分けるように修正 ([#967](https://github.com/kufu/tamatebako/issues/967)) ([cf71e12](https://github.com/kufu/tamatebako/commit/cf71e1256ef6453fe99080829e6969cea88d5a92))
+
 ## [3.3.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.3.0...eslint-plugin-smarthr-v3.3.1) (2025-12-19)
 
 

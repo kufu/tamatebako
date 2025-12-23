@@ -54,7 +54,7 @@ export const useIntlImpl = <Messages,>(useTranslations: any) => {
    * @param options - オプションの設定オブジェクト。
    * @param options.strict - `true`の場合、メッセージキーの厳密な型チェックを行います。
    * @param options.values - メッセージ内で補間する値。use-intl / next-intlのrichメソッドのフォーマットに対応しています。
-   * @returns 整形されたメッセージ。
+   * @returns 整形されたメッセージ。ReactNode型を明示的に指定することで、any型への推論を防いでいます。
    */
   const formatMessage = useCallback(
     <TargetKey extends TargetKeys<Messages> = never, Strict extends boolean | undefined = true>(
@@ -63,7 +63,7 @@ export const useIntlImpl = <Messages,>(useTranslations: any) => {
         strict?: Strict
         values?: OptionValues
       },
-    ) =>
+    ): ReactNode =>
       t.rich(id, {
         ...options?.values,
         br: () => <br />,

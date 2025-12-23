@@ -36,12 +36,12 @@
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.1",
-    "@storybook/react": "^8.6.14",
-    "@storybook/react-webpack5": "^8.6.14",
+    "@storybook/react": "^8.6.15",
+    "@storybook/react-webpack5": "^8.6.15",
     "@types/react": "^19.2.7",
     "babel-loader": "^10.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "storybook": "^8.6.14"
+    "storybook": "^8.6.15"
   }
 }

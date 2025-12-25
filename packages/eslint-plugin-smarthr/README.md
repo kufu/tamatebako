@@ -26,6 +26,7 @@
 - [best-practice-for-rest-parameters](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters)
 - [best-practice-for-tailwind-prohibit-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-prohibit-root-margin)
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)
+- [best-practice-for-unnesessary-early-return](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unnesessary-early-return)
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [format-import-path](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path)
 - [format-translate-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-translate-component)

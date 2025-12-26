@@ -3020,6 +3020,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-nested-attributes-array-index": [
       2,
     ],
+    "smarthr/best-practice-for-optional-chaining": [
+      1,
+    ],
     "smarthr/best-practice-for-prohibit-import-smarthr-ui-local": [
       1,
     ],
@@ -3027,6 +3030,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-rest-parameters": [
+      0,
+    ],
+    "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
     "smarthr/component-name": [

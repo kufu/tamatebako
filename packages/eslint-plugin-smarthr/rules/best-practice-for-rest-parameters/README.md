@@ -1,6 +1,6 @@
 # smarthr/best-practice-for-rest-parameters
 
-- 残余引数(rest parameters)の命名規則を設定するルールです
+- 残余引数(rest parameters)の利用方法を設定するルールです
   - https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Functions/rest_parameters
 - 残余引数にはrestという名称を設定することを推奨します
   - よく利用される `props` などを利用するとエラーになります

@@ -21,6 +21,7 @@
 - [best-practice-for-date](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date)
 - [best-practice-for-layouts](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts)
 - [best-practice-for-nested-attributes-array-index](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index)
+- [best-practice-for-optional-chaining](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining)
 - [best-practice-for-prohibit-import-smarthr-ui-local](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-prohibit-import-smarthr-ui-local)
 - [best-practice-for-remote-trigger-dialog](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog)
 - [best-practice-for-rest-parameters](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters)

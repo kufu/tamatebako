@@ -57,3 +57,19 @@ if (action) {
   ...
 }
 ```
+
+```jsx
+// if内で関数呼び出し以外の処理が存在すれば許容
+if (action) {
+  return action()
+}
+```
+
+```jsx
+// else if内の場合は許容
+if (any) {
+  ...
+} else if (action) {
+  action()
+}
+```

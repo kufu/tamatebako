@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.4.0...eslint-plugin-smarthr-v3.5.0) (2025-12-26)
+
+
+### Features
+
+* smarthr/best-practice-for-optional-chaining を追加 ([#979](https://github.com/kufu/tamatebako/issues/979)) ([ff18a55](https://github.com/kufu/tamatebako/commit/ff18a55970f026c2d828cf22f99e9969d90d7d82))
+* smarthr/best-practice-for-unnesessary-early-return を追加 ([#977](https://github.com/kufu/tamatebako/issues/977)) ([cd0b1a2](https://github.com/kufu/tamatebako/commit/cd0b1a205e82f01ce2be4fe43b69555d86ab5fd1))
+
 ## [3.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v3.3.2...eslint-plugin-smarthr-v3.4.0) (2025-12-24)
 
 

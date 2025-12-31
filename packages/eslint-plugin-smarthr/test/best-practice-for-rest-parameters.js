@@ -38,6 +38,7 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
         return rest
       }
     ` },
+    { code: `const removeIdAttr = ({ id: _id, ...rest }) => rest` },
   ],
   invalid: [
     { code: `const hoge = ({ ...rest }) => {}`, errors: [ { message: `意味のない残余引数のため、単一の引数に変更してください${DETAIL_LINK}` } ] },

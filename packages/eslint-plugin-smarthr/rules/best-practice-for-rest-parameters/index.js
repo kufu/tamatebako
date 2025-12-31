@@ -47,7 +47,7 @@ module.exports = {
           message: `残余引数には ${REST_REGEX} とマッチする名称を指定してください${DETAIL_LINK}`,
         })
       },
-      [`:not(:matches(RestElement,JSXSpreadAttribute,JSXSpreadAttribute>TSAsExpression,SpreadElement,SpreadElement>TSAsExpression,MemberExpression,VariableDeclarator,ArrayExpression,CallExpression,ObjectPattern>Property,ObjectExpression>Property))>Identifier[name=${REST_REGEX}]`]: actionNotRest,
+      [`:not(:matches(RestElement,JSXSpreadAttribute,JSXSpreadAttribute>TSAsExpression,SpreadElement,SpreadElement>TSAsExpression,MemberExpression,VariableDeclarator,ArrayExpression,CallExpression,ObjectPattern>Property,ObjectExpression>Property,ReturnStatement))>Identifier[name=${REST_REGEX}]`]: actionNotRest,
       [`:matches(VariableDeclarator[id.name=${REST_REGEX}],ObjectPattern>Property[value.name=${REST_REGEX}],ObjectExpression>Property[key.name=${REST_REGEX}])`]: actionNotRest,
       [`MemberExpression[object.name=${REST_REGEX}]`]: actionMemberExpressionName,
       [`VariableDeclarator[id.type='ObjectPattern'][init.name=${REST_REGEX}]`]: (node) => {

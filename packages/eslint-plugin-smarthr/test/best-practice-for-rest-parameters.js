@@ -32,6 +32,12 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
     { code: `const hoge = [rest]` },
     { code: `hoge(fugaRest)` },
     { code: `<Any {...rest} />` },
+    { code: `
+      const removeKey = (key, obj) => {
+        const { [key]: _removed, ...rest } = obj
+        return rest
+      }
+    ` },
   ],
   invalid: [
     { code: `const hoge = ({ ...rest }) => {}`, errors: [ { message: `意味のない残余引数のため、単一の引数に変更してください${DETAIL_LINK}` } ] },

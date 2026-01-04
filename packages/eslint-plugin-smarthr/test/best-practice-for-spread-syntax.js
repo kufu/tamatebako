@@ -20,6 +20,7 @@ ruleTester.run('best-practice-for-spread-syntax', rule, {
     { code: `<Fuga {...props1} {...props2} id="ABC" />` },
     { code: `const hoge = { ...props, id: props.id || 'ABC' }` },
     { code: `const hoge = { ...props1, ...props2, id: 'ABC' }` },
+    { code: `dig(target, ...keys.slice(1))` },
   ],
   invalid: [
     {

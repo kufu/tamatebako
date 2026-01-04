@@ -16,13 +16,16 @@ const CHECK_OBJ_REGEX = /^(always|only-object)$/
 const getInsertIndex = (node, type, attributesKey) => {
   const attributes = node.parent[attributesKey]
 
-  for (let i = 0; i < attributes.length; i++) {
-    const a = attributes[i]
+  // HINT: 関数のspread elementの場合などは除外したいので属性がない場合に対応
+  if (attributes) {
+    for (let i = 0; i < attributes.length; i++) {
+      const a = attributes[i]
 
-    if (a === node) {
-      return -1
-    } else if (a.type !== type) {
-      return i
+      if (a === node) {
+        return -1
+      } else if (a.type !== type) {
+        return i
+      }
     }
   }
 

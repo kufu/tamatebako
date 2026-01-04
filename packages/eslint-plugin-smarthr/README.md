@@ -31,7 +31,7 @@
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [format-import-path](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path)
 - [format-translate-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-translate-component)
-- [jsx-start-with-spread-attributes](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/jsx-start-with-spread-attributes)
+- [best-practice-for-spread-syntax](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-spread-syntax)
 - [no-import-other-domain](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/no-import-other-domain)
 - [prohibit-export-array-type](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-export-array-type)
 - [prohibit-file-name](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-file-name)

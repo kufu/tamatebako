@@ -3032,6 +3032,13 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-rest-parameters": [
       0,
     ],
+    "smarthr/best-practice-for-spread-syntax": [
+      2,
+      {
+        "checkType": "only-jsx",
+        "fix": true,
+      },
+    ],
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
@@ -3043,12 +3050,6 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/format-translate-component": [
       0,
-    ],
-    "smarthr/jsx-start-with-spread-attributes": [
-      2,
-      {
-        "fix": true,
-      },
     ],
     "smarthr/no-import-other-domain": [
       0,

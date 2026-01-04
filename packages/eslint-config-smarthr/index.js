@@ -61,7 +61,8 @@ export default [
       'smarthr/component-name': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
-      'smarthr/jsx-start-with-spread-attributes': [ 'error', { fix: true } ],
+      // TODO: 2026/01に再設定。導入したプロダクトの数に応じてcheckTypeを削除してjsx, objectともに対象にすることを検討予定
+      'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true, checkType: 'only-jsx' } ],
       'smarthr/no-import-other-domain': 'off',
       'smarthr/prohibit-export-array-type': 'error',
       'smarthr/prohibit-file-name': 'off',

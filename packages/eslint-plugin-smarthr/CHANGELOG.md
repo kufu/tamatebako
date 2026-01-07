@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v4.0.1...eslint-plugin-smarthr-v4.0.2) (2026-01-07)
+
+
+### Bug Fixes
+
+* best-practice-for-spread-syntaxのcheckTypeをalways以外を指定した場合、チェック対象のコードによってエラーが発生する問題を修正 ([#1005](https://github.com/kufu/tamatebako/issues/1005)) ([ebd7b71](https://github.com/kufu/tamatebako/commit/ebd7b714a4e31f3875f5c3d9ad6a16bfb6e31634))
+
 ## [4.0.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v4.0.0...eslint-plugin-smarthr-v4.0.1) (2026-01-04)
 
 

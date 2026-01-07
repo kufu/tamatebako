@@ -21,6 +21,8 @@ ruleTester.run('best-practice-for-spread-syntax', rule, {
     { code: `const hoge = { ...props, id: props.id || 'ABC' }` },
     { code: `const hoge = { ...props1, ...props2, id: 'ABC' }` },
     { code: `dig(target, ...keys.slice(1))` },
+    { code: `{[...Array(3)].map((_, i) => (i))}`, options: [ { checkType: 'only-jsx' } ], },
+    { code: `<Fuga id={props.id || 'ABC'} {...props} />`, options: [ { checkType: 'only-object' } ], },
   ],
   invalid: [
     {

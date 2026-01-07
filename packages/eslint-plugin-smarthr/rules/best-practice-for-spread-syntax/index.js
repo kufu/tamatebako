@@ -9,8 +9,10 @@ const SCHEMA = [
   }
 ]
 
-const CHECK_JSX_REGEX = /^(always|only-jsx)$/
-const CHECK_OBJ_REGEX = /^(always|only-object)$/
+const CHECK_REGEX = {
+  JSXSpreadAttribute: /^(always|only-jsx)$/,
+  SpreadElement: /^(always|only-object)$/,
+}
 
 // HINT: -1: 見つからなかった >= 0: 見つかった
 const getInsertIndex = (node, type, attributesKey) => {
@@ -45,55 +47,50 @@ module.exports = {
     const option = context.options[0] || {}
     const fix = option.fix
     const checkType = option.checkType || 'always'
+    const result = {}
 
     const generateAction = (type, attributesKey, fixAction) => {
-      return ((node) => {
-        const insertIndex = getInsertIndex(node, type, attributesKey)
+      if (CHECK_REGEX[type].test(checkType)) {
+        result[type] = (node) => {
+          const insertIndex = getInsertIndex(node, type, attributesKey)
 
-        if (insertIndex !== -1) {
-          const code = context.sourceCode.getText(node)
+          if (insertIndex !== -1) {
+            const code = context.sourceCode.getText(node)
 
-          context.report({
-            node,
-            message: `"${code}" は意図しない上書きを防ぐため、spread syntaxでない属性より先に記述してください
+            context.report({
+              node,
+              message: `"${code}" は意図しない上書きを防ぐため、spread syntaxでない属性より先に記述してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-spread-syntax`,
-            fix: fixAction ? (fixer) => {
-              const elementNode = node.parent
-              const normals = []
-              const spreads = []
+              fix: fixAction ? (fixer) => {
+                const elementNode = node.parent
+                const normals = []
+                const spreads = []
 
-              elementNode[attributesKey].forEach((a, i) => {
-                if (a !== node) {
-                  if (insertIndex === i) {
-                    spreads.push(code)
+                elementNode[attributesKey].forEach((a, i) => {
+                  if (a !== node) {
+                    if (insertIndex === i) {
+                      spreads.push(code)
+                    }
+
+                    (a.type === type ? spreads : normals).push(context.sourceCode.getText(a))
                   }
+                })
 
-                  (a.type === type ? spreads : normals).push(context.sourceCode.getText(a))
-                }
-              })
-
-              return fixer.replaceText(
-                elementNode,
-                fixAction(spreads.concat(normals), elementNode),
-              )
-            } : null
-          });
+                return fixer.replaceText(
+                  elementNode,
+                  fixAction(spreads.concat(normals), elementNode),
+                )
+              } : null
+            });
+          }
         }
-      })
+      }
     }
 
-    return {
-      JSXSpreadAttribute: (
-        CHECK_JSX_REGEX.test(checkType)
-          ? generateAction('JSXSpreadAttribute', 'attributes', (option.fix) && ((attributes, e) => `<${e.name.name} ${attributes.join(' ')}${e.selfClosing ? ' /' : ''}>`))
-          : undefined
-      ),
-      SpreadElement: (
-        CHECK_OBJ_REGEX.test(checkType)
-          ? generateAction('SpreadElement', 'properties', (option.fix) && ((attributes) => `{ ${attributes.join(', ')} }`))
-          : undefined
-      ),
-    }
+    generateAction('JSXSpreadAttribute', 'attributes', (option.fix) && ((attributes, e) => `<${e.name.name} ${attributes.join(' ')}${e.selfClosing ? ' /' : ''}>`))
+    generateAction('SpreadElement', 'properties', (option.fix) && ((attributes) => `{ ${attributes.join(', ')} }`))
+
+    return result
   },
 }
 module.exports.schema = SCHEMA

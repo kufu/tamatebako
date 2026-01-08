@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v4.0.2...eslint-plugin-smarthr-v5.0.0) (2026-01-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **best-practice-for-spread-syntax:** best-practice-for-spread-syntaxのチェック対象をObject内のスプレッド構文に広げ、autofixするように修正 ([#1009](https://github.com/kufu/tamatebako/issues/1009))
+
+### Features
+
+* **best-practice-for-spread-syntax:** best-practice-for-spread-syntaxのチェック対象をObject内のスプレッド構文に広げ、autofixするように修正 ([#1009](https://github.com/kufu/tamatebako/issues/1009)) ([d334970](https://github.com/kufu/tamatebako/commit/d33497002710301b738f7e16382540a5ba35d36f))
+
 ## [4.0.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v4.0.1...eslint-plugin-smarthr-v4.0.2) (2026-01-07)
 
 

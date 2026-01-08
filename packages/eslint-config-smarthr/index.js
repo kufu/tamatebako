@@ -53,16 +53,15 @@ export default [
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
-      'smarthr/best-practice-for-optional-chaining': 'warn', // TODO: 2025/12にwarn化。問題なければerrorに変更予定
-      'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'warn', // TODO: 2025/12にwarn化。問題なければerrorに変更予定
+      'smarthr/best-practice-for-optional-chaining': 'error',
+      'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
-      // TODO: 2026/01に再設定。導入したプロダクトの数に応じてcheckTypeを削除してjsx, objectともに対象にすることを検討予定
-      'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true, checkType: 'only-jsx' } ],
       'smarthr/no-import-other-domain': 'off',
       'smarthr/prohibit-export-array-type': 'error',
       'smarthr/prohibit-file-name': 'off',

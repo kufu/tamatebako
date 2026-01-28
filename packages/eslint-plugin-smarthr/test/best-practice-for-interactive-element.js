@@ -59,13 +59,16 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<button>...</button>` },
     { code: `<InteractiveComponent>...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^InteractiveComponent%'] }] },
     { code: `<CrewDetail onChangeName={onChange} />` },
+    { code: `<Stack as="form" onSubmit={onSubmit} />` },
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },
-    { code: `<Hoge as="form" role="menu" />`, errors: [{ message: interactiveError('Hoge') }] },
+    { code: `<Hoge as="form" role="menu" />`, errors: [{ message: `<Hoge as="form">にrole属性は指定しないでください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element` }] },
     { code: `<FormControl role="menu" />`, errors: [{ message: interactiveError('FormControl') }] },
     { code: `<InteractiveComponent role="group">...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^Interactive'] }], errors: [{ message: interactiveError('InteractiveComponent') }] },
     { code: `<CrewDetail onChange={onChange} />`, errors: [{ message: uninteractiveError('CrewDetail') }] },
+    { code: `<Stack onSubmit={onSubmit} />`, errors: [{ message: uninteractiveError('Stack') }] },
   ]
 })
 

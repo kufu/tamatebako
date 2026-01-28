@@ -30,6 +30,9 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
 ].join('|')})$`
 const INTERACTIVE_ON_REGEX = /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
 
+const ELEMENT_HAS_ROLE_ATTRIBUTE = 'JSXOpeningElement:has(JSXAttribute[name.name="role"])'
+const AS_FORM_PART_ATTRIBUTE = 'JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value=/^f(orm|ieldset)$/]'
+
 const SCHEMA = [
   {
     type: 'object',
@@ -51,19 +54,24 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const interactiveComponentRegex = new RegExp(`(${INTERACTIVE_COMPONENT_NAMES}${options?.additionalInteractiveComponentRegex ? `|${options.additionalInteractiveComponentRegex.join('|')}` : ''})`)
-
-    const interactiveAction = (node) => {
-      context.report({
-        node,
-        message: `${node.name.name}にrole属性は指定しないでください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
-      });
-    }
+    const targetNameProp = `[name.name=${interactiveComponentRegex}]`
 
     return {
-      [`JSXOpeningElement[name.name=${interactiveComponentRegex}]:has(JSXAttribute[name.name="role"])`]: interactiveAction,
-      'JSXOpeningElement:has(JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value=/^f(orm|ieldset)$/]):has(JSXAttribute[name.name="role"])': interactiveAction,
-      [`JSXOpeningElement:not([name.name=${interactiveComponentRegex}]):has(JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}])`]: (node) => {
+      [`${ELEMENT_HAS_ROLE_ATTRIBUTE}${targetNameProp}`]: (node) => {
+        context.report({
+          node,
+          message: `${node.name.name}にrole属性は指定しないでください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
+        });
+      },
+      [`${ELEMENT_HAS_ROLE_ATTRIBUTE} ${AS_FORM_PART_ATTRIBUTE}`]: (node) => {
+        context.report({
+          node: node.parent,
+          message: `<${node.parent.name.name} ${context.sourceCode.getText(node)}>にrole属性は指定しないでください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
+        });
+      },
+      [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE})):has(JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}])`]: (node) => {
         context.report({
           node,
           message: `${node.name.name}にデフォルトで用意されているonXxx形式の属性は設定しないでください

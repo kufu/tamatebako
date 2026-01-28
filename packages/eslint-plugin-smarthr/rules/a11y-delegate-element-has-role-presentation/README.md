@@ -50,7 +50,14 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 </div>
 ```
 
-上記の場合、Hogeがインタラクティブな要素を含むコンポーネントならば前述のadditionalInteractiveComponentRegexオプションを利用してください。
+上記の場合、Hogeがインタラクティブな要素を含むコンポーネントならばHogeコンポーネントをインタラクティブな要素として判断される名前(例: Form，Input，もしくはButton, Anchor, Linkなどのsuffixをつける)か、前述のadditionalInteractiveComponentRegexオプションを利用してください。
+
+```jsx
+// SuffixにButtonをつけたため、インタラクティブなコンポーネントとして扱われるようになりOK
+<div onClick={onClick} role="presentation">
+  <HogeButton />
+</div>
+```
 
 ```jsx
 // additionalInteractiveComponentRegex: ['^Hoge%']
@@ -119,7 +126,7 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 
 ```jsx
 // 非インタラクティブな要素にデフォルトで存在するonXxx形式の属性を設定するとエラー
-// 設定する場合、は onXxxx のsuffixに"なんのために利用するのか" がわかる名称を追加するか、
+// 設定する場合は onXxxx のsuffixに"なんのために利用するのか" がわかる名称を追加するか、
 // 最終手段として`role="presentation"` を設定する
 <CrewDetail onChange={onChange} />
 ```
@@ -157,4 +164,12 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 ```jsx
 // デフォルトのonXxxx形式の属性ではなく、どこで利用されるのかが明確な属性に対して設定しているためOK
 <CrewDetail onChangeName={onChangeName} />
+```
+
+```jsx
+// formやinput, button, aなどのインタラクティブな要素の場合、デフォルトのonXxx形式の属性は設定可能なのでOK
+<form onSubmit={onSubmit}>
+  <input onChange={onChange} />
+  <button type="submit" onClick={onClick} />
+</form>
 ```

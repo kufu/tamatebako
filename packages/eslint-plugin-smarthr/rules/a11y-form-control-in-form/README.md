@@ -135,6 +135,26 @@ const Sample = () => (
 )
 ```
 
+```jsx
+// FormControl、Fieldsetを内包するコンポーネントの場合、名称のsuffixが
+// FormControl、Fieldset、もしくはFormControls, Fieldsetsのいずれかである必要があるためNG
+const Sample1 = () => (
+  <>
+    <StyledFormControl name="field1" />
+    <StyledFormControl name="field2" />
+    <StyledFormControl name="field3" />
+  </>
+)
+const Sample2 = (props) => (
+  <Fieldset {...props}>
+    <Any />
+  </>
+)
+
+// コンポーネント名を上記の様に調整することで
+// これらのコンポーネントを利用する別コンポーネントでも正しくチェックが行えます
+```
+
 ## ✅ Correct
 
 ```jsx

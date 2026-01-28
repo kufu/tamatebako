@@ -2,7 +2,6 @@
 
 - [a11y-anchor-has-href-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute)
 - [a11y-clickable-element-has-text](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-clickable-element-has-text)
-- [a11y-delegate-element-has-role-presentation](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-delegate-element-has-role-presentation)
 - [a11y-form-control-in-form](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-form-control-in-form)
 - [a11y-heading-in-sectioning-content](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content)
 - [a11y-help-link-with-support-href](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-help-link-with-support-href)

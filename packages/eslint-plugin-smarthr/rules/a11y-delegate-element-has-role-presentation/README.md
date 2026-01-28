@@ -4,8 +4,8 @@
 
 ## role="presentation" とは何か
 
-role属性はhtml要素の意味(role)を変更するための属性です。  
-すべての属性はデフォルトの属性を持っており、**基本的にrole属性を利用することは推奨されません**。  
+role属性はhtmlの要素の意味(role)を変更するための属性です。  
+すべてのhtmlの要素はデフォルトの属性を持っており、**基本的にrole属性を利用することは推奨されません**。  
 不用意に利用した場合、ブラウザが適切な解釈を行うことが出来ず、必要な機能が有効にならない、などの問題が発生する可能性があります。
 
 特に`role="presentation"`は **設定した要素は見た目やJSで利用するためのもので意味づけはない** という設定になるため大変強力な設定になります。  
@@ -39,7 +39,7 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 ```
 
 上記のような場合、ブラウザによってdiv要素に暗黙のroleが設定される場合があり、div要素が何か意味があるかもしれないとして扱われてしまうことを防ぐ目的で `role="presentation"` を指定しています。  
-`role="presentation"` の設定によって、delegate用のdivはdelegateのための要素であり、マークアップによる意味付けはないことが明確になります。
+`role="presentation"` の設定によって、対象要素はdelegateのための要素であり、意味付けは必要ないことが明確になります。
 
 このチェックでは**インタラクティブではない要素でイベントをキャッチしており、かつ'role="presentation"'を設定しているにも関わらず、子要素にインタラクティブな要素がない場合はエラーになります。**
 
@@ -60,6 +60,42 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 </div>
 ```
 
+## コンポーネントに設定するイベントハンドラの名称について
+
+上記した `role="presentation"を設定するべきパターン` の対応のため、onClick, onChangeなどのjavascriptデフォルトのイベントハンドラをコンポーネントの属性として利用する場合、エラーになる場合があります。
+
+```jsx
+// 例えばCrewDetailというコンポーネントにonChangeを設定した場合、デフォルトではCrewDetailはインタラクティブなコンポーネントではないため、NGになる
+<CrewDetail onChange={onChange} />
+```
+
+これを回避するためには前述のadditionalInteractiveComponentRegexオプションを利用することも出来ますが、onChange属性の名称を変更することでも対応できます。
+
+```jsx
+// 例えばonChangeが `従業員の氏名変更で利用される` イベントハンドラの場合
+<CrewDetail onChangeName={onChange}>
+```
+
+上記のように**なんのために利用されるイベントハンドラなのか？**がわかる名称にすることでコードの可読性が上がるため、属性の名称を変更する対応を推奨しています。
+チェック対象となる属性名は以下のとおりです。
+
+- onChange
+- onInput
+- onFocus
+- onBlur
+- onClick
+- onDoubleClick
+- onKeyDown
+- onKeyUp
+- onKeyPress
+- onMouseEnter
+- onMouseOver
+- onMouseDown
+- onMouseUp
+- onMouseLeave
+- onSelect
+- onSubmit
+
 ## rules
 
 ```js
@@ -79,6 +115,13 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 // インタラクティブな要素に対して role="presentation" は設定できない
 <Button role="presentation">text.</Button>
 <input type="text" role="presentation" />
+```
+
+```jsx
+// 非インタラクティブな要素にデフォルトで存在するonXxx形式の属性を設定するとエラー
+// 設定する場合、は onXxxx のsuffixに"なんのために利用するのか" がわかる名称を追加するか、
+// 最終手段として`role="presentation"` を設定する
+<CrewDetail onChange={onChange} />
 ```
 
 ```jsx
@@ -109,4 +152,9 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 <div onClick={hoge} role="presentation">
   <AnyForm />
 </div>
+```
+
+```jsx
+// デフォルトのonXxxx形式の属性ではなく、どこで利用されるのかが明確な属性に対して設定しているためOK
+<CrewDetail onChangeName={onChangeName} />
 ```

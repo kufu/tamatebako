@@ -2958,9 +2958,6 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-clickable-element-has-text": [
       2,
     ],
-    "smarthr/a11y-delegate-element-has-role-presentation": [
-      2,
-    ],
     "smarthr/a11y-form-control-in-form": [
       2,
     ],
@@ -3007,6 +3004,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-date": [
+      2,
+    ],
+    "smarthr/best-practice-for-interactive-element": [
       2,
     ],
     "smarthr/best-practice-for-layouts": [

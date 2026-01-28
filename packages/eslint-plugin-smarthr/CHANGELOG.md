@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.0.0...eslint-plugin-smarthr-v6.0.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* **best-practice-for-interactive-element:** as属性でインタラクティブなコンポーネントに変更した場合、onXxxのチェックが誤検知する問題を修正 ([#1019](https://github.com/kufu/tamatebako/issues/1019)) ([8ba4343](https://github.com/kufu/tamatebako/commit/8ba4343b87b8acb8fee374946dd18c848839e6a9))
+
 ## [6.0.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v5.0.0...eslint-plugin-smarthr-v6.0.0) (2026-01-28)
 
 

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v12.0.0...eslint-config-smarthr-v13.0.0) (2026-01-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* a11y-delegate-element-has-role-presentation を削除し、best-practice-for-interactive-elementを追加 ([#1017](https://github.com/kufu/tamatebako/issues/1017))
+
+### Features
+
+* a11y-delegate-element-has-role-presentation を削除し、best-practice-for-interactive-elementを追加 ([#1017](https://github.com/kufu/tamatebako/issues/1017)) ([2fb307a](https://github.com/kufu/tamatebako/commit/2fb307ae0b0e098371d6c3d3d87ef72bc5b061af))
+
 ## [12.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v11.0.2...eslint-config-smarthr-v12.0.0) (2026-01-08)
 
 

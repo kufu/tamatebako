@@ -71,10 +71,10 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
         });
       },
-      [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE})):has(JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}])`]: (node) => {
+      [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE}))>JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}]`]: (node) => {
         context.report({
-          node,
-          message: `${node.name.name}にデフォルトで用意されているonXxx形式の属性は設定しないでください
+          node: node.parent,
+          message: `${node.parent.name.name}にデフォルトで用意されているonXxx形式の属性は設定しないでください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element
  - 対応方法1: 対象の属性がコンポーネント内の特定のインタラクティブな要素に設定される場合、名称を具体的なものに変更してください
    - 属性名を"${INTERACTIVE_ON_REGEX}"に一致しないものに変更してください

@@ -60,6 +60,7 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<InteractiveComponent>...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^InteractiveComponent%'] }] },
     { code: `<CrewDetail onChangeName={onChange} />` },
     { code: `<Stack as="form" onSubmit={onSubmit} />` },
+    { code: `<Stack any={<Button onClick={onClick} />} />` },
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },

@@ -6,6 +6,7 @@
 - インタラクティブな要素にrole属性が設定されている場合エラーとします
 - インタラクティブではないコンポーネントに対して、デフォルトで用意されているonXxx形式の属性を設定しようとするとエラーにします
   - 例: `CrewDetail` コンポーネントに `onChange` を設定するとエラー、 `onChangeName` ならOK
+  - 子要素で発生したイベントを親要素で処理すること(delegate)が目的の場合、イベントハンドラがdelegateを取り扱っていることがわかるように記述することを促します
 
 ## インタラクティブな要素・コンポーネントとは何か
 
@@ -39,6 +40,7 @@
 - Date
 - DatetimeLocal
 - Dialog
+- DisclosureTrigger
 - DropZone
 - FormControl
 - InputFile
@@ -125,6 +127,42 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 - onSelect
 - onSubmit
 
+#### 子要素で発生したイベントを親要素で処理する場合(delegateしたい場合)
+
+非インタラクティブな要素に対して、デフォルトのonXxx形式の属性を設定するパターンとして、delegateが存在します。
+
+```jsx
+// 子要素のbuttonから発生したclickイベントを親で受け取り処理する
+<div onClick={onClick}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+```
+
+上記例の場合、このルールはエラーになりますが、**delegateを目的としたイベントハンドラであること** を分かる状態にすることで回避出来ます。
+
+```jsx
+// 設定するハンドラの名称に delegate, もしくはDelegateを含める
+<div onClick={onDelegateClick}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+```
+
+無名関数を直接渡している場合、ハンドラの引数の名称にdelegate, もしくはDelegateを含めることで同様に回避出来ます。
+
+```jsx
+<div onClick={(delegateEv) => onClick(delegateEv)}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+```
+
+上記のように修正することで **delegateを目的としたイベントハンドラであることが明確** になり、コードの可読性が向上します
+
 
 ## rules
 
@@ -154,6 +192,22 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 <CrewDetail onChange={onChange} />
 ```
 
+```jsx
+// 子要素のbuttonから発生したclickイベントを親で受け取り処理する場合
+// イベントハンドラがdelegateを目的とするものであることが分かる必要がある
+<div onClick={onClick}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+
+<div onClick={(e) => onClick(e)}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+```
+
 ## ✅ Correct
 
 ```jsx
@@ -162,7 +216,7 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 ```
 
 ```jsx
-// additionalInteractiveComponentRegex: ['^InteractiveComponent%']
+// additionalInteractiveComponentRegex: ['^InteractiveComponent$']
 // インタラクティブなコンポーネントとして扱われるものに対してroleを指定していないのでOK
 <InteractiveComponent any={hoge}>...</InteractiveComponent>
 ```
@@ -175,4 +229,19 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 ```jsx
 // インタラクティブな要素なのでonXxx形式のデフォルト属性を設定してもOK
 <XxxInput onChange={onChange} />
+```
+
+```jsx
+// イベントハンドラがdelegateを目的とするものであることが明確なのでOK
+<div onClick={onDelegateClick}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
+
+<div onClick={(delegateEv) => onClick(delegateEv)}>
+  <ButtonA />
+  <ButtonB />
+  <ButtonC />
+</div>
 ```

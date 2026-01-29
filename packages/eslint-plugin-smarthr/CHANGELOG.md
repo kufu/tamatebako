@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.0.2...eslint-plugin-smarthr-v6.1.0) (2026-01-29)
+
+
+### Features
+
+* **best-practice-for-interactive-element:** delegateでイベントを受け取ることを明確にするようコード修正を促すように修正 ([#1027](https://github.com/kufu/tamatebako/issues/1027)) ([476c858](https://github.com/kufu/tamatebako/commit/476c858d87a581a33e764ac1aa9aafee29805217))
+
 ## [6.0.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.0.1...eslint-plugin-smarthr-v6.0.2) (2026-01-29)
 
 

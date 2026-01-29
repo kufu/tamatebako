@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.1.0...eslint-plugin-smarthr-v6.2.0) (2026-01-29)
+
+
+### Features
+
+* **best-practice-for-interactive-element:** 特定の要素・コンポーネントに対してrole属性の設定を共用する条件を追加 ([#1031](https://github.com/kufu/tamatebako/issues/1031)) ([1bf4c67](https://github.com/kufu/tamatebako/commit/1bf4c679e767edf169de53c89d7ac69c4873b1e1))
+
 ## [6.1.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.0.2...eslint-plugin-smarthr-v6.1.0) (2026-01-29)
 
 

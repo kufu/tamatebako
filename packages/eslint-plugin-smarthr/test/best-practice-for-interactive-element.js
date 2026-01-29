@@ -69,6 +69,9 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<Stack onSubmit={hoge.fuga.delegateAny.piyo} />` },
     { code: `<Stack onSubmit={(a, delegateEvent, b) => {}} />` },
     { code: `<HogeCheckbox role="switch" />` },
+    { code: `<HogeInput role="switch" />` },
+    { code: `<input role="combobox" />` },
+    { code: `<FugaButton role="option" />` },
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },
@@ -79,6 +82,9 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<CrewDetail onChange={onChange} />`, errors: [{ message: uninteractiveError('CrewDetail') }] },
     { code: `<Stack onSubmit={onSubmit} />`, errors: [{ message: uninteractiveError('Stack') }] },
     { code: `<HogeCheckbox role="any" />`, errors: [{ message: interactiveError('HogeCheckbox') }] },
+    { code: `<HogeInput role="any" />`, errors: [{ message: interactiveError('HogeInput') }] },
+    { code: `<input role="any" />`, errors: [{ message: interactiveError('input') }] },
+    { code: `<FugaButton role="any" />`, errors: [{ message: interactiveError('FugaButton') }] },
   ]
 })
 

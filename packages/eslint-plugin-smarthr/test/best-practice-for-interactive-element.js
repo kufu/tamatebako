@@ -23,6 +23,7 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
   '(T|t)extarea(s)?',
   'AccordionPanel(s)?',
   'Anchor',
+  'DisclosureTrigger?',
   'DropZone(s)?',
   'Field(S|s)et(s)?',
   'FilterDropdown(s)?',
@@ -50,9 +51,12 @@ const uninteractiveError = (name) => `${name}にデフォルトで用意され�
  - 対応方法1: 対象の属性がコンポーネント内の特定のインタラクティブな要素に設定される場合、名称を具体的なものに変更してください
    - 属性名を"${INTERACTIVE_ON_REGEX}"に一致しないものに変更してください
    - 例: 対象コンポーネント内に '追加ボタン' が存在する場合、'onClick' という属性名を 'onClickAddButton' に変更する
- - 対応方法2: 対象の属性が設定されているコンポーネントがインタラクティブなコンポーネントの場合、名称を調整してください
+ - 対応方法2: 子要素で発生したイベントを受け取ること(delegate)が目的でonXxx属性を設定している場合、イベントハンドラがdelegateを目的としている事がわかるように修正してください
+   - 修正例1: "onClick={onClick}" を設定している場合、 "onClick={onDelegateClick}" のようにDelegate, もしくはdelegateを含む名称に変更する
+   - 修正例2: "onClick={(e) => { ... }}" を設定している場合、 "onClick={(delegateEvent) => { ... }}" のように引数をdelegate, もしくはDelegateを含む名称に変更する
+ - 対応方法3: 対象の属性が設定されているコンポーネントがインタラクティブなコンポーネントの場合、名称を調整してください
    - "${new RegExp(`(${INTERACTIVE_COMPONENT_NAMES})`)}" の正規表現にmatchするコンポーネントに変更、もしくは名称を調整してください
- - 対応方法3: インタラクティブな親要素、もしくは子要素が存在する場合、onXxx属性を移動して設定することを検討してください`
+ - 対応方法4: インタラクティブな親要素、もしくは子要素が存在する場合、onXxx属性を移動して設定することを検討してください`
 
 ruleTester.run('best-practice-for-interactive-element', rule, {
   valid: [
@@ -61,6 +65,10 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<CrewDetail onChangeName={onChange} />` },
     { code: `<Stack as="form" onSubmit={onSubmit} />` },
     { code: `<Stack any={<Button onClick={onClick} />} />` },
+    { code: `<Stack onSubmit={onDelegateSubmit} />` },
+    { code: `<Stack onSubmit={hoge.fuga.delegateAny.piyo} />` },
+    { code: `<Stack onSubmit={(a, delegateEvent, b) => {}} />` },
+    { code: `<HogeCheckbox role="switch" />` },
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },
@@ -70,6 +78,7 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<InteractiveComponent role="group">...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^Interactive'] }], errors: [{ message: interactiveError('InteractiveComponent') }] },
     { code: `<CrewDetail onChange={onChange} />`, errors: [{ message: uninteractiveError('CrewDetail') }] },
     { code: `<Stack onSubmit={onSubmit} />`, errors: [{ message: uninteractiveError('Stack') }] },
+    { code: `<HogeCheckbox role="any" />`, errors: [{ message: interactiveError('HogeCheckbox') }] },
   ]
 })
 

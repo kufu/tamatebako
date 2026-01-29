@@ -32,6 +32,13 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
 const INTERACTIVE_ON_REGEX = /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
 const DELEGATE_REGEX = /(d|D)elegate/
 
+const ARROW_ROLES = {
+  '((^i|I)nput|(^c|C)heck(b|B)ox)$': 'switch',
+  '(^i|I)nput$': 'combobox',
+  '(^b|B)utton$': 'option',
+}
+const NOT_ARROW_ROLE_ATTRIBUTES = Object.entries(ARROW_ROLES).reduce((prev, [key, value]) => `${prev}:not([parent.name.name=/${key}/][value.value="${value}"])`, '')
+
 const ELEMENT_HAS_ROLE_ATTRIBUTE = 'JSXOpeningElement:has(JSXAttribute[name.name="role"])'
 const AS_FORM_PART_ATTRIBUTE = 'JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value=/^f(orm|ieldset)$/]'
 
@@ -59,7 +66,7 @@ module.exports = {
     const targetNameProp = `[name.name=${interactiveComponentRegex}]`
 
     return {
-      [`JSXOpeningElement${targetNameProp}>JSXAttribute[name.name="role"]:not([parent.name.name=/(^c|C)heck(b|B)ox$/][value.value="switch"])`]: (node) => {
+      [`JSXOpeningElement${targetNameProp}>JSXAttribute[name.name="role"]${NOT_ARROW_ROLE_ATTRIBUTES}`]: (node) => {
         context.report({
           node: node.parent,
           message: `${node.parent.name.name}にrole属性は指定しないでください。

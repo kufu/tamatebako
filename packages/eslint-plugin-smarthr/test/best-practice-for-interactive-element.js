@@ -72,6 +72,7 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
     { code: `<HogeInput role="switch" />` },
     { code: `<input role="combobox" />` },
     { code: `<FugaButton role="option" />` },
+    { code: `<FugaButton role="menuitem" />` },
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },

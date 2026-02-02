@@ -100,8 +100,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.2(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.2.0
-        version: 6.2.0(eslint@9.39.2(jiti@2.4.2))
+        specifier: 6.2.1
+        version: 6.2.1(eslint@9.39.2(jiti@2.4.2))
       globals:
         specifier: ^17.0.0
         version: 17.0.0
@@ -3809,8 +3809,8 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.2.0:
-    resolution: {integrity: sha512-9+qqyzIMM3VPdohuEXgSVAGPbinLAcZnOyi+ISy30nDryYPTECo54wd2wrQ75Rr3qyCWOxewySZANeT98oxi3g==}
+  eslint-plugin-smarthr@6.2.1:
+    resolution: {integrity: sha512-LCfEMLW2RGivUV3cOAtc+ETCnPQ0LfeAqMqRoddqTquPotXNl92jl36C98U0q9LRah8Z03ARV75oHm6Q3gWzXA==}
     engines: {node: '>=22.21.1'}
     peerDependencies:
       eslint: ^9
@@ -11676,7 +11676,7 @@ snapshots:
       eslint: 9.39.2(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.2.0(eslint@9.39.2(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.2.1(eslint@9.39.2(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.2(jiti@2.4.2)
       json5: 2.2.3

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.2.0...eslint-plugin-smarthr-v6.2.1) (2026-02-02)
+
+
+### Bug Fixes
+
+* **best-practice-for-interactive-element:** button要素に対してrole="menuitem"の設定を許容する ([#1038](https://github.com/kufu/tamatebako/issues/1038)) ([022b22f](https://github.com/kufu/tamatebako/commit/022b22f5432cd5cc7afd54525dd66c3e0e5d3d49))
+
 ## [6.2.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.1.0...eslint-plugin-smarthr-v6.2.0) (2026-01-29)
 
 

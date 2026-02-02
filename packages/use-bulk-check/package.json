@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^8.0.1",
-    "@types/react": "^19.2.7",
+    "@types/react": "^19.2.10",
     "react": "^19.2.3",
     "react-test-renderer": "^19.2.3"
   }

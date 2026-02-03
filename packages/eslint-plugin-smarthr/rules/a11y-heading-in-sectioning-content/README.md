@@ -1,6 +1,6 @@
 # smarthr/a11y-heading-in-sectioning-content
 
-HeadingコンポーネントをSectioningContent(Article, Aside, Nav, Section) のいずれかで囲むことを促すルールで<br />
+HeadingコンポーネントをSectioningContent(Article, Aside, Nav, Section) のいずれかで囲むことを促すルールです。<br />
 同時にSectioningContentはHeadingを内包しているか、もチェックします
 
 

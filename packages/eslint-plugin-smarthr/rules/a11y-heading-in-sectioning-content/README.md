@@ -14,7 +14,7 @@ HeadingコンポーネントをSectioningContent(Article, Aside, Nav, Section) �
 
 ## SectioningContentとして扱うコンポーネントについて
 
-このルールではsmarthr-ui/Layout系コンポーネント(Center, Reel, Sidebar, Stack)にas属性・forwardedAs属性で'section', 'article', 'aside', 'nav' のいずれかの要素が指定されている場合、SectioningContentとして扱います。<br />
+このルールではsmarthr-ui/Layout系コンポーネント(Center, Reel, Sidebar, Stack)にas属性・forwardedAs属性で`section` `article` `aside` `nav` のいずれかの要素が指定されている場合、SectioningContentとして扱います。<br />
 Layout系コンポーネントがSectioningContentとして扱われている場合、smarthr-uiの内部実装レベルでもSectioningContentとして扱われるため、前述のHeadingのレベルの自動計算が有効になります。
 
 ## section要素などbuildinのSectiongContentに属する要素の利用について

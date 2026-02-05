@@ -36,7 +36,7 @@ module.exports = {
 
     return {
       'JSXAttribute Literal[value=/(^ | $)/]': checker,
-      'JSXAttribute TemplateLiteral:has(>TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/]))': checker,
+      'JSXAttribute TemplateLiteral:has( > TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/]))': checker,
     }
   },
 }

@@ -100,8 +100,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.2(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.2.1
-        version: 6.2.1(eslint@9.39.2(jiti@2.4.2))
+        specifier: 6.2.2
+        version: 6.2.2(eslint@9.39.2(jiti@2.4.2))
       globals:
         specifier: ^17.2.0
         version: 17.3.0
@@ -3824,8 +3824,8 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.2.1:
-    resolution: {integrity: sha512-LCfEMLW2RGivUV3cOAtc+ETCnPQ0LfeAqMqRoddqTquPotXNl92jl36C98U0q9LRah8Z03ARV75oHm6Q3gWzXA==}
+  eslint-plugin-smarthr@6.2.2:
+    resolution: {integrity: sha512-WsdNeE57nUnFyf/+2Pv5Be12NUC2s47xUnGCLzBbkfQ4R3+yh4l4U/el/2wF+tuLjScECvsdELgxwXGW5t9p+Q==}
     engines: {node: '>=22.21.1'}
     peerDependencies:
       eslint: ^9
@@ -4214,7 +4214,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@9.3.5:
     resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
@@ -11667,7 +11667,7 @@ snapshots:
       eslint: 9.39.2(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.2.1(eslint@9.39.2(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.2.2(eslint@9.39.2(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.2(jiti@2.4.2)
       json5: 2.2.3

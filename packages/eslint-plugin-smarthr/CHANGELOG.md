@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.2.2...eslint-plugin-smarthr-v6.2.3) (2026-02-05)
+
+
+### Bug Fixes
+
+* eslintのセレクタエンジンのアップデートにより、&gt;の前後のスペースが必須になったため修正 ([#1055](https://github.com/kufu/tamatebako/issues/1055)) ([d885f3c](https://github.com/kufu/tamatebako/commit/d885f3cde328abc119c0e4798c399cbdd1b4907a))
+
 ## [6.2.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.2.1...eslint-plugin-smarthr-v6.2.2) (2026-02-05)
 
 

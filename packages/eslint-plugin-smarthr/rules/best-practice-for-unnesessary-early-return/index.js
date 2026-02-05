@@ -1,6 +1,6 @@
 const SCHEMA = []
 
-const EARLY_RETURN_IF_STATEMENT = `:matches(ArrowFunctionExpression,FunctionExpression,FunctionDeclaration)>BlockStatement>IfStatement[alternate=null]:matches([consequent.type='ReturnStatement'],[consequent.body.length=1])>`
+const EARLY_RETURN_IF_STATEMENT = `:matches(ArrowFunctionExpression,FunctionExpression,FunctionDeclaration) > BlockStatement > IfStatement[alternate=null]:matches([consequent.type='ReturnStatement'],[consequent.body.length=1]) > `
 const NULL_RETURN_STATEMENT = 'ReturnStatement[argument=null]'
 
 const FUNCTION_REGEX = /^(Arrow)?Function(Expression|Declaration)$/
@@ -84,7 +84,7 @@ module.exports = {
     }
 
     return {
-      [`${EARLY_RETURN_IF_STATEMENT}BlockStatement>${NULL_RETURN_STATEMENT}`]: action,
+      [`${EARLY_RETURN_IF_STATEMENT}BlockStatement > ${NULL_RETURN_STATEMENT}`]: action,
       [`${EARLY_RETURN_IF_STATEMENT}${NULL_RETURN_STATEMENT}`]: action,
     }
   },

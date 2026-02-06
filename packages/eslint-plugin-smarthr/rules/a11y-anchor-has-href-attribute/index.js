@@ -46,7 +46,7 @@ const OPTION = (() => {
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
 const NULL_HREF_ATTRIBUTE_VALUES = `${HREF_ATTRIBUTE}:matches(${['#', ''].reduce((prev, v) => {
-  return `${prev},:has( > Literal[value="${v}"]),:has( > JSXExpressionContainer[expression.value="${v}"])`
+  return `${prev},[value.type="Literal"][value.value="${v}"],[value.type="JSXExpressionContainer"][value.expression.value="${v}"]`
 }, '[value=null]')})`
 const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる

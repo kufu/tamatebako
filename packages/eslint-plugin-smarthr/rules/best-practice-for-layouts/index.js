@@ -185,7 +185,7 @@ module.exports = {
           message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください${DETAIL_LINK_MESSAGE}`,
         })
       },
-      [`JSXElement:has( > JSXOpeningElement[name.name=/RadioButton(Panel)?$/]) ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
+      [`JSXElement[openingElement.name.name=/RadioButton(Panel)?$/] ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
         const component = node.name.name.match(LAYOUT_COMPONENT_REGEX)[1]
 
         context.report({
@@ -193,7 +193,7 @@ module.exports = {
           message: `RadioButton, RadioButtonPanelの子孫に${component}を置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}`,
         })
       },
-      [`JSXElement:has( > JSXOpeningElement[name.name=/Checkbox?$/]) ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
+      [`JSXElement[openingElement.name.name=/Checkbox?$/] ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
         const component = node.name.name.match(LAYOUT_COMPONENT_REGEX)[1]
 
         context.report({

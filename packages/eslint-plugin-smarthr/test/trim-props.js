@@ -89,12 +89,12 @@ ruleTester.run('trim-props', rule, {
     {
       code: '<div data-spec={` a${b} c `}>....</div>',
       output: '<div data-spec={`a${b} c`}>....</div>',
-      errors: [{ message: ERROR_MESSAGE }],
+      errors: [{ message: ERROR_MESSAGE }, { message: ERROR_MESSAGE }],
     },
     {
       code: '<div data-spec={` a${b ? ` ${c} ` : "  "} d `}>....</div>',
       output: '<div data-spec={`a${b ? ` ${c} ` : "  "} d`}>....</div>',
-      errors: [{ message: ERROR_MESSAGE }],
+      errors: [{ message: ERROR_MESSAGE }, { message: ERROR_MESSAGE }],
     },
   ],
 })

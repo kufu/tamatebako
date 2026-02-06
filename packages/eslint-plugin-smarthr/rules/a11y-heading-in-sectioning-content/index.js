@@ -11,6 +11,7 @@ const noHeadingTagNamesRegex = /^(span|legend)$/
 const ignoreHeadingCheckParentTypeRegex = /^(Program|ExportNamedDeclaration)$/
 const headingAttributeRegex = /^(heading|title)$/
 const ariaLabelRegex = /^aria-label(ledby)?$/
+const tagAttrRegex = /^(tag|unrecommendedTag)$/
 
 const includeSectioningAsAttr = (a) => asRegex.test(a.name?.name) && bareTagRegex.test(a.value.value)
 
@@ -23,9 +24,9 @@ const pageHeadingMessage = `smarthr-ui/PageHeading が同一ファイル内に�
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content`
 const pageHeadingInSectionMessage = `smarthr-ui/PageHeadingはsmarthr-uiのArticle, Aside, Nav, Sectionで囲まないでください。囲んでしまうとページ全体の見出しではなくなってしまいます。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content`
-const noTagAttrMessage = `tag属性を指定せず、smarthr-uiのArticle, Aside, Nav, Sectionのいずれかの自動レベル計算に任せるよう、tag属性を削除してください。
+const noTagAttrMessage = `tag属性、unrecommendedTag属性を指定せず、smarthr-uiのArticle, Aside, Nav, Sectionのいずれかの自動レベル計算に任せるよう、tag属性、unrecommendedTag属性を削除してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content
- - tag属性を指定することで意図しないレベルに固定されてしまう可能性があります。`
+ - tag属性、unrecommendedTag属性を指定することで意図しないレベルに固定されてしまう可能性があります。`
 
 const VariableDeclaratorBareToSHR = (context, node) => {
   if (!node.init) {
@@ -177,7 +178,7 @@ const forInSearchChildren = (ary) => {
   return r
 }
 
-const findTagAttr = (a) => a.name?.name == 'tag'
+const findTagAttr = (a) => tagAttrRegex.test(a.name?.name)
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

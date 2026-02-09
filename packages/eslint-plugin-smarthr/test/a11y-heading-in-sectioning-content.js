@@ -20,9 +20,9 @@ const pageMessage = `smarthr-ui/PageHeading が同一ファイル内に複数存
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content`
 const pageInSectionMessage = `smarthr-ui/PageHeadingはsmarthr-uiのArticle, Aside, Nav, Sectionで囲まないでください。囲んでしまうとページ全体の見出しではなくなってしまいます。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content`
-const noTagAttrMessage = `tag属性を指定せず、smarthr-uiのArticle, Aside, Nav, Sectionのいずれかの自動レベル計算に任せるよう、tag属性を削除してください。
+const noTagAttrMessage = `tag属性、unrecommendedTag属性を指定せず、smarthr-uiのArticle, Aside, Nav, Sectionのいずれかの自動レベル計算に任せるよう、tag属性、unrecommendedTag属性を削除してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content
- - tag属性を指定することで意図しないレベルに固定されてしまう可能性があります。`
+ - tag属性、unrecommendedTag属性を指定することで意図しないレベルに固定されてしまう可能性があります。`
 const notHaveHeadingMessage = (elementName, isNav) => `${elementName} はHeading要素を含んでいません。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content
  - SectioningContentはHeadingを含むようにマークアップする必要があります
@@ -69,6 +69,7 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<Section><Heading>hoge</Heading><Heading>fuga</Heading></Section>', errors: [ { message: lowerMessage } ] },
     { code: '<Section><PageHeading>hoge</PageHeading></Section>', errors: [ { message: pageInSectionMessage } ] },
     { code: '<Section><Heading tag="h2">hoge</Heading></Section>', errors: [ { message: noTagAttrMessage } ] },
+    { code: '<Section><Heading unrecommendedTag="h2">hoge</Heading></Section>', errors: [ { message: noTagAttrMessage } ] },
     { code: '<Section></Section>', errors: [ { message: notHaveHeadingMessage('Section') } ] },
     { code: '<Aside><HogeSection></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') }, { message: notHaveHeadingMessage('HogeSection') } ] },
     { code: '<Aside any="hoge"><HogeSection><Heading /></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') } ] },

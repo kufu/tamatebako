@@ -39,7 +39,7 @@ next/link コンポーネント直下のa要素にhref属性が指定されて�
 <Link href={hoge}><a>any</a></Link>
 ```
 
-### spread-attributesが設定されているなら許容したい場合
+## spread-attributesが設定されているなら許容したい場合
 
 下記の様にspread attributesが設定されていれば、href属性が設定されている扱いにしたい場合、lintのoptionとして `checkType` に `allow-spread-attributes` を設定してください。
 
@@ -50,7 +50,7 @@ next/link コンポーネント直下のa要素にhref属性が指定されて�
 ```
 
 便利な設定ではありますが、**href属性が実際に設定されているかは判定出来ていないため、チェック漏れが発生する可能性があります。**  
-設定される場合は慎重に検討してください。
+設定する場合は慎重に検討してください。
 
 ## rules
 

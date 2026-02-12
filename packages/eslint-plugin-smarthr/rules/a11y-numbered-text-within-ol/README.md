@@ -102,7 +102,7 @@ ol要素でマークアップすることで連番テキストをもつ要素同
 
 const OrderedList = styled.ol`
   list-style: none; // デフォルトのstyleを消す
-  counter-reset: hoge; // カウンターの名称。わかりやすいものなら何でもOK
+  counter-reset: hoge; // カウンターの名称。同一html内で被らない名称にする
 `
 const NumberedHeading = styled(Heading)`
   &::before {

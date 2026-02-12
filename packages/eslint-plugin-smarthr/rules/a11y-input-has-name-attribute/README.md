@@ -1,10 +1,32 @@
 # smarthr/a11y-input-has-name-attribute
 
-- input, textarea, select など入力要素に name 属性を設定することを強制するルールです。
-  - 入力要素は name を設定することでブラウザの補完機能が有効になる可能性が高まります。
-    - 補完機能はブラウザによって異なるため、補完される可能性が上がるよう、name には半角英数の小文字・大文字と一部記号(`_ , [, ]`)のみ利用可能です。
-  - input[type="radio"] は name を適切に設定することでラジオグループが確立され、キーボード操作しやすくなる等のメリットがあります。
-- checkTypeオプションに 'allow-spread-attributes' を指定することで spread attributeが設定されている場合はcorrectに出来ます。
+input, textarea, select など入力要素に name 属性を設定することを強制するルールです。
+
+## なぜ入力要素にname属性を設定する必要があるのか
+
+入力要素にname属性を適切に設定することで、キーボード操作や補完機能が適切に動作するようになります。<br />
+例えば入力要素の一種である `input[type="radio"]` は同一のname属性が設定されたものは一つのグループとして扱われ、矢印キーでグループ内を適切に移動できるようになります。<br />
+他にはname属性に `address` `zip_code` など住所が連想される単語を含めた場合、ブラウザの補完機能で住所が自動入力される可能性が高まります。
+
+## name属性に設定する文字列のフォーマットについて
+
+なるべく同一のフォーマットをもちいることで自動補完される可能性を上げるためname属性が一定のフォーマットになるようチェックを行っています。<br />
+使える文字は以下のとおりです。
+
+- 半角英数の大文字・小文字
+- 一部記号(`_` `[` `]`)
+
+## spread-attributesが設定されているなら許容したい場合
+
+下記の様にspread attributesが設定されていれば、name属性が設定されている扱いにしたい場合、lintのoptionとして `checkType` に `allow-spread-attributes` を設定してください。
+
+```jsx
+// checkType: 'allow-spread-attributes'
+<AnyInput {...args} />
+```
+
+便利な設定ではありますが、**name属性が実際に設定されているかは判定出来ていないため、チェック漏れが発生する可能性があります。**  
+設定する場合は慎重に検討してください。
 
 ## rules
 
@@ -22,24 +44,18 @@
 ## ❌ Incorrect
 
 ```jsx
+// name属性が存在しないためNG
 <RadioButton />
 <Input type="radio" />
 <input type="text" />
 <Textarea />
 <Select />
-
-// checkType: 'always'
-<AnyInput {...args} />
-<AnyInput {...args} any="any" />
 ```
 
-
 ```jsx
-import styled from 'styled-components';
-
-const StyledHoge = styled.input``;
-const StyledFuga = styled(Input)``;
-const StyledPiyo = styled(RadioButton)``;
+// 仮にargsにname属性が存在していてもNG
+// checkType: 'always'
+<AnyInput {...args} />
 ```
 
 ## ✅ Correct
@@ -50,16 +66,9 @@ const StyledPiyo = styled(RadioButton)``;
 <input type="text" name="any" />
 <Textarea name="some" />
 <Select name="piyo" />
-
-// checkType: 'allow-spread-attributes'
-<AnyInput {...args} />
-<AnyInput {...args} any="any" />
 ```
 
 ```jsx
-import styled from 'styled-components';
-
-const StyledInput = styled.input``;
-const StyledInput = styled(Input)``;
-const StyledRadioButton = styled(RadioButton)``;
+// checkType: 'allow-spread-attributes'
+<AnyInput {...args} />
 ```

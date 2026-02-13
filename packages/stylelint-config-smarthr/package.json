@@ -31,14 +31,14 @@
     "jest": "^30.2.0",
     "postcss-styled-syntax": "^0.7.1",
     "styled-components": "^6.3.8",
-    "stylelint": "^16.26.1",
+    "stylelint": "^17.1.0",
     "stylelint-config-sass-guidelines": "^12.1.0",
     "stylelint-config-standard": "^38.0.0",
     "vitest": "^4.0.7"
   },
   "peerDependencies": {
     "postcss-styled-syntax": "^0.4.0 || ^0.5.0 || ^0.6.0 || ^0.7.0",
-    "stylelint": "^16.0.0",
+    "stylelint": "^16.0.0 || ^17.0.0",
     "stylelint-config-standard": "^33.0.0 || ^34.0.0 || ^35.0.0 || ^36.0.0 || ^37.0.0 || ^38.0.0"
   }
 }

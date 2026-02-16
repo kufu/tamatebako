@@ -40,8 +40,9 @@ module.exports = {
     const action = (node) => {
       const fn = searchFunction(node).body.body
       // 0: 最初の早期returnを検索中
-      // 1: 最初の早期returnを発見、その後も連続して早期returnが存在する場合
-      // 2: 1の後、早期returnの連続が途切れた場合
+      // 1: 最初の早期returnを発見直後
+      // 2: 1の直後に早期returnではないifが見つかった場合
+      // 3: 1の後にif以外が見つかった場合
       let flg = 0
 
       for (let i = 0; i < fn.length; i++) {
@@ -62,25 +63,43 @@ module.exports = {
           case 'TryStatement':
             return
           case 'IfStatement':
-            if (flg === 1 && node === getEarlyReturn(b)) {
-              context.report({
-                node,
-                message: `早期returnのifが分割されています${DETAIL_LINK}
+            if (flg === 1) {
+              if (node === getEarlyReturn(b)) {
+                context.report({
+                  node,
+                  message: `早期returnのifが分割されています${DETAIL_LINK}
  - 一つのifにまとめるよう、条件を調整してください`,
-              })
+                })
+                return
+              } else if (!b.alternate) {
+                flg = 2
+                continue
+              }
             }
+
             return
         }
 
-        flg = 2
+        flg = 3
       }
 
-      context.report({
-        node,
-        message: `後続の処理の逆の条件の早期returnのため修正してください。${DETAIL_LINK}
+      switch (flg) {
+        case 2:
+          context.report({
+            node,
+            message: `本質的に一つの条件が複数のifに分割されています${DETAIL_LINK}
+ - 直後のifと一つにまとめるよう、条件を調整してください`,
+          })
+          return
+        case 3:
+          context.report({
+            node,
+            message: `後続の処理の逆の条件の早期returnのため修正してください。${DETAIL_LINK}
  - 本質的に行いたい処理の条件とは逆がifに記述されているため、ロジックを確認する際条件を逆転させて考える余計な手間が発生しています
  - 条件を逆転させたうえで後続の処理をifの内部に移動してください`,
-      })
+          })
+          return
+      }
     }
 
     return {

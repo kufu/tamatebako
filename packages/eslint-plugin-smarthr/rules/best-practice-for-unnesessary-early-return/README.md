@@ -27,11 +27,96 @@ const anyAction = (a) => {
 ```
 
 - 上記のような条件に修正することで、本質的に実行したい処理の条件がわかりやすくなります
-- このルールは以下の条件すべてに合致する場合、NGにします
+- このルールは基本的に以下の条件すべてに合致する場合、NGにします
   - 早期return以降にifやelse、switch, tryがない
   - 早期returnの条件ブロック以降に変数宣言がない
   - 早期returnの条件ブロック以降にreturnがない
   - 早期returnが値を返していない
+
+## 特殊なパターンのチェックについて
+
+### 早期returnが連続する場合
+
+下記のように早期returnが連続している場合、NGになります。
+
+```jsx
+const anyAction = (a, b) => {
+  if (a) return
+  if (b) { return }
+
+  const hoge = 'any'
+  ...
+}
+```
+
+これらの早期returnは本質的に一つの条件のためまとめてください。
+
+```jsx
+const anyAction = (a, b) => {
+  if (a || b) return
+
+  const hoge = 'any'
+  ...
+}
+```
+
+上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。
+
+
+### 早期return直後にifが単独で存在する場合
+
+下記の様に早期return直後にifが単独で存在する場合、NGになります。
+
+```jsx
+const anyAction = (a, b) => {
+  if (a) return
+
+  if (b) {
+    ...
+  }
+}
+```
+
+これらのifは本質的に一つの条件のためまとめてください。
+
+```jsx
+const anyAction = (a, b) => {
+  if (!a && b) {
+    ...
+  }
+}
+```
+
+上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。
+このチェックは **早期return直後にifが単独で存在する場合** のみNGとするため **早期returnの直後にelseをもつifが存在する場合** や **早期returnの直後に複数のifが存在する場合** はNGになりません。
+
+```jsx
+// 早期returnの直後にelseをもつifが存在する場合はOK
+const anyAction = (a, b) => {
+  if (a) return
+
+  if (b) {
+    ...
+  } else {
+    // else ifの場合もNGにならない
+    ...
+  }
+}
+```
+
+```jsx
+// 早期returnの直後に複数のifが存在する場合はOK
+const anyAction = (a, b, c) => {
+  if (a) return
+
+  if (b) {
+    ...
+  }
+  if (c) {
+    ...
+  }
+}
+```
 
 ## rules
 

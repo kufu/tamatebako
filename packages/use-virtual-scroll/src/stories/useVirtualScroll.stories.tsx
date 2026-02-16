@@ -31,7 +31,7 @@ const ScrollOnWindow = () => {
   return (
     <ul ref={listRef} style={createListStyle()}>
       {items.map((item, index) => (
-        <li key={index} style={{ height: itemHeight, ...createItemStyle(index) }}>
+        <li key={index} style={{ ...createItemStyle(index), height: itemHeight }}>
           {item}
         </li>
       ))}
@@ -53,6 +53,7 @@ const ScrollOnContainer = () => {
   return (
     <>
       <div>
+        {/* eslint-disable-next-line smarthr/require-i18n-text */}
         <label htmlFor="scroll-container-height">Scroll Container Height</label>
       </div>
       <input
@@ -77,7 +78,7 @@ const ScrollOnContainer = () => {
       >
         <ul ref={listRef} style={createListStyle()}>
           {items.map((item, index) => (
-            <li key={index} style={{ height: itemHeight, ...createItemStyle(index) }}>
+            <li key={index} style={{ ...createItemStyle(index), height: itemHeight }}>
               {item}
             </li>
           ))}

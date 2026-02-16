@@ -1,6 +1,7 @@
 const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
+const MAP_METHOD_REGEX = /^(map|flatMap)$/
 
 const LAYOUT_COMPONENT_REGEX_WITHOUT_STACK = /(Center|Cluster|Container|Reel|Sidebar)$/
 const LAYOUT_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Stack|Sidebar)$/
@@ -44,7 +45,7 @@ const searchChildren = (node) => {
     case 'ChainExpression':
       return searchChildren(node.expression)
     case 'CallExpression':
-      return node.callee.property?.name !== 'map'
+      return !MAP_METHOD_REGEX.test(node.callee.property?.name)
     case 'ConditionalExpression':
       return searchChildren(node.consequent) && searchChildren(node.alternate)
     case 'LogicalExpression':
@@ -185,7 +186,7 @@ module.exports = {
           message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください${DETAIL_LINK_MESSAGE}`,
         })
       },
-      [`JSXElement:has( > JSXOpeningElement[name.name=/RadioButton(Panel)?$/]) ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
+      [`JSXElement[openingElement.name.name=/RadioButton(Panel)?$/] ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
         const component = node.name.name.match(LAYOUT_COMPONENT_REGEX)[1]
 
         context.report({
@@ -193,7 +194,7 @@ module.exports = {
           message: `RadioButton, RadioButtonPanelの子孫に${component}を置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}`,
         })
       },
-      [`JSXElement:has( > JSXOpeningElement[name.name=/Checkbox?$/]) ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
+      [`JSXElement[openingElement.name.name=/Checkbox?$/] ${LAYOUT_ELEMENT_NOT_SPAN}`]: (node) => {
         const component = node.name.name.match(LAYOUT_COMPONENT_REGEX)[1]
 
         context.report({

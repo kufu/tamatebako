@@ -18,6 +18,9 @@ const UNNESESSARY_EARLY_RETURN_ERROR = `後続の処理の逆の条件の早期r
 const SPLIT_EARLY_RETURN_ERROR = `早期returnのifが分割されています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unnesessary-early-return
  - 一つのifにまとめるよう、条件を調整してください`
+const SPLIT_CONFIG_ERROR = `本質的に一つの条件が複数のifに分割されています
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unnesessary-early-return
+ - 直後のifと一つにまとめるよう、条件を調整してください`
 
 ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
   valid: [
@@ -109,6 +112,36 @@ ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
         }
       }
     ` },
+    { code: `
+      const anyAction = (a) => {
+        if (!a) {
+          return
+        }
+
+        if (b) { /* any 1 */ } else { /* any 2 */ }
+      }
+    ` },
+    { code: `
+      const anyAction = (a) => {
+        if (!a) {
+          return
+        }
+
+        if (b) { /* any 1 */ }
+        if (c) { /* any 2 */ }
+      }
+    ` },
+    { code: `
+      const anyAction = (a) => {
+        if (!a) {
+          return
+        }
+
+        if (b) { /* any 1 */ }
+        if (c) { /* any 2 */ }
+        any()
+      }
+    ` },
   ],
   invalid: [
     { code: `
@@ -184,6 +217,15 @@ ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
 
         otherAction()
       }
-    `, errors: [ SPLIT_EARLY_RETURN_ERROR ] },
+    `, errors: [ UNNESESSARY_EARLY_RETURN_ERROR, SPLIT_EARLY_RETURN_ERROR ] },
+    { code: `
+      const anyAction = (a, b) => {
+        if (!a) {
+          return
+        }
+
+        if (b) { /* any 1 */ }
+      }
+    `, errors: [ SPLIT_CONFIG_ERROR ] },
   ]
 })

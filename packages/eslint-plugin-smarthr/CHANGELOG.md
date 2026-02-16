@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.4.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.3.0...eslint-plugin-smarthr-v6.4.0) (2026-02-16)
+
+
+### Features
+
+* **best-practice-for-unnesessary-early-return:** 早期return直後に単独のifが存在する場合、一つのifにまとめるように促すチェックを追加 ([#1082](https://github.com/kufu/tamatebako/issues/1082)) ([e7a6d70](https://github.com/kufu/tamatebako/commit/e7a6d709a5e633c0fbb65f9f0331746cfd752124))
+
+
+### Bug Fixes
+
+* **best-practice-for-layouts:** flatMapメソッドの場合も正しくチェックできるように修正する ([#1079](https://github.com/kufu/tamatebako/issues/1079)) ([838af61](https://github.com/kufu/tamatebako/commit/838af61523370a321fc95272aca742072a04c235))
+
 ## [6.3.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.2.3...eslint-plugin-smarthr-v6.3.0) (2026-02-06)
 
 

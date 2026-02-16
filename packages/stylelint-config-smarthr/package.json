@@ -32,7 +32,7 @@
     "postcss-styled-syntax": "^0.7.1",
     "styled-components": "^6.3.8",
     "stylelint": "^16.26.1",
-    "stylelint-config-sass-guidelines": "^12.1.0",
+    "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-config-standard": "^38.0.0",
     "vitest": "^4.0.7"
   },

@@ -1,6 +1,7 @@
 const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
+const MAP_METHOD_REGEX = /^(map|flatMap)$/
 
 const LAYOUT_COMPONENT_REGEX_WITHOUT_STACK = /(Center|Cluster|Container|Reel|Sidebar)$/
 const LAYOUT_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Stack|Sidebar)$/
@@ -44,7 +45,7 @@ const searchChildren = (node) => {
     case 'ChainExpression':
       return searchChildren(node.expression)
     case 'CallExpression':
-      return node.callee.property?.name !== 'map'
+      return !MAP_METHOD_REGEX.test(node.callee.property?.name)
     case 'ConditionalExpression':
       return searchChildren(node.consequent) && searchChildren(node.alternate)
     case 'LogicalExpression':

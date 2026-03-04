@@ -5,11 +5,11 @@
 
 ## なぜaria-labelledby属性に変数を設定するべきなのか
 
-[aria-labelledby属性](https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby)は他要素からテキストを参照し、そのテキストをa11y nameとしてaria-labelledby属性を記述した要素に設定します。<br />
+[aria-labelledby属性](https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby)は他要素からテキストを参照し、そのテキストをaccessible nameとしてaria-labelledby属性を記述した要素に設定します。<br />
 
 ```jsx
 <span id="label">入力要素1</span>
-{/* a11y nameは '入力要素1' になる */}
+{/* accessible nameは '入力要素1' になる */}
 <input aria-labelledby="label" />
 ```
 

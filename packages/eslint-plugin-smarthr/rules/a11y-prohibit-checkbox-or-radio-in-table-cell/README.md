@@ -29,20 +29,20 @@ SmartHR UI には、デフォルトでアクセシブルネームを設定する
 </Table>
 ```
 
-上記例の場合、各Checkboxにa11y nameが設定されておらず、スクリーンリーダーなどのユーザーにとってはなんのためのCheckboxが正しく伝えられない可能性があります。<br />
+上記例の場合、各Checkboxにaccessible nameが設定されておらず、スクリーンリーダーなどのユーザーにとってはなんのためのCheckboxが正しく伝えられない可能性があります。<br />
 この問題を解決するためには適切に不可視ラベルを設定する必要がありますが、thead内、tbody内でcheckboxの役割が違うため、それぞれ異なる設定方法が必要です。
 
 - tbody内のCheckboxの場合
-  - Checkboxが存在するtr要素内からその行を一意に特定できるテキストが設定されているものをaria-labelledby属性を利用してa11y nameを設定します
+  - Checkboxが存在するtr要素内からその行を一意に特定できるテキストが設定されているものをaria-labelledby属性を利用してaccessible nameを設定します
   - aria-labelledby属性は**設定した要素と参照対象になった要素のひも付きも表せる**ため、今回の様な場合に使用することが推奨されます
 - thead内のCheckboxの場合
   - Table内のすべての行に対してcheckする処理を行う一括処理のためCheckboxであることから **一括処理することがわかるテキスト** を設定する必要があります
-  - 同tr要素内には上記条件に合致するテキストは存在しないため、aria-label属性を利用してa11y nameを設定します
+  - 同tr要素内には上記条件に合致するテキストは存在しないため、aria-label属性を利用してaccessible nameを設定します
 
 上記を実際のコードに反映すると以下のようになります。
 
 ```jsx
-// Table内のCheckboxに適切にa11y nameを設定した場合
+// Table内のCheckboxに適切にaccessible nameを設定した場合
 <Table>
   <thead>
     <tr>
@@ -106,7 +106,7 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
   </thead>
   <tbody>
     <tr>
-      {/* a11y nameは smarthr-001 労務 太郎 */}
+      {/* accessible nameは smarthr-001 労務 太郎 */}
       <TdCheckbox aria-labelledby="id-1 name-1" />
       <Th id="id-1">smarthr-001</Th>
       <Td id="name-1">労務 太郎</Td>
@@ -114,7 +114,7 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
       <Td><Button>編集</Button></Td>
     </tr>
     <tr>
-      {/* a11y nameは smarthr-002 労務 次郎 */}
+      {/* accessible nameは smarthr-002 労務 次郎 */}
       <TdCheckbox aria-labelledby="id-2 name-2" />
       <Th id="id-2">smarthr-002</Th>
       <Td id="name-2">労務 次郎</Td>

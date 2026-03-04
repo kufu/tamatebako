@@ -77,21 +77,21 @@ SmartHR UI には、デフォルトでアクセシブルネームを設定する
   </thead>
   <tbody>
     <tr>
-      {/* aria-labelledbyが必須属性になっており、設定ミスが防げる */}
-      <TdCheckbox aria-labelledby="name-1" />
+      {/* labelCellIdsが必須属性になっており、a11y nameの設定ミスが防げる */}
+      <TdCheckbox labelCellIds="name-1" />
       <Td id="name-1">労務 太郎</Td>
     </tr>
     <tr>
-      <TdCheckbox aria-labelledby="name-2" />
+      <TdCheckbox labelCellIds="name-2" />
       <Td id="name-2">労務 次郎</Td>
     </tr>
   </tbody>
 </Table>
 ```
 
-### aria-labelledby属性で複数の要素を参照する場合
+### labelCellIds属性で複数の要素を参照する場合
 
-aria-labelledby属性には複数の要素のidを設定することが可能性です。
+labelCellIds属性には複数の要素のidを設定することが可能性です。
 
 ```jsx
 <Table>
@@ -107,7 +107,7 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
   <tbody>
     <tr>
       {/* a11y nameは smarthr-001 労務 太郎 */}
-      <TdCheckbox aria-labelledby="id-1 name-1" />
+      <TdCheckbox labelCellIds={['id-1', 'name-1'] } />
       <Th id="id-1">smarthr-001</Th>
       <Td id="name-1">労務 太郎</Td>
       <Td>労務 太郎は......</Td>
@@ -115,7 +115,7 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
     </tr>
     <tr>
       {/* a11y nameは smarthr-002 労務 次郎 */}
-      <TdCheckbox aria-labelledby="id-2 name-2" />
+      <TdCheckbox labelCellIds={['id-2', 'name-2'] } />
       <Th id="id-2">smarthr-002</Th>
       <Td id="name-2">労務 次郎</Td>
       <Td>労務 次郎は......</Td>
@@ -125,8 +125,10 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
 </Table>
 ```
 
-aria-labelledbyに複数の要素を設定する場合、"elm1 elm2" のように空白で区切るようにしてください。<br />
-TdCheckboxに設定する場合 **その行が一意に特定できる、人間が分かりやすい状態** になるよう心がけてください。<br />
+labelCellIdsに複数の要素を設定する場合、配列を利用できます。<br />
+(labelCellIds属性は実態としてはaria-labelledby属性のため `aria-labelledby="id-1 name-1"` のように空白区切りのidを複数設定することでも対応可能ですが、可読性が低いため非推奨です)
+
+labelCellIdsに複数のidを設定する場合 **その行が一意に特定できる、人間が分かりやすい状態** になるよう心がけてください。<br />
 上記の例で言えば**名前だけでは同姓同名と被る可能性がある**、**従業員IDだけではどの従業員か人間が分かりづらい** などの観点があり、両方の要素を設定するほうが望ましいでしょう。<br />
 逆に**概要**や**操作**のカラムをaria-labelledbyに含めることは過剰な情報になるため、含めないほうが良いでしょう。<br />
 スクリーンリーダーなどがaria-labelledbyを読み上げる際、過剰な情報は利用者にとってノイズとなる可能性が高いためです。

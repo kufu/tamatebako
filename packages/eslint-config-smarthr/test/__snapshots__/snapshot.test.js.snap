@@ -2961,6 +2961,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-anchor-has-href-attribute": [
       2,
     ],
+    "smarthr/a11y-aria-labelledby": [
+      1,
+    ],
     "smarthr/a11y-clickable-element-has-text": [
       2,
     ],

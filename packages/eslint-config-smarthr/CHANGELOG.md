@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.5.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.4.0...eslint-config-smarthr-v13.5.0) (2026-03-06)
+
+
+### Features
+
+* a11y-aria-labelledby ruleをwarnで追加 ([#1101](https://github.com/kufu/tamatebako/issues/1101)) ([2e49345](https://github.com/kufu/tamatebako/commit/2e49345e0ea864eea591573ca1f0a8583b09d053))
+
 ## [13.4.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.3.0...eslint-config-smarthr-v13.4.0) (2026-02-16)
 
 

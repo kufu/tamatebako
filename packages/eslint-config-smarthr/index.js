@@ -33,6 +33,7 @@ export default [
 
       // original rules
       'smarthr/a11y-anchor-has-href-attribute': 'error',
+      'smarthr/a11y-aria-labelledby': 'warn', // TODO: 2026/03に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/a11y-clickable-element-has-text': 'error',
       'smarthr/a11y-form-control-in-form': 'error',
       'smarthr/a11y-heading-in-sectioning-content': 'error',

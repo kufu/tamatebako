@@ -75,7 +75,7 @@ new Date(2022, 11, 31)
 ```
 
 ```js
-// new Dateではなく事前にpaseする場合は問題なし
+// new Dateではなく事前にparseする場合は問題なし
 const args = arg.split('/')
 new Date(args[0], parseInt(args[1], 10) - 1, args[2])
 ```

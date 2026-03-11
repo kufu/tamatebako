@@ -1,8 +1,17 @@
 # smarthr/best-practice-for-button-element
 
-- button要素の利用を禁止し、smarthr/Button、もしくはsmarthr/UnstyledButtonの利用を促すルールです
-- button要素のtype属性のデフォルトは 'submit' であり、これはform要素にbuttonを設置すると、clickでformをsubmitする状態になります
-- 上記挙動は開発者が意図しづらいため、smarthr/Button, smarthr/UnstyledButtonはtype属性のデフォルトを 'button' に変更しています
+button要素ではなく、smarthr-ui/Button、もしくはsmarthr-ui/UnstyledButtonの利用を促すルールです
+
+## なぜ smarthr-ui/Button を使うべきなのか
+
+button要素にはtype属性が存在します。<br />
+type属性のデフォルト値は 'submit' ですが、これはform要素内にbutton要素を設置すると影響します。<br />
+type属性が'submit'の場合、設定したbutton要素をクリックすると、親のform要素を送信する状態になります。
+
+React等を利用している場合、button要素とform要素のコード的な距離が離れている場合も多く、またコンポーネント名もButtonなどに変更した結果、formを送信してしまう可能性にエンジニア自体が気づきにくい状況が発生します。<br />
+
+この問題を解決するため、smarthr-ui/Button・smarthr-ui/UnstyledButtonはtype属性をデフォルトを'button'に変更しており、利用を推奨しています。
+またこのルールではtype属性を明示している場合、button要素を直接利用してもエラーにならないようになっています。
 
 ## rules
 
@@ -17,19 +26,20 @@
 ## ❌ Incorrect
 
 ```js
+// smarthr-ui/Buttonを利用しておらず、type属性も明示していないためNG
 <button>click</button>
-
-const AnyButton = styled.button``
 ```
 
 ## ✅ Correct
 
-
 ```js
-<button type="button">click</button>
-<button type="submit">click</button>
+// smarthr-ui/Buttonを利用しているのでOK
 <Button>click</Button>
 <AnyButton>click</AnyButton>
+```
 
-const AnyButton = styled(Button)``
+```js
+// type属性を明示しているのでOK
+<button type="button">click</button>
+<button type="submit">click</button>
 ```

@@ -4,13 +4,12 @@
 
 ### なぜDateを直接利用すると危険なのか
 
-`new Date(arg)` と `Date.parse(arg)` はブラウザの実装によっては、意図しない日付として解釈されてしまう問題を回避するためのものです。
+`new Date(arg)` と `Date.parse(arg)` はブラウザの実装によっては、意図しない日付として解釈されてしまう場合があります。
 
 - [Date オブジェクトを生成するいくつかの方法](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date#date_%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E7%94%9F%E6%88%90%E3%81%99%E3%82%8B%E3%81%84%E3%81%8F%E3%81%A4%E3%81%8B%E3%81%AE%E6%96%B9%E6%B3%95)
 - [Date.parse](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date#date.parse)
 
 簡単にまとめると**文字列を引数として渡した場合、ブラウザによって結果が異なります**。<br />
-また**区切り文字によって意図しづらい結果になる場合があります**。<br />
 [上記MDNの記事](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date#date_%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E7%94%9F%E6%88%90%E3%81%99%E3%82%8B%E3%81%84%E3%81%8F%E3%81%A4%E3%81%8B%E3%81%AE%E6%96%B9%E6%B3%95) では`YYYY-MM-DDTHH:MM:SS`形式の動作の信頼性が書かれていますが、あくまで仕様としてであり、実際のブラウザでの挙動ではエラーになる場合があります。
 
 有名なものではChromeで以下の様に解釈されます。

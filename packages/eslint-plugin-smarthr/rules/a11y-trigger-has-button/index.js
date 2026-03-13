@@ -1,4 +1,4 @@
-const TRIGGER_REGEX = /(Dialog||Disclosure|Dropdown)Trigger$/
+const TRIGGER_REGEX = /(Dialog|Disclosure|Dropdown)Trigger$/
 const BUTTON_REGEX = /(B|^b)utton$/
 const ANCHOR_BUTTON_REGEX = /AnchorButton$/
 const FALSY_TEXT_REGEX = /^\s*\n+\s*$/

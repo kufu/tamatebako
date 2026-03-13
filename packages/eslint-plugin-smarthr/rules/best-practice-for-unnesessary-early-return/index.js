@@ -43,6 +43,7 @@ module.exports = {
       // 1: 最初の早期returnを発見直後
       // 2: 1の直後に早期returnではないifが見つかった場合
       // 3: 1の後にif以外が見つかった場合
+      // 4: 2の後に何らかの処理が見つかった場合
       let flg = 0
 
       for (let i = 0; i < fn.length; i++) {
@@ -61,6 +62,10 @@ module.exports = {
           case 'ReturnStatement':
           case 'SwitchStatement':
           case 'TryStatement':
+            if (flg === 2) {
+              flg = 4
+            }
+
             return
           case 'IfStatement':
             if (flg === 1) {
@@ -75,12 +80,14 @@ module.exports = {
                 flg = 2
                 continue
               }
+            } else if (flg === 2) {
+              flg = 4
             }
 
             return
         }
 
-        flg = 3
+        flg = flg === 2 || flg === 4 ? 4 : 3
       }
 
       switch (flg) {

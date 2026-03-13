@@ -181,6 +181,18 @@ const anyAction = (a, b) => {
 }
 ```
 
+```jsx
+// 早期returnに分ける必要がないifなのでNG
+const anyAction = (a, b) => {
+  if (!a) {
+    return
+  }
+  if (b) {
+    anyAction()
+  }
+}
+```
+
 ## ✅ Correct
 
 ```jsx
@@ -242,5 +254,21 @@ const sample5 = (a, b) => {
 
   // 早期returnとは別のreturnが関数スコープのrootにあるため許容
   return ...
+}
+```
+
+```jsx
+const anyAction = (a, b) => {
+  if (a) {
+    return
+  }
+
+  // 早期return以降で複数の条件分岐がある場合も許容
+  if (b) {
+    bAction()
+  }
+  if (c) {
+    cAction()
+  }
 }
 ```

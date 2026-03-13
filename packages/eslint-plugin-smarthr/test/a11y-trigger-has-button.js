@@ -16,6 +16,7 @@ ruleTester.run('a11y-trigger-has-button', rule, {
     { code: '<DialogTrigger><AnyButton>{hoge}</AnyButton></DialogTrigger>' },
     { code: '<DisclosureTrigger>{hoge}</DisclosureTrigger>' },
     { code: '<AnyDropdownTrigger/>' },
+    { code: '<Trigger>hoge</Trigger>' },
   ],
   invalid: [
     { code: '<DropdownTrigger>ほげ</DropdownTrigger>', errors: [ { message: `DropdownTrigger の直下にはbutton要素のみ設置してください(AnchorButtonはa要素のため設置できません)

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.6.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.1...eslint-plugin-smarthr-v6.6.2) (2026-03-13)
+
+
+### Bug Fixes
+
+* **a11y-trigger-has-button:** 対象となるTriggerの範囲指定ミスを修正 ([#1128](https://github.com/kufu/tamatebako/issues/1128)) ([a337f46](https://github.com/kufu/tamatebako/commit/a337f46ac58eab53d3f1d4ea5c6afc99e485b5ac))
+
 ## [6.6.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.0...eslint-plugin-smarthr-v6.6.1) (2026-03-13)
 
 

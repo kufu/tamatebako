@@ -33,6 +33,8 @@ Frontend packages for projects at SmartHR
 
 基本的にはこれでリリースは完了です。
 
+リリースの成功/失敗は、#dev_github_tamatebako の Slack チャンネルへの通知を確認するか、Github Actions の実行結果を直接確認してください。
+
 ### 2. publish workflow に失敗した場合は手元でリリースを行う
 
 publish workflow が何かしらの理由で失敗した場合、`CHANGELOG.md` が更新されたりリリースタグが打たれたりなど Github 上ではリリースが完了している状態になるのに、npm にはパッケージが公開されていない、といったような不整合が起きてしまいます。  

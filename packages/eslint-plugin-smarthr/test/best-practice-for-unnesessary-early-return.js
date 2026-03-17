@@ -142,6 +142,67 @@ ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
         any()
       }
     ` },
+    { code: `
+      const openDialog = (open) => {
+        if (a) return
+
+        if (!b) {
+          any()
+        }
+
+        open()
+      }
+    ` },
+    { code: `
+      const openDialog = (open) => {
+        if (a) return
+
+        if (!b) {
+          any()
+        }
+
+        open()
+        other()
+      }
+    ` },
+    { code: `
+      const openDialog = (open) => {
+        if (a) return
+
+        if (!b) {
+          any()
+          return
+        }
+
+        return hoge
+      }
+    ` },
+    { code: `
+      const openDialog = (open) => {
+        if (a) return
+
+        if (!b) {
+          any()
+          return
+        }
+
+        try {}
+        catch {}
+      }
+    ` },
+    { code: `
+      const openDialog = (open) => {
+        if (a) return
+
+        if (!b) {
+          any()
+        }
+
+        if (c) {
+          other()
+        }
+      }
+    ` },
   ],
   invalid: [
     { code: `
@@ -217,7 +278,7 @@ ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
 
         otherAction()
       }
-    `, errors: [ UNNESESSARY_EARLY_RETURN_ERROR, SPLIT_EARLY_RETURN_ERROR ] },
+    `, errors: [ SPLIT_EARLY_RETURN_ERROR ] },
     { code: `
       const anyAction = (a, b) => {
         if (!a) {
@@ -225,6 +286,17 @@ ruleTester.run('best-practice-for-unnesessary-early-return', rule, {
         }
 
         if (b) { /* any 1 */ }
+      }
+    `, errors: [ SPLIT_CONFIG_ERROR ] },
+    { code: `
+      const anyAction = (a, b) => {
+        if (!a) {
+          return
+        }
+
+        if (b) {
+          hoge()
+        }
       }
     `, errors: [ SPLIT_CONFIG_ERROR ] },
   ]

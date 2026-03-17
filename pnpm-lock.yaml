@@ -100,8 +100,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.3(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.5.0
-        version: 6.5.0(eslint@9.39.3(jiti@2.4.2))
+        specifier: 6.6.2
+        version: 6.6.2(eslint@9.39.3(jiti@2.4.2))
       globals:
         specifier: ^17.4.0
         version: 17.4.0
@@ -3861,9 +3861,9 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.5.0:
-    resolution: {integrity: sha512-jih2L48Gr/JqKxPI2TZ8bDh/fk4vvLI3mqY7xQd8xgc8RFXFhkVijml4dPP2KlyDR5q8rtt+G5ooI1M+FEhUPg==}
-    engines: {node: '>=22.22.0'}
+  eslint-plugin-smarthr@6.6.2:
+    resolution: {integrity: sha512-1UgJSS5q9lTin5yKZmI9BUv7EJePtwMzoxowhgNaIszoijIOMQg8/g3gM1JoPGdP3dMAu6KRcsmWYA35y6Fz9Q==}
+    engines: {node: '>=22.22.1'}
     peerDependencies:
       eslint: ^9
 
@@ -9990,10 +9990,10 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3))(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)':
+  '@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.4.2))(typescript@5.9.3))(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.56.1(eslint@9.39.3(jiti@2.4.2))(typescript@5.9.3)
       '@typescript-eslint/scope-manager': 8.56.1
       '@typescript-eslint/type-utils': 8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
       '@typescript-eslint/utils': 8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
@@ -11714,7 +11714,7 @@ snapshots:
       eslint: 9.39.3(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.5.0(eslint@9.39.3(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.6.2(eslint@9.39.3(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.3(jiti@2.4.2)
       json5: 2.2.3
@@ -15385,7 +15385,7 @@ snapshots:
 
   typescript-eslint@8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3))(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
+      '@typescript-eslint/eslint-plugin': 8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.4.2))(typescript@5.9.3))(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
       '@typescript-eslint/parser': 8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)
       '@typescript-eslint/typescript-estree': 8.56.1(typescript@5.9.3)
       '@typescript-eslint/utils': 8.56.1(eslint@9.39.2(jiti@2.4.2))(typescript@5.9.3)

@@ -87,7 +87,7 @@ const anyAction = (a, b) => {
 }
 ```
 
-上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。
+上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。<br />
 このチェックは **早期return直後にifが単独で存在する場合** のみNGとするため **早期returnの直後にelseをもつifが存在する場合** や **早期returnの直後に複数のifが存在する場合** はNGになりません。
 
 ```jsx
@@ -181,6 +181,18 @@ const anyAction = (a, b) => {
 }
 ```
 
+```jsx
+// 早期returnに分ける必要がないifなのでNG
+const anyAction = (a, b) => {
+  if (!a) {
+    return
+  }
+  if (b) {
+    anyAction()
+  }
+}
+```
+
 ## ✅ Correct
 
 ```jsx
@@ -242,5 +254,21 @@ const sample5 = (a, b) => {
 
   // 早期returnとは別のreturnが関数スコープのrootにあるため許容
   return ...
+}
+```
+
+```jsx
+const anyAction = (a, b) => {
+  if (a) {
+    return
+  }
+
+  // 早期return以降で複数の条件分岐がある場合も許容
+  if (b) {
+    bAction()
+  }
+  if (c) {
+    cAction()
+  }
 }
 ```

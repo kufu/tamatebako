@@ -29,9 +29,10 @@ const SCHEMA = [
 ]
 
 // 文字列リテラルを持つ属性を選択するセレクタの条件部分
+const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const STRING_LITERAL_CONDITION =
-  ':matches([value.type="Literal"][value.value=/\\S/], [value.type="JSXExpressionContainer"][value.expression.type="Literal"][value.expression.value=/\\S/])'
-const TEMPLATE_LITERAL_CONDITION = '[value.type="JSXExpressionContainer"][value.expression.type="TemplateLiteral"]'
+  `:matches([value.type="Literal"][value.value=/\\S/], ${JSX_EXPRESSION_CONTAINER}[value.expression.type="Literal"][value.expression.value=/\\S/])`
+const TEMPLATE_LITERAL_CONDITION = `${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
 
 const generateAttributeSelector = (attributes) =>
   `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${STRING_LITERAL_CONDITION}`

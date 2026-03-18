@@ -86,6 +86,11 @@ ruleTester.run('require-i18n-text', rule, {
         },
       ],
     },
+
+    // TemplateLiteral - 変数のみ
+    { code: `<img alt={\`\${t('key')}\`} />`, options },
+    { code: `<div title={\`\${i18n.t('title')}\`} />`, options },
+    { code: `<Button label={\`\${label}\`} />`, options },
   ],
   invalid: [
     // 属性エラー: デフォルト設定
@@ -182,6 +187,34 @@ ruleTester.run('require-i18n-text', rule, {
         { message: attributeError('Button', 'label') },
         { message: childTextError },
       ],
+    },
+
+    // TemplateLiteral - 文字列リテラルを含む
+    {
+      code: `<img alt={\`Profile picture\`} />`,
+      options,
+      errors: [{ message: attributeError('img', 'alt') }],
+    },
+    {
+      code: `<img alt={\`Profile \${name}\`} />`,
+      options,
+      errors: [{ message: attributeError('img', 'alt') }],
+    },
+    {
+      code: `<div title={\`\${prefix} title\`} />`,
+      options,
+      errors: [{ message: attributeError('div', 'title') }],
+    },
+    {
+      code: `<Button label={\`Submit button\`} />`,
+      options,
+      errors: [{ message: attributeError('Button', 'label') }],
+    },
+
+    // TemplateLiteral - デフォルト設定
+    {
+      code: `<CustomComponent aria-label={\`Label text\`} />`,
+      errors: [{ message: attributeError('CustomComponent', 'aria-label') }],
     },
   ],
 })

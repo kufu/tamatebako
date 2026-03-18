@@ -48,9 +48,25 @@ const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|
 const NULL_HREF_ATTRIBUTE_VALUES = `${HREF_ATTRIBUTE}:matches(${['#', ''].reduce((prev, v) => {
   return `${prev},[value.type="Literal"][value.value="${v}"],[value.type="JSXExpressionContainer"][value.expression.value="${v}"]`
 }, '[value=null]')})`
+const TEMPLATE_LITERAL_SELECTOR = `${HREF_ATTRIBUTE}[value.type="JSXExpressionContainer"][value.expression.type="TemplateLiteral"]`
 const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
 const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(NEXT_LINK_REGEX))
+
+const hasInvalidTemplateLiteral = (node) => {
+  const quasis = node.value.expression.quasis
+  if (quasis.length === 0) return false
+
+  const firstQuasi = quasis[0].value.cooked
+
+  // 全体が空文字列（quasisが1つだけで空文字列）
+  if (quasis.length === 1 && firstQuasi === '') return true
+
+  // #で始まる（quasisが1つで"#"、または複数で最初が"#"）
+  if (firstQuasi === '#' || (firstQuasi && firstQuasi.startsWith('#'))) return true
+
+  return false
+}
 
 const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
@@ -96,6 +112,11 @@ module.exports = {
         }
       },
       [`${ANCHOR_ELEMENT}:has(${NULL_HREF_ATTRIBUTE_VALUES})`]: reporter,
+      [`${ANCHOR_ELEMENT} ${TEMPLATE_LITERAL_SELECTOR}`]: (node) => {
+        if (hasInvalidTemplateLiteral(node)) {
+          reporter(node.parent)
+        }
+      },
     }
   },
 }

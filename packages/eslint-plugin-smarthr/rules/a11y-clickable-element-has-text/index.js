@@ -10,17 +10,6 @@ const SCHEMA = [
 
 const CLICKABLE_ELEMENT = 'JSXElement[openingElement.name.name=/((^b|B)utton|Anchor|Link|^a)/]:has(JSXClosingElement)'
 const TEXT_LIKE_ATTRIBUTE = 'JSXAttribute[name.name=/^(text|alt|aria-label(ledby)?)$/]:not(:matches([value=null],[value.value=""],[value.expression.value=""]))'
-const TEXT_LIKE_ATTRIBUTE_TEMPLATE = 'JSXAttribute[name.name=/^(text|alt|aria-label(ledby)?)$/][value.expression.type="TemplateLiteral"]'
-
-const hasNonEmptyTemplate = (node) => {
-  const quasis = node.value.expression.quasis
-  // quasisが1つだけで空文字列の場合は空とみなす
-  if (quasis.length === 1 && quasis[0].value.cooked === '') {
-    return false
-  }
-  // それ以外の場合は非空とみなす
-  return true
-}
 
 const message = `a, buttonなどのクリッカブルな要素内にはテキストを設定してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-clickable-element-has-text

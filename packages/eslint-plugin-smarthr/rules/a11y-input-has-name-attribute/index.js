@@ -71,10 +71,11 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
         })
       },
-      [`${INPUT_ELEMENT}${notHasSpreadAttribute} ${NAME_ATTRIBUTE}[value.value]:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
+      [`${INPUT_ELEMENT}${notHasSpreadAttribute} ${NAME_ATTRIBUTE}:matches([value.value]:not([value.value=${INPUT_NAME_REGEX}]),[value.expression.value]:not([value.expression.value=${INPUT_NAME_REGEX}]))`]: (node) => {
+        const value = node.value.value || node.value.expression?.value
         context.report({
           node,
-          message: `${node.parent.name.name} のname属性の値(${node.value.value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}
+          message: `${node.parent.name.name} のname属性の値(${value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
         })
       },

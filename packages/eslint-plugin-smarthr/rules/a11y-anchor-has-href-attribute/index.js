@@ -43,12 +43,13 @@ const OPTION = (() => {
   return {}
 })()
 
+const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
 const NULL_HREF_ATTRIBUTE_VALUES = `${HREF_ATTRIBUTE}:matches(${['#', ''].reduce((prev, v) => {
-  return `${prev},[value.type="Literal"][value.value="${v}"],[value.type="JSXExpressionContainer"][value.expression.value="${v}"]`
+  return `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
 }, '[value=null]')})`
-const TEMPLATE_LITERAL_SELECTOR = `${HREF_ATTRIBUTE}[value.type="JSXExpressionContainer"][value.expression.type="TemplateLiteral"]`
+const TEMPLATE_LITERAL_SELECTOR = `${HREF_ATTRIBUTE}${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
 const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
 const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(NEXT_LINK_REGEX))

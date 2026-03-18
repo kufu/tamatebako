@@ -10,7 +10,7 @@ module.exports = {
   },
   create(context) {
     return {
-      'JSXAttribute[name.name="overflow"][value.value="hidden"]': (node) => {
+      'JSXAttribute[name.name="overflow"]:matches([value.value="hidden"],[value.expression.value="hidden"],[value.expression.quasis.length=1][value.expression.quasis.0.value.cooked="hidden"])': (node) => {
         context.report({
           node,
           message: `overflow属性に"hidden"を設定しないでください。

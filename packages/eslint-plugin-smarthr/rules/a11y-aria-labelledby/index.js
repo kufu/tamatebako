@@ -1,8 +1,9 @@
 const SCHEMA = []
 
+const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ARIA_LABELLEDBY = 'JSXAttribute[name.name="aria-labelledby"]'
-const SELECTOR_LITERAL = `${ARIA_LABELLEDBY}:matches([value.type="Literal"],[value.type="JSXExpressionContainer"][value.expression.type="Literal"])`
-const SELECTOR_TEMPLATE_LITERAL = `${ARIA_LABELLEDBY}[value.type="JSXExpressionContainer"][value.expression.type="TemplateLiteral"]:has(:matches(TemplateElement[value.raw]:not([value.raw=/^(| )$/]),Literal))`
+const SELECTOR_LITERAL = `${ARIA_LABELLEDBY}:matches([value.type="Literal"],${JSX_EXPRESSION_CONTAINER}[value.expression.type="Literal"])`
+const SELECTOR_TEMPLATE_LITERAL = `${ARIA_LABELLEDBY}${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(:matches(TemplateElement[value.raw]:not([value.raw=/^(| )$/]),Literal))`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

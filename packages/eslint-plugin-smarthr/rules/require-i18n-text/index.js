@@ -1,12 +1,3 @@
-// デフォルトのワイルドカード設定
-const DEFAULT_WILDCARD_ATTRIBUTES = [
-  'alt',
-  'aria-label',
-  // smarthr-ui DefinitionListItem
-  'term',
-  'title',
-]
-
 const SCHEMA = [
   {
     type: 'object',
@@ -30,26 +21,14 @@ const SCHEMA = [
 
 // 文字列リテラルを持つ属性を選択するセレクタの条件部分
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
-const STRING_LITERAL_CONDITION =
-  `:matches([value.type="Literal"][value.value=/\\S/], ${JSX_EXPRESSION_CONTAINER}[value.expression.type="Literal"][value.expression.value=/\\S/])`
-const TEMPLATE_LITERAL_CONDITION = `${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
 
 const generateAttributeSelector = (attributes) =>
-  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${STRING_LITERAL_CONDITION}`
+  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]:matches([value.type="Literal"][value.value=/\\S/], ${JSX_EXPRESSION_CONTAINER}[value.expression.type="Literal"][value.expression.value=/\\S/])`
 
 const generateTemplateLiteralSelector = (attributes) =>
-  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${TEMPLATE_LITERAL_CONDITION}`
+  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
 
-const REGEX_IGNORE_TEXT = /^ *(\.|\+|\-|\*|\/|[0-9]+) *$/
-const checkIgnoreText = (text) => !REGEX_IGNORE_TEXT.test(text)
-
-const hasStringLiteralInTemplate = (node) => {
-  const quasis = node.value.expression.quasis
-  return quasis.some((quasi) => {
-    const cooked = quasi.value.cooked
-    return cooked && cooked.trim() !== '' && checkIgnoreText(cooked)
-  })
-}
+const checkIgnoreText = (text) => !/^ *(\.|\+|\-|\*|\/|[0-9]+) *$/.test(text)
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -62,7 +41,7 @@ module.exports = {
   create(context) {
     const elementsObj = (context.options[0] || {}).elements || {}
     // ユーザーが'*'を設定していない場合のみデフォルトを適用
-    const wildcardAttributes = elementsObj['*'] || DEFAULT_WILDCARD_ATTRIBUTES
+    const wildcardAttributes = elementsObj['*'] || ['alt', 'aria-label', 'term', 'title']
     const specificElements = Object.keys(elementsObj).filter((k) => k !== '*')
     const handlers = {}
 
@@ -77,7 +56,11 @@ module.exports = {
     }
 
     const reportTemplateLiteralError = (node) => {
-      if (hasStringLiteralInTemplate(node)) {
+      const quasis = node.value.expression.quasis
+      if (quasis.some((quasi) => {
+        const cooked = quasi.value.cooked
+        return cooked && cooked.trim() !== '' && checkIgnoreText(cooked)
+      })) {
         context.report({
           node,
           message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください

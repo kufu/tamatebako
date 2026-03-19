@@ -46,7 +46,8 @@ const OPTION = (() => {
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
-const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) =>
+const INVALID_HREF_VALUES = ['#', '']
+const NULL_HREF_VALUES = INVALID_HREF_VALUES.reduce((prev, v) =>
   `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
 , '[value=null]')
 

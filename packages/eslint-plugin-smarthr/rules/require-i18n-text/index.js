@@ -31,8 +31,7 @@ const generateAttributeSelector = (attributes) =>
 const generateTemplateLiteralSelector = (attributes) =>
   `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
 
-const IGNORE_TEXT_REGEX = /^ *(\.|\+|\-|\*|\/|[0-9]+) *$/
-const checkIgnoreText = (text) => !IGNORE_TEXT_REGEX.test(text)
+const checkIgnoreText = (text) => !/^ *(\.|\+|\-|\*|\/|[0-9]+) *$/.test(text)
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

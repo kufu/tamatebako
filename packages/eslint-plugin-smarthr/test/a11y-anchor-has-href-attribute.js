@@ -31,6 +31,8 @@ ruleTester.run('a11y-anchor-has-href-attribute', rule, {
     // TemplateLiteral - 変数のみ
     { code: '<a href={`${path}`}>link</a>' },
     { code: '<a href={`/path/${id}`}>link</a>' },
+    // TemplateLiteral - アンカーリンク
+    { code: '<HogeLink href={`#${hash}`}>hoge</HogeLink>' },
   ],
   invalid: [
     { code: `<a></a>`, errors: [{ message: generateErrorText('a') }] },
@@ -51,7 +53,5 @@ ruleTester.run('a11y-anchor-has-href-attribute', rule, {
     { code: '<HogeLink href={``}>hoge</HogeLink>', errors: [{ message: generateErrorText('HogeLink') }] },
     // TemplateLiteral - #のみ
     { code: '<HogeLink href={`#`}>hoge</HogeLink>', errors: [{ message: generateErrorText('HogeLink') }] },
-    // TemplateLiteral - #で始まる
-    { code: '<HogeLink href={`#${hash}`}>hoge</HogeLink>', errors: [{ message: generateErrorText('HogeLink') }] },
   ]
 })

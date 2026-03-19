@@ -43,12 +43,10 @@ const OPTION = (() => {
   return {}
 })()
 
+const INVALID_HREF_VALUES_ARRAY = ['#', '']
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
-const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) =>
-  `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
-, '[value=null]')
 
 const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
@@ -60,23 +58,7 @@ const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : '
    - button要素のdisabled属性が設定された場合に相当します`
 
 const NEXT_LINK_REGEX = /Link$/
-// HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
 const nextCheck = (node) => NEXT_LINK_REGEX.test(node.parent.parent.openingElement.name.name || '')
-
-const hasInvalidTemplateLiteral = (node) => {
-  const quasis = node.value.expression.quasis
-  if (quasis.length === 0) return false
-
-  const firstQuasi = quasis[0].value.cooked
-
-  // 全体が空文字列（quasisが1つだけで空文字列）
-  if (quasis.length === 1 && firstQuasi === '') return true
-
-  // #で始まる（quasisが1つで"#"、または複数で最初が"#"）
-  if (firstQuasi === '#' || (firstQuasi && firstQuasi.startsWith('#'))) return true
-
-  return false
-}
 
 const SCHEMA = [
   {
@@ -113,12 +95,7 @@ module.exports = {
           reporter(node)
         }
       },
-      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${NULL_HREF_VALUES}))`]: reporter,
-      [`${ANCHOR_ELEMENT} ${HREF_ATTRIBUTE}${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`]: (node) => {
-        if (hasInvalidTemplateLiteral(node)) {
-          reporter(node.parent)
-        }
-      },
+      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${INVALID_HREF_VALUES_ARRAY.reduce((prev, v) => `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`, '[value=null]')},${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(TemplateElement:matches(${INVALID_HREF_VALUES_ARRAY.reduce((prev, v) => `${prev},[value.cooked="${v}"]`, '').slice(1)})):not(:has(TemplateElement ~ TemplateElement))))`]: reporter,
     }
   },
 }

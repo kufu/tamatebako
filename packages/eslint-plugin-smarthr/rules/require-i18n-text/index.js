@@ -34,6 +34,8 @@ const generateTemplateLiteralSelector = (attributes) =>
 const IGNORE_TEXT_REGEX = /^ *(\.|\+|\-|\*|\/|[0-9]+) *$/
 const checkIgnoreText = (text) => !IGNORE_TEXT_REGEX.test(text)
 
+const someReportTemplateLiteralError = (quasi) => quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked)
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -60,8 +62,7 @@ module.exports = {
     }
 
     const reportTemplateLiteralError = (node) => {
-      const quasis = node.value.expression.quasis
-      if (quasis.some((quasi) => quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked))) {
+      if (node.value.expression.quasis.some(someReportTemplateLiteralError)) {
         context.report({
           node,
           message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください

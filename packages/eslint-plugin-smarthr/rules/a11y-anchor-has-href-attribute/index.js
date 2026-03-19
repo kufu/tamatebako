@@ -60,7 +60,7 @@ const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : '
    - button要素のdisabled属性が設定された場合に相当します`
 
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
-const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(/Link$/))
+const nextCheck = (node) => /Link$/.test(node.parent.parent.openingElement.name.name || '')
 
 const hasInvalidTemplateLiteral = (node) => {
   const quasis = node.value.expression.quasis

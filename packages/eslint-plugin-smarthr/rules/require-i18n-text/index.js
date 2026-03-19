@@ -58,10 +58,7 @@ module.exports = {
 
     const reportTemplateLiteralError = (node) => {
       const quasis = node.value.expression.quasis
-      if (quasis.some((quasi) => {
-        const cooked = quasi.value.cooked
-        return cooked && cooked.trim() !== '' && checkIgnoreText(cooked)
-      })) {
+      if (quasis.some((quasi) => quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked))) {
         context.report({
           node,
           message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください

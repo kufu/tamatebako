@@ -105,6 +105,23 @@ ruleTester.run('a11y-clickable-element-has-text', rule, {
         componentsWithText: ['AnyComponent']
       }],
     },
+    // JSXExpressionContainer（Literal）
+    {
+      code: `<button><Hoge text={'any'} /></button>`,
+    },
+    {
+      code: `<a><img src="hoge.jpg" alt={'ほげ'} /></a>`,
+    },
+    // TemplateLiteral - 非空
+    {
+      code: `<button><Hoge text={\`any\`} /></button>`,
+    },
+    {
+      code: `<a><img src="hoge.jpg" alt={\`ほげ\`} /></a>`,
+    },
+    {
+      code: `<a><img src="hoge.jpg" alt={\`\${label}\`} /></a>`,
+    },
   ],
   invalid: [
     {

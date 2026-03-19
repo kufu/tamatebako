@@ -23,7 +23,13 @@ ruleTester.run('a11y-aria-labelledby', rule, {
     { code: '<Any aria-labelledby={`${hoge} ${fuga}`} />' },
   ],
   invalid: [
+    // 文字列リテラル
     { code: `<Any aria-labelledby="hoge" />`, errors: [{ message: ERROR_MESSAGE }] },
+    // JSXExpressionContainer（Literal）
+    { code: `<Any aria-labelledby={'hoge'} />`, errors: [{ message: ERROR_MESSAGE }] },
+    { code: `<Any aria-labelledby={"hoge"} />`, errors: [{ message: ERROR_MESSAGE }] },
+    // TemplateLiteral内の文字列リテラル
+    { code: '<Any aria-labelledby={`hoge`} />', errors: [{ message: ERROR_MESSAGE }] },
     { code: '<Any aria-labelledby={`hoge-${fuga}`} />', errors: [{ message: ERROR_MESSAGE }] },
     { code: '<Any aria-labelledby={`${"hoge"} ${fuga}`} />', errors: [{ message: ERROR_MESSAGE }] },
   ]

@@ -19,6 +19,9 @@ const SCHEMA = [
   },
 ]
 
+// デフォルトのワイルドカード設定
+const DEFAULT_WILDCARD_ATTRIBUTES = ['alt', 'aria-label', 'term', 'title']
+
 // 文字列リテラルを持つ属性を選択するセレクタの条件部分
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 
@@ -42,7 +45,7 @@ module.exports = {
   create(context) {
     const elementsObj = (context.options[0] || {}).elements || {}
     // ユーザーが'*'を設定していない場合のみデフォルトを適用
-    const wildcardAttributes = elementsObj['*'] || ['alt', 'aria-label', 'term', 'title']
+    const wildcardAttributes = elementsObj['*'] || DEFAULT_WILDCARD_ATTRIBUTES
     const specificElements = Object.keys(elementsObj).filter((k) => k !== '*')
     const handlers = {}
 

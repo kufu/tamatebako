@@ -46,8 +46,7 @@ const OPTION = (() => {
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
-const INVALID_HREF_VALUES = ['#', '']
-const NULL_HREF_VALUES = INVALID_HREF_VALUES.reduce((prev, v) =>
+const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) =>
   `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
 , '[value=null]')
 
@@ -60,9 +59,8 @@ const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : '
  - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
    - button要素のdisabled属性が設定された場合に相当します`
 
-const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
-const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(NEXT_LINK_REGEX))
+const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(/Link$/))
 
 const hasInvalidTemplateLiteral = (node) => {
   const quasis = node.value.expression.quasis

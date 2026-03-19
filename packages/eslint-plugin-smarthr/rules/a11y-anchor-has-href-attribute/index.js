@@ -53,15 +53,6 @@ const INVALID_HREF_VALUES = ['#', ''].reduce((acc, v) => ({
 const INVALID_HREF_SELECTOR = `${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${INVALID_HREF_VALUES.nullHrefValues},${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(TemplateElement:matches(${INVALID_HREF_VALUES.templateLiteralMatches.slice(1)})):not(:has(TemplateElement ~ TemplateElement))))`
 const NO_HREF_SELECTOR = `${ANCHOR_ELEMENT}:not(:has(${HREF_ATTRIBUTE}))`
 
-const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
- - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
-   - Cmd + clickなどのキーボードショートカットに対応出来ます
- - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください
-   - href属性に空文字(""など)や '#' が設定されている場合、実質画面遷移を行わないため、同様にbutton要素でマークアップすることを検討してください
- - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
-   - button要素のdisabled属性が設定された場合に相当します`
-
 const NEXT_LINK_REGEX = /Link$/
 const nextCheck = (node) => NEXT_LINK_REGEX.test(node.parent.parent.openingElement.name.name || '')
 
@@ -90,7 +81,14 @@ module.exports = {
     const reporter = (node) => {
       context.report({
         node,
-        message: `${node.name.name}${MESSAGE_SUFFIX}`,
+        message: `${node.name.name} に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
+ - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
+   - Cmd + clickなどのキーボードショートカットに対応出来ます
+ - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください
+   - href属性に空文字(""など)や '#' が設定されている場合、実質画面遷移を行わないため、同様にbutton要素でマークアップすることを検討してください
+ - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
+   - button要素のdisabled属性が設定された場合に相当します`,
       })
     }
 

@@ -46,9 +46,9 @@ const OPTION = (() => {
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
-const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) => {
-  return `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
-}, '[value=null]')
+const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) =>
+  `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
+, '[value=null]')
 
 const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute

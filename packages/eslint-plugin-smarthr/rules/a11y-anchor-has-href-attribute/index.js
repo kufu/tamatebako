@@ -47,6 +47,10 @@ const INVALID_HREF_VALUES_ARRAY = ['#', '']
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
+const NULL_HREF_VALUES = INVALID_HREF_VALUES_ARRAY.reduce((prev, v) =>
+  `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
+, '[value=null]')
+const INVALID_TEMPLATE_LITERAL = `${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(TemplateElement:matches(${INVALID_HREF_VALUES_ARRAY.reduce((prev, v) => `${prev},[value.cooked="${v}"]`, '').slice(1)})):not(:has(TemplateElement ~ TemplateElement))`
 
 const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
@@ -95,7 +99,7 @@ module.exports = {
           reporter(node)
         }
       },
-      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${INVALID_HREF_VALUES_ARRAY.reduce((prev, v) => `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`, '[value=null]')},${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(TemplateElement:matches(${INVALID_HREF_VALUES_ARRAY.reduce((prev, v) => `${prev},[value.cooked="${v}"]`, '').slice(1)})):not(:has(TemplateElement ~ TemplateElement))))`]: reporter,
+      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${NULL_HREF_VALUES},${INVALID_TEMPLATE_LITERAL}))`]: reporter,
     }
   },
 }

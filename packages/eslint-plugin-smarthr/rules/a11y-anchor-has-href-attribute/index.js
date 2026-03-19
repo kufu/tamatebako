@@ -59,8 +59,9 @@ const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : '
  - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
    - button要素のdisabled属性が設定された場合に相当します`
 
+const NEXT_LINK_REGEX = /Link$/
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
-const nextCheck = (node) => /Link$/.test(node.parent.parent.openingElement.name.name || '')
+const nextCheck = (node) => NEXT_LINK_REGEX.test(node.parent.parent.openingElement.name.name || '')
 
 const hasInvalidTemplateLiteral = (node) => {
   const quasis = node.value.expression.quasis

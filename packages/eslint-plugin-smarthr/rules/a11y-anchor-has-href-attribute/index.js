@@ -46,6 +46,18 @@ const OPTION = (() => {
 const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
+const NULL_HREF_VALUES = ['#', ''].reduce((prev, v) => {
+  return `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
+}, '[value=null]')
+
+const MESSAGE_SUFFIX = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
+ - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
+   - Cmd + clickなどのキーボードショートカットに対応出来ます
+ - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください
+   - href属性に空文字(""など)や '#' が設定されている場合、実質画面遷移を行わないため、同様にbutton要素でマークアップすることを検討してください
+ - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
+   - button要素のdisabled属性が設定された場合に相当します`
 
 // HINT: next/link で `Link > a` という構造がありえるので直上のJSXElementを調べる
 const nextCheck = (node) => ((node.parent.parent.openingElement.name.name || '').test(/Link$/))
@@ -86,19 +98,11 @@ module.exports = {
   create(context) {
     const option = context.options[0] || {}
     const spreadAttributeSelector = option.checkType === 'allow-spread-attributes' ? ':not(:has(JSXSpreadAttribute))' : ''
-    const messageSuffix = ` に href${OPTION.react_router ? '、もしくはto' : ''} 属性を正しく設定してください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute
- - onClickなどでページ遷移する場合でもhref属性に遷移先のURIを設定してください
-   - Cmd + clickなどのキーボードショートカットに対応出来ます
- - onClickなどの動作がURLの変更を行わない場合、button要素でマークアップすることを検討してください
-   - href属性に空文字(""など)や '#' が設定されている場合、実質画面遷移を行わないため、同様にbutton要素でマークアップすることを検討してください
- - リンクが存在せず無効化されていることを表したい場合、href属性に undefined を設定してください
-   - button要素のdisabled属性が設定された場合に相当します`
 
     const reporter = (node) => {
       context.report({
         node,
-        message: `${node.name.name}${messageSuffix}`,
+        message: `${node.name.name}${MESSAGE_SUFFIX}`,
       })
     }
 
@@ -108,9 +112,7 @@ module.exports = {
           reporter(node)
         }
       },
-      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${['#', ''].reduce((prev, v) => {
-        return `${prev},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`
-      }, '[value=null]')}))`]: reporter,
+      [`${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${NULL_HREF_VALUES}))`]: reporter,
       [`${ANCHOR_ELEMENT} ${HREF_ATTRIBUTE}${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`]: (node) => {
         if (hasInvalidTemplateLiteral(node)) {
           reporter(node.parent)

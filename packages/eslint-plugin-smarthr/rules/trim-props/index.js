@@ -22,8 +22,7 @@ module.exports = {
 
     return {
       'JSXAttribute > Literal[value=/(^ | $)/]': checker,
-      'JSXAttribute > JSXExpressionContainer>Literal[value=/(^ | $)/]': checker,
-      'JSXAttribute > JSXExpressionContainer > TemplateLiteral:has(> TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/]))': checker,
+      'JSXAttribute > JSXExpressionContainer > :matches(Literal[value=/(^ | $)/], TemplateLiteral:has(> TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/])))': checker,
     }
   },
 }

@@ -69,10 +69,10 @@ export default [
         'error',
         {
           props: 'never',
-          children: 'never',
+          children: 'ignore', // HINT: {' '} などを許容するため
           propElementValues: 'always',
         },
-      ]
+      ],
       'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'] }],
       'react/jsx-fragments': ['error', 'syntax'],
       'react/jsx-no-useless-fragment': 'error',

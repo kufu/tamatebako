@@ -57,6 +57,8 @@ const SCHEMA = [
   }
 ]
 
+const hasDelegateParam = (p) => DELEGATE_REGEX.test(p.name)
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -67,8 +69,8 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const interactiveComponentRegex = new RegExp(`(${INTERACTIVE_COMPONENT_NAMES}${options?.additionalInteractiveComponentRegex ? `|${options.additionalInteractiveComponentRegex.join('|')}` : ''})`)
-    const targetNameProp = `[name.name=${interactiveComponentRegex}]`
+    const interactiveComponentPattern = `/(${INTERACTIVE_COMPONENT_NAMES}${options?.additionalInteractiveComponentRegex ? `|${options.additionalInteractiveComponentRegex.join('|')}` : ''})/`
+    const targetNameProp = `[name.name=${interactiveComponentPattern}]`
 
     return {
       [`JSXOpeningElement${targetNameProp} > JSXAttribute[name.name="role"]${NOT_ARROW_ROLE_ATTRIBUTES}`]: (node) => {
@@ -93,7 +95,7 @@ module.exports = {
             }
             break
           case 'ArrowFunctionExpression':
-            if (node.value.expression.params.some((p) => DELEGATE_REGEX.test(p.name))) {
+            if (node.value.expression.params.some(hasDelegateParam)) {
               return
             }
 
@@ -111,7 +113,7 @@ module.exports = {
    - 修正例1: "onClick={onClick}" を設定している場合、 "onClick={onDelegateClick}" のようにDelegate, もしくはdelegateを含む名称に変更する
    - 修正例2: "onClick={(e) => { ... }}" を設定している場合、 "onClick={(delegateEvent) => { ... }}" のように引数をdelegate, もしくはDelegateを含む名称に変更する
  - 対応方法3: 対象の属性が設定されているコンポーネントがインタラクティブなコンポーネントの場合、名称を調整してください
-   - "${interactiveComponentRegex}" の正規表現にmatchするコンポーネントに変更、もしくは名称を調整してください
+   - "${interactiveComponentPattern}" の正規表現にmatchするコンポーネントに変更、もしくは名称を調整してください
  - 対応方法4: インタラクティブな親要素、もしくは子要素が存在する場合、onXxx属性を移動して設定することを検討してください`,
         });
       }
@@ -119,3 +121,5 @@ module.exports = {
   },
 };
 module.exports.schema = SCHEMA;
+module.exports.INTERACTIVE_COMPONENT_NAMES = INTERACTIVE_COMPONENT_NAMES;
+module.exports.AS_FORM_PART_ATTRIBUTE = AS_FORM_PART_ATTRIBUTE;

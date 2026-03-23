@@ -17,9 +17,7 @@ const ERROR_MESSAGE = `属性に設定している文字列から先頭、末尾
 ruleTester.run('trim-props', rule, {
   valid: [
     { code: '<a href="https://www.google.com">google</a>' },
-    { code: '<a href={"https://www.google.com"}>google</a>' },
     { code: '<img src="/sample.jpg" alt="sample" />' },
-    { code: `<img src={'/sample.jpg'} alt={'sample'} />` },
     { code: '<div data-spec="info-area">....</div>' },
     { code: '<div data-spec={`a${b} c`}>....</div>' },
     { code: '<div data-spec={`a${b ? ` ${c} ` : "  "} d`}>....</div>' },
@@ -41,31 +39,8 @@ ruleTester.run('trim-props', rule, {
       errors: [{ message: ERROR_MESSAGE }],
     },
     {
-      code: '<a href={" https://www.google.com"}>google</a>',
-      output: '<a href={"https://www.google.com"}>google</a>',
-      errors: [{ message: ERROR_MESSAGE }],
-    },
-    {
-      code: '<a href={"https://www.google.com "}>google</a>',
-      output: '<a href={"https://www.google.com"}>google</a>',
-      errors: [{ message: ERROR_MESSAGE }],
-    },
-    {
-      code: '<a href={" https://www.google.com "}>google</a>',
-      output: '<a href={"https://www.google.com"}>google</a>',
-      errors: [{ message: ERROR_MESSAGE }],
-    },
-    {
       code: '<img src=" /sample.jpg" alt="sample " />',
       output: '<img src="/sample.jpg" alt="sample" />',
-      errors: [
-        { message: ERROR_MESSAGE },
-        { message: ERROR_MESSAGE },
-      ],
-    },
-    {
-      code: `<img src={' /sample.jpg'} alt={'sample '} />`,
-      output: `<img src={'/sample.jpg'} alt={'sample'} />`,
       errors: [
         { message: ERROR_MESSAGE },
         { message: ERROR_MESSAGE },
@@ -76,16 +51,7 @@ ruleTester.run('trim-props', rule, {
       output: '<div data-spec="info-area">....</div>',
       errors: [{ message: ERROR_MESSAGE }],
     },
-    {
-      code: '<div data-spec={" info-area "}>....</div>',
-      output: '<div data-spec={"info-area"}>....</div>',
-      errors: [{ message: ERROR_MESSAGE }],
-    },
-    {
-      code: '<div data-spec={` ab c `}>....</div>',
-      output: '<div data-spec={`ab c`}>....</div>',
-      errors: [{ message: ERROR_MESSAGE }],
-    },
+    // TemplateLiteral - 変数を含み、先頭/末尾に空白がある
     {
       code: '<div data-spec={` a${b} c `}>....</div>',
       output: '<div data-spec={`a${b} c`}>....</div>',

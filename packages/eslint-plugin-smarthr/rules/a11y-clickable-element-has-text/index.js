@@ -23,7 +23,7 @@ module.exports = {
     const customComponents = componentsWithText.length > 0 ? `|^(${componentsWithText.join('|')})` : ''
 
     return {
-      [`JSXElement[openingElement.name.name=/((^b|B)utton|Anchor|Link|^a)/]:has(JSXClosingElement):not(:has(:matches(JSXAttribute[name.name=/^(text|alt|aria-label(ledby)?)$/]:not(:matches([value=null],[value.value=""],[value.expression.value=""])),JSXText,JSXExpressionContainer,JSXOpeningElement[name.name=/(SmartHRLogo|Text|Message${customComponents})$/])))`]: (node) => {
+      [`JSXElement[openingElement.name.name=/((^b|B)utton|Anchor|Link|^a)/]:has(JSXClosingElement):not(:has(:matches(JSXAttribute[name.name=/^(text|alt|aria-label(ledby)?)$/]:not(:matches([value=null],[value.value=""])),JSXText,JSXExpressionContainer,JSXOpeningElement[name.name=/(SmartHRLogo|Text|Message${customComponents})$/])))`]: (node) => {
         context.report({
           node,
           message: `a, buttonなどのクリッカブルな要素内にはテキストを設定してください

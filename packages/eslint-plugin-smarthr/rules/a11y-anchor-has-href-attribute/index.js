@@ -43,14 +43,9 @@ const OPTION = (() => {
   return {}
 })()
 
-const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
 const ANCHOR_ELEMENT = 'JSXOpeningElement[name.name=/(Anchor|Link|^a)$/]'
 const HREF_ATTRIBUTE = `JSXAttribute[name.name=${OPTION.react_router ? '/^(href|to)$/' : '"href"'}]`
-const INVALID_HREF_VALUES = ['#', ''].reduce((acc, v) => ({
-  nullHrefValues: `${acc.nullHrefValues},[value.type="Literal"][value.value="${v}"],${JSX_EXPRESSION_CONTAINER}[value.expression.value="${v}"]`,
-  templateLiteralMatches: `${acc.templateLiteralMatches},[value.cooked="${v}"]`
-}), { nullHrefValues: '[value=null]', templateLiteralMatches: '' })
-const INVALID_HREF_SELECTOR = `${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches(${INVALID_HREF_VALUES.nullHrefValues},${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]:has(TemplateElement:matches(${INVALID_HREF_VALUES.templateLiteralMatches.slice(1)})):not(:has(TemplateElement ~ TemplateElement))))`
+const INVALID_HREF_SELECTOR = `${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([value=null],[value.type="Literal"][value.value="#"],[value.type="Literal"][value.value=""]))`
 const NO_HREF_SELECTOR = `${ANCHOR_ELEMENT}:not(:has(${HREF_ATTRIBUTE}))`
 
 const NEXT_LINK_REGEX = /Link$/

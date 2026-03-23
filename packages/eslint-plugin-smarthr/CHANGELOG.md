@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.6.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.2...eslint-plugin-smarthr-v6.6.3) (2026-03-23)
+
+
+### Bug Fixes
+
+* a11y-anchor-has-href-attributeルールでTemplateLiteralに対応 ([#1138](https://github.com/kufu/tamatebako/issues/1138)) ([25e06f3](https://github.com/kufu/tamatebako/commit/25e06f392e5a8c432056b219ae2bb24d61939a5c))
+* a11y-aria-labelledbyルールでJSXExpressionContainerに対応 ([#1137](https://github.com/kufu/tamatebako/issues/1137)) ([15632dd](https://github.com/kufu/tamatebako/commit/15632dd7f3f1ed4fcc611c3fb73344a250e834f0))
+* a11y-clickable-element-has-textルールでJSXExpressionContainerとTemplateLiteralに対応 ([#1140](https://github.com/kufu/tamatebako/issues/1140)) ([6abb67b](https://github.com/kufu/tamatebako/commit/6abb67bfe4f97b0599abd484c5a4d233fa83bd10))
+* a11y-input-has-name-attributeルールでJSXExpressionContainerに対応 ([#1141](https://github.com/kufu/tamatebako/issues/1141)) ([b51052e](https://github.com/kufu/tamatebako/commit/b51052ea67bd8ec67635286a62c007b0a278c9cf))
+* require-i18n-textルールでTemplateLiteralに対応 ([#1139](https://github.com/kufu/tamatebako/issues/1139)) ([908c365](https://github.com/kufu/tamatebako/commit/908c3655728dfe46270894c1cfa7aa360c76b2e4))
+
 ## [6.6.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.1...eslint-plugin-smarthr-v6.6.2) (2026-03-13)
 
 

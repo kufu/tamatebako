@@ -125,11 +125,6 @@ ruleTester.run('require-i18n-text', rule, {
       options,
       errors: [{ message: attributeError('img', 'alt') }],
     },
-    {
-      code: `<img alt={'Profile'} />`,
-      options,
-      errors: [{ message: attributeError('img', 'alt') }],
-    },
 
     // 属性エラー: 同一要素の複数属性
     {
@@ -189,12 +184,7 @@ ruleTester.run('require-i18n-text', rule, {
       ],
     },
 
-    // TemplateLiteral - 文字列リテラルを含む
-    {
-      code: `<img alt={\`Profile picture\`} />`,
-      options,
-      errors: [{ message: attributeError('img', 'alt') }],
-    },
+    // TemplateLiteral - 変数を含み、文字列リテラル部分がある
     {
       code: `<img alt={\`Profile \${name}\`} />`,
       options,
@@ -204,17 +194,6 @@ ruleTester.run('require-i18n-text', rule, {
       code: `<div title={\`\${prefix} title\`} />`,
       options,
       errors: [{ message: attributeError('div', 'title') }],
-    },
-    {
-      code: `<Button label={\`Submit button\`} />`,
-      options,
-      errors: [{ message: attributeError('Button', 'label') }],
-    },
-
-    // TemplateLiteral - デフォルト設定
-    {
-      code: `<CustomComponent aria-label={\`Label text\`} />`,
-      errors: [{ message: attributeError('CustomComponent', 'aria-label') }],
     },
   ],
 })

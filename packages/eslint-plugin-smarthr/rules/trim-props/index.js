@@ -12,7 +12,7 @@ module.exports = {
   },
   create(context) {
     return {
-      ':matches(JSXAttribute > Literal[value=/(^ | $)/], JSXAttribute > JSXExpressionContainer > :matches(Literal[value=/(^ | $)/], TemplateLiteral:has(> TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/]))))': (node) => {
+      ':matches(JSXAttribute > Literal[value=/(^ | $)/], JSXAttribute > JSXExpressionContainer > TemplateLiteral:has(> TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/])))': (node) => {
         context.report({
           node,
           message: `属性に設定している文字列から先頭、末尾の空白文字を削除してください

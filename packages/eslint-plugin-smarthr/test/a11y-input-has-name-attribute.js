@@ -26,14 +26,9 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
     { code: '<HogeTextarea name="hoge" />' },
     { code: '<select name="hoge" />' },
     { code: '<Select name="hoge[0][Fuga]" />' },
-    { code: '<Select name={`ABC`} />' },
     { code: '<Input {...hoge} />', options: [{ checkType: 'allow-spread-attributes' }] },
     { code: '<Input {...args1} {...args2} />', options: [{ checkType: 'allow-spread-attributes' }] },
     { code: '<Input {...args} hoge="fuga" />', options: [{ checkType: 'allow-spread-attributes' }] },
-    // JSXExpressionContainer（Literal）- 有効な値
-    { code: '<input type="radio" name={\'hoge\'} />' },
-    { code: '<select name={\"user_name\"} />' },
-    { code: '<textarea name={\'comment[0]\'} />' },
   ],
   invalid: [
     { code: '<input />', errors: [ { message: `input にname属性を指定してください${MESSAGE_SUFFIX}
@@ -69,11 +64,6 @@ ruleTester.run('a11y-input-has-name-attribute', rule, {
     { code: '<Input {...hoge} hoge="fuga" />', options: [{ checkType: 'always' }], errors: [ { message: `Input にname属性を指定してください
  - ブラウザの自動補完が有効化されるなどのメリットがあります
  - より多くのブラウザが自動補完を行える可能性を上げるため、\"/^[a-zA-Z0-9_\\[\\]]+$/\"にmatchするフォーマットで命名してください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute` } ] },
-    // JSXExpressionContainer（Literal）- 無効な値
-    { code: '<input type="radio" name={\'ほげ\'} />', errors: [ { message: `input のname属性の値(ほげ)はブラウザの自動補完が適切に行えない可能性があるため"/^[a-zA-Z0-9_\\[\\]]+$/"にmatchするフォーマットで命名してください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute` } ] },
-    { code: '<select name={\"user-name\"} />', errors: [ { message: `select のname属性の値(user-name)はブラウザの自動補完が適切に行えない可能性があるため"/^[a-zA-Z0-9_\\[\\]]+$/"にmatchするフォーマットで命名してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute` } ] },
   ],
 });

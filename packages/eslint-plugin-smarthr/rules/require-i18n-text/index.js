@@ -22,14 +22,11 @@ const SCHEMA = [
 // デフォルトのワイルドカード設定
 const DEFAULT_WILDCARD_ATTRIBUTES = ['alt', 'aria-label', 'term', 'title']
 
-// 文字列リテラルを持つ属性を選択するセレクタの条件部分
-const JSX_EXPRESSION_CONTAINER = '[value.type="JSXExpressionContainer"]'
-
 const generateAttributeSelector = (attributes) =>
-  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]:matches([value.type="Literal"][value.value=/\\S/], ${JSX_EXPRESSION_CONTAINER}[value.expression.type="Literal"][value.expression.value=/\\S/])`
+  `JSXAttribute[name.name=/^(${attributes.join('|')})$/][value.type="Literal"][value.value=/\\S/]`
 
 const generateTemplateLiteralSelector = (attributes) =>
-  `JSXAttribute[name.name=/^(${attributes.join('|')})$/]${JSX_EXPRESSION_CONTAINER}[value.expression.type="TemplateLiteral"]`
+  `JSXAttribute[name.name=/^(${attributes.join('|')})$/][value.type="JSXExpressionContainer"][value.expression.type="TemplateLiteral"]`
 
 const IGNORE_TEXT_REGEX = /^ *(\.|\+|\-|\*|\/|[0-9]+) *$/
 const checkIgnoreText = (text) => !IGNORE_TEXT_REGEX.test(text)

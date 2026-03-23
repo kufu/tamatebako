@@ -66,8 +66,8 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
         })
       },
-      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]${notHasSpreadAttribute} ${NAME_ATTRIBUTE}:matches([value.value]:not([value.value=${INPUT_NAME_REGEX}]),[value.expression.value]:not([value.expression.value=${INPUT_NAME_REGEX}]))`]: (node) => {
-        const value = node.value.value || node.value.expression?.value
+      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]${notHasSpreadAttribute} ${NAME_ATTRIBUTE}[value.value]:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
+        const value = node.value.value
         context.report({
           node,
           message: `${node.parent.name.name} のname属性の値(${value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}

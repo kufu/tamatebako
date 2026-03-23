@@ -105,7 +105,6 @@ ruleTester.run('a11y-clickable-element-has-text', rule, {
         componentsWithText: ['AnyComponent']
       }],
     },
-    // JSXExpressionContainer（Literal）
     {
       code: `<button><Hoge text={'any'} /></button>`,
     },

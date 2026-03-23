@@ -40,7 +40,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder`,
         })
       },
-      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|FieldSet|(Date|Wareki|Time)Picker)$/]:not(${SEARCH_INPUT_NAME}) ${PLACEHOLDER_ATTRIBUTE}`]: (node) => {
+      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(Date|Wareki|Time)Picker)$/]:not(${SEARCH_INPUT_NAME}) ${PLACEHOLDER_ATTRIBUTE}`]: (node) => {
         const name = node.parent.name.name
 
         context.report({

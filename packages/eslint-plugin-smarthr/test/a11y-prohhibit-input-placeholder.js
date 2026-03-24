@@ -14,11 +14,13 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
   valid: [
     { code: `<input />` },
     { code: `<textarea />` },
-    { code: `<FieldSet />` },
+    { code: `<Fieldset />` },
+    { code: `<Fieldset placeholder="any" />` },
     { code: `<ComboBox />` },
     { code: `<StyledInput />` },
     { code: `<HogeTextarea />` },
-    { code: `<FugaFieldSet />` },
+    { code: `<FugaFieldset />` },
+    { code: `<FugaFieldset placeholder="any" />` },
     { code: `<CustomComboBox />` },
     { code: `<SearchInput />` },
     { code: `<DatePicker />` },
@@ -38,8 +40,6 @@ ruleTester.run('a11y-prohibit-input-placeholder', rule, {
     { code: `<StyledInput placeholder={any} />`, errors: [ { message: `StyledInput にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><StyledInput /><Hint>ヒント</Hint></div>')
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder` } ] },
     { code: `<HogeTextarea placeholder="any" />`, errors: [ { message: `HogeTextarea にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeTextarea /><Hint>ヒント</Hint></div>')
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder` } ] },
-    { code: `<HogeFieldSet placeholder="any" />`, errors: [ { message: `HogeFieldSet にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeFieldSet /><Hint>ヒント</Hint></div>')
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder` } ] },
     { code: `<HogeDatePicker placeholder="any" />`, errors: [ { message: `HogeDatePicker にはplaceholder属性は設定せず、別途ヒント用要素の利用を検討してください。(例: '<div><HogeDatePicker /><Hint>ヒント</Hint></div>')
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder` } ] },

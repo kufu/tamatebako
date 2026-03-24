@@ -61,7 +61,7 @@ const EXPECTED_NAMES = {
   '(A|^a)rticle$': 'Article$',
   '(A|^a)side$': 'Aside$',
   '(B|^b)utton$': 'Button$',
-  '(Date|Wareki)Picker$': '(Date|Wareki)Picker$',
+  '(Date(timeLocal)?|Time|Month|Wareki)Picker$': '(Date(timeLocal)?|Time|Month|Wareki)Picker$',
   '(F|^f)ieldset$': 'Fieldset$',
   '(F|^f)orm$': 'Form$',
   '(Heading|^h(2|3|4|5|6))$': 'Heading$',
@@ -84,10 +84,11 @@ const EXPECTED_NAMES = {
   'Check(B|b)ox(e)?s$': 'Checkboxes$',
   'Cluster$': 'Cluster$',
   'Combo(B|b)ox$': 'Combobox$',
+  'Dialog$': 'Dialog$',
   'DialogTrigger$': 'DialogTrigger$',
+  'DisclosureTrigger$': 'DisclosureTrigger$',
   'DropZone$': 'DropZone$',
   'DropdownTrigger$': 'DropdownTrigger$',
-  'FieldSet$': 'FieldSet$',
   'Fieldsets$': 'Fieldsets$',
   'FilterDropdown$': 'FilterDropdown$',
   'FormControl$': 'FormControl$',
@@ -113,6 +114,7 @@ const EXPECTED_NAMES = {
   'RemoteTrigger(.*)FormDialog$': 'RemoteTrigger(.*)FormDialog$',
   'RemoteTrigger(.+)Dialog$': 'RemoteTrigger(.+)Dialog$',
   'RightFixedNote$': 'RightFixedNote$',
+  'Scroller$': 'Scroller$',
   'SearchInput$': 'SearchInput$',
   'SegmentedControl$': 'SegmentedControl$',
   'SideNav$': 'SideNav$',
@@ -122,7 +124,6 @@ const EXPECTED_NAMES = {
   'Switch$': 'Switch$',
   'TabItem$': 'TabItem$',
   'Text$': 'Text$',
-  'TimePicker$': 'TimePicker$',
   '^(img|svg)$': '(Img|Image|Icon)$',
   '^a$': '(Anchor|Link)$',
 }
@@ -137,7 +138,8 @@ const UNEXPECTED_NAMES = {
   '(A|^a)rticle$': ['(Article)$', unexpectedMessageTemplate ],
   '(A|^a)side$': ['(Aside)$', unexpectedMessageTemplate ],
   '(B|^b)utton$': '(Button)$',
-  '(Date|Wareki)Picker$': '((Date|Wareki)Picker)$',
+  '(Date(timeLocal)?|Time|Month|Wareki)Picker$': '((Date(timeLocal)?|Time|Month|Wareki)Picker)$',
+  'Dialog$': '(Dialog)$',
   '(F|^f)ieldset$': '(Fieldset)$',
   '(F|^f)orm$': '(Form)$',
   '(Heading|^h(1|2|3|4|5|6))$': '(Heading)$',
@@ -159,6 +161,7 @@ const UNEXPECTED_NAMES = {
   'Check(B|b)ox(e)?s$': '(Checkboxes)$',
   'Cluster$': '(Cluster)$',
   'Combo(B|b)ox$': '(Combobox)$',
+  'DisclosureTrigger$': '(DisclosureTrigger)$',
   'Fieldsets$': '(Fieldsets)$',
   'FilterDropdown$': '(FilterDropdown)$',
   'FormControl$': '(FormControl)$',
@@ -173,13 +176,19 @@ const UNEXPECTED_NAMES = {
   'RadioButtons$': '(RadioButtons)$',
   'Reel$': '(Reel)$',
   'RemoteTrigger(.*)FormDialog$': '(RemoteTrigger(.*)FormDialog)$',
+  'Scroller$': '(Scroller)$',
   'SearchInput$': '(SearchInput)$',
   'SideNav$': '(SideNav)$',
   'Sidebar$': '(Sidebar)$',
   'Stack$': '(Stack)$',
-  'TimePicker$': '(TimePicker)$',
 }
 
+const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
+const entriesesUnTagNames = Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
+  const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
+
+  return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
+})
 
 const SCHEMA = []
 
@@ -192,17 +201,9 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
-    const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
-    const entriesesUnTagNames = UNEXPECTED_NAMES ? Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
-      const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
-
-      return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
-    }) : []
-
-
     const checkImportedNameToLocalName = (node, base, extended, isImport) => {
-      entriesesTagNames.forEach(([b, e]) => {
-        if (base.match(b) && !extended.match(e)) {
+      for (const [b, e] of entriesesTagNames) {
+        if (b.test(base) && !e.test(extended)) {
           context.report({
             node,
             message: `${extended}を正規表現 "${e.toString()}" がmatchする名称に変更してください。
@@ -210,7 +211,7 @@ module.exports = {
  - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります` : ''}`,
           });
         }
-      })
+      }
     }
 
     return {
@@ -218,11 +219,11 @@ module.exports = {
         checkImportStyledComponents(node, context)
 
         if (node.importKind !== 'type') {
-          node.specifiers.forEach((s) => {
+          for (const s of node.specifiers) {
             if (s.importKind !== 'type' && s.imported && s.imported.name !== s.local.name) {
               checkImportedNameToLocalName(node, s.imported.name, s.local.name, true)
             }
-          })
+          }
         }
       },
       VariableDeclarator: (node) => {
@@ -233,19 +234,17 @@ module.exports = {
 
           checkImportedNameToLocalName(node, base, extended)
 
-          entriesesUnTagNames.forEach(([b, e, m]) => {
+          for (const [b, e, m] of entriesesUnTagNames) {
             const matcher = extended.match(e)
 
-            if (matcher && !base.match(b)) {
+            if (matcher && !b.test(base)) {
               const expected = matcher[1]
               const isBareTag = base === base.toLowerCase()
               const sampleFixBase = `styled${isBareTag ? `.${base}` : `(${base})`}`
 
               context.report({
                 node,
-                message: m ? m
-                .replaceAll('{{extended}}', extended)
-                .replaceAll('{{expected}}', expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+                message: m ? m.replace(/\{\{extended\}\}/g, extended).replace(/\{\{expected\}\}/g, expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - ${extended} の名称の末尾が"${expected}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isBareTag ? '適切なタグや別コンポーネントに差し替えてください' : '名称に変更するか、適切な別コンポーネントに差し替えてください'}
@@ -254,7 +253,7 @@ module.exports = {
    - 修正例3: const ${extended} = styled(Xxxx${expected})`
               })
             }
-          })
+          }
         }
       },
       'VariableDeclarator[id.name=/Modal/]': (node) => {

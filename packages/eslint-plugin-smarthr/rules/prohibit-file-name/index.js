@@ -34,7 +34,7 @@ module.exports = {
 
     const messages = []
 
-    targetPaths.forEach(([path, pathRegex]) => {
+    for (const [path, pathRegex] of targetPaths) {
       const message = options[path]
 
       matcher = context.filename.match(pathRegex)
@@ -43,7 +43,7 @@ module.exports = {
         messages.push([...matcher].reduce(((prev, k, index) => prev.replace(new RegExp(`\\$${index}`, 'g'), k)), `${message}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-file-name`))
       }
-    })
+    }
 
     if (messages.length === 0) {
       return {}
@@ -51,12 +51,12 @@ module.exports = {
 
     return {
       Program: (node) => {
-        messages.forEach((message) => {
+        for (const message of messages) {
           context.report({
             node,
             message,
           })
-        })
+        }
       },
     }
   },

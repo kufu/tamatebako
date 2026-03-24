@@ -63,7 +63,7 @@ module.exports = {
         let isDenyPath = false
         let deniedModules = []
 
-        targetAllowedImports.forEach((allowedKey) => {
+        for (const allowedKey of targetAllowedImports) {
           const allowedOption = option.allowedImports[allowedKey]
 
           for (const targetModule in allowedOption) {
@@ -88,7 +88,7 @@ module.exports = {
               deniedModules.push(node.specifiers.map((s) => s.imported?.name).filter(i => allowedModules.indexOf(i) == -1))
             }
           }
-        })
+        }
 
         if (isDenyPath) {
           if (deniedModules[0] === true) {

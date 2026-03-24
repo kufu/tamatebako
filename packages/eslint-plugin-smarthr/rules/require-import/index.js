@@ -59,7 +59,7 @@ module.exports = {
         const importDeclarations = node.body.filter(filterImportDeclaration)
         const parentDir = getParentDir(context.filename)
 
-        targetRequires.forEach((requireKey) => {
+        for (const requireKey of targetRequires) {
           const option = options[requireKey]
 
           for (const targetModule in option) {
@@ -89,21 +89,21 @@ module.exports = {
 
             if (!importDeclaration) {
               if (Array.isArray(imported)) {
-                imported.forEach((i) => {
+                for (const i of imported) {
                   reporter(i)
-                })
+                }
               } else if (imported) {
                 reporter()
               }
             } else if (Array.isArray(imported)) {
-              imported.forEach((i) => {
+              for (const i of imported) {
                 if (!importDeclaration.specifiers.find((s) => s.imported && s.imported.name === i)) {
                   reporter(i)
                 }
-              })
+              }
             }
           }
-        })
+        }
       },
     }
   },

@@ -67,7 +67,7 @@ module.exports = {
           return
         }
 
-        targetRequires.forEach((requireKey) => {
+        for (const requireKey of targetRequires) {
           const option = options[requireKey]
 
           for (const requireDeclaration in option) {
@@ -110,7 +110,7 @@ module.exports = {
               const code = context.sourceCode.getText(hit)
               let reported = false
 
-              localOption.use.forEach((u) => {
+              for (const u of localOption.use) {
                 if (!useRegex(u).test(code) && (!localOption.reportMessage || !reported)) {
                   context.report({
                     node: hit,
@@ -119,10 +119,10 @@ module.exports = {
                   })
                   reported = true
                 }
-              })
+              }
             }
           }
-        })
+        }
       },
     };
   },

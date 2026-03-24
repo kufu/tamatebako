@@ -40,7 +40,7 @@ module.exports = {
 
     return {
       TemplateLiteral: (node) => {
-        node.expressions.forEach((exp) => {
+        for (const exp of node.expressions) {
           const name = recursiveFetchRootNameIsPath(exp, nameRegex)
 
           if (name) {
@@ -50,7 +50,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-path-within-template-literal`,
             });
           }
-        })
+        }
       },
     }
   },

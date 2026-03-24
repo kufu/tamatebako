@@ -202,7 +202,7 @@ module.exports = {
   },
   create(context) {
     const checkImportedNameToLocalName = (node, base, extended, isImport) => {
-      entriesesTagNames.forEach(([b, e]) => {
+      for (const [b, e] of entriesesTagNames) {
         if (b.test(base) && !e.test(extended)) {
           context.report({
             node,
@@ -211,7 +211,7 @@ module.exports = {
  - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります` : ''}`,
           });
         }
-      })
+      }
     }
 
     return {
@@ -219,11 +219,11 @@ module.exports = {
         checkImportStyledComponents(node, context)
 
         if (node.importKind !== 'type') {
-          node.specifiers.forEach((s) => {
+          for (const s of node.specifiers) {
             if (s.importKind !== 'type' && s.imported && s.imported.name !== s.local.name) {
               checkImportedNameToLocalName(node, s.imported.name, s.local.name, true)
             }
-          })
+          }
         }
       },
       VariableDeclarator: (node) => {
@@ -234,7 +234,7 @@ module.exports = {
 
           checkImportedNameToLocalName(node, base, extended)
 
-          entriesesUnTagNames.forEach(([b, e, m]) => {
+          for (const [b, e, m] of entriesesUnTagNames) {
             const matcher = extended.match(e)
 
             if (matcher && !b.test(base)) {
@@ -253,7 +253,7 @@ module.exports = {
    - 修正例3: const ${extended} = styled(Xxxx${expected})`
               })
             }
-          })
+          }
         }
       },
       'VariableDeclarator[id.name=/Modal/]': (node) => {

@@ -56,7 +56,7 @@ module.exports = {
 
     return {
       ImportDeclaration: (node) => {
-        targetProhibits.forEach((prohibitKey) => {
+        for (const prohibitKey of targetProhibits) {
           const option = options[prohibitKey]
 
           for (const targetModule in option) {
@@ -91,7 +91,7 @@ module.exports = {
               }
             }
           }
-        })
+        }
       },
     }
   },

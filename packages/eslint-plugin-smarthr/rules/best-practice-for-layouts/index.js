@@ -78,7 +78,7 @@ module.exports = {
         let alignAttr = null
         let gapAttr = null
 
-        node.attributes.forEach((a) => {
+        for (const a of node.attributes) {
           switch (a.name?.name) {
             case 'justify':
               justifyAttr = a
@@ -90,7 +90,7 @@ module.exports = {
               gapAttr = a
               break
           }
-        })
+        }
 
         if (layoutType === 'Stack') {
           if (alignAttr && FLEX_END_REGEX.test(alignAttr.value.value)) {

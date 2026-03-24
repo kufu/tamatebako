@@ -38,7 +38,7 @@ const DECLARATION_REGEX = /Declaration$/
 const find = (type, ds, rd) => ds.find((d) => d.type === type && d.id.name === rd)
 const codeSeparator = '[^a-zA-Z0-1_$]'
 const useRegex = (use) => {
-  const actualUse = use.replaceAll('.', '\.')
+  const actualUse = use.replace(/\./g, '\\.')
   return new RegExp(`((${codeSeparator}(${actualUse})${codeSeparator})|(^(${actualUse})${codeSeparator})|${codeSeparator}(${actualUse})$)`)
 }
 

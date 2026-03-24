@@ -34,7 +34,7 @@ module.exports = {
       matcher = context.filename.match(new RegExp(path))
 
       if (matcher) {
-        messages.push([...matcher].reduce(((prev, k, index) => prev.replaceAll(`\$${index}`, k)), `${message}
+        messages.push([...matcher].reduce(((prev, k, index) => prev.replace(new RegExp(`\\$${index}`, 'g'), k)), `${message}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-file-name`))
       }
     })

@@ -85,7 +85,7 @@ module.exports = {
               if (useImported) {
                 context.report({
                   node,
-                  message: reportMessage ? `${reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported)}
+                  message: reportMessage ? `${reportMessage.replace(/\{\{module\}\}/g, node.source.value).replace(/\{\{export\}\}/g, useImported)}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` : defaultReportMessage(node.source.value, useImported)
                 });
               }

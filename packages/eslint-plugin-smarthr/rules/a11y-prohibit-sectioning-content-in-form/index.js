@@ -4,8 +4,8 @@ const asRegex = /^(as|forwardedAs)$/
 const asFormRegex = /^(form|fieldset)$/
 const asSectioningContentRegex = /^(article|aside|nav|section)$/
 
-const includeAsAttrFormOrFieldset = (a) => a.name?.name.match(asRegex) && asFormRegex.test(a.value.value)
-const includeAsAttrSectioningContent = (a) => a.name?.name.match(asRegex) && asSectioningContentRegex.test(a.value.value)
+const includeAsAttrFormOrFieldset = (a) => asRegex.test(a.name?.name) && asFormRegex.test(a.value.value)
+const includeAsAttrSectioningContent = (a) => asRegex.test(a.name?.name) && asSectioningContentRegex.test(a.value.value)
 const includeWrapper =  (fn) => wrapperRegex.test(fn)
 
 const sectioningContentRegex = /((A|^a)(rticle|side)|(N|^n)av|(S|^s)ection)$/
@@ -41,7 +41,7 @@ const searchBubbleUpForSectioningContent = (node) => {
       break
     // Form系コンポーネントの拡張なのでNG
     case 'VariableDeclarator':
-      if (node.parent.parent?.type.match(formPartCheckParentTypeRegex) && wrapperRegex.test(node.id.name)) {
+      if (formPartCheckParentTypeRegex.test(node.parent.parent?.type) && wrapperRegex.test(node.id.name)) {
         return node
       }
 
@@ -85,7 +85,7 @@ const searchBubbleUpForFormControl = (node) => {
 
       break
     case 'VariableDeclarator':
-      if (node.parent.parent?.type.match(formPartCheckParentTypeRegex) && wrapperRegex.test(node.id.name)) {
+      if (formPartCheckParentTypeRegex.test(node.parent.parent?.type) && wrapperRegex.test(node.id.name)) {
         return null
       }
 

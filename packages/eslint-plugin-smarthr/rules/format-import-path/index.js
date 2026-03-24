@@ -85,7 +85,7 @@ const calculateRelativeImportPath = ({ importPath, filteredDirs, filteredPaths }
     return importPath
   }
 
-  return `${filteredDirs.length === 0 ? './' : [...Array(filteredDirs.length)].reduce((prev) => `${prev}../`, '')}${filteredPaths.join('/')}`.replace(TRAILING_SLASH_REGEX, '$1')
+  return `${filteredDirs.length === 0 ? './' : '../'.repeat(filteredDirs.length)}${filteredPaths.join('/')}`.replace(TRAILING_SLASH_REGEX, '$1')
 }
 
 /**

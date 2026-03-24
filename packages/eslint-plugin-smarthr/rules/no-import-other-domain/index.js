@@ -65,10 +65,8 @@ module.exports = {
 
         targetAllowedImports.forEach((allowedKey) => {
           const allowedOption = option.allowedImports[allowedKey]
-          const targetModules = Object.keys(allowedOption)
 
-          targetModules.forEach((targetModule) => {
-            const allowedModules = allowedOption[targetModule] || true
+          for (const targetModule in allowedOption) {
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${process.cwd()}/${targetModule}`)
             let sourceValue = node.source.value
 
@@ -77,8 +75,10 @@ module.exports = {
             }
 
             if (actualTarget !== sourceValue) {
-              return
+              continue
             }
+
+            let allowedModules = allowedOption[targetModule] || true
 
 
             if (!Array.isArray(allowedModules)) {
@@ -87,7 +87,7 @@ module.exports = {
             } else {
               deniedModules.push(node.specifiers.map((s) => s.imported?.name).filter(i => allowedModules.indexOf(i) == -1))
             }
-          })
+          }
         })
 
         if (isDenyPath) {

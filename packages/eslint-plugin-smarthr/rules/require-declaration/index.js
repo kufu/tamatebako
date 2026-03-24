@@ -70,7 +70,7 @@ module.exports = {
         targetRequires.forEach((requireKey) => {
           const option = options[requireKey]
 
-          Object.keys(option).forEach((requireDeclaration) => {
+          for (const requireDeclaration in option) {
             const localOption = option[requireDeclaration]
             let hit
 
@@ -121,7 +121,7 @@ module.exports = {
                 }
               })
             }
-          })
+          }
         })
       },
     };

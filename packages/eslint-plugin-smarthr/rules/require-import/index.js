@@ -62,13 +62,15 @@ module.exports = {
         targetRequires.forEach((requireKey) => {
           const option = options[requireKey]
 
-          Object.keys(option).forEach((targetModule) => {
-            const { imported, reportMessage, targetRegex } = Object.assign({imported: true}, option[targetModule])
+          for (const targetModule in option) {
+            const moduleOption = option[targetModule]
+            const targetRegex = moduleOption.targetRegex
 
             if (targetRegex && !(new RegExp(targetRegex)).test(context.filename)) {
-              return
+              continue
             }
 
+            const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             const importDeclaration = importDeclarations.find(
               actualTarget[0] !== '/' ? (
@@ -100,7 +102,7 @@ module.exports = {
                 }
               })
             }
-          })
+          }
         })
       },
     }

@@ -58,10 +58,8 @@ module.exports = {
       ImportDeclaration: (node) => {
         targetProhibits.forEach((prohibitKey) => {
           const option = options[prohibitKey]
-          const targetModules = Object.keys(option)
 
-          targetModules.forEach((targetModule) => {
-            const { imported, reportMessage } = Object.assign({imported: true}, option[targetModule])
+          for (const targetModule in option) {
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             let sourceValue = node.source.value
 
@@ -70,6 +68,8 @@ module.exports = {
             }
 
             if (actualTarget === sourceValue) {
+              const moduleOption = option[targetModule]
+              const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
               let useImported = false
 
               if (!Array.isArray(imported)) {
@@ -90,7 +90,7 @@ module.exports = {
                 });
               }
             }
-          })
+          }
         })
       },
     }

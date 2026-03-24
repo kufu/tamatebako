@@ -55,8 +55,14 @@ module.exports = {
       humanizeParentDir,
     } = calcContext
 
-    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) : []
-    const targetAllowedImports = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(calcContext.filename))
+    const targetAllowedImports = []
+    if (option?.allowedImports) {
+      for (const regex in option.allowedImports) {
+        if ((new RegExp(regex)).test(calcContext.filename)) {
+          targetAllowedImports.push(regex)
+        }
+      }
+    }
 
     return {
       ImportDeclaration: (node) => {

@@ -9,7 +9,7 @@ const OPTION = (() => {
     const packageConfig = JSON5.parse(fs.readFileSync(file)).dependencies
 
     return {
-      react_hook_form: packageConfig ? Object.keys(packageConfig).includes('react-hook-form') : false,
+      react_hook_form: packageConfig ? 'react-hook-form' in packageConfig : false,
     }
   }
 

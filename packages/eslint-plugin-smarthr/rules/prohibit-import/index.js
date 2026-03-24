@@ -47,8 +47,12 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const parentDir = getParentDir(context.filename)
-    const targetPathRegexs = Object.keys(options)
-    const targetProhibits = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetProhibits = []
+    for (const regex in options) {
+      if ((new RegExp(regex)).test(context.filename)) {
+        targetProhibits.push(regex)
+      }
+    }
 
     if (targetProhibits.length === 0) {
       return {}

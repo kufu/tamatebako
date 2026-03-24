@@ -26,6 +26,7 @@ const REPLACE_PATH_ENTRIES = Object.entries(replacePaths)
 const REPLACE_PATH_KEY_REGEX = new RegExp(`^(${Object.keys(replacePaths).join('|')})`)
 const DIR_SEPARATE_REGEX = /\//g
 const MULTIPLE_DIR_SEPARATE_REGEX =/(\/)+/g
+const TRAILING_SLASH_REGEX = /^(.+?)\/$/
 
 const dirCount = (dir) => dir.match(DIR_SEPARATE_REGEX).length
 
@@ -84,7 +85,7 @@ const calculateRelativeImportPath = ({ importPath, filteredDirs, filteredPaths }
     return importPath
   }
 
-  return `${filteredDirs.length === 0 ? './' : [...Array(filteredDirs.length)].reduce((prev) => `${prev}../`, '')}${filteredPaths.join('/')}`.replace(/^(.+?)\/$/, '$1')
+  return `${filteredDirs.length === 0 ? './' : [...Array(filteredDirs.length)].reduce((prev) => `${prev}../`, '')}${filteredPaths.join('/')}`.replace(TRAILING_SLASH_REGEX, '$1')
 }
 
 /**

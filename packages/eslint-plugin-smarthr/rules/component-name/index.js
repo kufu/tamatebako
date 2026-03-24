@@ -183,6 +183,12 @@ const UNEXPECTED_NAMES = {
   'Stack$': '(Stack)$',
 }
 
+const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
+const entriesesUnTagNames = Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
+  const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
+
+  return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
+})
 
 const SCHEMA = []
 
@@ -195,17 +201,9 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
-    const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
-    const entriesesUnTagNames = UNEXPECTED_NAMES ? Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
-      const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
-
-      return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
-    }) : []
-
-
     const checkImportedNameToLocalName = (node, base, extended, isImport) => {
       entriesesTagNames.forEach(([b, e]) => {
-        if (base.match(b) && !extended.match(e)) {
+        if (b.test(base) && !e.test(extended)) {
           context.report({
             node,
             message: `${extended}を正規表現 "${e.toString()}" がmatchする名称に変更してください。
@@ -239,16 +237,14 @@ module.exports = {
           entriesesUnTagNames.forEach(([b, e, m]) => {
             const matcher = extended.match(e)
 
-            if (matcher && !base.match(b)) {
+            if (matcher && !b.test(base)) {
               const expected = matcher[1]
               const isBareTag = base === base.toLowerCase()
               const sampleFixBase = `styled${isBareTag ? `.${base}` : `(${base})`}`
 
               context.report({
                 node,
-                message: m ? m
-                .replaceAll('{{extended}}', extended)
-                .replaceAll('{{expected}}', expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+                message: m ? m.replace(/\{\{extended\}\}/g, extended).replace(/\{\{expected\}\}/g, expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - ${extended} の名称の末尾が"${expected}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isBareTag ? '適切なタグや別コンポーネントに差し替えてください' : '名称に変更するか、適切な別コンポーネントに差し替えてください'}

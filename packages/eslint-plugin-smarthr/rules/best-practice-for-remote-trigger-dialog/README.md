@@ -50,7 +50,7 @@ const id = 'help_dialog'
   </>
 ))}
 
-// OK: Dialogは1つ、Triggerが複数
+// OK: Dialogは1つ、Triggerが複数（Dialogのレンダリングは高コストのため、一つにまとめる）
 {employees.map(employee => (
   <RemoteDialogTrigger
     targetId="employee_detail"
@@ -64,7 +64,7 @@ const id = 'help_dialog'
 </RemoteTriggerActionDialog>
 ```
 
-このパターンでは、「何のためのダイアログか」を表すid属性（`employee_detail`）はプロダクト内で常に一意になります。そのため、アイテムのidなどの変数を使わずとも一意の文字列を指定でき、リテラル文字列で統一的に管理することが適切です。
+このパターンでは、Dialogのレンダリングは高コストのため、一つにまとめることでパフォーマンスが向上します。また、「何のためのダイアログか」を表すid属性（`employee_detail`）はプロダクト内で常に一意になります。そのため、アイテムのidなどの変数を使わずとも一意の文字列を指定でき、リテラル文字列で統一的に管理することが適切です。
 
 ## rules
 

@@ -45,7 +45,12 @@ module.exports = {
     const elementsObj = (context.options[0] || {}).elements || {}
     // ユーザーが'*'を設定していない場合のみデフォルトを適用
     const wildcardAttributes = elementsObj['*'] || DEFAULT_WILDCARD_ATTRIBUTES
-    const specificElements = Object.keys(elementsObj).filter((k) => k !== '*')
+    const specificElements = []
+    for (const k in elementsObj) {
+      if (k !== '*') {
+        specificElements.push(k)
+      }
+    }
     const handlers = {}
 
     const reportAttributeError = (node) => {

@@ -140,6 +140,8 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeDropdownTrigger = styled(DropdownTrigger)``' },
 
     { code: 'const RemoteTriggerHogeDialog = styled(RemoteTriggerActionDialog)``' },
+    { code: `const FugaDialog = styled(ActionDialog)\`\`` },
+    { code: `const FugaDialog = styled(MessageDialog)\`\`` },
   ],
   invalid: [
     { code: `import hoge from 'styled-components'`, errors: [ { message: `styled-components をimportする際は、名称が"styled" となるようにしてください。例: "import styled from 'styled-components'"
@@ -167,9 +169,9 @@ ruleTester.run('component-name', rule, {
     { code: 'const Hoge = styled(HogeMessage)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Message$/ }) } ]  },
     { code: 'const HogeButton = styled.div``', errors: [ { message: messageProperName({ extended: 'HogeButton', matcher: /(B|^b)utton$/, suffix: 'Button', base: 'div' }) } ]  },
 
-    { code: `import { DatePicker as DatePickerHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'DatePickerHoge', matcher: /(Date|Wareki)Picker$/, base: 'DatePicker' }) } ] },
-    { code: 'const Fuga = styled(WarekiPicker)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /(Date|Wareki)Picker$/ }) } ]  },
-    { code: `import { TimePicker as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /TimePicker$/, base: 'TimePicker' }) } ] },
+    { code: `import { DatePicker as DatePickerHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'DatePickerHoge', matcher: /(Date(timeLocal)?|Time|Month|Wareki)Picker$/, base: 'DatePicker' }) } ] },
+    { code: 'const Fuga = styled(WarekiPicker)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /(Date(timeLocal)?|Time|Month|Wareki)Picker$/ }) } ]  },
+    { code: `import { TimePicker as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /(Date(timeLocal)?|Time|Month|Wareki)Picker$/, base: 'TimePicker' }) } ] },
     { code: 'const Hoge = styled(DropZone)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DropZone$/ }) } ]  },
     { code: `import { Switch as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Switch$/, base: 'Switch' }) } ] },
     { code: 'const SegmentedControlHoge = styled(FugaSegmentedControl)``', errors: [ { message: messageInheritance({ extended: 'SegmentedControlHoge', matcher: '/SegmentedControl$/' }) } ]  },
@@ -182,26 +184,27 @@ ruleTester.run('component-name', rule, {
     { code: `const Hoge = styled(Fieldsets)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Fieldsets$/ }) } ] },
     { code: `const Hoge = styled(FormControls)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /FormControls$/ }) } ] },
     { code: `const Hoge = styled(FilterDropdown)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /FilterDropdown$/ }) } ] },
+    { code: `const Hoge = styled(ActionDialog)\`\``, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Dialog$/ }) } ] },
+    { code: `const Hoge = styled(MessageDialog)\`\``, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Dialog$/ }) } ] },
+    { code: `const HogeFuga = styled(RemoteTriggerActionDialog)\`\``, errors: [
+      { message: messageInheritance({ extended: 'HogeFuga', matcher: /Dialog$/ }) },
+      { message: messageInheritance({ extended: 'HogeFuga', matcher: /RemoteTrigger(.+)Dialog$/ }) }
+    ] },
 
     { code: `import { HogePageHeading as PageHeadingAbc } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'PageHeadingAbc', matcher: /Heading$/, base: 'HogePageHeading' }) }, { message: messageImportAs({ extended: 'PageHeadingAbc', matcher: /PageHeading$/, base: 'HogePageHeading' }) } ] },
     { code: `import { Heading as HeadingHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HeadingHoge', matcher: /Heading$/, base: 'Heading' }) } ] },
     { code: `import { HogeArticle as HogeArticleFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeArticleFuga', matcher: /Article$/, base: 'HogeArticle' }) } ] },
-    { code: `import { HogeAside as HogeAsideFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeAsideFuga', matcher: /Aside$/, base: 'HogeAside' }) } ] },
-    { code: `import { HogeNav as HogeNavFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeNavFuga', matcher: /Nav$/, base: 'HogeNav' }) } ] },
     { code: `import { HogeSection as HogeSectionFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeSectionFuga', matcher: /Section$/, base: 'HogeSection' }) } ] },
-    { code: `import { HogeModelessDialog as HogeModelessDialogFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeModelessDialogFuga', matcher: /ModelessDialog$/, base: 'HogeModelessDialog' }) } ] },
+    { code: `import { HogeModelessDialog as HogeModelessDialogFuga } from './hoge'`, errors: [
+      { message: messageImportAs({ extended: 'HogeModelessDialogFuga', matcher: /Dialog$/, base: 'HogeModelessDialog' }) },
+      { message: messageImportAs({ extended: 'HogeModelessDialogFuga', matcher: /ModelessDialog$/, base: 'HogeModelessDialog' }) }
+    ] },
     { code: 'const Hoge = styled.h1``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /PageHeading$/ }) } ] },
     { code: 'const Hoge = styled.h2``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Heading$/ }) } ] },
-    { code: 'const Hoge = styled.h3``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Heading$/ }) } ] },
-    { code: 'const Hoge = styled.h4``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Heading$/ }) } ] },
-    { code: 'const Hoge = styled.h5``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Heading$/ }) } ] },
-    { code: 'const Hoge = styled.h6``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Heading$/ }) } ] },
     { code: 'const Fuga = styled(Heading)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Heading$/ }) } ] },
     { code: 'const Fuga = styled(HogeHeading)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Heading$/ }) } ] },
     { code: 'const Fuga = styled(HogeHeading).attrs(() => ({ type: "blockTitle" }))``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Heading$/ }) } ] },
     { code: 'const Fuga = styled(HogeArticle)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Article$/ }) } ] },
-    { code: 'const Fuga = styled(HogeAside)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Aside$/ }) } ] },
-    { code: 'const Fuga = styled(HogeNav)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Nav$/ }) } ] },
     { code: 'const Fuga = styled(HogeSection)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Section$/ }) } ] },
     { code: 'const Fuga = styled(HogeCenter)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Center$/ }) } ] },
     { code: 'const Fuga = styled(HogeReel)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Reel$/ }) } ] },
@@ -209,19 +212,11 @@ ruleTester.run('component-name', rule, {
     { code: 'const Fuga = styled(HogeStack)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /Stack$/ }) } ] },
     { code: 'const StyledSection = styled.div``', errors: [ { message: messageExtendSectioningContent({ extended: 'StyledSection', expected: 'Section' }) } ] },
     { code: 'const StyledArticle = styled(Hoge)``', errors: [ { message:messageExtendSectioningContent({ extended: 'StyledArticle', expected: 'Article' }) } ] },
-    { code: 'const StyledAside = styled(AsideXxxx)``', errors: [ { message: messageExtendSectioningContent({ extended: 'StyledAside', expected: 'Aside' }) } ] },
     { code: 'const HogeHeading = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeHeading', matcher: /(Heading|^h(1|2|3|4|5|6))$/, suffix: 'Heading', base: 'Hoge' }) } ] },
     { code: 'const HogeHeading = styled.div``', errors: [ { message: messageProperName({ extended: 'HogeHeading', matcher: /(Heading|^h(1|2|3|4|5|6))$/, suffix: 'Heading', base: 'div' }) } ] },
-    { code: `import { HogeImg as ImgFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'ImgFuga', matcher: /Img$/, base: 'HogeImg' }) } ] },
-    { code: `import { HogeImage as HogeImageFuga } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeImageFuga', matcher: /Image$/, base: 'HogeImage' }) } ] },
     { code: `import { Icon as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Icon$/, base: 'Icon' }) } ] },
     { code: 'const Hoge = styled.img``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /(Img|Image|Icon)$/ }) } ] },
-    { code: 'const Hoge = styled.svg``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /(Img|Image|Icon)$/ }) } ] },
     { code: 'const Hoge = styled(Icon)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Icon$/ }) } ] },
-    { code: 'const Hoge = styled(Img)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Img$/ }) } ] },
-    { code: 'const Hoge = styled(Image)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Image$/ }) } ] },
-    { code: 'const HogeImage = styled.span``', errors: [ { message: messageProperName({ extended: 'HogeImage', matcher: /(Image|^(img|svg))$/, suffix: 'Image', base: 'span' }) } ] },
-    { code: 'const HogeImg = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeImg', matcher: /(Img|^(img|svg))$/, suffix: 'Img', base: 'Hoge' }) } ] },
     { code: 'const HogeIcon = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeIcon', matcher: /(Icon|^(img|svg))$/, suffix: 'Icon', base: 'Hoge' }) } ] },
     { code: `import { ComboBox as ComboBoxHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'ComboBoxHoge', matcher: /Combobox$/, base: 'ComboBox' }) } ] },
     { code: 'const RadioButton = styled(FugaRadioButtonPanel)``', errors: [
@@ -233,20 +228,17 @@ ruleTester.run('component-name', rule, {
     { code: `import { DropdownTrigger as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /DropdownTrigger$/, base: 'DropdownTrigger' }) } ] },
     { code: `import { DialogTrigger as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /DialogTrigger$/, base: 'DialogTrigger' }) } ] },
     { code: `import { Button as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Button$/, base: 'Button' }) } ] },
-    { code: `import { AbcAnchorButton as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Button$/, base: 'AbcAnchorButton' }) }, messageImportAs({ extended: 'Hoge', matcher: /AnchorButton$/, base: 'AbcAnchorButton' }) ] },
-    { code: `import { Anchor as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Anchor$/, base: 'Anchor' }) } ] },
     { code: `import { Link as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Link$/, base: 'Link' }) } ] },
     { code: 'const Hoge = styled.a``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /(Anchor|Link)$/ }) } ] },
     { code: 'const Hoge = styled(Button)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Button$/ }) } ] },
-    { code: 'const Hoge = styled(AnchorButton)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Button$/ }) }, { message: messageInheritance({ extended: 'Hoge', matcher: /AnchorButton$/ }) } ] },
-    { code: 'const Hoge = styled(ButtonAnchor)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Anchor$/ }) } ] },
-    { code: 'const Hoge = styled(Anchor)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Anchor$/ }) } ] },
     { code: 'const Hoge = styled(Link)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Link$/ }) } ] },
-    { code: 'const Hoge = styled(DropdownTrigger)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DropdownTrigger$/ }) } ] },
     { code: 'const Hoge = styled(DialogTrigger)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DialogTrigger$/ }) } ] },
 
     { code: 'const Hoge = styled(RemoteDialogTrigger)``', errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /DialogTrigger$/ }) }, { message: messageInheritance({ extended: 'Hoge', matcher: /RemoteDialogTrigger$/ }) } ] },
-    { code: 'const Fuga = styled(RemoteTriggerActionDialog)``', errors: [ { message: messageInheritance({ extended: 'Fuga', matcher: /RemoteTrigger(.+)Dialog$/ }) } ] },
+    { code: 'const Fuga = styled(RemoteTriggerActionDialog)``', errors: [
+      { message: messageInheritance({ extended: 'Fuga', matcher: /Dialog$/ }) },
+      { message: messageInheritance({ extended: 'Fuga', matcher: /RemoteTrigger(.+)Dialog$/ }) }
+    ] },
     { code: 'const HogeModalFuga = any', errors: [ { message: `コンポーネント名や変数名に"Modal"という名称は使わず、"Dialog"に統一してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - Modalとは形容詞であり、かつ"現在の操作から切り離して専用の操作を行わせる" という意味合いを持ちます

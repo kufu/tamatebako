@@ -1,5 +1,6 @@
 const SCHEMA = []
 
+const TRIM_REGEX = /^(['"`])\s*(.+?)\s*(['"`])$/
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -17,7 +18,7 @@ module.exports = {
           node,
           message: `属性に設定している文字列から先頭、末尾の空白文字を削除してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/trim-props`,
-          fix: (fixer) => fixer.replaceText(node, context.sourceCode.getText(node).replace(/^('|"|`)\s+/, '$1').replace(/\s+('|"|`)$/, '$1')),
+          fix: (fixer) => fixer.replaceText(node, context.sourceCode.getText(node).replace(TRIM_REGEX, '$1$2$3')),
         })
       },
     }

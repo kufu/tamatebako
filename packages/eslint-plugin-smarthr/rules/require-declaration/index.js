@@ -38,7 +38,7 @@ const DECLARATION_REGEX = /Declaration$/
 const find = (type, ds, rd) => ds.find((d) => d.type === type && d.id.name === rd)
 const codeSeparator = '[^a-zA-Z0-1_$]'
 const useRegex = (use) => {
-  const actualUse = use.replaceAll('.', '\.')
+  const actualUse = use.replace(/\./g, '\\.')
   return new RegExp(`((${codeSeparator}(${actualUse})${codeSeparator})|(^(${actualUse})${codeSeparator})|${codeSeparator}(${actualUse})$)`)
 }
 
@@ -52,8 +52,12 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const targetPathRegexs = Object.keys(options)
-    const targetRequires = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetRequires = []
+    for (const regex in options) {
+      if ((new RegExp(regex)).test(context.filename)) {
+        targetRequires.push(regex)
+      }
+    }
 
     if (targetRequires.length === 0) {
       return {}
@@ -67,10 +71,10 @@ module.exports = {
           return
         }
 
-        targetRequires.forEach((requireKey) => {
+        for (const requireKey of targetRequires) {
           const option = options[requireKey]
 
-          Object.keys(option).forEach((requireDeclaration) => {
+          for (const requireDeclaration in option) {
             const localOption = option[requireDeclaration]
             let hit
 
@@ -110,7 +114,7 @@ module.exports = {
               const code = context.sourceCode.getText(hit)
               let reported = false
 
-              localOption.use.forEach((u) => {
+              for (const u of localOption.use) {
                 if (!useRegex(u).test(code) && (!localOption.reportMessage || !reported)) {
                   context.report({
                     node: hit,
@@ -119,10 +123,10 @@ module.exports = {
                   })
                   reported = true
                 }
-              })
+              }
             }
-          })
-        })
+          }
+        }
       },
     };
   },

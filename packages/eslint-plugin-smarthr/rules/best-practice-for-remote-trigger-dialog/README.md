@@ -33,7 +33,38 @@ const id = 'help_dialog'
 // "help_dialog"で検索すれば、対応するTriggerとDialogが両方見つかる
 ```
 
-DialogとTriggerの関係は1:1または1:n（複数のTriggerが1つのDialogを開く）のみで、Dialogの名称はプロダクト内で常に一意です。そのため、リテラル文字列で統一的に管理することが適切です。
+### ベストプラクティス：Dialogは1つ、Triggerは複数
+
+複数アイテム毎（例: 従業員一覧）にDialogをレンダリングするのではなく、Dialogは一つでTriggerが複数になるようにロジックを組むことがベストプラクティスです。
+
+```jsx
+// NG: 各従業員ごとにDialogを作成（パフォーマンス上問題）
+{employees.map(employee => (
+  <>
+    <RemoteDialogTrigger targetId={`employee-${employee.id}`}>
+      詳細
+    </RemoteDialogTrigger>
+    <RemoteTriggerActionDialog id={`employee-${employee.id}`}>
+      {employee.name}の詳細
+    </RemoteTriggerActionDialog>
+  </>
+))}
+
+// OK: Dialogは1つ、Triggerが複数
+{employees.map(employee => (
+  <RemoteDialogTrigger
+    targetId="employee_detail"
+    onClick={() => setSelectedEmployee(employee)}
+  >
+    詳細
+  </RemoteDialogTrigger>
+))}
+<RemoteTriggerActionDialog id="employee_detail">
+  {selectedEmployee?.name}の詳細
+</RemoteTriggerActionDialog>
+```
+
+このパターンでは、「何のためのダイアログか」を表すid属性（`employee_detail`）はプロダクト内で常に一意になります。そのため、アイテムのidなどの変数を使わずとも一意の文字列を指定でき、リテラル文字列で統一的に管理することが適切です。
 
 ## rules
 

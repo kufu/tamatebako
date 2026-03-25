@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@commitlint/cli':
-        specifier: ^20.4.4
+        specifier: ^20.5.0
         version: 20.5.0(@types/node@20.19.24)(conventional-commits-parser@6.3.0)(typescript@5.9.3)
       '@commitlint/config-conventional':
-        specifier: ^20.4.4
+        specifier: ^20.5.0
         version: 20.5.0
       '@types/jest':
         specifier: ^30.0.0

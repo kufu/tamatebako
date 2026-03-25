@@ -186,11 +186,11 @@ const UNEXPECTED_NAMES = {
 const SCHEMA = []
 
 const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
-const entriesesUnTagNames = UNEXPECTED_NAMES ? Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
+const entriesesUnTagNames = Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
   const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
 
   return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
-}) : []
+})
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

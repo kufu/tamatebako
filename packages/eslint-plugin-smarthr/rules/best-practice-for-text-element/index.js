@@ -11,17 +11,17 @@ module.exports = {
   create(context) {
     return {
       // as属性のみを持つパターン
-      'JSXOpeningElement[name.name="Text"]:has(JSXAttribute):not(:has(JSXAttribute[name.name!="as"]))': (node) => {
-        const asAttribute = node.attributes.find(attr => attr.name && attr.name.name === 'as')
-        const elementName = asAttribute?.value?.value
-
-        context.report({
-          node,
-          message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${elementName}>）に置き換えてください。
+      'JSXOpeningElement[name.name="Text"] > JSXAttribute[name.name="as"][value.type="Literal"]': (node) => {
+        // 属性が1つだけ（as属性のみ）の場合
+        if (node.parent.attributes.length === 1) {
+          context.report({
+            node: node.parent,
+            message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${node.value.value}>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
-        })
+          })
+        }
       },
       // 属性を持たないパターン
       'JSXOpeningElement[name.name="Text"]:not(:has(JSXAttribute))': (node) => {

@@ -11,7 +11,7 @@ module.exports = {
   create(context) {
     return {
       // as属性のみを持つパターン
-      'JSXOpeningElement[name.name="Text"]:has(JSXAttribute[name.name="as"]):not(:has(JSXAttribute[name.name!="as"]))': (node) => {
+      'JSXOpeningElement[name.name="Text"]:has(JSXAttribute):not(:has(JSXAttribute[name.name!="as"]))': (node) => {
         const asAttribute = node.attributes.find(attr => attr.name && attr.name.name === 'as')
         const elementName = asAttribute?.value?.value
 

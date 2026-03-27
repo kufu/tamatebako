@@ -7,12 +7,11 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
 
 // セレクタの共通部分
 const STEP_FORM_DIALOG = 'JSXOpeningElement[name.name="StepFormDialog"]'
-const ICON_COMPONENT = 'JSXOpeningElement[name.name=/Icon$/]'
+const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
 
 // セレクタ定義（事前計算）
-const ACTION_TEXT_SELECTOR = `JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] JSXExpressionContainer ${ICON_COMPONENT}`
-const SUBMIT_LABEL_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name="submitLabel"] JSXExpressionContainer ${ICON_COMPONENT}`
-const BUTTON_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submit|close|back)Button$/] JSXExpressionContainer ${ICON_COMPONENT}`
+const ACTION_TEXT_SELECTOR = `JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`
+const STEP_FORM_DIALOG_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -34,11 +33,8 @@ module.exports = {
       // actionText属性にIconコンポーネントが含まれている場合
       [ACTION_TEXT_SELECTOR]: reportIcon,
 
-      // submitLabel属性にIconコンポーネントが含まれている場合（StepFormDialog旧API）
-      [SUBMIT_LABEL_SELECTOR]: reportIcon,
-
-      // submitButton, closeButton, backButton内にIconコンポーネントが含まれている場合（StepFormDialog新API）
-      [BUTTON_SELECTOR]: reportIcon,
+      // StepFormDialogのボタン属性にIconコンポーネントが含まれている場合
+      [STEP_FORM_DIALOG_SELECTOR]: reportIcon,
     }
   },
 }

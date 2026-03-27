@@ -5,6 +5,11 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
  - デザインシステムのガイドラインでは、Dialogのボタンはテキストのみとすることが推奨されています
  - アイコンを使用する場合は、ボタンの外側に配置してください`
 
+// セレクタの共通部分
+const DIALOG_NAMES = /^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/
+const STEP_FORM_DIALOG = 'JSXOpeningElement[name.name="StepFormDialog"]'
+const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -14,30 +19,22 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
+    const reportIcon = (node) => {
+      context.report({
+        node,
+        message: ERROR_MESSAGE,
+      })
+    }
+
     return {
       // actionText属性にIconコンポーネントが含まれている場合
-      'JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]': (node) => {
-        context.report({
-          node,
-          message: ERROR_MESSAGE,
-        })
-      },
+      [`JSXOpeningElement[name.name=${DIALOG_NAMES}] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`]: reportIcon,
 
       // submitLabel属性にIconコンポーネントが含まれている場合（StepFormDialog旧API）
-      'JSXOpeningElement[name.name="StepFormDialog"] JSXAttribute[name.name="submitLabel"] JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]': (node) => {
-        context.report({
-          node,
-          message: ERROR_MESSAGE,
-        })
-      },
+      [`${STEP_FORM_DIALOG} JSXAttribute[name.name="submitLabel"] ${ICON_COMPONENT}`]: reportIcon,
 
       // submitButton.text, closeButton.text, backButton.textにIconコンポーネントが含まれている場合（StepFormDialog新API）
-      'JSXOpeningElement[name.name="StepFormDialog"] JSXAttribute[name.name=/^(submit|close|back)Button$/] JSXExpressionContainer ObjectExpression Property[key.name="text"] JSXOpeningElement[name.name=/Icon$/]': (node) => {
-        context.report({
-          node,
-          message: ERROR_MESSAGE,
-        })
-      },
+      [`${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submit|close|back)Button$/] JSXExpressionContainer ObjectExpression Property[key.name="text"] JSXOpeningElement[name.name=/Icon$/]`]: reportIcon,
     }
   },
 }

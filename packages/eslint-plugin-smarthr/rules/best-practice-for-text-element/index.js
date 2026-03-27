@@ -24,9 +24,9 @@ module.exports = {
       'JSXOpeningElement[name.name="Text"]:not(:has(JSXAttribute))': (node) => {
         context.report({
           node,
-          message: `属性を持たないTextコンポーネントは、ネイティブHTML要素（<span>）に置き換えてください。
+          message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
- - Textコンポーネントに属性がない場合、直接HTML要素を使用することでシンプルになります
+ - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
         })
       },

@@ -7,7 +7,12 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
 
 // セレクタの共通部分
 const STEP_FORM_DIALOG = 'JSXOpeningElement[name.name="StepFormDialog"]'
-const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
+const ICON_COMPONENT = 'JSXOpeningElement[name.name=/Icon$/]'
+
+// セレクタ定義（事前計算）
+const ACTION_TEXT_SELECTOR = `JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] JSXExpressionContainer ${ICON_COMPONENT}`
+const SUBMIT_LABEL_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name="submitLabel"] JSXExpressionContainer ${ICON_COMPONENT}`
+const BUTTON_TEXT_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submit|close|back)Button$/] JSXExpressionContainer ObjectExpression Property[key.name="text"] ${ICON_COMPONENT}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -27,13 +32,13 @@ module.exports = {
 
     return {
       // actionText属性にIconコンポーネントが含まれている場合
-      [`JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`]: reportIcon,
+      [ACTION_TEXT_SELECTOR]: reportIcon,
 
       // submitLabel属性にIconコンポーネントが含まれている場合（StepFormDialog旧API）
-      [`${STEP_FORM_DIALOG} JSXAttribute[name.name="submitLabel"] ${ICON_COMPONENT}`]: reportIcon,
+      [SUBMIT_LABEL_SELECTOR]: reportIcon,
 
       // submitButton.text, closeButton.text, backButton.textにIconコンポーネントが含まれている場合（StepFormDialog新API）
-      [`${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submit|close|back)Button$/] JSXExpressionContainer ObjectExpression Property[key.name="text"] JSXOpeningElement[name.name=/Icon$/]`]: reportIcon,
+      [BUTTON_TEXT_SELECTOR]: reportIcon,
     }
   },
 }

@@ -6,7 +6,6 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
  - アイコンを使用する場合は、ボタンの外側に配置してください`
 
 // セレクタの共通部分
-const DIALOG_NAMES = /^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/
 const STEP_FORM_DIALOG = 'JSXOpeningElement[name.name="StepFormDialog"]'
 const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
 
@@ -28,7 +27,7 @@ module.exports = {
 
     return {
       // actionText属性にIconコンポーネントが含まれている場合
-      [`JSXOpeningElement[name.name=${DIALOG_NAMES}] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`]: reportIcon,
+      [`JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`]: reportIcon,
 
       // submitLabel属性にIconコンポーネントが含まれている場合（StepFormDialog旧API）
       [`${STEP_FORM_DIALOG} JSXAttribute[name.name="submitLabel"] ${ICON_COMPONENT}`]: reportIcon,

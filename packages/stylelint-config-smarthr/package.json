@@ -34,7 +34,7 @@
     "stylelint": "^16.26.1",
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-config-standard": "^38.0.0",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.1"
   },
   "peerDependencies": {
     "postcss-styled-syntax": "^0.4.0 || ^0.5.0 || ^0.6.0 || ^0.7.0",

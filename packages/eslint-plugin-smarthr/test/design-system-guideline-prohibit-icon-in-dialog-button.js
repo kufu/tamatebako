@@ -11,7 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 
-const ERROR_MESSAGE = `Dialogのボタンテキストにアイコン（JSX要素）を含めることはできません。
+const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポーネントを含めることはできません。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-icon-in-dialog-button
  - デザインシステムのガイドラインでは、Dialogのボタンはテキストのみとすることが推奨されています
  - アイコンを使用する場合は、ボタンの外側に配置してください`
@@ -66,10 +66,6 @@ ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
     // FormDialog: アイコンを含む
     {
       code: `<FormDialog actionText={<><Icon name="send" />送信</>} />`,
-      errors: [{ message: ERROR_MESSAGE }]
-    },
-    {
-      code: `<FormDialog actionText={<><span>送信</span></>} />`,
       errors: [{ message: ERROR_MESSAGE }]
     },
 

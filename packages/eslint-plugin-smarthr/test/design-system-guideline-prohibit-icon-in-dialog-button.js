@@ -26,6 +26,8 @@ ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
     // FormDialog: テキストのみ
     { code: `<FormDialog actionText="送信" />` },
     { code: `<FormDialog actionText={submitText} />` },
+    { code: `<FormDialog submitButton={{ text: "送信" }} />` },
+    { code: `<FormDialog submitButton={{ text: submitText }} />` },
 
     // RemoteTriggerActionDialog: テキストのみ
     { code: `<RemoteTriggerActionDialog actionText="確認" />` },
@@ -66,6 +68,14 @@ ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
     // FormDialog: アイコンを含む
     {
       code: `<FormDialog actionText={<><Icon name="send" />送信</>} />`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<FormDialog submitButton={{ text: <><Icon name="send" />送信</> }} />`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<FormDialog submitButton={{ text: <Icon name="send" /> }} />`,
       errors: [{ message: ERROR_MESSAGE }]
     },
 

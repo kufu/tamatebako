@@ -6,12 +6,11 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
  - アイコンを使用する場合は、ボタンの外側に配置してください`
 
 // セレクタの共通部分
-const STEP_FORM_DIALOG = 'JSXOpeningElement[name.name="StepFormDialog"]'
 const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
 
 // セレクタ定義（事前計算）
 const ACTION_TEXT_SELECTOR = `JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`
-const STEP_FORM_DIALOG_SELECTOR = `${STEP_FORM_DIALOG} JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
+const BUTTON_SELECTOR = `JSXOpeningElement[name.name=/^(FormDialog|StepFormDialog)$/] JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -33,8 +32,8 @@ module.exports = {
       // actionText属性にIconコンポーネントが含まれている場合
       [ACTION_TEXT_SELECTOR]: reportIcon,
 
-      // StepFormDialogのボタン属性にIconコンポーネントが含まれている場合
-      [STEP_FORM_DIALOG_SELECTOR]: reportIcon,
+      // FormDialog/StepFormDialogのボタン属性にIconコンポーネントが含まれている場合
+      [BUTTON_SELECTOR]: reportIcon,
     }
   },
 }

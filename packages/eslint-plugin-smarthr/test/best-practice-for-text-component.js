@@ -1,4 +1,4 @@
-const rule = require('../rules/best-practice-for-text-element')
+const rule = require('../rules/best-practice-for-text-component')
 const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
@@ -12,11 +12,11 @@ const ruleTester = new RuleTester({
 })
 
 const ERROR_MESSAGE = `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<p>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`
 
-ruleTester.run('best-practice-for-text-element', rule, {
+ruleTester.run('best-practice-for-text-component', rule, {
   valid: [
     // ネイティブHTML要素
     { code: `<p>content</p>` },
@@ -41,21 +41,21 @@ ruleTester.run('best-practice-for-text-element', rule, {
     {
       code: `<Text as="span">text</Text>`,
       errors: [{ message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<span>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください` }]
     },
     {
       code: `<Text as="li">item</Text>`,
       errors: [{ message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<li>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください` }]
     },
     {
       code: `<Text as="div">content</Text>`,
       errors: [{ message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<div>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください` }]
     },
@@ -63,14 +63,14 @@ ruleTester.run('best-practice-for-text-element', rule, {
     {
       code: `<Text>content</Text>`,
       errors: [{ message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください` }]
     },
     {
       code: `<Text>text</Text>`,
       errors: [{ message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください` }]
     },

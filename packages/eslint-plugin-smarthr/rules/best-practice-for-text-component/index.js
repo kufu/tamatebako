@@ -149,18 +149,11 @@ module.exports = {
           fix(fixer) {
             const openingElement = asAttrNode.parent
             const jsxElement = openingElement.parent
-            const sourceCode = context.getSourceCode()
-            const content = sourceCode.getText(jsxElement).slice(
-              jsxElement.openingElement.range[1] - jsxElement.range[0],
-              jsxElement.closingElement ? jsxElement.closingElement.range[0] - jsxElement.range[0] : undefined
-            )
 
-            return openingElement.selfClosing
-              ? fixer.replaceText(openingElement, `<${tagName} />`)
-              : [
-                  fixer.replaceText(openingElement, `<${tagName}>`),
-                  fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
-                ]
+            return [
+              fixer.replaceText(openingElement, `<${tagName}>`),
+              fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+            ]
           },
         })
       },
@@ -179,9 +172,8 @@ module.exports = {
           fix(fixer) {
             const openingElement = classNameAttrNode.parent
             const attributesText = nonConvertible ? `${propSuggestions} className="${nonConvertible}"` : propSuggestions
-            const closingBracket = openingElement.selfClosing ? ' />' : '>'
 
-            return fixer.replaceText(openingElement, `<Text ${attributesText}${closingBracket}`)
+            return fixer.replaceText(openingElement, `<Text ${attributesText}>`)
           },
         })
       },
@@ -200,12 +192,10 @@ module.exports = {
             const openingElement = classNameAttrNode.parent
             const jsxElement = openingElement.parent
 
-            return openingElement.selfClosing
-              ? fixer.replaceText(openingElement, `<span ${classNameText} />`)
-              : [
-                  fixer.replaceText(openingElement, `<span ${classNameText}>`),
-                  fixer.replaceText(jsxElement.closingElement, '</span>')
-                ]
+            return [
+              fixer.replaceText(openingElement, `<span ${classNameText}>`),
+              fixer.replaceText(jsxElement.closingElement, '</span>')
+            ]
           },
         })
       },
@@ -227,9 +217,8 @@ module.exports = {
             const asText = asValue ? `as="${asValue}" ` : ''
             const classNameText = nonConvertible ? ` className="${nonConvertible}"` : ''
             const attributesText = `${asText}${propSuggestions}${classNameText}`
-            const closingBracket = openingElement.selfClosing ? ' />' : '>'
 
-            return fixer.replaceText(openingElement, `<Text ${attributesText}${closingBracket}`)
+            return fixer.replaceText(openingElement, `<Text ${attributesText}>`)
           },
         })
       },
@@ -250,12 +239,10 @@ module.exports = {
           fix(fixer) {
             const jsxElement = openingElement.parent
 
-            return openingElement.selfClosing
-              ? fixer.replaceText(openingElement, `<${tagName} ${classNameText} />`)
-              : [
-                  fixer.replaceText(openingElement, `<${tagName} ${classNameText}>`),
-                  fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
-                ]
+            return [
+              fixer.replaceText(openingElement, `<${tagName} ${classNameText}>`),
+              fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+            ]
           },
         })
       },

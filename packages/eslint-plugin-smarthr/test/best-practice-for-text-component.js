@@ -86,7 +86,6 @@ ruleTester.run('best-practice-for-text-component', rule, {
     // パターン1-3: classNameのみ（変換不可能なクラスのみ）
     { code: `<Text className="custom">content</Text>`, output: `<span className="custom">content</span>`, errors: [{ message: errorUnnecessaryClassName('custom') }] },
     { code: `<Text className="custom-class another-class">text</Text>`, output: `<span className="custom-class another-class">text</span>`, errors: [{ message: errorUnnecessaryClassName('custom-class another-class') }] },
-    { code: `<Text className="custom" />`, output: `<span className="custom" />`, errors: [{ message: errorUnnecessaryClassName('custom') }] },
     { code: `<Text className="custom"><span>nested</span></Text>`, output: `<span className="custom"><span>nested</span></span>`, errors: [{ message: errorUnnecessaryClassName('custom') }] },
 
     // パターン1-4: className + as（変換不可能なクラスのみ）
@@ -96,7 +95,6 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text className="shr-text-sm">text</Text>`, output: `<Text size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
     { code: `<Text className="shr-text-sm shr-font-bold">text</Text>`, output: `<Text size="S" weight="bold">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" weight="bold"', 'shr-text-sm, shr-font-bold') }] },
     { code: `<Text className="shr-text-lg shr-font-bold shr-text-grey">text</Text>`, output: `<Text size="L" weight="bold" color="TEXT_GREY">text</Text>`, errors: [{ message: errorConvertibleShr('size="L" weight="bold" color="TEXT_GREY"', 'shr-text-lg, shr-font-bold, shr-text-grey') }] },
-    { code: `<Text className="shr-text-sm" />`, output: `<Text size="S" />`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
 
     // パターン2-2: className + as（すべて変換可能）
     { code: `<Text as="p" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },

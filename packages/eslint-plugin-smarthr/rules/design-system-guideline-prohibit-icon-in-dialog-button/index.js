@@ -10,8 +10,7 @@ const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon
 const DIALOG_COMPONENT = 'JSXOpeningElement[name.name=/Dialog$/]'
 
 // セレクタ定義（事前計算）
-const ACTION_TEXT_SELECTOR = `${DIALOG_COMPONENT} JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`
-const BUTTON_SELECTOR = `${DIALOG_COMPONENT} JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
+const SELECTOR = `${DIALOG_COMPONENT} JSXAttribute[name.name=/^(actionText|submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -22,19 +21,13 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
-    const reportIcon = (node) => {
-      context.report({
-        node,
-        message: ERROR_MESSAGE,
-      })
-    }
-
     return {
-      // actionText属性にIconコンポーネントが含まれている場合
-      [ACTION_TEXT_SELECTOR]: reportIcon,
-
-      // FormDialog/StepFormDialogのボタン属性にIconコンポーネントが含まれている場合
-      [BUTTON_SELECTOR]: reportIcon,
+      [SELECTOR]: (node) => {
+        context.report({
+          node,
+          message: ERROR_MESSAGE,
+        })
+      },
     }
   },
 }

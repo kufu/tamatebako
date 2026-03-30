@@ -1,11 +1,47 @@
 # smarthr/require-barrel-import
 
-- tsconfig.json の compilerOptions.pathsに '@/*', もしくは '~/*' としてroot path を指定する必要があります
-  - tsconfig.json はデフォルトではコマンド実行をしたディレクトリから読み込みます
-  - tsconfig.json の設置ディレクトリを変更したい場合、 `.eslintrc` などのeslint設定ファイルに `parserOptions.project` を設定してください
-- importした対象が本来exportされているべきであるbarrel(index.tsなど)が有る場合、import pathの変更を促します
-  - 例: Page/parts/Menu/Item の import は Page/parts/Menu から行わせたい
-- ディレクトリ内のindexファイルを捜査し、対象を決定します
+importした対象が本来exportされているべきであるbarrel(index.tsなど)が有る場合、import pathの変更を促します。ディレクトリ内のindexファイルを捜査し、対象を決定します。
+
+## なぜbarrel経由のimportを強制する必要があるのか
+
+barrel（index.tsなど）を使用したexportパターンは、モジュールの公開APIを明示的に定義する重要な設計手法です：
+
+### カプセル化の実現
+
+barrelを経由することで、ディレクトリ内のどのモジュールが公開APIで、どれが内部実装かを明確に区別できます。これにより：
+
+- 内部実装の詳細を隠蔽し、外部から直接アクセスされることを防ぎます
+- モジュールの利用者に対して、使用すべきAPIを明示的に示すことができます
+
+### リファクタリングの容易性
+
+barrelを経由することで、内部のファイル構成を変更しても、外部のimport文に影響を与えずにリファクタリングできます：
+
+- ファイルの移動や名前変更時に、barrelのexport文のみを修正すればよい
+- 利用側のimport文を一切変更する必要がない
+
+### import文の簡潔化
+
+例えば、`Page/parts/Menu/Item` を `Page/parts/Menu` から importすることで、import文がより簡潔で読みやすくなります。
+
+## config
+
+### 必須設定
+
+tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroot path を指定する必要があります。
+
+- tsconfig.json はデフォルトではコマンド実行をしたディレクトリから読み込みます
+- tsconfig.json の設置ディレクトリを変更したい場合、`.eslintrc` などのeslint設定ファイルに `parserOptions.project` を設定してください
+
+## options
+
+### ignores
+
+除外したいファイルの正規表現を配列で指定します。
+
+### allowedImports
+
+特定のファイルから特定のimportを許可する設定を記述できます。
 
 ## rules
 

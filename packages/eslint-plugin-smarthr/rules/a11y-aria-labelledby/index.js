@@ -15,7 +15,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-aria-labelledby
  - 設定する値を変数化したうえでaria-labelledby属性に設定してください`,
         })
-      }
+      },
     }
   },
 }

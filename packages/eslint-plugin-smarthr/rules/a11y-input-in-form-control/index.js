@@ -185,8 +185,8 @@ module.exports = {
 
                     return
                   } else {
-                    const isSection = name.match(SECTIONING_REGEX)
-                    const layoutSectionAttribute = !isSection && name.match(LAYOUT_COMPONENT_REGEX) && openingElement.attributes.find(findAsSectioning)
+                    const isSection = SECTIONING_REGEX.test(name)
+                    const layoutSectionAttribute = !isSection && LAYOUT_COMPONENT_REGEX.test(name) && openingElement.attributes.find(findAsSectioning)
 
                     if (isSection || layoutSectionAttribute) {
                       // HINT: smarthr-ui/Checkboxはlabelを単独で持つため、FormControl系でラップをする必要はない
@@ -281,7 +281,7 @@ module.exports = {
         if (formControlMatcher) {
           const isRoleGrouop = node.attributes.find(findRoleGroup)
 
-          if (!nodeName.match(FORM_CONTROL_REGEX) && isRoleGrouop) {
+          if (!FORM_CONTROL_REGEX.test(nodeName) && isRoleGrouop) {
             const component = formControlMatcher[1]
             const actualComponent = az_REGEX.test(component[0]) ? component : `smarthr-ui/${component}`
 

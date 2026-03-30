@@ -2781,7 +2781,12 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       0,
     ],
     "react/jsx-curly-brace-presence": [
-      0,
+      2,
+      {
+        "children": "ignore",
+        "propElementValues": "always",
+        "props": "never",
+      },
     ],
     "react/jsx-curly-newline": [
       0,

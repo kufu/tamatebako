@@ -18,7 +18,6 @@ ruleTester.run('a11y-help-link-with-support-href', rule, {
     { code: `<HelpLink href="//support.hoge">any</HelpLink>` },
     { code: `<Hoge href="//support.hoge">any</Hoge>` },
     { code: `<HelpLink href="//support.hoge" />` },
-    { code: `<HelpLink href={"//support.hoge"} />` },
     { code: `<HelpLink href={path.support.hoge} />` },
     { code: `<HelpLink href={supportURL} />` },
     { code: `<HelpLink href={supportHref} />` },

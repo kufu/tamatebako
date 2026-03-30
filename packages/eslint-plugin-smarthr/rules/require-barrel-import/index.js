@@ -38,18 +38,24 @@ const REGEX_ROOT_PATH = new RegExp(`^${rootPath}/index\.`)
 const REGEX_INDEX_FILE = /\/index\.(ts|js)x?$/
 const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 
+// 正規表現を事前生成してキャッシュ
+const entriedReplacePathsWithRegex = entriedReplacePaths.map(([key, values]) => [
+  key,
+  values,
+  new RegExp(`^${key}(.+)$`),
+  values.map(v => new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`))
+])
+
 const calculateAbsoluteImportPath = (source) => {
   if (source[0] === '/') {
     return source
   }
 
-  return entriedReplacePaths.reduce((prev, [key, values]) => {
+  return entriedReplacePathsWithRegex.reduce((prev, [key, values, keyRegex]) => {
     if (source === prev) {
-      const regexp = new RegExp(`^${key}(.+)$`)
-
       return values.reduce((p, v) => {
-        if (prev === p && regexp.test(regexp)) {
-          return p.replace(regexp, `${path.resolve(`${CWD}/${v}`)}/$1`)
+        if (prev === p && keyRegex.test(keyRegex)) {
+          return p.replace(keyRegex, `${path.resolve(`${CWD}/${v}`)}/$1`)
         }
 
         return p
@@ -60,11 +66,11 @@ const calculateAbsoluteImportPath = (source) => {
   }, source)
 }
 const calculateReplacedImportPath = (source) => {
-  return entriedReplacePaths.reduce((prev, [key, values]) => {
+  return entriedReplacePathsWithRegex.reduce((prev, [key, values, keyRegex, valueRegexes]) => {
     if (source === prev) {
-      return values.reduce((p, v) => {
+      return values.reduce((p, v, index) => {
         if (prev === p) {
-          const regexp = new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`)
+          const regexp = valueRegexes[index]
 
           if (regexp.test(prev)) {
             return p.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
@@ -98,20 +104,24 @@ module.exports = {
     }
 
     const dir = getParentDir(context.filename)
-    const targetPathRegexs = option?.allowedImports ? Object.keys(option.allowedImports) : []
-    const targetAllowedImports = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetAllowedImports = []
+    if (option?.allowedImports) {
+      for (const regex in option.allowedImports) {
+        if ((new RegExp(regex)).test(context.filename)) {
+          targetAllowedImports.push(regex)
+        }
+      }
+    }
 
     return {
       ImportDeclaration: (node) => {
         let isDenyPath = false
         let deniedModules = []
 
-        targetAllowedImports.forEach((allowedKey) => {
+        for (const allowedKey of targetAllowedImports) {
           const allowedOption = option.allowedImports[allowedKey]
-          const targetModules = Object.keys(allowedOption)
 
-          targetModules.forEach((targetModule) => {
-            const allowedModules = allowedOption[targetModule] || true
+          for (const targetModule in allowedOption) {
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             let sourceValue = node.source.value
 
@@ -120,8 +130,10 @@ module.exports = {
             }
 
             if (actualTarget !== sourceValue) {
-              return
+              continue
             }
+
+            let allowedModules = allowedOption[targetModule] || true
 
             if (!Array.isArray(allowedModules)) {
               isDenyPath = true
@@ -129,8 +141,8 @@ module.exports = {
             } else {
               deniedModules.push(node.specifiers.map(pickImportedName).filter(i => allowedModules.indexOf(i) == -1))
             }
-          })
-        })
+          }
+        }
 
         if (
           isDenyPath && deniedModules[0] === true ||

@@ -28,6 +28,11 @@ ruleTester.run('a11y-anchor-has-href-attribute', rule, {
     { code: `<Link href="hoge">ほげ</Link>` },
     { code: `<Link href="#fuga">ほげ</Link>` },
     { code: '<AnyAnchor {...args1} />', options: [{ checkType: 'allow-spread-attributes' }] },
+    // TemplateLiteral - 変数のみ
+    { code: '<a href={`${path}`}>link</a>' },
+    { code: '<a href={`/path/${id}`}>link</a>' },
+    // TemplateLiteral - アンカーリンク
+    { code: '<HogeLink href={`#${hash}`}>hoge</HogeLink>' },
   ],
   invalid: [
     { code: `<a></a>`, errors: [{ message: generateErrorText('a') }] },
@@ -38,10 +43,7 @@ ruleTester.run('a11y-anchor-has-href-attribute', rule, {
     { code: `<HogeLink href="hoge"><a>hoge</a></HogeLink>`, errors: [{ message: generateErrorText('a') }] },
     { code: `<HogeLink to="hoge">hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
     { code: `<HogeLink href="">hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
-    { code: `<HogeLink href={""}>hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
-    { code: `<HogeLink href={''}>hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
     { code: `<HogeLink href="#">hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
-    { code: `<HogeLink href={'#'}>hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
     { code: '<AnyAnchor {...args1} />', errors: [{ message: generateErrorText('AnyAnchor') }] },
     { code: '<AnyAnchor {...args1} />', options: [{ checkType: 'always' }], errors: [{ message: generateErrorText('AnyAnchor') }] },
   ]

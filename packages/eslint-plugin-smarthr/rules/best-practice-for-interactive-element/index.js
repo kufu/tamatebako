@@ -45,6 +45,7 @@ const NOT_ARROW_ROLE_ATTRIBUTES = Object.entries(ARROW_ROLES).reduce((prev, [key
 
 const ELEMENT_HAS_ROLE_ATTRIBUTE = 'JSXOpeningElement:has(JSXAttribute[name.name="role"])'
 const AS_FORM_PART_ATTRIBUTE = 'JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value=/^f(orm|ieldset)$/]'
+const AS_FORM_PART_WITH_ROLE_SELECTOR = `${ELEMENT_HAS_ROLE_ATTRIBUTE} > ${AS_FORM_PART_ATTRIBUTE}`
 
 const SCHEMA = [
   {
@@ -77,14 +78,12 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
         });
       },
-      [`JSXOpeningElement > ${AS_FORM_PART_ATTRIBUTE}`]: (node) => {
-        if (node.parent.attributes.some((a) => a.type === 'JSXAttribute' && a.name?.name === 'role')) {
-          context.report({
-            node: node.parent,
-            message: `<${node.parent.name.name} ${context.sourceCode.getText(node)}>にrole属性は指定しないでください。
+      [AS_FORM_PART_WITH_ROLE_SELECTOR]: (node) => {
+        context.report({
+          node: node.parent,
+          message: `<${node.parent.name.name} ${context.sourceCode.getText(node)}>にrole属性は指定しないでください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
-          });
-        }
+        });
       },
       [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE})) > JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}]:not([value.expression.name=${DELEGATE_REGEX}])`]: (node) => {
         switch (node.value.expression.type) {

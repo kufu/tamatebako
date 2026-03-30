@@ -26,8 +26,12 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const targetPathRegexs = Object.keys(options)
-    const targetRequires = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetRequires = []
+    for (const regex in options) {
+      if ((new RegExp(regex)).test(context.filename)) {
+        targetRequires.push(regex)
+      }
+    }
 
     if (targetRequires.length === 0) {
       return {}
@@ -35,7 +39,7 @@ module.exports = {
 
     return {
       Program: (node) => {
-        targetRequires.forEach((requireKey) => {
+        for (const requireKey of targetRequires) {
           const option = options[requireKey]
           let existDefault = false
 
@@ -55,20 +59,20 @@ module.exports = {
                 exports.push(declaration.id.name)
               }
               if (declaration.specifiers) {
-                declaration.specifiers.forEach((s) => {
+                for (const s of declaration.specifiers) {
                   exports.push(s.exported.name)
-                })
+                }
               }
               if (declaration.declarations) {
-                declaration.declarations.forEach((d) => {
+                for (const d of declaration.declarations) {
                   if (d.id.name) {
                     exports.push(d.id.name)
                   } else {
-                    d.id.properties.forEach((p) => {
+                    for (const p of d.id.properties) {
                       exports.push(p.key.name)
-                    })
+                    }
                   }
-                })
+                }
               }
             }
           }
@@ -83,7 +87,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export`,
             })
           }
-        })
+        }
       },
     }
   },

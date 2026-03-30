@@ -47,8 +47,12 @@ module.exports = {
   create(context) {
     const options = context.options[0]
     const parentDir = getParentDir(context.filename)
-    const targetPathRegexs = Object.keys(options)
-    const targetProhibits = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetProhibits = []
+    for (const regex in options) {
+      if ((new RegExp(regex)).test(context.filename)) {
+        targetProhibits.push(regex)
+      }
+    }
 
     if (targetProhibits.length === 0) {
       return {}
@@ -56,12 +60,10 @@ module.exports = {
 
     return {
       ImportDeclaration: (node) => {
-        targetProhibits.forEach((prohibitKey) => {
+        for (const prohibitKey of targetProhibits) {
           const option = options[prohibitKey]
-          const targetModules = Object.keys(option)
 
-          targetModules.forEach((targetModule) => {
-            const { imported, reportMessage } = Object.assign({imported: true}, option[targetModule])
+          for (const targetModule in option) {
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             let sourceValue = node.source.value
 
@@ -70,6 +72,8 @@ module.exports = {
             }
 
             if (actualTarget === sourceValue) {
+              const moduleOption = option[targetModule]
+              const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
               let useImported = false
 
               if (!Array.isArray(imported)) {
@@ -85,13 +89,13 @@ module.exports = {
               if (useImported) {
                 context.report({
                   node,
-                  message: reportMessage ? `${reportMessage.replaceAll('{{module}}', node.source.value).replaceAll('{{export}}', useImported)}
+                  message: reportMessage ? `${reportMessage.replace(/\{\{module\}\}/g, node.source.value).replace(/\{\{export\}\}/g, useImported)}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` : defaultReportMessage(node.source.value, useImported)
                 });
               }
             }
-          })
-        })
+          }
+        }
       },
     }
   },

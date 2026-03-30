@@ -65,7 +65,14 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/rules-of-hooks': 'error',
       'react/display-name': 'off',
-      'react/jsx-curly-brace-presence': 'off',
+      'react/jsx-curly-brace-presence': [
+        'error',
+        {
+          props: 'never',
+          children: 'ignore', // HINT: {' '} などを許容するため
+          propElementValues: 'always',
+        },
+      ],
       'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'] }],
       'react/jsx-fragments': ['error', 'syntax'],
       'react/jsx-no-useless-fragment': 'error',

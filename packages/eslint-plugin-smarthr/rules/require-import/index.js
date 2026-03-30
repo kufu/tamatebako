@@ -45,8 +45,12 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0]
-    const targetPathRegexs = Object.keys(options)
-    const targetRequires = targetPathRegexs.filter((regex) => (new RegExp(regex)).test(context.filename))
+    const targetRequires = []
+    for (const regex in options) {
+      if ((new RegExp(regex)).test(context.filename)) {
+        targetRequires.push(regex)
+      }
+    }
 
     if (targetRequires.length === 0) {
       return {}
@@ -59,16 +63,18 @@ module.exports = {
         const importDeclarations = node.body.filter(filterImportDeclaration)
         const parentDir = getParentDir(context.filename)
 
-        targetRequires.forEach((requireKey) => {
+        for (const requireKey of targetRequires) {
           const option = options[requireKey]
 
-          Object.keys(option).forEach((targetModule) => {
-            const { imported, reportMessage, targetRegex } = Object.assign({imported: true}, option[targetModule])
+          for (const targetModule in option) {
+            const moduleOption = option[targetModule]
+            const targetRegex = moduleOption.targetRegex
 
             if (targetRegex && !(new RegExp(targetRegex)).test(context.filename)) {
-              return
+              continue
             }
 
+            const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             const importDeclaration = importDeclarations.find(
               actualTarget[0] !== '/' ? (
@@ -80,28 +86,28 @@ module.exports = {
             const reporter = (item) => {
               context.report({
                 node,
-                message: `${reportMessage ? reportMessage.replaceAll('{{module}}', actualTarget).replaceAll('{{export}}', item) : defaultReportMessage(actualTarget, item)}
+                message: `${reportMessage ? reportMessage.replace(/\{\{module\}\}/g, actualTarget).replace(/\{\{export\}\}/g, item) : defaultReportMessage(actualTarget, item)}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`
               })
             }
 
             if (!importDeclaration) {
               if (Array.isArray(imported)) {
-                imported.forEach((i) => {
+                for (const i of imported) {
                   reporter(i)
-                })
+                }
               } else if (imported) {
                 reporter()
               }
             } else if (Array.isArray(imported)) {
-              imported.forEach((i) => {
+              for (const i of imported) {
                 if (!importDeclaration.specifiers.find((s) => s.imported && s.imported.name === i)) {
                   reporter(i)
                 }
-              })
+              }
             }
-          })
-        })
+          }
+        }
       },
     }
   },

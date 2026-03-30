@@ -1,7 +1,10 @@
 # smarthr/best-practice-for-unnesessary-early-return
 
-- 不必要な早期returnをチェックするルールです
-- 不要な早期returnとは **直後に実行される処理の条件を逆転している早期return** を指します
+不必要な早期returnをチェックするルールです。
+
+## なぜ不必要な早期returnを避けるべきなのか
+
+不必要な早期returnとは、**直後に実行される処理の条件を逆転している早期return**を指します。
 
 ```jsx
 // 不要な早期returnの例
@@ -14,9 +17,17 @@ const anyAction = (a) => {
 }
 ```
 
-- 上記の例の場合、実質 `otherActionを実行する条件だけが存在する` ため、実際にコードを読む際、条件を逆転させて考える余計なコストが発生します
-- 下記の様に早期returnを利用せず書くことを推奨します
+### 問題点
 
+上記の例では、実質「`otherAction`を実行する条件だけが存在する」ため、コードを読む際に条件を逆転させて考える余計なコストが発生します。
+
+読み手は以下のように考える必要があります:
+
+1. 「`!a`の場合にreturnする」
+2. 「ということは、`a`が真の場合に続く処理が実行される」
+3. 「つまり、`otherAction()`は`a`が真の場合に実行される」
+
+### 推奨する書き方
 
 ```jsx
 const anyAction = (a) => {
@@ -26,20 +37,23 @@ const anyAction = (a) => {
 }
 ```
 
-- 上記のような条件に修正することで、本質的に実行したい処理の条件がわかりやすくなります
-- このルールは基本的に以下の条件すべてに合致する場合、NGにします
-  - 早期return以降にifやelse、switch, tryがない
-  - 早期returnの条件ブロック以降に変数宣言がない
-  - 早期returnの条件ブロック以降にreturnがない
-  - 早期returnが値を返していない
+このように書くことで、本質的に実行したい処理の条件が一目でわかるようになります。
 
-## 特殊なパターンのチェックについて
+## チェックする内容
 
-### 早期returnが連続する場合
+基本的に以下の条件**すべて**に合致する場合、NGになります:
 
-下記のように早期returnが連続している場合、NGになります。
+1. 早期return以降に`if`や`else`、`switch`、`try`がない
+2. 早期returnの条件ブロック以降に変数宣言がない
+3. 早期returnの条件ブロック以降に`return`がない
+4. 早期returnが値を返していない
+
+### 特殊なパターン1: 早期returnが連続する場合
+
+早期returnが連続している場合、NGになります:
 
 ```jsx
+// NG: 早期returnが連続している
 const anyAction = (a, b) => {
   if (a) return
   if (b) { return }
@@ -49,9 +63,10 @@ const anyAction = (a, b) => {
 }
 ```
 
-これらの早期returnは本質的に一つの条件のためまとめてください。
+これらの早期returnは本質的に一つの条件のため、まとめてください:
 
 ```jsx
+// OK: 一つの条件にまとめる
 const anyAction = (a, b) => {
   if (a || b) return
 
@@ -60,14 +75,17 @@ const anyAction = (a, b) => {
 }
 ```
 
-上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。
+上記のように一つの条件にまとめることで:
 
+- 一連の条件であることが明確になる
+- よりよい条件がある場合に見つけやすくなる
 
-### 早期return直後にifが単独で存在する場合
+### 特殊なパターン2: 早期return直後にifが単独で存在する場合
 
-下記の様に早期return直後にifが単独で存在する場合、NGになります。
+早期return直後に`if`が単独で存在する場合、NGになります:
 
 ```jsx
+// NG: 早期return直後に単独のifがある
 const anyAction = (a, b) => {
   if (a) return
 
@@ -77,9 +95,10 @@ const anyAction = (a, b) => {
 }
 ```
 
-これらのifは本質的に一つの条件のためまとめてください。
+これらの`if`は本質的に一つの条件のため、まとめてください:
 
 ```jsx
+// OK: 一つの条件にまとめる
 const anyAction = (a, b) => {
   if (!a && b) {
     ...
@@ -87,11 +106,12 @@ const anyAction = (a, b) => {
 }
 ```
 
-上記のように一つの条件にまとめることで一連の条件であること、よりよい条件がある場合見つけやすくなることなどのメリットがあります。<br />
-このチェックは **早期return直後にifが単独で存在する場合** のみNGとするため **早期returnの直後にelseをもつifが存在する場合** や **早期returnの直後に複数のifが存在する場合** はNGになりません。
+ただし、以下の場合は許容されます:
+
+#### else句を持つifの場合
 
 ```jsx
-// 早期returnの直後にelseをもつifが存在する場合はOK
+// OK: else句があるため許容
 const anyAction = (a, b) => {
   if (a) return
 
@@ -104,8 +124,10 @@ const anyAction = (a, b) => {
 }
 ```
 
+#### 複数のifが存在する場合
+
 ```jsx
-// 早期returnの直後に複数のifが存在する場合はOK
+// OK: 複数の独立したifがあるため許容
 const anyAction = (a, b, c) => {
   if (a) return
 
@@ -115,6 +137,81 @@ const anyAction = (a, b, c) => {
   if (c) {
     ...
   }
+}
+```
+
+## 許容される早期returnのパターン
+
+以下のパターンは早期returnが有効なため、許容されます:
+
+### 値を返す早期return
+
+```jsx
+const sample1 = (a) => {
+  if (a) {
+    // 早期returnで値を返しているため許容
+    return true
+  }
+  ...
+}
+```
+
+### 早期return後に変数宣言がある
+
+```jsx
+const sample2 = (a) => {
+  if (!a) {
+    return
+  }
+
+  // 早期return後に変数宣言しているため許容
+  const calculated = calc(a)
+  ...
+}
+```
+
+### else句がある
+
+```jsx
+const sample3 = (a) => {
+  if (!a) {
+    return
+  }
+  // 早期returnの条件以外に条件が存在するため許容
+  else if (a === any) {
+    ...
+  }
+}
+```
+
+### 早期returnの間に処理がある
+
+```jsx
+const sample4 = (a, b) => {
+  if (!a) {
+    return
+  }
+
+  otherAction1(a)
+
+  // この場合も別条件のため許容
+  if (b === any) {
+    return
+  }
+  ...
+}
+```
+
+### 関数スコープのrootに別のreturnがある
+
+```jsx
+const sample5 = (a, b) => {
+  if (!a) {
+    return
+  }
+
+  // 早期returnとは別のreturnが関数スコープのrootにあるため許容
+  return ...
 }
 ```
 

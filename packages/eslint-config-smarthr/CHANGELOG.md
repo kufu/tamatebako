@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.7.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.6.2...eslint-config-smarthr-v13.7.0) (2026-03-23)
+
+
+### Features
+
+* react/jsx-curly-brace-presenceをerrorに変更 ([#1145](https://github.com/kufu/tamatebako/issues/1145)) ([e45c93a](https://github.com/kufu/tamatebako/commit/e45c93a239c57655f00675e27f83d866dacd6cd5))
+* update eslint-plugin-smarthr to 6.6.3 ([#1148](https://github.com/kufu/tamatebako/issues/1148)) ([a3f6d51](https://github.com/kufu/tamatebako/commit/a3f6d51768e25cc02f1e3cf3f2cca451b09de643))
+
 ## [13.6.2](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.6.1...eslint-config-smarthr-v13.6.2) (2026-03-13)
 
 

@@ -86,6 +86,11 @@ ruleTester.run('require-i18n-text', rule, {
         },
       ],
     },
+
+    // TemplateLiteral - 変数のみ
+    { code: `<img alt={\`\${t('key')}\`} />`, options },
+    { code: `<div title={\`\${i18n.t('title')}\`} />`, options },
+    { code: `<Button label={\`\${label}\`} />`, options },
   ],
   invalid: [
     // 属性エラー: デフォルト設定
@@ -117,11 +122,6 @@ ruleTester.run('require-i18n-text', rule, {
     // 属性エラー: カスタムオプション
     {
       code: `<img alt="Profile picture" />`,
-      options,
-      errors: [{ message: attributeError('img', 'alt') }],
-    },
-    {
-      code: `<img alt={'Profile'} />`,
       options,
       errors: [{ message: attributeError('img', 'alt') }],
     },
@@ -182,6 +182,18 @@ ruleTester.run('require-i18n-text', rule, {
         { message: attributeError('Button', 'label') },
         { message: childTextError },
       ],
+    },
+
+    // TemplateLiteral - 変数を含み、文字列リテラル部分がある
+    {
+      code: `<img alt={\`Profile \${name}\`} />`,
+      options,
+      errors: [{ message: attributeError('img', 'alt') }],
+    },
+    {
+      code: `<div title={\`\${prefix} title\`} />`,
+      options,
+      errors: [{ message: attributeError('div', 'title') }],
     },
   ],
 })

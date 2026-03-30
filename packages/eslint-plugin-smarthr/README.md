@@ -33,6 +33,7 @@
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)
 - [best-practice-for-unnesessary-early-return](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unnesessary-early-return)
 - [component-name](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name)
+- [design-system-guideline-prohibit-dialog-button-icon](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-dialog-button-icon)
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [format-import-path](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path)
 - [format-translate-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-translate-component)

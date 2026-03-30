@@ -46,9 +46,14 @@ ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
     { code: `<StepFormDialog backButton={{ text: "戻る" }} />` },
     { code: `<StepFormDialog submitButton={{ text: "送信", theme: "primary" }} />` },
 
-    // 他のDialog（対象外）
+    // カスタムDialog: actionTextやボタン属性がない場合は対象外
     { code: `<MessageDialog>message</MessageDialog>` },
     { code: `<ModelessDialog>content</ModelessDialog>` },
+    { code: `<CustomDialog title="確認">content</CustomDialog>` },
+
+    // カスタムDialog: テキストのみの場合は許容
+    { code: `<CustomDialog actionText="保存" />` },
+    { code: `<ConfirmDialog submitButton={{ text: "確認" }} />` },
   ],
   invalid: [
     // ActionDialog: アイコンを含む
@@ -116,6 +121,16 @@ ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
     },
     {
       code: `<StepFormDialog backButton={{ text: <><Icon />戻る</> }} />`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+
+    // カスタムDialog: アイコンを含む
+    {
+      code: `<CustomDialog actionText={<><Icon name="save" />保存</>} />`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<ConfirmDialog submitButton={{ text: <Icon name="check" /> }} />`,
       errors: [{ message: ERROR_MESSAGE }]
     },
   ]

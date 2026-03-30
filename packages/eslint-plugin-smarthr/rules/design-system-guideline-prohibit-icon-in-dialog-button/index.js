@@ -7,10 +7,11 @@ const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポー
 
 // セレクタの共通部分
 const ICON_COMPONENT = 'JSXExpressionContainer JSXOpeningElement[name.name=/Icon$/]'
+const DIALOG_COMPONENT = 'JSXOpeningElement[name.name=/Dialog$/]'
 
 // セレクタ定義（事前計算）
-const ACTION_TEXT_SELECTOR = `JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|RemoteTrigger(Action|Form)Dialog)$/] JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`
-const BUTTON_SELECTOR = `JSXOpeningElement[name.name=/^(FormDialog|StepFormDialog)$/] JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
+const ACTION_TEXT_SELECTOR = `${DIALOG_COMPONENT} JSXAttribute[name.name="actionText"] ${ICON_COMPONENT}`
+const BUTTON_SELECTOR = `${DIALOG_COMPONENT} JSXAttribute[name.name=/^(submitLabel|(submit|close|back)Button)$/] ${ICON_COMPONENT}`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

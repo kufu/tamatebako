@@ -1,4 +1,4 @@
-const rule = require('../rules/design-system-guideline-prohibit-icon-in-dialog-button')
+const rule = require('../rules/design-system-guideline-prohibit-dialog-button-icon')
 const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
@@ -12,11 +12,11 @@ const ruleTester = new RuleTester({
 })
 
 const ERROR_MESSAGE = `Dialogのボタンテキストにアイコンコンポーネントを含めることはできません。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-icon-in-dialog-button
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-dialog-button-icon
  - デザインシステムのガイドラインでは、Dialogのボタンはテキストのみとすることが推奨されています
  - アイコンを使用する場合は、ボタンの外側に配置してください`
 
-ruleTester.run('design-system-guideline-prohibit-icon-in-dialog-button', rule, {
+ruleTester.run('design-system-guideline-prohibit-dialog-button-icon', rule, {
   valid: [
     // ActionDialog: テキストのみ
     { code: `<ActionDialog actionText="保存" />` },

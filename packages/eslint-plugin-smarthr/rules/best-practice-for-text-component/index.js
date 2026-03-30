@@ -120,6 +120,7 @@ function getAttributeLiteralValue(openingElement, attrName) {
 module.exports = {
   meta: {
     type: 'suggestion',
+    fixable: 'code',
     schema: SCHEMA,
   },
   create(context) {
@@ -137,18 +138,37 @@ module.exports = {
 
       // パターン1-2: as属性のみ（文字列リテラル）
       [SELECTOR_UNNECESSARY_TEXT_ONLY_AS]: (asAttrNode) => {
+        const tagName = asAttrNode.value.value
+
         context.report({
           node: asAttrNode.parent,
-          message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${asAttrNode.value.value}>）に置き換えてください。
+          message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${tagName}>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
+          fix(fixer) {
+            const openingElement = asAttrNode.parent
+            const jsxElement = openingElement.parent
+            const sourceCode = context.getSourceCode()
+            const content = sourceCode.getText(jsxElement).slice(
+              jsxElement.openingElement.range[1] - jsxElement.range[0],
+              jsxElement.closingElement ? jsxElement.closingElement.range[0] - jsxElement.range[0] : undefined
+            )
+
+            return openingElement.selfClosing
+              ? fixer.replaceText(openingElement, `<${tagName} />`)
+              : [
+                  fixer.replaceText(openingElement, `<${tagName}>`),
+                  fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+                ]
+          },
         })
       },
 
       // パターン2-1: classNameのみ（asなし）、Text属性なし、shr-クラスあり
       [SELECTOR_CONVERTIBLE_SHR_TO_PROPS]: (classNameAttrNode) => {
         const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
+
         context.report({
           node: classNameAttrNode.parent,
           message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
@@ -156,43 +176,87 @@ module.exports = {
  - 推奨: <Text ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
+          fix(fixer) {
+            const openingElement = classNameAttrNode.parent
+            const attributesText = nonConvertible ? `${propSuggestions} className="${nonConvertible}"` : propSuggestions
+            const closingBracket = openingElement.selfClosing ? ' />' : '>'
+
+            return fixer.replaceText(openingElement, `<Text ${attributesText}${closingBracket}`)
+          },
         })
       },
 
       // パターン1-3: classNameのみ（asなし）、Text属性なし、shr-クラスなし
       [SELECTOR_UNNECESSARY_TEXT_CLASSNAME]: (classNameAttrNode) => {
+        const classNameText = `className="${classNameAttrNode.value.value}"`
+
         context.report({
           node: classNameAttrNode.parent,
           message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <span className="${classNameAttrNode.value.value}">
+ - 推奨: <span ${classNameText}>
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
+          fix(fixer) {
+            const openingElement = classNameAttrNode.parent
+            const jsxElement = openingElement.parent
+
+            return openingElement.selfClosing
+              ? fixer.replaceText(openingElement, `<span ${classNameText} />`)
+              : [
+                  fixer.replaceText(openingElement, `<span ${classNameText}>`),
+                  fixer.replaceText(jsxElement.closingElement, '</span>')
+                ]
+          },
         })
       },
 
       // パターン2-2, 2-3: className + as（文字列リテラル）、Text属性なし、shr-クラスあり
       [SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_AS]: (classNameAttrNode) => {
         const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
-        const asValue = getAttributeLiteralValue(classNameAttrNode.parent, 'as')
+        const openingElement = classNameAttrNode.parent
+        const asValue = getAttributeLiteralValue(openingElement, 'as')
 
         context.report({
-          node: classNameAttrNode.parent,
+          node: openingElement,
           message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - 推奨: <Text${asValue ? ` as="${asValue}"` : ''} ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
+          fix(fixer) {
+            const asText = asValue ? `as="${asValue}" ` : ''
+            const classNameText = nonConvertible ? ` className="${nonConvertible}"` : ''
+            const attributesText = `${asText}${propSuggestions}${classNameText}`
+            const closingBracket = openingElement.selfClosing ? ' />' : '>'
+
+            return fixer.replaceText(openingElement, `<Text ${attributesText}${closingBracket}`)
+          },
         })
       },
 
       // パターン1-4: className + as（文字列リテラル）、Text属性なし、shr-クラスなし
       [SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME]: (asAttrNode) => {
+        const tagName = asAttrNode.value.value
+        const openingElement = asAttrNode.parent
+        const classNameValue = getAttributeLiteralValue(openingElement, 'className')
+        const classNameText = `className="${classNameValue}"`
+
         context.report({
-          node: asAttrNode.parent,
+          node: openingElement,
           message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - <${asAttrNode.value.value}>要素にclassNameを移動してください
+ - <${tagName}>要素にclassNameを移動してください
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
+          fix(fixer) {
+            const jsxElement = openingElement.parent
+
+            return openingElement.selfClosing
+              ? fixer.replaceText(openingElement, `<${tagName} ${classNameText} />`)
+              : [
+                  fixer.replaceText(openingElement, `<${tagName} ${classNameText}>`),
+                  fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+                ]
+          },
         })
       },
 

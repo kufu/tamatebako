@@ -1,9 +1,10 @@
 # smarthr/best-practice-for-text-component
 
-Textコンポーネントの適切な使用を促進するルールです。以下の2つのチェックを行います：
+Textコンポーネントの適切な使用を促進するルールです。以下の3つのチェックを行います：
 
-1. **不要なTextコンポーネントの検出**: 属性がない、またはas属性のみが設定されている場合、ネイティブHTML要素の使用を推奨
-2. **className属性の最適化**: shr-プレフィックスのTailwindクラスがある場合、Textコンポーネントの属性への置き換えを推奨
+1. **不要なTextコンポーネントの検出**: Textの機能を使用していない場合、ネイティブHTML要素の使用を推奨
+2. **className属性の最適化**: shr-プレフィックスのクラスがある場合、Textコンポーネントの属性への置き換えを推奨
+3. **矛盾する指定の防止**: Text属性とshr-プレフィックスのクラスを同時に使用している場合に警告
 
 ## なぜこのルールが必要なのか
 
@@ -115,13 +116,17 @@ Textの属性とshr-プレフィックスのクラスを同時に使用してい
 <Text styleType="blockTitle">text</Text>
 <Text icon={<Icon />}>text</Text>
 
-// OK: Textのスタイリング属性 + className（変換不可能なクラスのみ）
+// OK: as + スタイリング属性
+<Text as="p" weight="bold">content</Text>
+
+// OK: スタイリング属性 + className（変換不可能なクラスのみ）
 <Text size="M" className="custom">text</Text>
 <Text weight="bold" className="custom-class">text</Text>
 
-// OK: classNameが変数や式（静的解析不可能）
+// OK: className/asが変数や式（静的解析不可能）
 <Text className={customClass}>text</Text>
 <Text className={`custom-${type}`}>text</Text>
+<Text as={component}>text</Text>
 <Text size="M" className={customClass}>text</Text>
 ```
 
@@ -170,103 +175,41 @@ Textの属性とshr-プレフィックスのクラスを同時に使用してい
 }
 ```
 
-## ❌ Incorrect
+## 使用例
+
+### ❌ Incorrect
 
 ```jsx
-// パターン1: 不要なTextコンポーネント
-
-// as属性のみ
-<Text as="p">これはテキストです</Text>
-<Text as="span">ラベル</Text>
-<Text as="li">リストアイテム</Text>
-<Text as="div">コンテンツ</Text>
-
-// 属性なし
+// 不要なTextコンポーネント
 <Text>テキスト</Text>
-
-// 変換不可能なclassNameのみ
+<Text as="p">これはテキストです</Text>
 <Text className="custom">テキスト</Text>
-<Text as="p" className="wrapper">コンテンツ</Text>
 
-// パターン2: className属性の最適化
-
-// shr-クラスのみ
-<Text className="shr-text-sm">小さいテキスト</Text>
+// shr-クラスを属性に変換すべき
 <Text className="shr-text-sm shr-font-bold">強調テキスト</Text>
-<Text className="shr-text-lg shr-font-bold shr-text-grey">グレーの大きいテキスト</Text>
-
-// shr-クラス + as
 <Text as="p" className="shr-text-sm">段落</Text>
-<Text as="p" className="shr-text-sm shr-font-bold">強調段落</Text>
-
-// shr-クラス + 変換不可能なクラス
 <Text className="shr-text-sm custom-class">テキスト</Text>
-<Text as="p" className="shr-text-sm wrapper">段落</Text>
 
-// パターン3: 属性とclassNameの矛盾
-
-// size属性とshr-text-*クラスの併用
+// 属性とclassNameの矛盾
 <Text size="M" className="shr-text-sm">テキスト</Text>
-
-// weight属性とshr-font-*クラスの併用
 <Text weight="bold" className="shr-font-normal">テキスト</Text>
-
-// 複数の矛盾
-<Text size="L" className="shr-text-sm shr-font-bold">テキスト</Text>
-<Text size="M" className="shr-text-sm custom-class">テキスト</Text>
 ```
 
-## ✅ Correct
+### ✅ Correct
 
 ```jsx
-// パターン1: ネイティブHTML要素を使用
-
-// as属性のみの場合
-<p>これはテキストです</p>
-<span>ラベル</span>
-<li>リストアイテム</li>
-<div>コンテンツ</div>
-
-// 属性なしの場合
+// ネイティブHTML要素を使用
 <span>テキスト</span>
-// または要素を削除してテキストのみに
-
-// 変換不可能なclassNameのみの場合
+<p>これはテキストです</p>
 <span className="custom">テキスト</span>
-<p className="wrapper">コンテンツ</p>
 
-// パターン2: Textの属性を使用
-
-// shr-クラスを属性に変換
-<Text size="S">小さいテキスト</Text>
+// Textの属性を使用
 <Text size="S" weight="bold">強調テキスト</Text>
-<Text size="L" weight="bold" color="TEXT_GREY">グレーの大きいテキスト</Text>
-
-// shr-クラス + as を属性に変換
 <Text as="p" size="S">段落</Text>
-<Text as="p" size="S" weight="bold">強調段落</Text>
-
-// shr-クラスを属性に、それ以外はclassNameに
 <Text size="S" className="custom-class">テキスト</Text>
-<Text as="p" size="S" className="wrapper">段落</Text>
 
-// 正しいTextコンポーネントの使用方法
-<Text weight="bold">スタイル付きテキスト</Text>
-<Text as="p" size="M" color="TEXT_GREY">グレーの段落</Text>
-<Text leading="TIGHT">行間の詰まったテキスト</Text>
-<Text maxLines={2}>最大2行のテキスト</Text>
-
-// パターン3: 属性とclassNameの矛盾を解消
-
-// size属性を使用する場合
+// 矛盾を解消
 <Text size="M">テキスト</Text>
-
-// classNameを使用する場合
-<Text className="shr-text-sm">テキスト</Text>
-
-// 複数の属性を使用する場合
-<Text size="L" weight="bold">テキスト</Text>
-
-// Textの属性 + 変換不可能なclassName（OK）
+<Text weight="bold">テキスト</Text>
 <Text size="M" className="custom-class">テキスト</Text>
 ```

@@ -30,57 +30,88 @@ const CLASS_TO_PROP_MAP = {
   'shr-text-color-inherit': { prop: 'color', value: 'inherit' },
 }
 
-// Textコンポーネントのスタイリングプロパティ
-const TEXT_STYLE_PROPS = ['size', 'weight', 'color', 'leading', 'italic', 'whiteSpace', 'maxLines', 'styleType', 'icon']
+const REGEX_CLASSNAME_SPLIT = /\s+/
+
+// ESLintセレクタの基本要素
+const ATTR_AS = 'JSXAttribute[name.name="as"]'
+const ATTR_CLASSNAME = 'JSXAttribute[name.name="className"]'
+const ATTR_TEXT_PROPS = 'JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon)$/]'
+const LITERAL_TYPE = '[value.type="Literal"]'
+const HAS_SHR_CLASS = '[value.value=/shr-/]'
+
+// ESLintセレクタの共通部分
+const TEXT_OPENING = 'JSXOpeningElement[name.name="Text"]'
+const NOT_HAS_AS = `:not(:has(${ATTR_AS}))`
+const HAS_TEXT_PROPS = `:has(${ATTR_TEXT_PROPS})`
+const NOT_HAS_TEXT_PROPS = `:not(${HAS_TEXT_PROPS})`
+const CHILD_CLASSNAME_LITERAL = `> ${ATTR_CLASSNAME}${LITERAL_TYPE}`
+const NOT_HAS_SHR_CLASS = `:not(${HAS_SHR_CLASS})`
+const CHILD_AS_LITERAL = `> ${ATTR_AS}${LITERAL_TYPE}`
+
+// 完全なESLintセレクタ（事前計算）
+const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))`
+const SELECTOR_UNNECESSARY_TEXT_ONLY_AS = `${TEXT_OPENING}[attributes.length=1] ${CHILD_AS_LITERAL}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_AS}${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_SHR_CLASS}`
+const SELECTOR_UNNECESSARY_TEXT_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_AS}${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${NOT_HAS_SHR_CLASS}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_AS = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE})${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_SHR_CLASS}`
+const SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME = `${TEXT_OPENING}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS})${NOT_HAS_TEXT_PROPS} ${CHILD_AS_LITERAL}`
+const SELECTOR_CONFLICTING_PROPS_SHR = `${TEXT_OPENING}${HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}`
 
 /**
- * className属性からクラス名の配列を取得
+ * className属性の変換可能なクラス名のみを取得（パターン3専用: 矛盾チェック）
+ * セレクタで [value.type="Literal"] を保証しているため、必ず文字列リテラル
+ * trim-props ルールで先頭・末尾の空白は禁止されているため、trim() は不要
  */
-function getClassNames(classNameAttr) {
-  if (!classNameAttr || !classNameAttr.value) {
-    return []
-  }
-
-  // Literal（文字列リテラル）の場合のみ処理
-  if (classNameAttr.value.type !== 'Literal' || typeof classNameAttr.value.value !== 'string') {
-    return null // 静的解析不可能
-  }
-
-  return classNameAttr.value.value.split(/\s+/).filter(Boolean)
-}
-
-/**
- * クラス名を変換可能/不可能に分類
- */
-function categorizeClasses(classNames) {
-  const convertible = []
-  const nonConvertible = []
+function getConvertible(classNameAttrNode) {
+  const classNames = classNameAttrNode.value.value.split(REGEX_CLASSNAME_SPLIT)
+  const convertibleClassNames = []
 
   for (const className of classNames) {
     if (CLASS_TO_PROP_MAP[className]) {
-      convertible.push(className)
-    } else {
-      nonConvertible.push(className)
+      convertibleClassNames.push(className)
     }
   }
 
-  return { convertible, nonConvertible }
+  return convertibleClassNames.join(', ')
 }
 
 /**
- * 変換可能なクラス名からTextプロパティへの推奨を生成
+ * className属性のクラス名を解析し、1回のループで全ての情報を生成（パターン2-1, 2-2, 2-3専用）
+ * セレクタで [value.type="Literal"] を保証しているため、必ず文字列リテラル
+ * trim-props ルールで先頭・末尾の空白は禁止されているため、trim() は不要
  */
-function generatePropSuggestions(convertibleClasses) {
-  const propMap = {}
+function categorizeClassNames(classNameAttrNode) {
+  const classNames = classNameAttrNode.value.value.split(REGEX_CLASSNAME_SPLIT)
+  const convertibleClassNames = []
+  const nonConvertibleClassNames = []
+  const propPairs = []
 
-  for (const className of convertibleClasses) {
+  for (const className of classNames) {
     const mapping = CLASS_TO_PROP_MAP[className]
-    propMap[mapping.prop] = mapping.value
+    if (mapping) {
+      convertibleClassNames.push(className)
+      propPairs.push(`${mapping.prop}="${mapping.value}"`)
+    } else {
+      nonConvertibleClassNames.push(className)
+    }
   }
 
-  return Object.entries(propMap)
-    .map(([prop, value]) => `${prop}="${value}"`)
-    .join(' ')
+  return {
+    nonConvertible: nonConvertibleClassNames.join(' '),
+    propSuggestions: propPairs.join(' '),
+    convertible: convertibleClassNames.join(', '),
+  }
+}
+
+/**
+ * 指定した属性の値を取得（文字列リテラルのみ）
+ * セレクタで [value.type="Literal"] を保証しているため、型チェックは不要
+ */
+function getAttributeLiteralValue(openingElement, attrName) {
+  const attr = openingElement.attributes.find(
+    attr => attr.type === 'JSXAttribute' && attr.name.name === attrName
+  )
+  return attr?.value?.value ?? null
 }
 
 /**
@@ -93,126 +124,91 @@ module.exports = {
   },
   create(context) {
     return {
-      'JSXOpeningElement[name.name="Text"]': (node) => {
-        const attributes = node.attributes
-
-        // 属性を分類
-        const asAttr = attributes.find(attr => attr.type === 'JSXAttribute' && attr.name.name === 'as')
-        const classNameAttr = attributes.find(attr => attr.type === 'JSXAttribute' && attr.name.name === 'className')
-        const hasTextStyleProps = attributes.some(attr =>
-          attr.type === 'JSXAttribute' && TEXT_STYLE_PROPS.includes(attr.name.name)
-        )
-
-        // classNameの解析
-        const classNames = classNameAttr ? getClassNames(classNameAttr) : []
-
-        // 早期リターン: classNameが静的解析不可能な場合はスキップ
-        if (classNames === null) {
-          return
-        }
-
-        const { convertible, nonConvertible } = categorizeClasses(classNames)
-
-        // Textのスタイリングプロパティがある場合、shr-クラスとの矛盾をチェック
-        if (hasTextStyleProps) {
-          if (convertible.length > 0) {
-            context.report({
-              node,
-              message: `Textコンポーネントの属性とclassNameで矛盾する指定があります。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 変換可能なクラス: ${convertible.join(', ')}
- - Textコンポーネントの属性（size、weight、color等）とclassNameのshr-プレフィックスのクラスを同時に使用すると、意図しない挙動になる可能性があります
- - どちらか一方のみを使用してください`,
-            })
-          }
-          return
-        }
-
-        const hasShrClasses = convertible.length > 0
-
-        // パターン1: className なし
-        if (!classNameAttr) {
-          // 1-1: 属性なし
-          if (attributes.length === 0) {
-            context.report({
-              node,
-              message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
+      // パターン1-1: 属性なし
+      [SELECTOR_UNNECESSARY_TEXT_NO_ATTRS]: (node) => {
+        context.report({
+          node,
+          message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
-            })
-            return
-          }
+        })
+      },
 
-          // 1-2: as属性のみ
-          if (attributes.length === 1 && asAttr && asAttr.value && asAttr.value.type === 'Literal') {
-            context.report({
-              node,
-              message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${asAttr.value.value}>）に置き換えてください。
+      // パターン1-2: as属性のみ（文字列リテラル）
+      [SELECTOR_UNNECESSARY_TEXT_ONLY_AS]: (asAttrNode) => {
+        context.report({
+          node: asAttrNode.parent,
+          message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${asAttrNode.value.value}>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
  - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
-            })
-          }
-          return
-        }
+        })
+      },
 
-        // パターン2: shr-クラスがある場合
-        if (hasShrClasses) {
-          const propSuggestions = generatePropSuggestions(convertible)
-          const asValue = asAttr && asAttr.value && asAttr.value.type === 'Literal' ? asAttr.value.value : null
-          const asString = asValue ? ` as="${asValue}"` : ''
-          const remainingClassName = nonConvertible.length > 0 ? ` className="${nonConvertible.join(' ')}"` : ''
-
-          // 2-1, 2-2: すべて変換可能
-          if (nonConvertible.length === 0) {
-            context.report({
-              node,
-              message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
+      // パターン2-1: classNameのみ（asなし）、Text属性なし、shr-クラスあり
+      [SELECTOR_CONVERTIBLE_SHR_TO_PROPS]: (classNameAttrNode) => {
+        const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
+        context.report({
+          node: classNameAttrNode.parent,
+          message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <Text${asString} ${propSuggestions}>
+ - 推奨: <Text ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
+ - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
-            })
-          } else {
-            // 2-3: 一部のみ変換可能
-            context.report({
-              node,
-              message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
+        })
+      },
+
+      // パターン1-3: classNameのみ（asなし）、Text属性なし、shr-クラスなし
+      [SELECTOR_UNNECESSARY_TEXT_CLASSNAME]: (classNameAttrNode) => {
+        context.report({
+          node: classNameAttrNode.parent,
+          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <Text${asString} ${propSuggestions}${remainingClassName}>
- - 変換可能なクラス: ${convertible.join(', ')}
+ - 推奨: <span className="${classNameAttrNode.value.value}">
+ - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
+        })
+      },
+
+      // パターン2-2, 2-3: className + as（文字列リテラル）、Text属性なし、shr-クラスあり
+      [SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_AS]: (classNameAttrNode) => {
+        const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
+        const asValue = getAttributeLiteralValue(classNameAttrNode.parent, 'as')
+
+        context.report({
+          node: classNameAttrNode.parent,
+          message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
+ - 推奨: <Text${asValue ? ` as="${asValue}"` : ''} ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
+ - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
-            })
-          }
-          return
-        }
+        })
+      },
 
-        // パターン3: shr-クラスがなく、変換不可能なクラスのみ
-        if (nonConvertible.length > 0) {
-          const asValue = asAttr && asAttr.value && asAttr.value.type === 'Literal' ? asAttr.value.value : null
-
-          // 1-3: classNameのみ（as なし）
-          if (!asAttr) {
-            context.report({
-              node,
-              message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
+      // パターン1-4: className + as（文字列リテラル）、Text属性なし、shr-クラスなし
+      [SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME]: (asAttrNode) => {
+        context.report({
+          node: asAttrNode.parent,
+          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <span className="${nonConvertible.join(' ')}">
+ - <${asAttrNode.value.value}>要素にclassNameを移動してください
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-            })
-            return
-          }
+        })
+      },
 
-          // 1-4: className + as
-          if (asValue) {
-            context.report({
-              node,
-              message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<${asValue}>）に置き換えてください。
+      // パターン3: Text属性あり、classNameにshr-クラスあり（矛盾）
+      [SELECTOR_CONFLICTING_PROPS_SHR]: (classNameAttrNode) => {
+        const convertible = getConvertible(classNameAttrNode)
+
+        if (convertible) {
+          context.report({
+            node: classNameAttrNode.parent,
+            message: `Textコンポーネントの属性とclassNameで矛盾する指定があります。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <${asValue} className="${nonConvertible.join(' ')}">
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-            })
-          }
+ - 変換可能なクラス: ${convertible}
+ - Textコンポーネントの属性（size、weight、color等）とclassNameのshr-プレフィックスのクラスを同時に使用すると、意図しない挙動になる可能性があります
+ - どちらか一方のみを使用してください`,
+          })
         }
       },
     }

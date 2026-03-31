@@ -6,19 +6,10 @@ const ERROR_MESSAGE = `ResponseMessageは見出しやラベルでは使用でき
  - 見出しやラベルにアイコンを表示したい場合は、Headingのicon属性、FormControlのlabel.icon属性、Fieldsetのlegend.icon属性、またはsmarthr-ui/Textを使用してください`
 
 // 共通パターン
-const RESPONSE_MESSAGE_OPENING = 'JSXOpeningElement[name.name=/ResponseMessage$/]'
-const JSX_EXPRESSION_CONTAINER = 'JSXExpressionContainer'
+const RESPONSE_MESSAGE = 'JSXOpeningElement[name.name=/ResponseMessage$/]'
+const LABEL_LEGEND = '/^(label|legend)$/'
 
-const SELECTOR = [
-  // Heading系（h1-h6, Heading, PageHeading）のchildren内
-  `JSXElement[openingElement.name.name=/((^h(1|2|3|4|5|6))|Heading|PageHeading)$/] ${RESPONSE_MESSAGE_OPENING}`,
-  // FormControlのlabel属性内
-  `JSXOpeningElement[name.name=/FormControl$/] > JSXAttribute[name.name="label"] ${JSX_EXPRESSION_CONTAINER} ${RESPONSE_MESSAGE_OPENING}`,
-  // Fieldsetのlegend属性内
-  `JSXOpeningElement[name.name=/Fieldset$/] > JSXAttribute[name.name="legend"] ${JSX_EXPRESSION_CONTAINER} ${RESPONSE_MESSAGE_OPENING}`,
-  // label/legend要素のchildren内
-  `JSXElement[openingElement.name.name=/^(label|legend)$/] ${RESPONSE_MESSAGE_OPENING}`,
-].join(', ')
+const SELECTOR = `:matches(JSXElement[openingElement.name.name=/((^h(1|2|3|4|5|6))|(Page)?Heading)$/] ${RESPONSE_MESSAGE}, JSXOpeningElement[name.name=/^(FormControl|Fieldset)$/] > JSXAttribute[name.name=${LABEL_LEGEND}] JSXExpressionContainer ${RESPONSE_MESSAGE}, JSXElement[openingElement.name.name=${LABEL_LEGEND}] ${RESPONSE_MESSAGE})`
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}

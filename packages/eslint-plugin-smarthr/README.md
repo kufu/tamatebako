@@ -13,6 +13,7 @@
 - [a11y-prohibit-checkbox-or-radio-in-table-cell](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell)
 - [a11y-prohibit-input-maxlength-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-maxlength-attribute)
 - [a11y-prohibit-input-placeholder](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-input-placeholder)
+- [a11y-prohibit-overflow-hidden](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-overflow-hidden)
 - [a11y-prohibit-sectioning-content-in-form](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-sectioning-content-in-form)
 - [a11y-prohibit-useless-sectioning-fragment](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-useless-sectioning-fragment)
 - [a11y-trigger-has-button](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-trigger-has-button)

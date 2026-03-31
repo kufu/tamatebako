@@ -3002,11 +3002,17 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-prohibit-input-placeholder": [
       2,
     ],
+    "smarthr/a11y-prohibit-overflow-hidden": [
+      1,
+    ],
     "smarthr/a11y-prohibit-sectioning-content-in-form": [
       2,
     ],
     "smarthr/a11y-prohibit-useless-sectioning-fragment": [
       2,
+    ],
+    "smarthr/a11y-scroller-has-tabindex": [
+      1,
     ],
     "smarthr/a11y-trigger-has-button": [
       2,
@@ -3048,11 +3054,17 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "fix": true,
       },
     ],
+    "smarthr/best-practice-for-text-component": [
+      1,
+    ],
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
     "smarthr/component-name": [
       2,
+    ],
+    "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
+      1,
     ],
     "smarthr/format-import-path": [
       0,

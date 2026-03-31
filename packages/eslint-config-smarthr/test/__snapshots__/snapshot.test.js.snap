@@ -3023,6 +3023,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-button-element": [
       2,
     ],
+    "smarthr/best-practice-for-data-test-attribute": [
+      0,
+    ],
     "smarthr/best-practice-for-date": [
       2,
     ],
@@ -3054,6 +3057,12 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "fix": true,
       },
     ],
+    "smarthr/best-practice-for-tailwind-prohibit-root-margin": [
+      0,
+    ],
+    "smarthr/best-practice-for-tailwind-variants": [
+      0,
+    ],
     "smarthr/best-practice-for-text-component": [
       1,
     ],
@@ -3065,6 +3074,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
       1,
+    ],
+    "smarthr/design-system-guideline-prohibit-double-icons": [
+      0,
     ],
     "smarthr/format-import-path": [
       0,

@@ -28,6 +28,7 @@
 - [best-practice-for-optional-chaining](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining)
 - [best-practice-for-prohibit-import-smarthr-ui-local](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-prohibit-import-smarthr-ui-local)
 - [best-practice-for-remote-trigger-dialog](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog)
+- [best-practice-for-response-message](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-response-message)
 - [best-practice-for-rest-parameters](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-rest-parameters)
 - [best-practice-for-spread-syntax](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-spread-syntax)
 - [best-practice-for-tailwind-prohibit-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-prohibit-root-margin)

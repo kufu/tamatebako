@@ -53,6 +53,7 @@ export default [
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
       'smarthr/best-practice-for-date': 'error',
+      'smarthr/best-practice-for-data-test-attribute': 'off',
       'smarthr/best-practice-for-interactive-element': 'error',
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
@@ -61,10 +62,13 @@ export default [
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
+      'smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
+      'smarthr/best-practice-for-tailwind-variants': 'off',
       'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
       'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-double-icons': 'off',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',

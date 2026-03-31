@@ -30,6 +30,7 @@
 - [best-practice-for-spread-syntax](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-spread-syntax)
 - [best-practice-for-tailwind-prohibit-root-margin](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-prohibit-root-margin)
 - [best-practice-for-tailwind-variants](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants)
+- [best-practice-for-text-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component)
 - [best-practice-for-unnesessary-early-return](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unnesessary-early-return)
 - [component-name](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name)
 - [design-system-guideline-prohibit-dialog-button-icon](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-dialog-button-icon)

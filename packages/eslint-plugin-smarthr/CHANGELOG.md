@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.7.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.3...eslint-plugin-smarthr-v6.7.0) (2026-03-31)
+
+
+### Features
+
+* a11y-scroller-has-tabindex を追加 ([#1135](https://github.com/kufu/tamatebako/issues/1135)) ([7eb8cf2](https://github.com/kufu/tamatebako/commit/7eb8cf2c10d1295f1f5b56930f5bf6d4b443c21e))
+* best-practice-for-text-componentルールを追加 ([#1169](https://github.com/kufu/tamatebako/issues/1169)) ([1430a8e](https://github.com/kufu/tamatebako/commit/1430a8e985992b9c1b0f6f0b92be1536a33d249a))
+* design-system-guideline-prohibit-icon-in-dialog-buttonルールを追加 ([#1168](https://github.com/kufu/tamatebako/issues/1168)) ([a87ee44](https://github.com/kufu/tamatebako/commit/a87ee449676711e98ebb78cc423fffb05e5047ce))
+
+
+### Bug Fixes
+
+* a11y-prohibit-overflow-hidden rule を追加 ([#1123](https://github.com/kufu/tamatebako/issues/1123)) ([145815a](https://github.com/kufu/tamatebako/commit/145815a495524763384dab8e3ef83f950040a2ca))
+
 ## [6.6.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.2...eslint-plugin-smarthr-v6.6.3) (2026-03-23)
 
 

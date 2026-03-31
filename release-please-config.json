@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "last-release-sha": "32268ddecb4340a1311b869f09888085e5c12502",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
+  "pull-request-header": "リリース内容",
   "packages": {
     "packages/create-lint-set": {},
     "packages/eslint-config-smarthr": {},

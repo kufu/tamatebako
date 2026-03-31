@@ -1,13 +1,10 @@
 # smarthr/best-practice-for-spread-syntax
 
-- 意図しない属性の上書きを防ぐため、spread syntax({ ...b } のようにjs, jsxでオブジェクトを展開する記述)を通常の属性より先に記述するよう促すruleです
-- eslint を `--fix` オプション付きで実行する際、 fix オプション を true にすると自動修正します
-  - !!! 要注意 !!! 自動修正は属性の並び替えだけ行うため、spread syntaxによって上書きすることを期待していたロジックが狂う可能性があります
-- jsxのspread attributesのみ、objectのspread sytaxのみチェック対象にしたい場合、checkTypeオプションに only-jsx, only-object を指定してください
+spread syntax（`{ ...b }`のようにオブジェクトを展開する記述）を通常の属性より先に記述することを促すルールです。
 
-# spread syntax を通常の属性より後に記述した場合に発生する問題
+## なぜspread syntaxを先に書くべきなのか
 
-spread syntaxより先に通常の属性を記述した場合、**spread syntaxで値が上書きされる** 可能性があります。
+spread syntaxを通常の属性より後に記述すると、**spread syntaxで値が上書きされる**可能性があります。
 
 ```jsx
 const AnyComponent = (props: Props) => {
@@ -16,11 +13,19 @@ const AnyComponent = (props: Props) => {
 }
 ```
 
-上記例の場合、**Props型がidを含むか? 含む場合必須か？などの確認** が必要になります。  
-(idが必須の場合、Fugaにベタ書きしているidがそもそも不要になるため)  
-また`idのデフォルト値が"ABC", propsでidが指定された場合そちらを優先` というロジックが必要かどうかを該当コードの部分だけで判断出来ず、広範囲の確認が必要になりがちです。  
-特にidなど多用され、HTMLの要素が持つ属性と名前が被っている場合、意図せず上書きされてしまう問題が発生する可能性が高く危険です。  
-そのため下記の様に記述することを推奨します。
+### 問題点
+
+上記の例では、以下の確認が必要になります:
+
+- **Props型がidを含むか？**
+- **idが必須か？**
+- **propsでidが指定された場合、どちらが優先されるか？**
+
+特に`id`など、HTMLの要素が持つ属性と名前が被っている場合、意図せず上書きされてしまう問題が発生する可能性が高く危険です。
+
+また、コードから「デフォルト値なのか、固定値なのか」が一目でわからず、広範囲の確認が必要になりがちです。
+
+### 推奨する記法
 
 ```jsx
 // propsがidを含む可能性がある場合
@@ -36,14 +41,14 @@ const AnyComponent = (props: Props) => {
 }
 ```
 
-推奨の記法では
+このように書くことで:
 
-- spread syntaxによる意図せぬ上書きを回避できる
-- コードとしてデフォルト値なのか、固定値なのかが一目でわかる
+- **spread syntaxによる意図せぬ上書きを回避できる**
+- **コードとしてデフォルト値なのか、固定値なのかが一目でわかる**
 
-などのメリットがあります。
+### オブジェクトの場合も同様
 
-例ではjsxを使用しましたが、通常のオブジェクトの場合も同様にチェックします
+例ではJSXを使用しましたが、通常のオブジェクトの場合も同様にチェックします:
 
 ```js
 // NG例
@@ -59,6 +64,47 @@ const obj = {
 }
 ```
 
+## 自動修正について
+
+eslintを`--fix`オプション付きで実行する際、`fix`オプションを`true`にすると自動修正します。
+
+```js
+{
+  rules: {
+    'smarthr/best-practice-for-spread-syntax': [
+      'error',
+      { fix: true },
+    ]
+  },
+}
+```
+
+### ⚠️ 自動修正の注意点
+
+自動修正は属性の並び替えだけを行うため、**spread syntaxによって上書きすることを期待していたロジックが狂う可能性があります**。
+
+自動修正を使う前に、手動で確認することを推奨します。
+
+## チェック対象の制限
+
+JSXのspread attributesのみ、もしくはObjectのspread syntaxのみをチェック対象にしたい場合、`checkType`オプションを指定できます:
+
+```js
+{
+  rules: {
+    'smarthr/best-practice-for-spread-syntax': [
+      'error',
+      {
+        checkType: 'only-jsx', // または 'only-object'
+      },
+    ]
+  },
+}
+```
+
+- `'always'` (デフォルト) - JSXとObjectの両方をチェック
+- `'only-jsx'` - JSXのみチェック
+- `'only-object'` - Objectのみチェック
 
 ## rules
 

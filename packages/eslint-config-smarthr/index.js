@@ -45,10 +45,10 @@ export default [
       'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
       'smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
       'smarthr/a11y-prohibit-input-placeholder': 'error',
-      'smarthr/a11y-prohibit-overflow-hidden': 'warn', // TODO: 2026/04に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/a11y-prohibit-overflow-hidden': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-      'smarthr/a11y-scroller-has-tabindex': 'warn', // TODO: 2026/04に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/a11y-scroller-has-tabindex': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
@@ -61,10 +61,10 @@ export default [
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
-      'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
-      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',

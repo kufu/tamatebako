@@ -1,10 +1,26 @@
-# smarthr/autofixer-smarthr-ui-v90-to-v91
+# smarthr/autofixer-smarthr-ui-migration
 
-smarthr-ui v90 から v91 への移行を支援する自動修正ルールです。
+smarthr-ui のバージョン間の移行を支援する自動修正ルールです。
 
-このルールは一時的な移行支援ルールであり、v91 への移行が完了したら無効化することを推奨します。
+オプションで移行元・移行先のバージョンを指定することで、該当する breaking changes を検出し、自動修正します。
 
-## 対応する Breaking Changes
+## オプション
+
+このルールは `from` と `to` オプションの指定が必須です。
+
+```javascript
+{
+  "rules": {
+    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v91" }]
+  }
+}
+```
+
+### サポートされているバージョン
+
+- `v90` → `v91`
+
+## v90 → v91 の対応内容
 
 ### 1. Dialog コンポーネントのリネーム
 
@@ -79,13 +95,13 @@ import { ControlledActionDialog, ControlledFormDialog } from 'smarthr-ui'
 
 ### eslint-config-smarthr を使用している場合
 
-一時的に `.eslintrc.js` でルールを有効化してください:
+`.eslintrc.js` または `eslint.config.js` でルールを有効化してください:
 
 ```javascript
 module.exports = {
   extends: ['smarthr'],
   rules: {
-    'smarthr/autofixer-smarthr-ui-v90-to-v91': 'error',
+    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
   },
 }
 ```
@@ -96,7 +112,7 @@ module.exports = {
 module.exports = {
   plugins: ['smarthr'],
   rules: {
-    'smarthr/autofixer-smarthr-ui-v90-to-v91': 'error',
+    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
   },
 }
 ```
@@ -113,13 +129,17 @@ npm run lint:fix
 
 ## 移行後の対応
 
-v91 への移行が完了したら、このルールを無効化してください:
+移行が完了したら、このルールを無効化またはオプションを更新してください:
 
 ```javascript
 module.exports = {
   extends: ['smarthr'],
   rules: {
-    // 'smarthr/autofixer-smarthr-ui-v90-to-v91': 'error', // 移行完了後はコメントアウト
+    // v91 への移行完了後はコメントアウトまたは削除
+    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
+
+    // v92 への移行時は新しいオプションを設定
+    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v91', to: 'v92' }],
   },
 }
 ```
@@ -129,3 +149,7 @@ module.exports = {
 - `ResponseMessage` の `iconGap` 属性は単純に削除されます。親コンポーネントの `icon.gap` への移行は手動で行う必要があります
 - `ResponseMessage` の `right` 属性は自動修正されません
 - 複雑なコード（変数経由での属性設定など）は自動修正されない場合があります
+
+## 将来のバージョン対応
+
+今後 v92、v93 などの新しいバージョンがリリースされた際は、このルールに新しいバージョンのサポートを追加していく予定です。

@@ -65,19 +65,45 @@ import { ControlledActionDialog, ControlledFormDialog } from 'smarthr-ui'
 
 **注意:** このケースは自動修正されません。各プロダクトで `right` 属性が使われていないことは確認済みですが、もしエラーが発生した場合は想定外のケースのため、コアチームへの報告が必要です。
 
-### 4. ResponseMessage の `iconGap` 属性削除
+### 4. ResponseMessage の `iconGap` 属性削除と移行
 
-`iconGap` 属性は削除されました。アイコンとテキストの間隔は自動的に調整されます。
+`iconGap` 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で `icon.gap` を使用してください。
+
+**親コンポーネントに icon 属性がない場合（自動修正）:**
+
+ResponseMessage と同じ UI になるように、status に応じた icon を追加します。
 
 ```tsx
 // Incorrect
-<ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage>
+<Heading><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>
 
-// Correct
-<ResponseMessage>Xxxx</ResponseMessage>
+// Correct（自動修正）
+<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>
 ```
 
-**注意:** 現在の実装では iconGap 属性を単純に削除します。親コンポーネント（Heading/FormControl/Fieldset）で `icon.gap` を使用する必要がある場合は、手動で調整してください。
+**親コンポーネントに既に icon 属性がある場合（エラーのみ）:**
+
+既に icon が設定されている場合は、意図的な可能性があるため自動修正されません。手動で調整してください。
+
+```tsx
+// エラー（自動修正なし）
+<Heading icon={<CustomIcon />}><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Heading>
+
+// 手動で修正
+<Heading icon={{ prefix: <CustomIcon />, gap: 0.5 }}>Xxxx</Heading>
+```
+
+**適切な親がない場合（自動修正）:**
+
+iconGap のみ削除されます。
+
+```tsx
+// Incorrect
+<div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div>
+
+// Correct（自動修正）
+<div><ResponseMessage>Xxxx</ResponseMessage></div>
+```
 
 ### 5. AppHeader の `arbitraryDisplayName` 属性削除
 
@@ -146,7 +172,7 @@ module.exports = {
 
 ## 制限事項
 
-- `ResponseMessage` の `iconGap` 属性は単純に削除されます。親コンポーネントの `icon.gap` への移行は手動で行う必要があります
+- 親コンポーネントに既に `icon` 属性が設定されている場合、`ResponseMessage` の `iconGap` は自動修正されません（手動対応が必要）
 - `ResponseMessage` の `right` 属性は自動修正されません
 - 複雑なコード（変数経由での属性設定など）は自動修正されない場合があります
 

@@ -41,6 +41,7 @@ module.exports = {
       renameType: 'ResponseMessage の type 属性は status にリネームされました',
       removeRight: 'ResponseMessage の right 属性は削除されました。このエラーが表示された場合は @group-smarthrui-core に連絡してください',
       removeIconGap: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で icon.gap を使用してください',
+      removeIconGapWithParentIcon: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネントに既に icon が設定されているため、手動で調整してください',
       removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
     },
   },
@@ -217,22 +218,13 @@ function createV90ToV91Checkers(context, sourceCode) {
     const children = getJSXElementChildren(responseMessageElement)
 
     if (parent.hasIcon) {
-      // パターンA: 親に icon がある
+      // パターンA: 親に icon がある → エラーのみ（自動修正なし）
       context.report({
         node: iconGapAttr,
-        messageId: 'removeIconGap',
-        fix(fixer) {
-          return fixIconGapWithParentIcon(
-            fixer,
-            parent,
-            responseMessageElement,
-            children,
-            iconGapValue
-          )
-        },
+        messageId: 'removeIconGapWithParentIcon',
       })
     } else {
-      // パターンB: 親に icon がない
+      // パターンB: 親に icon がない → ResponseMessage の UI を再現
       const iconName = STATUS_ICON_MAP[statusValue]
       context.report({
         node: iconGapAttr,
@@ -362,25 +354,6 @@ function createV90ToV91Checkers(context, sourceCode) {
       .map((child) => sourceCode.getText(child))
       .join('')
       .trim()
-  }
-
-  function fixIconGapWithParentIcon(fixer, parent, responseMessageElement, children, iconGapValue) {
-    if (parent.type === 'Heading') {
-      // Heading の場合
-      const iconValue = sourceCode.getText(parent.iconAttr.value)
-      const newIconValue = `{{ prefix: ${iconValue.replace(/^{|}$/g, '')}, gap: ${iconGapValue} }}`
-      return [
-        fixer.replaceText(responseMessageElement, children),
-        fixer.replaceText(parent.iconAttr.value, newIconValue),
-      ]
-    } else {
-      // FormControl/Fieldset の場合: label/legend を object 形式に変換
-      const attr = parent.labelAttr || parent.legendAttr
-      const iconValue = sourceCode.getText(parent.iconAttr.value)
-      const newIconValue = `{ prefix: ${iconValue.replace(/^{|}$/g, '')}, gap: ${iconGapValue} }`
-      const newValue = `{{ text: ${children}, icon: ${newIconValue} }}`
-      return fixer.replaceText(attr.value, newValue)
-    }
   }
 
   function fixIconGapWithoutParentIcon(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {

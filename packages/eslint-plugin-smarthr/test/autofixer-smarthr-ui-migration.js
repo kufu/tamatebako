@@ -253,18 +253,18 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
-    // 4. ResponseMessage の iconGap: パターンA（親に icon がある）
+    // 4. ResponseMessage の iconGap: パターンA（親に icon がある → エラーのみ）
     {
       code: `<Heading icon={<FaUserIcon />}><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaUserIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      output: null,
       options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
+      errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
     {
       code: `<Heading icon={<FaCheckIcon />}><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      output: null,
       options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
+      errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
 
     // 4. ResponseMessage の iconGap: FormControl
@@ -283,18 +283,27 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
-    // 4. ResponseMessage の iconGap: ネストが深い場合
+    // 4. ResponseMessage の iconGap: ネストが深い場合（親に icon なし）
     {
       code: `<Heading><div><span><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></span></div></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}><div><span>Xxxx</span></div></Heading>`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },
+    // 4. ResponseMessage の iconGap: ネストが深い場合（親に icon あり → エラーのみ）
     {
       code: `<Heading icon={<FaUserIcon />}><div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div></Heading>`,
-      output: `<Heading icon={{ prefix: <FaUserIcon />, gap: 0.5 }}><div>Xxxx</div></Heading>`,
+      output: null,
       options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
+      errors: [{ messageId: 'removeIconGapWithParentIcon' }],
+    },
+
+    // 4. ResponseMessage の iconGap: FormControl に icon がある場合（エラーのみ）
+    {
+      code: `<FormControl label={{ text: <ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>, icon: <FaUserIcon /> }} />`,
+      output: null,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
 
     // 5. AppHeader の arbitraryDisplayName 削除

@@ -157,20 +157,9 @@ function createV90ToV91Checkers(context, sourceCode) {
           })
         }
 
-        // 4. iconGap 削除
+        // 4. iconGap 削除と移行
         if (attrName === 'iconGap') {
-          context.report({
-            node: attr,
-            messageId: 'removeIconGap',
-            fix(fixer) {
-              // 属性とその前のスペースを削除
-              const tokenBefore = sourceCode.getTokenBefore(attr)
-              if (tokenBefore && tokenBefore.range[1] < attr.range[0]) {
-                return fixer.removeRange([tokenBefore.range[1], attr.range[1]])
-              }
-              return fixer.remove(attr)
-            },
-          })
+          handleIconGapMigration(node, attr)
         }
       })
     },
@@ -190,5 +179,222 @@ function createV90ToV91Checkers(context, sourceCode) {
         },
       })
     },
+  }
+
+  function handleIconGapMigration(responseMessageNode, iconGapAttr) {
+    // ResponseMessage の属性を取得
+    const statusAttr = responseMessageNode.attributes.find(
+      (a) => a.type === 'JSXAttribute' && a.name.name === 'status'
+    )
+    const typeAttr = responseMessageNode.attributes.find(
+      (a) => a.type === 'JSXAttribute' && a.name.name === 'type'
+    )
+
+    const statusValue = getAttributeValue(statusAttr || typeAttr) || 'info'
+    const iconGapValue = getAttributeValue(iconGapAttr)
+
+    // 親を遡って Heading/FormControl/Fieldset を探す
+    const parent = findParentComponent(responseMessageNode)
+
+    if (!parent) {
+      // パターンC: 適切な親が見つからない → iconGap のみ削除
+      context.report({
+        node: iconGapAttr,
+        messageId: 'removeIconGap',
+        fix(fixer) {
+          const tokenBefore = sourceCode.getTokenBefore(iconGapAttr)
+          if (tokenBefore && tokenBefore.range[1] < iconGapAttr.range[0]) {
+            return fixer.removeRange([tokenBefore.range[1], iconGapAttr.range[1]])
+          }
+          return fixer.remove(iconGapAttr)
+        },
+      })
+      return
+    }
+
+    // ResponseMessage の children を取得
+    const responseMessageElement = responseMessageNode.parent
+    const children = getJSXElementChildren(responseMessageElement)
+
+    if (parent.hasIcon) {
+      // パターンA: 親に icon がある
+      context.report({
+        node: iconGapAttr,
+        messageId: 'removeIconGap',
+        fix(fixer) {
+          return fixIconGapWithParentIcon(
+            fixer,
+            parent,
+            responseMessageElement,
+            children,
+            iconGapValue
+          )
+        },
+      })
+    } else {
+      // パターンB: 親に icon がない
+      const iconName = STATUS_ICON_MAP[statusValue]
+      context.report({
+        node: iconGapAttr,
+        messageId: 'removeIconGap',
+        fix(fixer) {
+          return fixIconGapWithoutParentIcon(
+            fixer,
+            parent,
+            responseMessageElement,
+            children,
+            iconName,
+            iconGapValue
+          )
+        },
+      })
+    }
+  }
+
+  function findParentComponent(node) {
+    let current = node.parent
+
+    while (current) {
+      if (current.type === 'Program') break
+
+      if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
+        const name = current.openingElement.name.name
+
+        if (name === 'Heading') {
+          const iconAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+          )
+          return {
+            type: 'Heading',
+            element: current,
+            node: current.openingElement,
+            iconAttr,
+            hasIcon: !!iconAttr,
+          }
+        }
+
+        if (name === 'FormControl') {
+          const labelAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
+          )
+          if (labelAttr && isResponseMessageInAttribute(labelAttr, node)) {
+            const iconAttr = getLabelIconAttribute(labelAttr)
+            return {
+              type: 'FormControl',
+              element: current,
+              node: current.openingElement,
+              labelAttr,
+              iconAttr,
+              hasIcon: !!iconAttr,
+            }
+          }
+        }
+
+        if (name === 'Fieldset') {
+          const legendAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
+          )
+          if (legendAttr && isResponseMessageInAttribute(legendAttr, node)) {
+            const iconAttr = getLabelIconAttribute(legendAttr)
+            return {
+              type: 'Fieldset',
+              element: current,
+              node: current.openingElement,
+              legendAttr,
+              iconAttr,
+              hasIcon: !!iconAttr,
+            }
+          }
+        }
+      }
+
+      current = current.parent
+    }
+
+    return null
+  }
+
+  function isResponseMessageInAttribute(attr, responseMessageNode) {
+    let current = responseMessageNode
+    while (current) {
+      if (current === attr) return true
+      current = current.parent
+    }
+    return false
+  }
+
+  function getLabelIconAttribute(labelAttr) {
+    if (
+      labelAttr.value &&
+      labelAttr.value.type === 'JSXExpressionContainer' &&
+      labelAttr.value.expression.type === 'ObjectExpression'
+    ) {
+      const iconProp = labelAttr.value.expression.properties.find(
+        (p) => p.type === 'Property' && p.key.name === 'icon'
+      )
+      return iconProp
+    }
+    return null
+  }
+
+  function getAttributeValue(attr) {
+    if (!attr || !attr.value) return null
+
+    if (attr.value.type === 'Literal') {
+      return attr.value.value
+    }
+
+    if (attr.value.type === 'JSXExpressionContainer') {
+      const expr = attr.value.expression
+      if (expr.type === 'Literal') {
+        return expr.value
+      }
+      return sourceCode.getText(expr)
+    }
+
+    return null
+  }
+
+  function getJSXElementChildren(element) {
+    if (!element.children || element.children.length === 0) return ''
+
+    return element.children
+      .map((child) => sourceCode.getText(child))
+      .join('')
+      .trim()
+  }
+
+  function fixIconGapWithParentIcon(fixer, parent, responseMessageElement, children, iconGapValue) {
+    if (parent.type === 'Heading') {
+      // Heading の場合
+      const iconValue = sourceCode.getText(parent.iconAttr.value)
+      const newIconValue = `{{ prefix: ${iconValue.replace(/^{|}$/g, '')}, gap: ${iconGapValue} }}`
+      return [
+        fixer.replaceText(responseMessageElement, children),
+        fixer.replaceText(parent.iconAttr.value, newIconValue),
+      ]
+    } else {
+      // FormControl/Fieldset の場合: label/legend を object 形式に変換
+      const attr = parent.labelAttr || parent.legendAttr
+      const iconValue = sourceCode.getText(parent.iconAttr.value)
+      const newIconValue = `{ prefix: ${iconValue.replace(/^{|}$/g, '')}, gap: ${iconGapValue} }`
+      const newValue = `{{ text: ${children}, icon: ${newIconValue} }}`
+      return fixer.replaceText(attr.value, newValue)
+    }
+  }
+
+  function fixIconGapWithoutParentIcon(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
+    if (parent.type === 'Heading') {
+      // Heading の場合
+      return [
+        fixer.replaceText(responseMessageElement, children),
+        fixer.insertTextAfter(parent.node.name, ` icon={{ prefix: <${iconName} />, gap: ${iconGapValue} }}`),
+      ]
+    } else {
+      // FormControl/Fieldset の場合: label/legend を object 形式に変換
+      const attr = parent.labelAttr || parent.legendAttr
+      const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${iconGapValue} } }}`
+      return fixer.replaceText(attr.value, newValue)
+    }
   }
 }

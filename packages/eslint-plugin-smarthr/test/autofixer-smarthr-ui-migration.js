@@ -213,16 +213,72 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
-    // 4. ResponseMessage の iconGap: 単純削除
+    // 4. ResponseMessage の iconGap: 単純削除（親がない場合）
     {
       code: `<ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>`,
       output: `<ResponseMessage status="success">Xxxx</ResponseMessage>`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },
+
+    // 4. ResponseMessage の iconGap: パターンB（親に icon がない）
     {
       code: `<Heading><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading><ResponseMessage status="success">Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading><ResponseMessage status="info" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleInfoIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading><ResponseMessage status="warning" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <WarningIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading><ResponseMessage status="error" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleExclamationIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading><ResponseMessage status="sync" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaRotateIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+
+    // 4. ResponseMessage の iconGap: パターンA（親に icon がある）
+    {
+      code: `<Heading icon={<FaUserIcon />}><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaUserIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading icon={<FaCheckIcon />}><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+
+    // 4. ResponseMessage の iconGap: FormControl
+    {
+      code: `<FormControl label={<ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>} />`,
+      output: `<FormControl label={{ text: Xxxx, icon: { prefix: <FaCircleCheckIcon />, gap: 0.5 } }} />`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+
+    // 4. ResponseMessage の iconGap: Fieldset
+    {
+      code: `<Fieldset legend={<ResponseMessage status="error" iconGap={0.5}>Xxxx</ResponseMessage>} />`,
+      output: `<Fieldset legend={{ text: Xxxx, icon: { prefix: <FaCircleExclamationIcon />, gap: 0.5 } }} />`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },

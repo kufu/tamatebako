@@ -1,5 +1,6 @@
 # eslint-plugin-smarthr
 
+- [autofixer-smarthr-ui-v90-to-v91](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/autofixer-smarthr-ui-v90-to-v91) （一時的な移行支援ルール）
 - [a11y-anchor-has-href-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-anchor-has-href-attribute)
 - [a11y-aria-labelledby](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-aria-labelledby)
 - [a11y-clickable-element-has-text](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-clickable-element-has-text)

@@ -283,6 +283,20 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
+    // 4. ResponseMessage の iconGap: ネストが深い場合
+    {
+      code: `<Heading><div><span><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></span></div></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}><div><span>Xxxx</span></div></Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Heading icon={<FaUserIcon />}><div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div></Heading>`,
+      output: `<Heading icon={{ prefix: <FaUserIcon />, gap: 0.5 }}><div>Xxxx</div></Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+
     // 5. AppHeader の arbitraryDisplayName 削除
     {
       code: `<AppHeader arbitraryDisplayName="山田太郎" email="test@example.com" />`,

@@ -40,11 +40,49 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'missingOptions' }],
     },
 
-    // サポートされていないバージョン
+    // サポートされていないバージョン（完全にサポート外）
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       options: [{ from: 'v91', to: 'v92' }],
       errors: [{ messageId: 'unsupportedVersion' }],
+    },
+
+    // 複数バージョンスキップ: v90→v92（v91→v92が存在しない場合）
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      output: `import { ControlledActionDialog } from 'smarthr-ui'`,
+      options: [{ from: 'v90', to: 'v92' }],
+      errors: [
+        {
+          messageId: 'skippedVersion',
+          data: { version: 'v92' },
+        },
+        {
+          messageId: 'renameDialog',
+          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
+        },
+      ],
+    },
+
+    // 複数バージョンスキップ: v90→v93（v91→v92, v92→v93が存在しない場合）
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      output: `import { ControlledActionDialog } from 'smarthr-ui'`,
+      options: [{ from: 'v90', to: 'v93' }],
+      errors: [
+        {
+          messageId: 'skippedVersion',
+          data: { version: 'v92' },
+        },
+        {
+          messageId: 'skippedVersion',
+          data: { version: 'v93' },
+        },
+        {
+          messageId: 'renameDialog',
+          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
+        },
+      ],
     },
 
     // 1. Dialog コンポーネントのリネーム: import

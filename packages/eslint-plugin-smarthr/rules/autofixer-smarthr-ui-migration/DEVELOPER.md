@@ -12,11 +12,14 @@
 2. versionディレクトリを作成（`versions/vXX-to-vYY/`）
 3. 移行ルール実装ファイルを作成（`versions/vXX-to-vYY/index.js`）
 4. 移行ガイドを作成（`versions/vXX-to-vYY/README.md`）
-5. テストケースを作成（`versions/vXX-to-vYY/test.js`）
-6. VERSION_MODULES に登録（`index.js`）
-7. メインテストファイルを更新（`test/autofixer-smarthr-ui-migration.js`）
-8. README を更新（サポートバージョンテーブル）
-9. **このDEVELOPER.mdを更新**（AIアシスタント用プロンプトの参考ファイルを最新versionに更新）
+5. **実装参考ドキュメントを作成**（`versions/vXX-to-vYY/REFERENCE.md`）
+   - 前versionのREFERENCE.mdをベースにコピー
+   - 今回のversionに特有のパターンを追加
+6. テストケースを作成（`versions/vXX-to-vYY/test.js`）
+7. VERSION_MODULES に登録（`index.js`）
+8. メインテストファイルを更新（`test/autofixer-smarthr-ui-migration.js`）
+9. README を更新（サポートバージョンテーブル）
+10. **このDEVELOPER.mdを更新**（最新versionへの参照を更新）
 
 ## ファイル構成
 
@@ -28,11 +31,13 @@ rules/autofixer-smarthr-ui-migration/
 ├── versions/
 │   ├── v90-to-v91/                     # v90→v91の移行ルール
 │   │   ├── index.js                   # 移行ルール実装
-│   │   ├── README.md                  # 移行ガイド
+│   │   ├── README.md                  # 移行ガイド（ユーザー向け）
+│   │   ├── REFERENCE.md               # 実装参考（開発者向け）
 │   │   └── test.js                    # テストケース
 │   └── vXX-to-vYY/                     # ← 新規追加
 │       ├── index.js                   # 移行ルール実装
-│       ├── README.md                  # 移行ガイド
+│       ├── README.md                  # 移行ガイド（ユーザー向け）
+│       ├── REFERENCE.md               # 実装参考（開発者向け）
 │       └── test.js                    # テストケース
 └── test/
     └── autofixer-smarthr-ui-migration.js  # メインテスト（共通部分 + version別テストの統合）
@@ -51,10 +56,11 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 ## 参考にするファイル
 
 必ず以下のファイルを読んで、実装パターンを踏襲してください（最新のversionディレクトリを参照）：
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/index.js
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js
-- test/autofixer-smarthr-ui-migration.js
+- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/REFERENCE.md（実装パターンの詳細説明）
+- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/index.js（実装例）
+- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md（ユーザー向け移行ガイド）
+- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js（テストケース）
+- test/autofixer-smarthr-ui-migration.js（メインテスト）
 
 ## 対応する変更
 
@@ -85,16 +91,20 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    - createCheckers関数の実装
    - 必要に応じてヘルパー関数
 
-3. `versions/v[XX]-to-v[YY]/README.md` を作成
+3. `versions/v[XX]-to-v[YY]/README.md` を作成（ユーザー向け移行ガイド）
    - 各変更の説明
    - Before/Afterのコード例
    - 制限事項
 
-4. `versions/v[XX]-to-v[YY]/test.js` を作成
+4. `versions/v[XX]-to-v[YY]/REFERENCE.md` を作成（開発者向け実装参考）
+   - 前versionのREFERENCE.mdをベースにコピー
+   - 今回のversionに特有の実装パターンを追加
+
+5. `versions/v[XX]-to-v[YY]/test.js` を作成
    - valid: v[YY]形式が正常に通ること
    - invalid: v[XX]形式が検出されて修正されること
 
-5. `index.js`のVERSION_MODULESに登録
+6. `index.js`のVERSION_MODULESに登録
    ```javascript
    const v[XX]Tov[YY] = require('./versions/v[XX]-to-v[YY]/index')
 
@@ -104,7 +114,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    }
    ```
 
-6. `test/autofixer-smarthr-ui-migration.js` を更新
+7. `test/autofixer-smarthr-ui-migration.js` を更新
    ```javascript
    const v[XX]Tov[YY]Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v[XX]-to-v[YY]/test')
 
@@ -121,11 +131,11 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    })
    ```
 
-7. README.mdのサポートバージョンテーブルを更新
+8. README.mdのサポートバージョンテーブルを更新
 
-8. **DEVELOPER.mdを更新**
+9. **DEVELOPER.mdを更新**
    - AIアシスタント用プロンプトの「参考にするファイル」を最新versionに更新
-   - 既存実装の参考ポイントで言及しているversionを最新に更新
+   - 「実装の参考ポイント」セクションの「最新version」リンクを更新
 
 ## 注意事項
 
@@ -138,9 +148,9 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
 実装が完了したら、**必ずこのDEVELOPER.mdを更新**してください：
 
-1. 「参考にするファイル」セクションで、v90-to-v91を今回追加したversionに変更
-2. 「既存実装の参考ポイント」セクションで言及しているversionを今回追加したversionに更新
-3. 上記の変更により、次回のversion追加時により適切な実装パターンが参照されるようになります
+1. 「参考にするファイル」セクション（AIアシスタント用プロンプト内）で、v90-to-v91を今回追加したversionに変更
+2. 「実装の参考ポイント」セクションの「最新version」リンクを今回追加したversionに更新
+3. `versions/vXX-to-vYY/REFERENCE.md` を作成（前versionのREFERENCE.mdをベースに、今回特有のパターンを追加）
 
 これにより、このドキュメント自体が常に最新の実装を参照し、**自己進化**します。
 ```
@@ -156,10 +166,14 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
   - [ ] createCheckers関数が実装されている
   - [ ] ヘルパー関数にJSDocコメントがある
   - [ ] ファイル冒頭に変更サマリーコメントがある
-- [ ] `versions/vXX-to-vYY/README.md` を作成
+- [ ] `versions/vXX-to-vYY/README.md` を作成（ユーザー向け移行ガイド）
   - [ ] 各変更の説明がある
   - [ ] Before/Afterのコード例がある
   - [ ] 制限事項が記載されている
+- [ ] `versions/vXX-to-vYY/REFERENCE.md` を作成（開発者向け実装参考）
+  - [ ] 前versionのREFERENCE.mdをベースにコピー
+  - [ ] 今回のversionに特有の実装パターンを追加
+  - [ ] よくある実装パターンセクションを更新
 - [ ] `versions/vXX-to-vYY/test.js` を作成
   - [ ] validケースがある（v[YY]形式）
   - [ ] invalidケースがある（v[XX]形式の検出と修正）
@@ -170,8 +184,8 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - [ ] `test/autofixer-smarthr-ui-migration.js` を更新（version別テストをインポート）
 - [ ] README.mdのサポートバージョンテーブルに追加
 - [ ] **DEVELOPER.mdを更新**
-  - [ ] AIアシスタント用プロンプトの参考ファイルを最新versionに更新
-  - [ ] 「既存実装の参考ポイント」セクションで言及するversionを最新に更新
+  - [ ] AIアシスタント用プロンプトの「参考にするファイル」を最新versionに更新
+  - [ ] 「実装の参考ポイント」セクションの「最新version」リンクを更新
 
 ### 動作確認
 - [ ] `npm test -- test/autofixer-smarthr-ui-migration.js` が通過
@@ -184,28 +198,20 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
 https://github.com/kufu/smarthr-ui/releases
 
-### 既存実装の参考ポイント
+### 実装の参考ポイント
 
-**重要:** 新しいバージョンを追加したら、このセクションで言及しているversionを最新のものに更新してください。
+各versionディレクトリに`REFERENCE.md`があり、実装パターンや注意点が記載されています。
 
-#### 最新version（v90-to-v91）の構造
-1. ファイル冒頭のコメント（対応する変更のサマリー）
-2. 定数定義（DIALOG_COMPONENTS、STATUS_ICON_MAPなど）
-3. messages定義（エラーメッセージ）
-4. createCheckers関数
-   - 各変更に対応するセレクターとハンドラー
-   - fix関数での自動修正ロジック
-5. ヘルパー関数（必要に応じて、JSDocコメント付き）
+**最新version:** [v90-to-v91/REFERENCE.md](./versions/v90-to-v91/REFERENCE.md)
 
-#### メッセージの書き方
-- 何が変更されたのか明確に
-- 必要に応じて対処方法も含める
-- `{{変数名}}` で動的な値を埋め込める
+このドキュメントには以下が含まれます：
+- ファイル構造と各セクションの説明
+- 定数定義、messages、createCheckers関数の書き方
+- 自動修正の判断基準
+- よくある実装パターン
+- トラブルシューティング
 
-#### 自動修正の判断基準
-- **自動修正可能**: 機械的に100%正しく変換できる場合
-- **エラーのみ**: 手動確認が必要な場合（意図が不明、複数の対処方法がある）
-- **変換しない**: 複雑すぎる、安全性が確保できない場合
+**重要:** 新しいバージョンを追加したら、上記の「最新version」リンクを更新してください。
 
 ## トラブルシューティング
 

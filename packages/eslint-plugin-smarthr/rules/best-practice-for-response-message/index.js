@@ -59,8 +59,7 @@ function getAttributeValue(attr, sourceCode) {
  * JSX要素の子要素をテキストとして取得
  */
 function getJSXElementChildren(element, sourceCode) {
-  if (!element.children || element.children.length === 0) return ''
-
+  if (!element.children?.length) return ''
   return element.children.reduce((acc, child) => acc + sourceCode.getText(child), '').trim()
 }
 
@@ -68,8 +67,7 @@ function getJSXElementChildren(element, sourceCode) {
  * Heading要素の子要素を取得し、ResponseMessageをその子要素で置き換え
  */
 function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseMessageElement, sourceCode) {
-  if (!headingElement.children || headingElement.children.length === 0) return ''
-
+  if (!headingElement.children?.length) return ''
   return headingElement.children.reduce((acc, child) => {
     // ResponseMessage要素の場合は、その子要素のテキストに置き換え
     return child === responseMessageElement

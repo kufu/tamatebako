@@ -40,21 +40,20 @@ function getLabelIconAttribute(labelAttr) {
  * 属性値を取得
  */
 function getAttributeValue(attr, sourceCode) {
-  if (!attr || !attr.value) return null
-
-  switch (attr.value.type) {
-    case 'Literal':
-      return attr.value.value
-    case 'JSXExpressionContainer':
-      switch (attr.value.expression.type) {
-        case 'Literal':
-          return attr.value.expression.value
-        default:
-          return sourceCode.getText(attr.value.expression)
-      }
-    default:
-      return null
+  if (attr?.value) {
+    switch (attr.value.type) {
+      case 'Literal':
+        return attr.value.value
+      case 'JSXExpressionContainer':
+        switch (attr.value.expression.type) {
+          case 'Literal':
+            return attr.value.expression.value
+          default:
+            return sourceCode.getText(attr.value.expression)
+        }
+    }
   }
+  return null
 }
 
 /**

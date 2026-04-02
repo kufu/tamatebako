@@ -4,6 +4,8 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 
 オプションで移行元・移行先のバージョンを指定することで、該当する breaking changes を検出し、自動修正します。
 
+**重要:** このルールは一時的な使用を想定しています。移行完了後は無効化してください。
+
 ## オプション
 
 このルールは `from` と `to` オプションの指定が必須です。
@@ -16,106 +18,36 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 }
 ```
 
-### サポートされているバージョン
+### 複数バージョンのスキップ
 
-- `v90` → `v91`
+複数のバージョンをまたぐ移行も可能です（例: `v90` → `v93`）。この場合、存在する移行ルールを自動的に適用し、実装されていないバージョンについては警告を表示します。
 
-## v90 → v91 の対応内容
-
-### 1. Dialog コンポーネントのリネーム
-
-v91 では Dialog 系コンポーネントが Controlled プレフィックス付きにリネームされました。
-
-```tsx
-// Incorrect
-import { ActionDialog, FormDialog } from 'smarthr-ui'
-<ActionDialog>...</ActionDialog>
-<FormDialog>...</FormDialog>
-
-// Correct
-import { ControlledActionDialog, ControlledFormDialog } from 'smarthr-ui'
-<ControlledActionDialog>...</ControlledActionDialog>
-<ControlledFormDialog>...</ControlledFormDialog>
+```javascript
+{
+  "rules": {
+    // v90→v91とv92→v93のルールが適用される（v91→v92がない場合は警告）
+    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v93" }]
+  }
+}
 ```
 
-**対応コンポーネント:**
-- `ActionDialog` → `ControlledActionDialog`
-- `FormDialog` → `ControlledFormDialog`
-- `MessageDialog` → `ControlledMessageDialog`
-- `StepFormDialog` → `ControlledStepFormDialog`
+## サポートされているバージョン
 
-### 2. ResponseMessage の `type` → `status` リネーム
+| バージョン | 詳細 |
+|-----------|------|
+| `v90` → `v91` | [移行ガイド](./versions/v90-to-v91.md) |
 
-```tsx
-// Incorrect
-<ResponseMessage type="success">Xxxx</ResponseMessage>
+## 主な対応内容（v90 → v91）
 
-// Correct
-<ResponseMessage status="success">Xxxx</ResponseMessage>
-```
+以下の5つの破壊的変更に対応しています：
 
-### 3. ResponseMessage の `right` 属性削除
+1. **Dialog コンポーネントのリネーム** - `ActionDialog` → `ControlledActionDialog` など
+2. **ResponseMessage の `type` → `status` リネーム**
+3. **ResponseMessage の `right` 属性削除**（エラー検出のみ）
+4. **ResponseMessage の `iconGap` 属性削除と親コンポーネントへの移行**
+5. **AppHeader の `arbitraryDisplayName` 属性削除**
 
-`right` 属性は削除されました。このエラーが表示された場合は @group-smarthrui-core に連絡してください。
-
-```tsx
-// Incorrect
-<ResponseMessage right>Xxxx</ResponseMessage>
-```
-
-**注意:** このケースは自動修正されません。各プロダクトで `right` 属性が使われていないことは確認済みですが、もしエラーが発生した場合は想定外のケースのため、コアチームへの報告が必要です。
-
-### 4. ResponseMessage の `iconGap` 属性削除と移行
-
-`iconGap` 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で `icon.gap` を使用してください。
-
-**親コンポーネントに icon 属性がない場合（自動修正）:**
-
-ResponseMessage と同じ UI になるように、status に応じた icon を追加します。
-
-```tsx
-// Incorrect
-<Heading><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>
-
-// Correct（自動修正）
-<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>
-```
-
-**親コンポーネントに既に icon 属性がある場合（エラーのみ）:**
-
-既に icon が設定されている場合は、意図的な可能性があるため自動修正されません。手動で調整してください。
-
-```tsx
-// エラー（自動修正なし）
-<Heading icon={<CustomIcon />}><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Heading>
-
-// 手動で修正
-<Heading icon={{ prefix: <CustomIcon />, gap: 0.5 }}>Xxxx</Heading>
-```
-
-**適切な親がない場合（自動修正）:**
-
-iconGap のみ削除されます。
-
-```tsx
-// Incorrect
-<div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div>
-
-// Correct（自動修正）
-<div><ResponseMessage>Xxxx</ResponseMessage></div>
-```
-
-### 5. AppHeader の `arbitraryDisplayName` 属性削除
-
-`arbitraryDisplayName` 属性は削除されました。表示名は `email`、`empCode`、`firstName`、`lastName` から自動生成されます。
-
-```tsx
-// Incorrect
-<AppHeader arbitraryDisplayName="山田太郎" email="test@example.com" />
-
-// Correct
-<AppHeader email="test@example.com" />
-```
+詳細は [v90 → v91 移行ガイド](./versions/v90-to-v91.md) を参照してください。
 
 ## 使用方法
 
@@ -172,10 +104,11 @@ module.exports = {
 
 ## 制限事項
 
-- 親コンポーネントに既に `icon` 属性が設定されている場合、`ResponseMessage` の `iconGap` は自動修正されません（手動対応が必要）
-- `ResponseMessage` の `right` 属性は自動修正されません
+- 一部のケースは自動修正されず、手動対応が必要です
 - 複雑なコード（変数経由での属性設定など）は自動修正されない場合があります
+
+詳細は各バージョンの移行ガイドを参照してください。
 
 ## 将来のバージョン対応
 
-今後 v92、v93 などの新しいバージョンがリリースされた際は、このルールに新しいバージョンのサポートを追加していく予定です。
+新しいバージョンがリリースされた際は、このルールに新しいバージョンのサポートを追加していきます。各バージョンの移行ルールは `versions/` ディレクトリに追加されます。

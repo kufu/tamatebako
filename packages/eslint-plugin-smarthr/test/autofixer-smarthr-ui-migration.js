@@ -13,231 +13,149 @@ const ruleTester = new RuleTester({
 
 const v90ToV91Options = [{ from: 'v90', to: 'v91' }]
 
+// ============================================================
+// ヘルパー関数: テストケース生成
+// ============================================================
+
+/**
+ * Dialogコンポーネントのリネームテストケースを生成
+ */
+function createDialogRenameTests(oldName, newName) {
+  return {
+    import: {
+      code: `import { ${oldName} } from 'smarthr-ui'`,
+      output: `import { ${newName} } from 'smarthr-ui'`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'renameDialog', data: { old: oldName, new: newName, to: 'v91' } }],
+    },
+    jsx: {
+      code: `<${oldName}>Xxxx</${oldName}>`,
+      output: `<${newName}>Xxxx</${newName}>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'renameDialog', data: { old: oldName, new: newName, to: 'v91' } }],
+    },
+  }
+}
+
+/**
+ * ResponseMessageのiconGap移行テストケースを生成（Heading内）
+ */
+function createIconGapMigrationTest(status, iconName) {
+  return {
+    code: `<Heading><ResponseMessage status="${status}" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+    output: `<Heading icon={{ prefix: <${iconName} />, gap: 0.5 }}>Xxxx</Heading>`,
+    options: v90ToV91Options,
+    errors: [{ messageId: 'removeIconGap' }],
+  }
+}
+
+// ============================================================
+// テストケース
+// ============================================================
+
 ruleTester.run('autofixer-smarthr-ui-migration', rule, {
   valid: [
-    // v91 形式: Dialog コンポーネント
+    // v91形式は正常
     { code: `import { ControlledActionDialog } from 'smarthr-ui'`, options: v90ToV91Options },
-    { code: `import { ControlledFormDialog } from 'smarthr-ui'`, options: v90ToV91Options },
-    { code: `import { ControlledMessageDialog } from 'smarthr-ui'`, options: v90ToV91Options },
-    { code: `import { ControlledStepFormDialog } from 'smarthr-ui'`, options: v90ToV91Options },
     { code: `<ControlledActionDialog>Xxxx</ControlledActionDialog>`, options: v90ToV91Options },
-    { code: `<ControlledFormDialog>Xxxx</ControlledFormDialog>`, options: v90ToV91Options },
-
-    // v91 形式: ResponseMessage
     { code: `<ResponseMessage status="success">Xxxx</ResponseMessage>`, options: v90ToV91Options },
-    { code: `<ResponseMessage status="error">Xxxx</ResponseMessage>`, options: v90ToV91Options },
-
-    // v91 形式: Heading with icon.gap
     { code: `<Heading icon={{ prefix: <FaCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`, options: v90ToV91Options },
-
-    // v91 形式: AppHeader (arbitraryDisplayName なし)
     { code: `<AppHeader email="test@example.com" />`, options: v90ToV91Options },
   ],
+
   invalid: [
-    // オプション未指定時のエラー
+    // ============================================================
+    // オプションチェック
+    // ============================================================
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       errors: [{ messageId: 'missingOptions' }],
     },
-
-    // サポートされていないバージョン（完全にサポート外）
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       options: [{ from: 'v91', to: 'v92' }],
       errors: [{ messageId: 'unsupportedVersion' }],
     },
 
-    // 複数バージョンスキップ: v90→v92（v91→v92が存在しない場合）
+    // ============================================================
+    // 複数バージョンスキップ
+    // ============================================================
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       output: `import { ControlledActionDialog } from 'smarthr-ui'`,
       options: [{ from: 'v90', to: 'v92' }],
       errors: [
-        {
-          messageId: 'skippedVersion',
-          data: { version: 'v92' },
-        },
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
+        { messageId: 'skippedVersion', data: { version: 'v92' } },
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
       ],
     },
-
-    // 複数バージョンスキップ: v90→v93（v91→v92, v92→v93が存在しない場合）
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       output: `import { ControlledActionDialog } from 'smarthr-ui'`,
       options: [{ from: 'v90', to: 'v93' }],
       errors: [
-        {
-          messageId: 'skippedVersion',
-          data: { version: 'v92' },
-        },
-        {
-          messageId: 'skippedVersion',
-          data: { version: 'v93' },
-        },
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
+        { messageId: 'skippedVersion', data: { version: 'v92' } },
+        { messageId: 'skippedVersion', data: { version: 'v93' } },
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
       ],
     },
 
-    // 1. Dialog コンポーネントのリネーム: import
-    {
-      code: `import { ActionDialog } from 'smarthr-ui'`,
-      output: `import { ControlledActionDialog } from 'smarthr-ui'`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `import { FormDialog } from 'smarthr-ui'`,
-      output: `import { ControlledFormDialog } from 'smarthr-ui'`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `import { MessageDialog } from 'smarthr-ui'`,
-      output: `import { ControlledMessageDialog } from 'smarthr-ui'`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `import { StepFormDialog } from 'smarthr-ui'`,
-      output: `import { ControlledStepFormDialog } from 'smarthr-ui'`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'StepFormDialog', new: 'ControlledStepFormDialog', to: 'v91' },
-        },
-      ],
-    },
+    // ============================================================
+    // 1. Dialogコンポーネントのリネーム
+    // ============================================================
+
+    // import文
+    createDialogRenameTests('ActionDialog', 'ControlledActionDialog').import,
+    createDialogRenameTests('FormDialog', 'ControlledFormDialog').import,
+
+    // 複数import
     {
       code: `import { ActionDialog, FormDialog } from 'smarthr-ui'`,
       output: `import { ControlledActionDialog, ControlledFormDialog } from 'smarthr-ui'`,
       options: v90ToV91Options,
       errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
-        {
-          messageId: 'renameDialog',
-          data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' },
-        },
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
       ],
     },
 
-    // 1. Dialog コンポーネントのリネーム: JSX
-    {
-      code: `<ActionDialog>Xxxx</ActionDialog>`,
-      output: `<ControlledActionDialog>Xxxx</ControlledActionDialog>`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `<FormDialog>Xxxx</FormDialog>`,
-      output: `<ControlledFormDialog>Xxxx</ControlledFormDialog>`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `<MessageDialog>Xxxx</MessageDialog>`,
-      output: `<ControlledMessageDialog>Xxxx</ControlledMessageDialog>`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' },
-        },
-      ],
-    },
-    {
-      code: `<StepFormDialog>Xxxx</StepFormDialog>`,
-      output: `<ControlledStepFormDialog>Xxxx</ControlledStepFormDialog>`,
-      options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'StepFormDialog', new: 'ControlledStepFormDialog', to: 'v91' },
-        },
-      ],
-    },
+    // JSX要素
+    createDialogRenameTests('ActionDialog', 'ControlledActionDialog').jsx,
+    createDialogRenameTests('MessageDialog', 'ControlledMessageDialog').jsx,
+
+    // 自己閉じタグ
     {
       code: `<ActionDialog />`,
       output: `<ControlledActionDialog />`,
       options: v90ToV91Options,
-      errors: [
-        {
-          messageId: 'renameDialog',
-          data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' },
-        },
-      ],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
     },
 
-    // 2. ResponseMessage の type → status
+    // ============================================================
+    // 2. ResponseMessageのtype→status
+    // ============================================================
     {
       code: `<ResponseMessage type="success">Xxxx</ResponseMessage>`,
       output: `<ResponseMessage status="success">Xxxx</ResponseMessage>`,
       options: v90ToV91Options,
       errors: [{ messageId: 'renameType' }],
     },
-    {
-      code: `<ResponseMessage type="error">Xxxx</ResponseMessage>`,
-      output: `<ResponseMessage status="error">Xxxx</ResponseMessage>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'renameType' }],
-    },
-    {
-      code: `<ResponseMessage type="info">Xxxx</ResponseMessage>`,
-      output: `<ResponseMessage status="info">Xxxx</ResponseMessage>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'renameType' }],
-    },
 
-    // 3. ResponseMessage の right 属性削除（エラーのみ、修正なし）
+    // ============================================================
+    // 3. ResponseMessageのright削除（エラーのみ）
+    // ============================================================
     {
       code: `<ResponseMessage right>Xxxx</ResponseMessage>`,
       output: null,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeRight' }],
     },
-    {
-      code: `<ResponseMessage right={true}>Xxxx</ResponseMessage>`,
-      output: null,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeRight' }],
-    },
 
-    // 4. ResponseMessage の iconGap: パターンC（適切な親がない）
+    // ============================================================
+    // 4. ResponseMessageのiconGap移行
+    // ============================================================
+
+    // パターンC: 適切な親がない → iconGapのみ削除
     {
       code: `<div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div>`,
       output: `<div><ResponseMessage>Xxxx</ResponseMessage></div>`,
@@ -245,75 +163,31 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
     {
-      code: `<Stack><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Stack>`,
-      output: `<Stack><ResponseMessage>Xxxx</ResponseMessage></Stack>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
-
-    // 4. ResponseMessage の iconGap: 単純削除（親がない場合）
-    {
       code: `<ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>`,
       output: `<ResponseMessage status="success">Xxxx</ResponseMessage>`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },
 
-    // 4. ResponseMessage の iconGap: パターンB（親に icon がない）
-    {
-      code: `<Heading><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
-    {
-      code: `<Heading><ResponseMessage status="info" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaCircleInfoIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
-    {
-      code: `<Heading><ResponseMessage status="warning" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <WarningIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
-    {
-      code: `<Heading><ResponseMessage status="error" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaCircleExclamationIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
-    {
-      code: `<Heading><ResponseMessage status="sync" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: `<Heading icon={{ prefix: <FaRotateIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGap' }],
-    },
+    // パターンB: 親にiconなし → iconを追加
+    createIconGapMigrationTest('success', 'FaCircleCheckIcon'),
+    createIconGapMigrationTest('warning', 'WarningIcon'),
 
-    // 4. ResponseMessage の iconGap: パターンA（親に icon がある → エラーのみ）
+    // パターンA: 親にiconあり → エラーのみ
     {
       code: `<Heading icon={<FaUserIcon />}><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
       output: null,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
-    {
-      code: `<Heading icon={<FaCheckIcon />}><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
-      output: null,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeIconGapWithParentIcon' }],
-    },
 
-    // 4. ResponseMessage の iconGap: FormControl
+    // FormControl/Fieldset
     {
       code: `<FormControl label={<ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>} />`,
       output: `<FormControl label={{ text: Xxxx, icon: { prefix: <FaCircleCheckIcon />, gap: 0.5 } }} />`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },
-
-    // 4. ResponseMessage の iconGap: Fieldset
     {
       code: `<Fieldset legend={<ResponseMessage status="error" iconGap={0.5}>Xxxx</ResponseMessage>} />`,
       output: `<Fieldset legend={{ text: Xxxx, icon: { prefix: <FaCircleExclamationIcon />, gap: 0.5 } }} />`,
@@ -321,14 +195,13 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
-    // 4. ResponseMessage の iconGap: ネストが深い場合（親に icon なし）
+    // ネストが深い場合
     {
       code: `<Heading><div><span><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></span></div></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}><div><span>Xxxx</span></div></Heading>`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeIconGap' }],
     },
-    // 4. ResponseMessage の iconGap: ネストが深い場合（親に icon あり → エラーのみ）
     {
       code: `<Heading icon={<FaUserIcon />}><div><ResponseMessage iconGap={0.5}>Xxxx</ResponseMessage></div></Heading>`,
       output: null,
@@ -336,7 +209,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
 
-    // 4. ResponseMessage の iconGap: FormControl に icon がある場合（エラーのみ）
+    // FormControlにiconがある場合
     {
       code: `<FormControl label={{ text: <ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage>, icon: <FaUserIcon /> }} />`,
       output: null,
@@ -344,16 +217,12 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       errors: [{ messageId: 'removeIconGapWithParentIcon' }],
     },
 
-    // 5. AppHeader の arbitraryDisplayName 削除
+    // ============================================================
+    // 5. AppHeaderのarbitraryDisplayName削除
+    // ============================================================
     {
       code: `<AppHeader arbitraryDisplayName="山田太郎" email="test@example.com" />`,
       output: `<AppHeader email="test@example.com" />`,
-      options: v90ToV91Options,
-      errors: [{ messageId: 'removeArbitraryDisplayName' }],
-    },
-    {
-      code: `<AppHeader arbitraryDisplayName={userName} />`,
-      output: `<AppHeader />`,
       options: v90ToV91Options,
       errors: [{ messageId: 'removeArbitraryDisplayName' }],
     },

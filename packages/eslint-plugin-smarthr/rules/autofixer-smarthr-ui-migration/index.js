@@ -1,5 +1,23 @@
+/**
+ * smarthr-ui のバージョン間移行を支援する自動修正ルール
+ *
+ * このルールは一時的に使用するもので、移行完了後は無効化してください。
+ *
+ * 使用例:
+ * {
+ *   "rules": {
+ *     "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v91" }]
+ *   }
+ * }
+ *
+ * 複数バージョンをまたぐ移行も可能です（例: v90→v93）。
+ * この場合、存在する移行ルール（v90→v91など）を自動的に適用し、
+ * 実装されていないバージョンについては警告を表示します。
+ */
+
 const v90ToV91 = require('./versions/v90-to-v91')
 
+// サポートしているバージョン間の移行モジュール
 const VERSION_MODULES = {
   'v90-v91': v90ToV91,
 }
@@ -69,34 +87,40 @@ module.exports = {
     const { path, skipped } = migrationResult
 
     // 各ステップのチェッカーを収集してマージ
+    // 例: v90→v92 なら [v90→v91のチェッカー] を収集
     const checkersList = path.map((stepKey) => {
       const module = VERSION_MODULES[stepKey]
       return module.createCheckers(context, sourceCode)
     })
 
-    const merged = mergeCheckers(checkersList)
+    const mergedCheckers = mergeCheckers(checkersList)
 
-    // スキップされたバージョンがある場合は通知
+    // スキップされたバージョンがある場合は警告を追加
+    // 例: v90→v93 で v92 の移行ルールがない場合、v92 について警告
     if (skipped.length > 0) {
-      const existingProgram = merged.Program
-      merged.Program = function (node) {
-        if (existingProgram) {
-          existingProgram.call(this, node)
-        }
-        skipped.forEach((version) => {
-          context.report({
-            node,
-            messageId: 'skippedVersion',
-            data: { version: `v${version}` },
-          })
-        })
-      }
+      addSkippedVersionWarnings(mergedCheckers, context, skipped)
     }
 
-    return merged
+    return mergedCheckers
   },
 }
 
+/**
+ * バージョン間の移行パスを生成する
+ *
+ * @param {string} from - 移行元バージョン（例: "v90"）
+ * @param {string} to - 移行先バージョン（例: "v91"）
+ * @returns {{ path: string[], skipped: number[] } | null} 移行パス情報、または無効な場合はnull
+ *
+ * @example
+ * getMigrationPath('v90', 'v91')
+ * // => { path: ['v90-v91'], skipped: [] }
+ *
+ * @example
+ * getMigrationPath('v90', 'v93')
+ * // v92のモジュールがない場合
+ * // => { path: ['v90-v91'], skipped: [92, 93] }
+ */
 function getMigrationPath(from, to) {
   const fromNum = parseInt(from.replace('v', ''))
   const toNum = parseInt(to.replace('v', ''))
@@ -108,17 +132,19 @@ function getMigrationPath(from, to) {
   const path = []
   const skipped = []
 
+  // fromからtoまでの各ステップについて、移行モジュールが存在するかチェック
   for (let i = fromNum; i < toNum; i++) {
     const stepKey = `v${i}-v${i + 1}`
     if (VERSION_MODULES[stepKey]) {
       path.push(stepKey)
     } else {
-      // 存在しない場合はスキップ（breaking changes がないバージョン）
+      // モジュールが存在しない = 自動修正ルールが未実装
+      // major versionなので必ず破壊的変更があるはずだが、ルールは未実装
       skipped.push(i + 1)
     }
   }
 
-  // 適用可能なステップが1つもない場合はエラー
+  // 適用可能なステップが1つもない場合は、完全にサポート外
   if (path.length === 0) {
     return null
   }
@@ -126,15 +152,25 @@ function getMigrationPath(from, to) {
   return { path, skipped }
 }
 
+/**
+ * 複数のチェッカーオブジェクトを1つにマージする
+ *
+ * 同じセレクターに対する複数のハンドラーがある場合、両方を実行するようにラップする。
+ *
+ * @param {Array<Object>} checkersList - チェッカーオブジェクトの配列
+ * @returns {Object} マージされたチェッカーオブジェクト
+ */
 function mergeCheckers(checkersList) {
   const merged = {}
 
   checkersList.forEach((checkers) => {
     Object.keys(checkers).forEach((selector) => {
       if (!merged[selector]) {
+        // 初めて見るセレクターはそのまま追加
         merged[selector] = checkers[selector]
       } else {
-        // 既存のハンドラーと新しいハンドラーを両方実行
+        // 既に存在するセレクターの場合、両方のハンドラーを順次実行するようラップ
+        // 例: v90→v91とv91→v92で同じImportDeclarationを処理する場合
         const existing = merged[selector]
         const additional = checkers[selector]
         merged[selector] = function (node) {
@@ -146,4 +182,34 @@ function mergeCheckers(checkersList) {
   })
 
   return merged
+}
+
+/**
+ * スキップされたバージョンについての警告を追加する
+ *
+ * Programノードのハンドラーをラップして、スキップされた各バージョンについて
+ * 警告メッセージを表示する。
+ *
+ * @param {Object} checkers - チェッカーオブジェクト（この関数内で直接変更される）
+ * @param {Object} context - ESLintのcontext
+ * @param {number[]} skippedVersions - スキップされたバージョン番号の配列（例: [92, 93]）
+ */
+function addSkippedVersionWarnings(checkers, context, skippedVersions) {
+  const existingProgramHandler = checkers.Program
+
+  checkers.Program = function (node) {
+    // 既存のProgramハンドラーがあれば先に実行
+    if (existingProgramHandler) {
+      existingProgramHandler.call(this, node)
+    }
+
+    // スキップされた各バージョンについて警告を表示
+    skippedVersions.forEach((versionNumber) => {
+      context.report({
+        node,
+        messageId: 'skippedVersion',
+        data: { version: `v${versionNumber}` },
+      })
+    })
+  }
 }

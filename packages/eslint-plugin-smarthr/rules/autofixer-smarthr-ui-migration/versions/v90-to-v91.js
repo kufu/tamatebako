@@ -1,3 +1,23 @@
+/**
+ * smarthr-ui v90 → v91 移行ルール
+ *
+ * v91での破壊的変更に対応する自動修正を提供します。
+ *
+ * 対応する破壊的変更:
+ * 1. Dialogコンポーネントのリネーム (例: ActionDialog → ControlledActionDialog)
+ * 2. ResponseMessage の type → status リネーム
+ * 3. ResponseMessage の right 属性削除
+ * 4. ResponseMessage の iconGap 属性削除と親コンポーネントへの移行
+ * 5. AppHeader の arbitraryDisplayName 属性削除
+ *
+ * 参考: https://github.com/kufu/smarthr-ui/releases/tag/smarthr-ui-v91.0.0
+ */
+
+// ============================================================
+// 定数定義
+// ============================================================
+
+// 1. Dialogコンポーネントのリネームマッピング
 const DIALOG_COMPONENTS = {
   ActionDialog: 'ControlledActionDialog',
   FormDialog: 'ControlledFormDialog',
@@ -5,6 +25,7 @@ const DIALOG_COMPONENTS = {
   StepFormDialog: 'ControlledStepFormDialog',
 }
 
+// 4. ResponseMessageのstatusに対応するアイコンのマッピング
 const STATUS_ICON_MAP = {
   info: 'FaCircleInfoIcon',
   success: 'FaCircleCheckIcon',
@@ -12,6 +33,13 @@ const STATUS_ICON_MAP = {
   error: 'FaCircleExclamationIcon',
   sync: 'FaRotateIcon',
 }
+
+// v91を示す定数（メッセージで使用）
+const TARGET_VERSION = 'v91'
+
+// ============================================================
+// モジュールエクスポート
+// ============================================================
 
 module.exports = {
   messages: {
@@ -25,7 +53,13 @@ module.exports = {
 
   createCheckers(context, sourceCode) {
     return {
-      // 1. Dialog コンポーネントのリネーム (import)
+      // ============================================================
+      // 1. Dialogコンポーネントのリネーム
+      // ============================================================
+
+      // import文での検出と修正
+      // 例: import { ActionDialog } from 'smarthr-ui'
+      //  → import { ControlledActionDialog } from 'smarthr-ui'
       ImportDeclaration(node) {
         if (node.source.value !== 'smarthr-ui') return
 
@@ -39,7 +73,7 @@ module.exports = {
             context.report({
               node: specifier,
               messageId: 'renameDialog',
-              data: { old: importedName, new: newName, to: 'v91' },
+              data: { old: importedName, new: newName, to: TARGET_VERSION },
               fix(fixer) {
                 return fixer.replaceText(specifier.imported, newName)
               },
@@ -48,7 +82,9 @@ module.exports = {
         })
       },
 
-      // 1. Dialog コンポーネントのリネーム (JSX)
+      // JSX要素での検出と修正
+      // 例: <ActionDialog>...</ActionDialog>
+      //  → <ControlledActionDialog>...</ControlledActionDialog>
       'JSXOpeningElement[name.name=/^(ActionDialog|FormDialog|MessageDialog|StepFormDialog)$/]'(node) {
         const componentName = node.name.name
         const newName = DIALOG_COMPONENTS[componentName]
@@ -57,11 +93,11 @@ module.exports = {
           context.report({
             node,
             messageId: 'renameDialog',
-            data: { old: componentName, new: newName, to: 'v91' },
+            data: { old: componentName, new: newName, to: TARGET_VERSION },
             fix(fixer) {
               const fixes = [fixer.replaceText(node.name, newName)]
 
-              // 終了タグも修正
+              // 終了タグも修正（<Component></Component> 形式の場合）
               const jsxElement = node.parent
               if (jsxElement.closingElement) {
                 fixes.push(fixer.replaceText(jsxElement.closingElement.name, newName))
@@ -73,7 +109,14 @@ module.exports = {
         }
       },
 
-      // 2, 3, 4. ResponseMessage の属性
+      // ============================================================
+      // 2, 3, 4. ResponseMessageの属性変更
+      // ============================================================
+
+      // ResponseMessageの各属性をチェックして対応
+      // - type → status リネーム
+      // - right 属性削除
+      // - iconGap 属性削除と親への移行
       'JSXOpeningElement[name.name=/ResponseMessage$/]'(node) {
         node.attributes.forEach((attr) => {
           if (attr.type !== 'JSXAttribute') return
@@ -106,13 +149,18 @@ module.exports = {
         })
       },
 
-      // 5. AppHeader の arbitraryDisplayName 削除
+      // ============================================================
+      // 5. AppHeaderのarbitraryDisplayName属性削除
+      // ============================================================
+
+      // arbitraryDisplayName属性を検出して削除
+      // 表示名はemail, empCode, firstName, lastNameから自動生成されるため不要
       'JSXOpeningElement[name.name="AppHeader"] > JSXAttribute[name.name="arbitraryDisplayName"]'(node) {
         context.report({
           node,
           messageId: 'removeArbitraryDisplayName',
           fix(fixer) {
-            // 属性とその前のスペースを削除
+            // 属性とその前のスペース/改行を削除
             const tokenBefore = sourceCode.getTokenBefore(node)
             if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
               return fixer.removeRange([tokenBefore.range[1], node.range[1]])
@@ -123,6 +171,18 @@ module.exports = {
       },
     }
 
+    // ============================================================
+    // ヘルパー関数（iconGap移行用）
+    // ============================================================
+
+    /**
+     * ResponseMessageのiconGap属性の移行処理
+     *
+     * 以下の3パターンに対応:
+     * - パターンA: 親にicon属性が既にある → エラーのみ（手動対応が必要）
+     * - パターンB: 親にicon属性がない → ResponseMessageと同じUIになるようiconを追加
+     * - パターンC: 適切な親がない → iconGapのみ削除
+     */
     function handleIconGapMigration(responseMessageNode, iconGapAttr) {
       // ResponseMessage の属性を取得
       const statusAttr = responseMessageNode.attributes.find(
@@ -184,15 +244,23 @@ module.exports = {
       }
     }
 
+    /**
+     * ResponseMessageの親要素を遡ってHeading/FormControl/Fieldsetを探す
+     *
+     * @param {Object} node - ResponseMessage要素のASTノード
+     * @returns {Object|null} 親コンポーネント情報、見つからない場合はnull
+     */
     function findParentComponent(node) {
       let current = node.parent
 
+      // Programノードに到達するまで親を遡る
       while (current) {
         if (current.type === 'Program') break
 
         if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
           const name = current.openingElement.name.name
 
+          // Headingコンポーネントを検出
           if (name === 'Heading') {
             const iconAttr = current.openingElement.attributes.find(
               (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
@@ -206,6 +274,7 @@ module.exports = {
             }
           }
 
+          // FormControlコンポーネントのlabel属性内を検出
           if (name === 'FormControl') {
             const labelAttr = current.openingElement.attributes.find(
               (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
@@ -223,6 +292,7 @@ module.exports = {
             }
           }
 
+          // Fieldsetコンポーネントのlegend属性内を検出
           if (name === 'Fieldset') {
             const legendAttr = current.openingElement.attributes.find(
               (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
@@ -247,6 +317,13 @@ module.exports = {
       return null
     }
 
+    /**
+     * ResponseMessageが特定の属性の値として使われているかチェック
+     *
+     * @param {Object} attr - チェック対象の属性ノード
+     * @param {Object} responseMessageNode - ResponseMessageのノード
+     * @returns {boolean} 属性値内に含まれている場合true
+     */
     function isResponseMessageInAttribute(attr, responseMessageNode) {
       let current = responseMessageNode
       while (current) {
@@ -256,6 +333,14 @@ module.exports = {
       return false
     }
 
+    /**
+     * label/legend属性のオブジェクト形式からicon属性を取得
+     *
+     * 例: label={{ text: "ラベル", icon: <Icon /> }} の場合、iconプロパティを返す
+     *
+     * @param {Object} labelAttr - label/legend属性のASTノード
+     * @returns {Object|null} iconプロパティ、存在しない場合はnull
+     */
     function getLabelIconAttribute(labelAttr) {
       if (
         labelAttr.value &&
@@ -270,24 +355,39 @@ module.exports = {
       return null
     }
 
+    /**
+     * JSX属性の値を取得
+     *
+     * @param {Object} attr - 属性のASTノード
+     * @returns {string|number|null} 属性値、取得できない場合はnull
+     */
     function getAttributeValue(attr) {
       if (!attr || !attr.value) return null
 
+      // 文字列リテラル: status="success"
       if (attr.value.type === 'Literal') {
         return attr.value.value
       }
 
+      // JSX式: status={"success"} または iconGap={0.5}
       if (attr.value.type === 'JSXExpressionContainer') {
         const expr = attr.value.expression
         if (expr.type === 'Literal') {
           return expr.value
         }
+        // 変数や式の場合はソースコードをそのまま取得
         return sourceCode.getText(expr)
       }
 
       return null
     }
 
+    /**
+     * JSX要素の子要素をテキストとして取得
+     *
+     * @param {Object} element - JSX要素のASTノード
+     * @returns {string} 子要素のテキスト、空の場合は空文字列
+     */
     function getJSXElementChildren(element) {
       if (!element.children || element.children.length === 0) return ''
 
@@ -297,6 +397,19 @@ module.exports = {
         .trim()
     }
 
+    /**
+     * 親にicon属性がない場合のiconGap移行処理
+     *
+     * ResponseMessageと同じUIを再現するため、親にicon属性を追加する
+     *
+     * @param {Object} fixer - ESLintのfixer
+     * @param {Object} parent - 親コンポーネント情報
+     * @param {Object} responseMessageElement - ResponseMessage要素
+     * @param {string} children - ResponseMessageの子要素テキスト
+     * @param {string} iconName - 追加するアイコン名
+     * @param {string|number} iconGapValue - gap値
+     * @returns {Array|Object} fix操作
+     */
     function fixIconGapWithoutParentIcon(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
       if (parent.type === 'Heading') {
         // Heading の場合

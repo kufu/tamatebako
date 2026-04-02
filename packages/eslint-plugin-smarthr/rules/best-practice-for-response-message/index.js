@@ -5,6 +5,15 @@ const ERROR_MESSAGE = `ResponseMessageは見出しやラベルでは使用でき
  - ResponseMessageはAPIの実行結果を表示する目的のコンポーネントです
  - 見出しやラベルにアイコンを表示したい場合は、Headingのicon属性、FormControlのlabel.icon属性、Fieldsetのlegend.icon属性、またはsmarthr-ui/Textを使用してください`
 
+// status/type値とアイコンのマッピング（smarthr-uiの仕様に基づく）
+const STATUS_ICON_MAP = {
+  info: 'FaCircleInfoIcon',
+  success: 'FaCircleCheckIcon',
+  warning: 'WarningIcon',
+  error: 'FaCircleExclamationIcon',
+  sync: 'FaRotateIcon',
+}
+
 // 共通パターン
 const RESPONSE_MESSAGE = 'JSXOpeningElement[name.name=/ResponseMessage$/]'
 const LABEL_LEGEND = '/^(label|legend)$/'
@@ -17,16 +26,288 @@ const SELECTOR = `:matches(JSXElement[openingElement.name.name=/((^h(1|2|3|4|5|6
 module.exports = {
   meta: {
     type: 'problem',
+    fixable: 'code',
     schema: SCHEMA,
   },
   create(context) {
+    const sourceCode = context.getSourceCode()
+
     return {
       [SELECTOR]: (node) => {
+        // ResponseMessageの親要素を特定
+        const parent = findParentComponent(node, sourceCode)
+
+        if (!parent) {
+          // 親が特定できない場合はエラーのみ
+          context.report({
+            node,
+            message: ERROR_MESSAGE,
+          })
+          return
+        }
+
+        // ResponseMessage要素の情報を取得
+        const responseMessageElement = node.parent
+
+        // Heading要素の場合は、Heading全体の子要素を取得してResponseMessageを置き換え
+        // それ以外の場合は、ResponseMessageの子要素のみを取得
+        let children
+        if (parent.type === 'Heading') {
+          children = getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
+        } else {
+          children = getJSXElementChildren(responseMessageElement, sourceCode)
+        }
+
+        // status/type属性を取得
+        const statusAttr = node.attributes.find(
+          (a) => a.type === 'JSXAttribute' && (a.name.name === 'status' || a.name.name === 'type')
+        )
+        const statusValue = getAttributeValue(statusAttr, sourceCode) || 'info'
+
+        // iconGap属性を取得
+        const iconGapAttr = node.attributes.find(
+          (a) => a.type === 'JSXAttribute' && a.name.name === 'iconGap'
+        )
+        const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : undefined
+
+        // アイコン名を決定
+        const iconName = STATUS_ICON_MAP[statusValue] || 'FaCircleInfoIcon'
+
         context.report({
           node,
           message: ERROR_MESSAGE,
+          fix(fixer) {
+            return fixResponseMessage(
+              fixer,
+              parent,
+              responseMessageElement,
+              children,
+              iconName,
+              iconGapValue,
+              sourceCode
+            )
+          },
         })
       },
+    }
+
+    /**
+     * ResponseMessageの親要素を遡ってHeading/FormControl/Fieldset/label/legendを探す
+     */
+    function findParentComponent(node, sourceCode) {
+      let current = node.parent
+
+      while (current) {
+        if (current.type === 'Program') break
+
+        if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
+          const name = current.openingElement.name.name
+
+          // Heading/PageHeadingコンポーネント
+          if (name === 'Heading' || name === 'PageHeading') {
+            const iconAttr = current.openingElement.attributes.find(
+              (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+            )
+            return {
+              type: 'Heading',
+              element: current,
+              node: current.openingElement,
+              iconAttr,
+              hasIcon: !!iconAttr,
+            }
+          }
+
+          // FormControlコンポーネントのlabel属性内
+          if (name === 'FormControl') {
+            const labelAttr = current.openingElement.attributes.find(
+              (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
+            )
+            if (labelAttr && isNodeInAttribute(labelAttr, node)) {
+              const iconAttr = getLabelIconAttribute(labelAttr)
+              return {
+                type: 'FormControl',
+                element: current,
+                node: current.openingElement,
+                labelAttr,
+                iconAttr,
+                hasIcon: !!iconAttr,
+              }
+            }
+          }
+
+          // Fieldsetコンポーネントのlegend属性内
+          if (name === 'Fieldset') {
+            const legendAttr = current.openingElement.attributes.find(
+              (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
+            )
+            if (legendAttr && isNodeInAttribute(legendAttr, node)) {
+              const iconAttr = getLabelIconAttribute(legendAttr)
+              return {
+                type: 'Fieldset',
+                element: current,
+                node: current.openingElement,
+                legendAttr,
+                iconAttr,
+                hasIcon: !!iconAttr,
+              }
+            }
+          }
+
+          // h1-h6要素
+          if (/^h[1-6]$/.test(name)) {
+            return {
+              type: 'heading',
+              element: current,
+              node: current.openingElement,
+              tagName: name,
+            }
+          }
+
+          // label要素
+          if (name === 'label') {
+            return {
+              type: 'label',
+              element: current,
+              node: current.openingElement,
+            }
+          }
+
+          // legend要素
+          if (name === 'legend') {
+            return {
+              type: 'legend',
+              element: current,
+              node: current.openingElement,
+            }
+          }
+        }
+
+        current = current.parent
+      }
+
+      return null
+    }
+
+    /**
+     * ノードが特定の属性の値として使われているかチェック
+     */
+    function isNodeInAttribute(attr, targetNode) {
+      let current = targetNode
+      while (current) {
+        if (current === attr) return true
+        current = current.parent
+      }
+      return false
+    }
+
+    /**
+     * label/legend属性のオブジェクト形式からicon属性を取得
+     */
+    function getLabelIconAttribute(labelAttr) {
+      if (
+        labelAttr.value &&
+        labelAttr.value.type === 'JSXExpressionContainer' &&
+        labelAttr.value.expression.type === 'ObjectExpression'
+      ) {
+        const iconProp = labelAttr.value.expression.properties.find(
+          (p) => p.type === 'Property' && p.key.name === 'icon'
+        )
+        return iconProp || null
+      }
+      return null
+    }
+
+    /**
+     * 属性値を取得
+     */
+    function getAttributeValue(attr, sourceCode) {
+      if (!attr || !attr.value) return null
+
+      if (attr.value.type === 'Literal') {
+        return attr.value.value
+      }
+
+      if (attr.value.type === 'JSXExpressionContainer') {
+        const expr = attr.value.expression
+        if (expr.type === 'Literal') {
+          return expr.value
+        }
+        return sourceCode.getText(expr)
+      }
+
+      return null
+    }
+
+    /**
+     * JSX要素の子要素をテキストとして取得
+     */
+    function getJSXElementChildren(element, sourceCode) {
+      if (!element.children || element.children.length === 0) return ''
+
+      return element.children
+        .map((child) => sourceCode.getText(child))
+        .join('')
+        .trim()
+    }
+
+    /**
+     * Heading要素の子要素を取得し、ResponseMessageをその子要素で置き換え
+     */
+    function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseMessageElement, sourceCode) {
+      if (!headingElement.children || headingElement.children.length === 0) return ''
+
+      return headingElement.children
+        .map((child) => {
+          // ResponseMessage要素の場合は、その子要素のテキストに置き換え
+          if (child === responseMessageElement) {
+            return getJSXElementChildren(responseMessageElement, sourceCode)
+          }
+          return sourceCode.getText(child)
+        })
+        .join('')
+        .trim()
+    }
+
+    /**
+     * ResponseMessageを適切な形式に修正
+     */
+    function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGapValue, sourceCode) {
+      const gap = iconGapValue !== undefined ? iconGapValue : 0.5
+
+      if (parent.type === 'Heading') {
+        // Heading/PageHeading の場合
+        if (parent.hasIcon) {
+          // 既にicon属性がある場合は自動修正しない
+          return null
+        }
+        // Heading要素の開始タグの終わりから終了タグの開始までを置き換え
+        const openingElement = parent.node
+        const closingElement = parent.element.closingElement
+        const rangeStart = openingElement.range[1]
+        const rangeEnd = closingElement.range[0]
+
+        return [
+          fixer.replaceTextRange([rangeStart, rangeEnd], children),
+          fixer.insertTextAfter(openingElement.name, ` icon={{ prefix: <${iconName} />, gap: ${gap} }}`),
+        ]
+      } else if (parent.type === 'FormControl' || parent.type === 'Fieldset') {
+        // FormControl/Fieldset の場合
+        if (parent.hasIcon) {
+          // 既にicon属性がある場合は自動修正しない
+          return null
+        }
+        const attr = parent.labelAttr || parent.legendAttr
+        const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
+        return fixer.replaceText(attr.value, newValue)
+      } else if (parent.type === 'heading' || parent.type === 'label' || parent.type === 'legend') {
+        // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
+        return fixer.replaceText(
+          responseMessageElement,
+          `<Text icon={{ prefix: <${iconName} />, gap: ${gap} }}>${children}</Text>`
+        )
+      }
+
+      return null
     }
   },
 }

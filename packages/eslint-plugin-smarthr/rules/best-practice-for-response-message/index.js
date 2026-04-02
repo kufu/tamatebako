@@ -80,97 +80,92 @@ function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseM
 /**
  * ResponseMessageの親要素を遡ってHeading/FormControl/Fieldset/label/legendを探す
  */
-function findParentComponent(node) {
-  let current = node.parent
+function findParentComponent(current) {
+  if (!current) return null
+  if (current.type !== 'JSXElement' || current.openingElement.name.type !== 'JSXIdentifier') {
+    return findParentComponent(current.parent)
+  }
 
-  // SELECTORが親要素（Heading/FormControl/Fieldset/h1-h6/label/legend）の存在を保証
-  // Programノードに到達する前に必ず見つかる
-  while (current) {
-    if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
-      const name = current.openingElement.name.name
+  const name = current.openingElement.name.name
 
-      // h1-h6要素
-      if (HEADING_TAG_REGEX.test(name)) {
+  // h1-h6要素
+  if (HEADING_TAG_REGEX.test(name)) {
+    return {
+      type: 'heading',
+      element: current,
+      node: current.openingElement,
+      tagName: name,
+    }
+  }
+
+  // Heading/PageHeadingコンポーネント
+  if (HEADING_COMPONENT_REGEX.test(name)) {
+    const iconAttr = current.openingElement.attributes.find(
+      (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+    )
+    return {
+      type: 'Heading',
+      element: current,
+      node: current.openingElement,
+      iconAttr,
+      hasIcon: !!iconAttr,
+    }
+  }
+
+  // 残りのコンポーネント
+  switch (name) {
+    case 'FormControl': {
+      const labelAttr = current.openingElement.attributes.find(
+        (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
+      )
+      if (labelAttr) {
+        const iconAttr = getLabelIconAttribute(labelAttr)
         return {
-          type: 'heading',
+          type: 'FormControl',
           element: current,
           node: current.openingElement,
-          tagName: name,
-        }
-      }
-
-      // Heading/PageHeadingコンポーネント
-      if (HEADING_COMPONENT_REGEX.test(name)) {
-        const iconAttr = current.openingElement.attributes.find(
-          (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-        )
-        return {
-          type: 'Heading',
-          element: current,
-          node: current.openingElement,
+          labelAttr,
           iconAttr,
           hasIcon: !!iconAttr,
         }
       }
-
-      // 残りのコンポーネント
-      switch (name) {
-        case 'FormControl': {
-          const labelAttr = current.openingElement.attributes.find(
-            (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
-          )
-          if (labelAttr) {
-            const iconAttr = getLabelIconAttribute(labelAttr)
-            return {
-              type: 'FormControl',
-              element: current,
-              node: current.openingElement,
-              labelAttr,
-              iconAttr,
-              hasIcon: !!iconAttr,
-            }
-          }
-          break
-        }
-
-        case 'Fieldset': {
-          const legendAttr = current.openingElement.attributes.find(
-            (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
-          )
-          if (legendAttr) {
-            const iconAttr = getLabelIconAttribute(legendAttr)
-            return {
-              type: 'Fieldset',
-              element: current,
-              node: current.openingElement,
-              legendAttr,
-              iconAttr,
-              hasIcon: !!iconAttr,
-            }
-          }
-          break
-        }
-
-        case 'label':
-          return {
-            type: 'label',
-            element: current,
-            node: current.openingElement,
-          }
-
-        case 'legend':
-          return {
-            type: 'legend',
-            element: current,
-            node: current.openingElement,
-          }
-      }
+      break
     }
 
-    current = current.parent
+    case 'Fieldset': {
+      const legendAttr = current.openingElement.attributes.find(
+        (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
+      )
+      if (legendAttr) {
+        const iconAttr = getLabelIconAttribute(legendAttr)
+        return {
+          type: 'Fieldset',
+          element: current,
+          node: current.openingElement,
+          legendAttr,
+          iconAttr,
+          hasIcon: !!iconAttr,
+        }
+      }
+      break
+    }
+
+    case 'label':
+      return {
+        type: 'label',
+        element: current,
+        node: current.openingElement,
+      }
+
+    case 'legend':
+      return {
+        type: 'legend',
+        element: current,
+        node: current.openingElement,
+      }
   }
 
-  return null
+  return findParentComponent(current.parent)
 }
 
 /**
@@ -230,7 +225,7 @@ module.exports = {
     return {
       [SELECTOR]: (node) => {
         // ResponseMessageの親要素を特定
-        const parent = findParentComponent(node)
+        const parent = findParentComponent(node.parent)
 
         if (!parent) {
           // 親が特定できない場合はエラーのみ

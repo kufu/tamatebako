@@ -86,20 +86,20 @@ function findParentComponent(current) {
   }
 
   const name = current.openingElement.name.name
+  const base = {
+    element: current,
+    node: current.openingElement,
+  }
 
   // h1-h6要素（Textコンポーネントに置き換える）
   if (HEADING_TAG_REGEX.test(name)) {
-    return {
-      element: current,
-      node: current.openingElement,
-    }
+    return base
   }
 
   // Heading/PageHeadingコンポーネント
   if (HEADING_COMPONENT_REGEX.test(name)) {
     return {
-      element: current,
-      node: current.openingElement,
+      ...base,
       iconAttr: current.openingElement.attributes.find(
         (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
       ),
@@ -116,8 +116,7 @@ function findParentComponent(current) {
       )
       if (attr) {
         return {
-          element: current,
-          node: current.openingElement,
+          ...base,
           attr,
           iconAttr: getLabelIconAttribute(attr),
         }
@@ -125,10 +124,7 @@ function findParentComponent(current) {
       return findParentComponent(current.parent)
     case 'label':
     case 'legend':
-      return {
-        element: current,
-        node: current.openingElement,
-      }
+      return base
   }
 
   return findParentComponent(current.parent)
@@ -138,38 +134,28 @@ function findParentComponent(current) {
  * ResponseMessageを適切な形式に修正
  */
 function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
+  // 既にicon属性がある場合は自動修正しない（早期リターン）
+  if (parent.iconAttr) {
+    return null
+  }
+
   const gap = iconGapValue !== undefined ? iconGapValue : 0.5
+  const iconTemplate = `{ prefix: <${iconName} />, gap: ${gap} }`
 
   if (parent.attr) {
     // FormControl/Fieldset の場合
-    if (parent.iconAttr) {
-      // 既にicon属性がある場合は自動修正しない
-      return null
-    }
-    const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
-    return fixer.replaceText(parent.attr.value, newValue)
+    return fixer.replaceText(parent.attr.value, `{{ text: ${children}, icon: ${iconTemplate} }}`)
   } else if ('iconAttr' in parent) {
     // Heading/PageHeading の場合
-    if (parent.iconAttr) {
-      // 既にicon属性がある場合は自動修正しない
-      return null
-    }
-    // Heading要素の開始タグの終わりから終了タグの開始までを置き換え
     const openingElement = parent.node
     const closingElement = parent.element.closingElement
-    const rangeStart = openingElement.range[1]
-    const rangeEnd = closingElement.range[0]
-
     return [
-      fixer.replaceTextRange([rangeStart, rangeEnd], children),
-      fixer.insertTextAfter(openingElement.name, ` icon={{ prefix: <${iconName} />, gap: ${gap} }}`),
+      fixer.replaceTextRange([openingElement.range[1], closingElement.range[0]], children),
+      fixer.insertTextAfter(openingElement.name, ` icon={${iconTemplate}}`),
     ]
   } else {
     // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
-    return fixer.replaceText(
-      responseMessageElement,
-      `<Text icon={{ prefix: <${iconName} />, gap: ${gap} }}>${children}</Text>`
-    )
+    return fixer.replaceText(responseMessageElement, `<Text icon={${iconTemplate}}>${children}</Text>`)
   }
 }
 

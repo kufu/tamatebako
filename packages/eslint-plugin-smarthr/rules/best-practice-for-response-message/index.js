@@ -14,14 +14,16 @@ const STATUS_ICON_MAP = {
   sync: 'FaRotateIcon',
 }
 
-// 共通パターン
+// 正規表現パターン（速度最適化のため事前に定義）
+const H_TAGS_PATTERN = '^h(1|2|3|4|5|6)'
+const HEADING_PATTERN = `((${H_TAGS_PATTERN})|(Page)?Heading)$`
+const HEADING_TAG_REGEX = /^h[1-6]$/
+
+// セレクタパターン
 const RESPONSE_MESSAGE = 'JSXOpeningElement[name.name=/ResponseMessage$/]'
 const LABEL_LEGEND = '/^(label|legend)$/'
 
-const SELECTOR = `:matches(JSXElement[openingElement.name.name=/((^h(1|2|3|4|5|6))|(Page)?Heading)$/] ${RESPONSE_MESSAGE}, JSXOpeningElement[name.name=/^(FormControl|Fieldset)$/] > JSXAttribute[name.name=${LABEL_LEGEND}] JSXExpressionContainer ${RESPONSE_MESSAGE}, JSXElement[openingElement.name.name=${LABEL_LEGEND}] ${RESPONSE_MESSAGE})`
-
-// 正規表現（速度最適化のため事前にコンパイル）
-const HEADING_TAG_REGEX = /^h[1-6]$/
+const SELECTOR = `:matches(JSXElement[openingElement.name.name=/${HEADING_PATTERN}/] ${RESPONSE_MESSAGE}, JSXOpeningElement[name.name=/^(FormControl|Fieldset)$/] > JSXAttribute[name.name=${LABEL_LEGEND}] JSXExpressionContainer ${RESPONSE_MESSAGE}, JSXElement[openingElement.name.name=${LABEL_LEGEND}] ${RESPONSE_MESSAGE})`
 
 // ============================================================
 // ヘルパー関数（速度最適化のためcreate外で定義）

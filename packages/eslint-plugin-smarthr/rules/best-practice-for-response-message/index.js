@@ -30,18 +30,6 @@ const SELECTOR = `:matches(JSXElement[openingElement.name.name=/${HEADING_PATTER
 // ============================================================
 
 /**
- * ノードが特定の属性の値として使われているかチェック
- */
-function isNodeInAttribute(attr, targetNode) {
-  let current = targetNode
-  while (current) {
-    if (current === attr) return true
-    current = current.parent
-  }
-  return false
-}
-
-/**
  * label/legend属性のオブジェクト形式からicon属性を取得
  */
 function getLabelIconAttribute(labelAttr) {
@@ -140,7 +128,7 @@ function findParentComponent(node) {
         const labelAttr = current.openingElement.attributes.find(
           (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
         )
-        if (labelAttr && isNodeInAttribute(labelAttr, node)) {
+        if (labelAttr) {
           const iconAttr = getLabelIconAttribute(labelAttr)
           return {
             type: 'FormControl',
@@ -158,7 +146,7 @@ function findParentComponent(node) {
         const legendAttr = current.openingElement.attributes.find(
           (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
         )
-        if (legendAttr && isNodeInAttribute(legendAttr, node)) {
+        if (legendAttr) {
           const iconAttr = getLabelIconAttribute(legendAttr)
           return {
             type: 'Fieldset',

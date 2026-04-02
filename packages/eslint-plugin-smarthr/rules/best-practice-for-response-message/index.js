@@ -88,13 +88,12 @@ function findParentComponent(current) {
 
   const name = current.openingElement.name.name
 
-  // h1-h6要素
+  // h1-h6要素（Textコンポーネントに置き換える）
   if (HEADING_TAG_REGEX.test(name)) {
     return {
-      type: 'heading',
+      type: 'nativeElement',
       element: current,
       node: current.openingElement,
-      tagName: name,
     }
   }
 
@@ -132,21 +131,13 @@ function findParentComponent(current) {
     return findParentComponent(current.parent)
   }
 
-  // label/legend要素
-  switch (name) {
-    case 'label':
-      return {
-        type: 'label',
-        element: current,
-        node: current.openingElement,
-      }
-
-    case 'legend':
-      return {
-        type: 'legend',
-        element: current,
-        node: current.openingElement,
-      }
+  // label/legend要素（Textコンポーネントに置き換える）
+  if (name === 'label' || name === 'legend') {
+    return {
+      type: 'nativeElement',
+      element: current,
+      node: current.openingElement,
+    }
   }
 
   return findParentComponent(current.parent)
@@ -182,7 +173,7 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
     }
     const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
     return fixer.replaceText(parent.attr.value, newValue)
-  } else if (parent.type === 'heading' || parent.type === 'label' || parent.type === 'legend') {
+  } else if (parent.type === 'nativeElement') {
     // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
     return fixer.replaceText(
       responseMessageElement,

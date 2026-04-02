@@ -33,17 +33,10 @@ const SELECTOR = `:matches(JSXElement[openingElement.name.name=/${HEADING_PATTER
  * label/legend属性のオブジェクト形式からicon属性を取得
  */
 function getLabelIconAttribute(labelAttr) {
-  if (
-    labelAttr.value &&
-    labelAttr.value.type === 'JSXExpressionContainer' &&
-    labelAttr.value.expression.type === 'ObjectExpression'
-  ) {
-    const iconProp = labelAttr.value.expression.properties.find(
-      (p) => p.type === 'Property' && p.key.name === 'icon'
-    )
-    return iconProp || null
-  }
-  return null
+  if (labelAttr.value?.expression?.type !== 'ObjectExpression') return null
+  return labelAttr.value.expression.properties.find(
+    (p) => p.type === 'Property' && p.key.name === 'icon'
+  ) || null
 }
 
 /**

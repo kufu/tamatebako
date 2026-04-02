@@ -33,10 +33,9 @@ const SELECTOR = `:matches(JSXElement[openingElement.name.name=/${HEADING_PATTER
  * label/legend属性のオブジェクト形式からicon属性を取得
  */
 function getLabelIconAttribute(labelAttr) {
-  if (labelAttr.value?.expression?.type !== 'ObjectExpression') return null
-  return labelAttr.value.expression.properties.find(
-    (p) => p.type === 'Property' && p.key.name === 'icon'
-  ) || null
+  const properties = labelAttr.value?.expression?.properties
+  if (!properties) return null
+  return properties.find((p) => p.type === 'Property' && p.key.name === 'icon') || null
 }
 
 /**

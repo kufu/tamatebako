@@ -117,5 +117,13 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text className="shr-leading-none">text</Text>`, output: `<Text leading="NONE">text</Text>`, errors: [{ message: errorConvertibleShr('leading="NONE"', 'shr-leading-none') }] },
     { code: `<Text className="shr-text-white">text</Text>`, output: `<Text color="TEXT_WHITE">text</Text>`, errors: [{ message: errorConvertibleShr('color="TEXT_WHITE"', 'shr-text-white') }] },
     { code: `<Text className="shr-text-color-inherit">text</Text>`, output: `<Text color="inherit">text</Text>`, errors: [{ message: errorConvertibleShr('color="inherit"', 'shr-text-color-inherit') }] },
+
+    // 追加テスト: 未知の属性が保持されることを確認
+    { code: `<Text className="custom" id="foo">text</Text>`, output: `<span className="custom" id="foo">text</span>`, errors: [{ message: errorUnnecessaryClassName('custom') }] },
+    { code: `<Text as="p" className="custom" id="foo">text</Text>`, output: `<p className="custom" id="foo">text</p>`, errors: [{ message: errorUnnecessaryAsClassName('p') }] },
+    { code: `<Text id="foo" className="shr-text-sm">text</Text>`, output: `<Text size="S" id="foo">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
+    { code: `<Text id="foo" className="shr-text-sm custom">text</Text>`, output: `<Text size="S" id="foo" className="custom">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom"', 'shr-text-sm') }] },
+    { code: `<Text as="p" id="foo" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S" id="foo">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },
+    { code: `<Text as="p" id="foo" onClick={handler} className="shr-text-sm custom">text</Text>`, output: `<Text as="p" size="S" id="foo" onClick={handler} className="custom">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom"', 'shr-text-sm', 'p') }] },
   ]
 })

@@ -35,7 +35,7 @@ const REGEX_CLASSNAME_SPLIT = /\s+/
 // ESLintセレクタの基本要素
 const ATTR_AS = 'JSXAttribute[name.name="as"]'
 const ATTR_CLASSNAME = 'JSXAttribute[name.name="className"]'
-const ATTR_TEXT_PROPS = 'JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon)$/]'
+const ATTR_TEXT_PROPS = 'JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/]'
 const LITERAL_TYPE = '[value.type="Literal"]'
 const HAS_SHR_CLASS = '[value.value=/shr-/]'
 
@@ -115,6 +115,15 @@ function getAttributeLiteralValue(openingElement, attrName) {
 }
 
 /**
+ * 指定した属性名の属性ノードを取得
+ */
+function getAttributeNode(openingElement, attrName) {
+  return openingElement.attributes.find(
+    attr => attr.type === 'JSXAttribute' && attr.name.name === attrName
+  )
+}
+
+/**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
 module.exports = {
@@ -149,10 +158,17 @@ module.exports = {
           fix(fixer) {
             const openingElement = asAttrNode.parent
             const jsxElement = openingElement.parent
+            const sourceCode = context.sourceCode || context.getSourceCode()
+
+            // 属性とその前のスペースを含めて削除
+            const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
+            const rangeStart = tokenBefore.range[1]
+            const rangeEnd = asAttrNode.range[1]
 
             return [
-              fixer.replaceText(openingElement, `<${tagName}>`),
-              fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+              fixer.removeRange([rangeStart, rangeEnd]),
+              fixer.replaceText(openingElement.name, tagName),
+              fixer.replaceText(jsxElement.closingElement.name, tagName)
             ]
           },
         })
@@ -171,9 +187,24 @@ module.exports = {
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
           fix(fixer) {
             const openingElement = classNameAttrNode.parent
-            const attributesText = nonConvertible ? `${propSuggestions} className="${nonConvertible}"` : propSuggestions
+            const sourceCode = context.sourceCode || context.getSourceCode()
+            const fixes = []
 
-            return fixer.replaceText(openingElement, `<Text ${attributesText}>`)
+            if (nonConvertible) {
+              // classNameの値を更新（属性自体は残す）
+              fixes.push(fixer.replaceText(classNameAttrNode.value, `"${nonConvertible}"`))
+            } else {
+              // className属性全体を削除（shr-クラスのみの場合）
+              const tokenBefore = sourceCode.getTokenBefore(classNameAttrNode)
+              const rangeStart = tokenBefore.range[1]
+              const rangeEnd = classNameAttrNode.range[1]
+              fixes.push(fixer.removeRange([rangeStart, rangeEnd]))
+            }
+
+            // 新しいpropsを追加
+            fixes.push(fixer.insertTextAfter(openingElement.name, ` ${propSuggestions}`))
+
+            return fixes
           },
         })
       },
@@ -193,8 +224,8 @@ module.exports = {
             const jsxElement = openingElement.parent
 
             return [
-              fixer.replaceText(openingElement, `<span ${classNameText}>`),
-              fixer.replaceText(jsxElement.closingElement, '</span>')
+              fixer.replaceText(openingElement.name, 'span'),
+              fixer.replaceText(jsxElement.closingElement.name, 'span')
             ]
           },
         })
@@ -214,11 +245,29 @@ module.exports = {
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
           fix(fixer) {
-            const asText = asValue ? `as="${asValue}" ` : ''
-            const classNameText = nonConvertible ? ` className="${nonConvertible}"` : ''
-            const attributesText = `${asText}${propSuggestions}${classNameText}`
+            const sourceCode = context.sourceCode || context.getSourceCode()
+            const fixes = []
 
-            return fixer.replaceText(openingElement, `<Text ${attributesText}>`)
+            if (nonConvertible) {
+              // classNameの値を更新（属性自体は残す）
+              fixes.push(fixer.replaceText(classNameAttrNode.value, `"${nonConvertible}"`))
+            } else {
+              // className属性全体を削除（shr-クラスのみの場合）
+              const tokenBefore = sourceCode.getTokenBefore(classNameAttrNode)
+              const rangeStart = tokenBefore.range[1]
+              const rangeEnd = classNameAttrNode.range[1]
+              fixes.push(fixer.removeRange([rangeStart, rangeEnd]))
+            }
+
+            // 新しいpropsを追加（as属性がある場合はその後ろに挿入）
+            const asAttrNode = getAttributeNode(openingElement, 'as')
+            if (asAttrNode) {
+              fixes.push(fixer.insertTextAfter(asAttrNode, ` ${propSuggestions}`))
+            } else {
+              fixes.push(fixer.insertTextAfter(openingElement.name, ` ${propSuggestions}`))
+            }
+
+            return fixes
           },
         })
       },
@@ -238,10 +287,17 @@ module.exports = {
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
           fix(fixer) {
             const jsxElement = openingElement.parent
+            const sourceCode = context.sourceCode || context.getSourceCode()
+
+            // 属性とその前のスペースを含めて削除
+            const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
+            const rangeStart = tokenBefore.range[1]
+            const rangeEnd = asAttrNode.range[1]
 
             return [
-              fixer.replaceText(openingElement, `<${tagName} ${classNameText}>`),
-              fixer.replaceText(jsxElement.closingElement, `</${tagName}>`)
+              fixer.removeRange([rangeStart, rangeEnd]),
+              fixer.replaceText(openingElement.name, tagName),
+              fixer.replaceText(jsxElement.closingElement.name, tagName)
             ]
           },
         })

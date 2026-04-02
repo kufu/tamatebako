@@ -186,5 +186,33 @@ ruleTester.run('best-practice-for-response-message', rule, {
       output: `<legend><Text icon={{ prefix: <FaCircleInfoIcon /> }}>Bar</Text></legend>`,
       errors: [{ message: ERROR_MESSAGE }]
     },
+
+    // iconGap属性が指定されている場合
+    {
+      code: `<Heading><ResponseMessage type="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<h1><ResponseMessage type="info" iconGap={1}>Hoge</ResponseMessage></h1>`,
+      output: `<h1><Text icon={{ prefix: <FaCircleInfoIcon />, gap: 1 }}>Hoge</Text></h1>`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<FormControl label={<ResponseMessage type="success" iconGap={0.5}>Foo</ResponseMessage>} />`,
+      output: `<FormControl label={{ text: Foo, icon: { prefix: <FaCircleCheckIcon />, gap: 0.5 } }} />`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    {
+      code: `<label><ResponseMessage type="warning" iconGap={0.75}>Bar</ResponseMessage></label>`,
+      output: `<label><Text icon={{ prefix: <WarningIcon />, gap: 0.75 }}>Bar</Text></label>`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
+    // iconGap={0.25}（デフォルト値）の場合はgap指定を省略
+    {
+      code: `<Heading><ResponseMessage type="success" iconGap={0.25}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
+      errors: [{ message: ERROR_MESSAGE }]
+    },
   ]
 })

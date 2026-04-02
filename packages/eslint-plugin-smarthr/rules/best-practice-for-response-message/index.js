@@ -132,13 +132,16 @@ function findParentComponent(current) {
 /**
  * ResponseMessageを適切な形式に修正
  */
-function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName) {
+function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGap) {
   // 既にicon属性がある場合は自動修正しない（早期リターン）
   if (parent.iconAttr) {
     return null
   }
 
-  const iconTemplate = `{ prefix: <${iconName} /> }`
+  // iconGapが0.25（デフォルト値）の場合は省略
+  const iconTemplate = iconGap === 0.25
+    ? `{ prefix: <${iconName} /> }`
+    : `{ prefix: <${iconName} />, gap: ${iconGap} }`
 
   if (parent.attr) {
     // FormControl/Fieldset の場合
@@ -197,25 +200,31 @@ module.exports = {
               ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
               : getJSXElementChildren(responseMessageElement, sourceCode)
 
-            // status/type属性を取得（速度最適化）
+            // status/type属性とiconGap属性を取得（速度最適化）
             let statusAttr = null
+            let iconGapAttr = null
             for (const attr of node.attributes) {
               if (attr.type !== 'JSXAttribute') continue
               if (attr.name.name === 'status' || attr.name.name === 'type') {
                 statusAttr = attr
-                break
+              }
+              if (attr.name.name === 'iconGap') {
+                iconGapAttr = attr
               }
             }
 
             const statusValue = statusAttr ? getAttributeValue(statusAttr, sourceCode) || 'info' : 'info'
             const iconName = STATUS_ICON_MAP[statusValue] || 'FaCircleInfoIcon'
+            // ResponseMessageのiconGapのデフォルト値は0.25
+            const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : 0.25
 
             return fixResponseMessage(
               fixer,
               parent,
               responseMessageElement,
               children,
-              iconName
+              iconName,
+              iconGapValue
             )
           },
         })

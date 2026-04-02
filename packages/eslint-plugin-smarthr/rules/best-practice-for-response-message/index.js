@@ -16,7 +16,7 @@ const STATUS_ICON_MAP = {
 
 // 正規表現パターン（速度最適化のため事前に定義）
 const H_TAG_PATTERN = 'h[1-6]'
-const HEADING_PATTERN = `((^${H_TAG_PATTERN})|(Page)?Heading)$`
+const HEADING_PATTERN = `((^${H_TAG_PATTERN})|Heading)$`
 const HEADING_TAG_REGEX = /^h[1-6]$/
 const HEADING_COMPONENT_REGEX = /Heading$/
 
@@ -81,7 +81,6 @@ function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseM
  * ResponseMessageの親要素を遡ってHeading/FormControl/Fieldset/label/legendを探す
  */
 function findParentComponent(current) {
-  if (!current) return null
   if (current.type !== 'JSXElement' || current.openingElement.name.type !== 'JSXIdentifier') {
     return findParentComponent(current.parent)
   }
@@ -91,7 +90,6 @@ function findParentComponent(current) {
   // h1-h6要素（Textコンポーネントに置き換える）
   if (HEADING_TAG_REGEX.test(name)) {
     return {
-      type: 'nativeElement',
       element: current,
       node: current.openingElement,
     }
@@ -99,43 +97,38 @@ function findParentComponent(current) {
 
   // Heading/PageHeadingコンポーネント
   if (HEADING_COMPONENT_REGEX.test(name)) {
-    const iconAttr = current.openingElement.attributes.find(
-      (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-    )
     return {
-      type: 'Heading',
       element: current,
       node: current.openingElement,
-      iconAttr,
+      iconAttr: current.openingElement.attributes.find(
+        (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+      ),
     }
   }
 
-  // FormControl/Fieldset（処理が同じなので統一）
-  if (name === 'FormControl' || name === 'Fieldset') {
-    const attrName = name === 'FormControl' ? 'label' : 'legend'
-    const attr = current.openingElement.attributes.find(
-      (a) => a.type === 'JSXAttribute' && a.name.name === attrName
-    )
-    if (attr) {
-      const iconAttr = getLabelIconAttribute(attr)
+  // 完全一致はswitchで最適化
+  switch (name) {
+    case 'FormControl':
+    case 'Fieldset':
+      const attrName = name === 'FormControl' ? 'label' : 'legend'
+      const attr = current.openingElement.attributes.find(
+        (a) => a.type === 'JSXAttribute' && a.name.name === attrName
+      )
+      if (attr) {
+        return {
+          element: current,
+          node: current.openingElement,
+          attr,
+          iconAttr: getLabelIconAttribute(attr),
+        }
+      }
+      return findParentComponent(current.parent)
+    case 'label':
+    case 'legend':
       return {
-        type: 'FormControlOrFieldset',
         element: current,
         node: current.openingElement,
-        attr,
-        iconAttr,
       }
-    }
-    return findParentComponent(current.parent)
-  }
-
-  // label/legend要素（Textコンポーネントに置き換える）
-  if (name === 'label' || name === 'legend') {
-    return {
-      type: 'nativeElement',
-      element: current,
-      node: current.openingElement,
-    }
   }
 
   return findParentComponent(current.parent)
@@ -147,7 +140,15 @@ function findParentComponent(current) {
 function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
   const gap = iconGapValue !== undefined ? iconGapValue : 0.5
 
-  if (parent.type === 'Heading') {
+  if (parent.attr) {
+    // FormControl/Fieldset の場合
+    if (parent.iconAttr) {
+      // 既にicon属性がある場合は自動修正しない
+      return null
+    }
+    const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
+    return fixer.replaceText(parent.attr.value, newValue)
+  } else if ('iconAttr' in parent) {
     // Heading/PageHeading の場合
     if (parent.iconAttr) {
       // 既にicon属性がある場合は自動修正しない
@@ -163,23 +164,13 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
       fixer.replaceTextRange([rangeStart, rangeEnd], children),
       fixer.insertTextAfter(openingElement.name, ` icon={{ prefix: <${iconName} />, gap: ${gap} }}`),
     ]
-  } else if (parent.type === 'FormControlOrFieldset') {
-    // FormControl/Fieldset の場合
-    if (parent.iconAttr) {
-      // 既にicon属性がある場合は自動修正しない
-      return null
-    }
-    const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
-    return fixer.replaceText(parent.attr.value, newValue)
-  } else if (parent.type === 'nativeElement') {
+  } else {
     // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
     return fixer.replaceText(
       responseMessageElement,
       `<Text icon={{ prefix: <${iconName} />, gap: ${gap} }}>${children}</Text>`
     )
   }
-
-  return null
 }
 
 /**
@@ -213,7 +204,7 @@ module.exports = {
 
         // Heading要素の場合は、Heading全体の子要素を取得してResponseMessageを置き換え
         // それ以外の場合は、ResponseMessageの子要素のみを取得
-        const children = parent.type === 'Heading'
+        const children = 'iconAttr' in parent && !parent.attr
           ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
           : getJSXElementChildren(responseMessageElement, sourceCode)
 

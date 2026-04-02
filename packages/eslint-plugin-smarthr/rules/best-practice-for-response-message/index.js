@@ -112,44 +112,28 @@ function findParentComponent(current) {
     }
   }
 
-  // 残りのコンポーネント
+  // FormControl/Fieldset（処理が同じなので統一）
+  if (name === 'FormControl' || name === 'Fieldset') {
+    const attrName = name === 'FormControl' ? 'label' : 'legend'
+    const attr = current.openingElement.attributes.find(
+      (a) => a.type === 'JSXAttribute' && a.name.name === attrName
+    )
+    if (attr) {
+      const iconAttr = getLabelIconAttribute(attr)
+      return {
+        type: 'FormControlOrFieldset',
+        element: current,
+        node: current.openingElement,
+        attr,
+        iconAttr,
+        hasIcon: !!iconAttr,
+      }
+    }
+    return findParentComponent(current.parent)
+  }
+
+  // label/legend要素
   switch (name) {
-    case 'FormControl': {
-      const labelAttr = current.openingElement.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
-      )
-      if (labelAttr) {
-        const iconAttr = getLabelIconAttribute(labelAttr)
-        return {
-          type: 'FormControl',
-          element: current,
-          node: current.openingElement,
-          labelAttr,
-          iconAttr,
-          hasIcon: !!iconAttr,
-        }
-      }
-      break
-    }
-
-    case 'Fieldset': {
-      const legendAttr = current.openingElement.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
-      )
-      if (legendAttr) {
-        const iconAttr = getLabelIconAttribute(legendAttr)
-        return {
-          type: 'Fieldset',
-          element: current,
-          node: current.openingElement,
-          legendAttr,
-          iconAttr,
-          hasIcon: !!iconAttr,
-        }
-      }
-      break
-    }
-
     case 'label':
       return {
         type: 'label',
@@ -190,15 +174,14 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
       fixer.replaceTextRange([rangeStart, rangeEnd], children),
       fixer.insertTextAfter(openingElement.name, ` icon={{ prefix: <${iconName} />, gap: ${gap} }}`),
     ]
-  } else if (parent.type === 'FormControl' || parent.type === 'Fieldset') {
+  } else if (parent.type === 'FormControlOrFieldset') {
     // FormControl/Fieldset の場合
     if (parent.hasIcon) {
       // 既にicon属性がある場合は自動修正しない
       return null
     }
-    const attr = parent.labelAttr || parent.legendAttr
     const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${gap} } }}`
-    return fixer.replaceText(attr.value, newValue)
+    return fixer.replaceText(parent.attr.value, newValue)
   } else if (parent.type === 'heading' || parent.type === 'label' || parent.type === 'legend') {
     // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
     return fixer.replaceText(

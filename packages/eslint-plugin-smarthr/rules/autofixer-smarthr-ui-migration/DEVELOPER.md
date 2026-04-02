@@ -6,7 +6,9 @@
 
 新しいバージョン（例: v91→v92）の移行ルールを追加する際の手順：
 
-1. smarthr-ui のリリースノートから破壊的変更を確認
+1. smarthr-ui のリリースノートから対応が必要な変更を確認
+   - 破壊的変更（BREAKING CHANGES）
+   - 推奨される書き方への置き換え（非破壊的だが移行を推奨するもの）
 2. 移行ルール実装ファイルを作成（`versions/vXX-to-vYY.js`）
 3. 移行ガイドを作成（`versions/vXX-to-vYY.md`）
 4. テストケースを追加（`test/autofixer-smarthr-ui-migration.js`）
@@ -44,21 +46,25 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 - rules/autofixer-smarthr-ui-migration/versions/v90-to-v91.md
 - test/autofixer-smarthr-ui-migration.js
 
-## 対応する破壊的変更
+## 対応する変更
 
 smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
-以下の変更に対応してください：
+以下の変更に対応してください（破壊的変更および推奨パターンへの移行）：
 
 1. [変更内容1の説明]
-   - 例: ComponentA が ComponentB にリネーム
+   - 例: ComponentA が ComponentB にリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
 
 2. [変更内容2の説明]
-   - 例: propsXがpropsYにリネーム
+   - 例: propsXがpropsYにリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
 
-3. ...
+3. [変更内容3の説明]
+   - 例: 非推奨パターンから推奨パターンへの置き換え（非破壊的）
+   - 自動修正: [可能/不可能/条件付き]
+
+4. ...
 
 ## 実装内容
 
@@ -135,12 +141,13 @@ https://github.com/kufu/smarthr-ui/releases
 ### 既存実装の参考ポイント
 
 #### v90-to-v91.js の構造
-1. 定数定義（DIALOG_COMPONENTS、STATUS_ICON_MAPなど）
-2. messages定義（エラーメッセージ）
-3. createCheckers関数
+1. ファイル冒頭のコメント（対応する変更のサマリー）
+2. 定数定義（DIALOG_COMPONENTS、STATUS_ICON_MAPなど）
+3. messages定義（エラーメッセージ）
+4. createCheckers関数
    - 各変更に対応するセレクターとハンドラー
    - fix関数での自動修正ロジック
-4. ヘルパー関数（必要に応じて）
+5. ヘルパー関数（必要に応じて、JSDocコメント付き）
 
 #### メッセージの書き方
 - 何が変更されたのか明確に

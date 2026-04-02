@@ -411,16 +411,21 @@ module.exports = {
      * @returns {Array|Object} fix操作
      */
     function fixIconGapWithoutParentIcon(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
+      // gap値が0.25（デフォルト値）の場合は省略
+      const iconTemplate = iconGapValue === 0.25 || iconGapValue === '0.25'
+        ? `{ prefix: <${iconName} /> }`
+        : `{ prefix: <${iconName} />, gap: ${iconGapValue} }`
+
       if (parent.type === 'Heading') {
         // Heading の場合
         return [
           fixer.replaceText(responseMessageElement, children),
-          fixer.insertTextAfter(parent.node.name, ` icon={{ prefix: <${iconName} />, gap: ${iconGapValue} }}`),
+          fixer.insertTextAfter(parent.node.name, ` icon={${iconTemplate}}`),
         ]
       } else {
         // FormControl/Fieldset の場合: label/legend を object 形式に変換
         const attr = parent.labelAttr || parent.legendAttr
-        const newValue = `{{ text: ${children}, icon: { prefix: <${iconName} />, gap: ${iconGapValue} } }}`
+        const newValue = `{{ text: ${children}, icon: ${iconTemplate} }}`
         return fixer.replaceText(attr.value, newValue)
       }
     }

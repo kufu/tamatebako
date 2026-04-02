@@ -146,6 +146,26 @@ module.exports = {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
+    // iconGap=0.25（デフォルト値）の場合はgap指定を省略
+    {
+      code: `<Heading><ResponseMessage status="success" iconGap={0.25}>Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<FormControl label={<ResponseMessage status="info" iconGap={0.25}>Xxxx</ResponseMessage>} />`,
+      output: `<FormControl label={{ text: Xxxx, icon: { prefix: <FaCircleInfoIcon /> } }} />`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+    {
+      code: `<Fieldset legend={<ResponseMessage status="warning" iconGap={0.25}>Xxxx</ResponseMessage>} />`,
+      output: `<Fieldset legend={{ text: Xxxx, icon: { prefix: <WarningIcon /> } }} />`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'removeIconGap' }],
+    },
+
     // ネストが深い場合
     {
       code: `<Heading><div><span><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></span></div></Heading>`,

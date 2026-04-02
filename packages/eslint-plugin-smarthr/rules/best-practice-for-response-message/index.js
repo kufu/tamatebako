@@ -16,7 +16,6 @@ const STATUS_ICON_MAP = {
 
 // 正規表現パターン（速度最適化のため事前に定義）
 const H_TAG_PATTERN = 'h[1-6]'
-const HEADING_TAG_REGEX = new RegExp(`^${H_TAG_PATTERN}$`)
 const HEADING_PATTERN = `((^${H_TAG_PATTERN})|(Page)?Heading)$`
 
 // セレクタパターン
@@ -88,82 +87,83 @@ function findParentComponent(node) {
     if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
       const name = current.openingElement.name.name
 
-      // Heading/PageHeadingコンポーネント
-      if (name === 'Heading' || name === 'PageHeading') {
-        const iconAttr = current.openingElement.attributes.find(
-          (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-        )
-        return {
-          type: 'Heading',
-          element: current,
-          node: current.openingElement,
-          iconAttr,
-          hasIcon: !!iconAttr,
-        }
-      }
-
-      // FormControlコンポーネントのlabel属性内
-      if (name === 'FormControl') {
-        const labelAttr = current.openingElement.attributes.find(
-          (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
-        )
-        if (labelAttr) {
-          const iconAttr = getLabelIconAttribute(labelAttr)
+      switch (name) {
+        case 'Heading':
+        case 'PageHeading': {
+          const iconAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+          )
           return {
-            type: 'FormControl',
+            type: 'Heading',
             element: current,
             node: current.openingElement,
-            labelAttr,
             iconAttr,
             hasIcon: !!iconAttr,
           }
         }
-      }
 
-      // Fieldsetコンポーネントのlegend属性内
-      if (name === 'Fieldset') {
-        const legendAttr = current.openingElement.attributes.find(
-          (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
-        )
-        if (legendAttr) {
-          const iconAttr = getLabelIconAttribute(legendAttr)
+        case 'FormControl': {
+          const labelAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
+          )
+          if (labelAttr) {
+            const iconAttr = getLabelIconAttribute(labelAttr)
+            return {
+              type: 'FormControl',
+              element: current,
+              node: current.openingElement,
+              labelAttr,
+              iconAttr,
+              hasIcon: !!iconAttr,
+            }
+          }
+          break
+        }
+
+        case 'Fieldset': {
+          const legendAttr = current.openingElement.attributes.find(
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
+          )
+          if (legendAttr) {
+            const iconAttr = getLabelIconAttribute(legendAttr)
+            return {
+              type: 'Fieldset',
+              element: current,
+              node: current.openingElement,
+              legendAttr,
+              iconAttr,
+              hasIcon: !!iconAttr,
+            }
+          }
+          break
+        }
+
+        case 'h1':
+        case 'h2':
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'h6':
           return {
-            type: 'Fieldset',
+            type: 'heading',
             element: current,
             node: current.openingElement,
-            legendAttr,
-            iconAttr,
-            hasIcon: !!iconAttr,
+            tagName: name,
           }
-        }
-      }
 
-      // h1-h6要素
-      if (HEADING_TAG_REGEX.test(name)) {
-        return {
-          type: 'heading',
-          element: current,
-          node: current.openingElement,
-          tagName: name,
-        }
-      }
+        case 'label':
+          return {
+            type: 'label',
+            element: current,
+            node: current.openingElement,
+          }
 
-      // label要素
-      if (name === 'label') {
-        return {
-          type: 'label',
-          element: current,
-          node: current.openingElement,
-        }
-      }
-
-      // legend要素
-      if (name === 'legend') {
-        return {
-          type: 'legend',
-          element: current,
-          node: current.openingElement,
-        }
+        case 'legend':
+          return {
+            type: 'legend',
+            element: current,
+            node: current.openingElement,
+          }
       }
     }
 

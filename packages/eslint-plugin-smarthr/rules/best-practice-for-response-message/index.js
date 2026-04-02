@@ -107,7 +107,6 @@ function findParentComponent(current) {
       element: current,
       node: current.openingElement,
       iconAttr,
-      hasIcon: !!iconAttr,
     }
   }
 
@@ -125,7 +124,6 @@ function findParentComponent(current) {
         node: current.openingElement,
         attr,
         iconAttr,
-        hasIcon: !!iconAttr,
       }
     }
     return findParentComponent(current.parent)
@@ -151,7 +149,7 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
 
   if (parent.type === 'Heading') {
     // Heading/PageHeading の場合
-    if (parent.hasIcon) {
+    if (parent.iconAttr) {
       // 既にicon属性がある場合は自動修正しない
       return null
     }
@@ -167,7 +165,7 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
     ]
   } else if (parent.type === 'FormControlOrFieldset') {
     // FormControl/Fieldset の場合
-    if (parent.hasIcon) {
+    if (parent.iconAttr) {
       // 既にicon属性がある場合は自動修正しない
       return null
     }

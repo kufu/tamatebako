@@ -15,7 +15,7 @@
  * 実装されていないバージョンについては警告を表示します。
  */
 
-const v90ToV91 = require('./versions/v90-to-v91')
+const v90ToV91 = require('./versions/v90-to-v91/index')
 
 // サポートしているバージョン間の移行モジュール
 const VERSION_MODULES = {

@@ -17,6 +17,8 @@ const STATUS_ICON_MAP = {
 // 正規表現パターン（速度最適化のため事前に定義）
 const H_TAG_PATTERN = 'h[1-6]'
 const HEADING_PATTERN = `((^${H_TAG_PATTERN})|(Page)?Heading)$`
+const HEADING_TAG_REGEX = /^h[1-6]$/
+const HEADING_COMPONENT_REGEX = /Heading$/
 
 // セレクタパターン
 const RESPONSE_MESSAGE = 'JSXOpeningElement[name.name=/ResponseMessage$/]'
@@ -87,21 +89,32 @@ function findParentComponent(node) {
     if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
       const name = current.openingElement.name.name
 
-      switch (name) {
-        case 'Heading':
-        case 'PageHeading': {
-          const iconAttr = current.openingElement.attributes.find(
-            (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-          )
-          return {
-            type: 'Heading',
-            element: current,
-            node: current.openingElement,
-            iconAttr,
-            hasIcon: !!iconAttr,
-          }
+      // h1-h6要素
+      if (HEADING_TAG_REGEX.test(name)) {
+        return {
+          type: 'heading',
+          element: current,
+          node: current.openingElement,
+          tagName: name,
         }
+      }
 
+      // Heading/PageHeadingコンポーネント
+      if (HEADING_COMPONENT_REGEX.test(name)) {
+        const iconAttr = current.openingElement.attributes.find(
+          (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
+        )
+        return {
+          type: 'Heading',
+          element: current,
+          node: current.openingElement,
+          iconAttr,
+          hasIcon: !!iconAttr,
+        }
+      }
+
+      // 残りのコンポーネント
+      switch (name) {
         case 'FormControl': {
           const labelAttr = current.openingElement.attributes.find(
             (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
@@ -137,19 +150,6 @@ function findParentComponent(node) {
           }
           break
         }
-
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          return {
-            type: 'heading',
-            element: current,
-            node: current.openingElement,
-            tagName: name,
-          }
 
         case 'label':
           return {

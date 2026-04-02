@@ -145,7 +145,9 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
   if (parent.attr) {
     // FormControl/Fieldset の場合
     return fixer.replaceText(parent.attr.value, `{{ text: ${children}, icon: ${iconTemplate} }}`)
-  } else if ('iconAttr' in parent) {
+  }
+
+  if ('iconAttr' in parent) {
     // Heading/PageHeading の場合
     const openingElement = parent.node
     const closingElement = parent.element.closingElement
@@ -153,10 +155,10 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
       fixer.replaceTextRange([openingElement.range[1], closingElement.range[0]], children),
       fixer.insertTextAfter(openingElement.name, ` icon={${iconTemplate}}`),
     ]
-  } else {
-    // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
-    return fixer.replaceText(responseMessageElement, `<Text icon={${iconTemplate}}>${children}</Text>`)
   }
+
+  // h1-h6, label, legend要素の場合はTextコンポーネントに置き換え
+  return fixer.replaceText(responseMessageElement, `<Text icon={${iconTemplate}}>${children}</Text>`)
 }
 
 /**
@@ -169,8 +171,6 @@ module.exports = {
     schema: SCHEMA,
   },
   create(context) {
-    const sourceCode = context.getSourceCode()
-
     return {
       [SELECTOR]: (node) => {
         // ResponseMessageの親要素を特定
@@ -185,40 +185,39 @@ module.exports = {
           return
         }
 
-        // ResponseMessage要素の情報を取得
-        const responseMessageElement = node.parent
-
-        // Heading要素の場合は、Heading全体の子要素を取得してResponseMessageを置き換え
-        // それ以外の場合は、ResponseMessageの子要素のみを取得
-        const children = 'iconAttr' in parent && !parent.attr
-          ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
-          : getJSXElementChildren(responseMessageElement, sourceCode)
-
-        // status/type属性とiconGap属性を一度に取得（速度最適化）
-        let statusAttr = null
-        let iconGapAttr = null
-        for (const attr of node.attributes) {
-          if (attr.type !== 'JSXAttribute') continue
-          const attrName = attr.name.name
-          if (attrName === 'status' || attrName === 'type') {
-            statusAttr = attr
-          } else if (attrName === 'iconGap') {
-            iconGapAttr = attr
-          }
-          // 両方見つかったら早期終了
-          if (statusAttr && iconGapAttr) break
-        }
-
-        const statusValue = getAttributeValue(statusAttr, sourceCode) || 'info'
-        const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : undefined
-
-        // アイコン名を決定
-        const iconName = STATUS_ICON_MAP[statusValue] || 'FaCircleInfoIcon'
-
         context.report({
           node,
           message: ERROR_MESSAGE,
           fix(fixer) {
+            // fix実行時のみsourceCodeと関連データを取得（速度最適化）
+            const sourceCode = context.getSourceCode()
+            const responseMessageElement = node.parent
+
+            // Heading要素の場合は、Heading全体の子要素を取得してResponseMessageを置き換え
+            // それ以外の場合は、ResponseMessageの子要素のみを取得
+            const children = 'iconAttr' in parent && !parent.attr
+              ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
+              : getJSXElementChildren(responseMessageElement, sourceCode)
+
+            // status/type属性とiconGap属性を一度に取得（速度最適化）
+            let statusAttr = null
+            let iconGapAttr = null
+            for (const attr of node.attributes) {
+              if (attr.type !== 'JSXAttribute') continue
+              const attrName = attr.name.name
+              if (attrName === 'status' || attrName === 'type') {
+                statusAttr = attr
+              } else if (attrName === 'iconGap') {
+                iconGapAttr = attr
+              }
+              // 両方見つかったら早期終了
+              if (statusAttr && iconGapAttr) break
+            }
+
+            const statusValue = statusAttr ? getAttributeValue(statusAttr, sourceCode) || 'info' : 'info'
+            const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : undefined
+            const iconName = STATUS_ICON_MAP[statusValue] || 'FaCircleInfoIcon'
+
             return fixResponseMessage(
               fixer,
               parent,

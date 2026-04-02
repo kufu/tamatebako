@@ -3002,11 +3002,17 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/a11y-prohibit-input-placeholder": [
       2,
     ],
+    "smarthr/a11y-prohibit-overflow-hidden": [
+      1,
+    ],
     "smarthr/a11y-prohibit-sectioning-content-in-form": [
       2,
     ],
     "smarthr/a11y-prohibit-useless-sectioning-fragment": [
       2,
+    ],
+    "smarthr/a11y-scroller-has-tabindex": [
+      1,
     ],
     "smarthr/a11y-trigger-has-button": [
       2,
@@ -3016,6 +3022,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/best-practice-for-button-element": [
       2,
+    ],
+    "smarthr/best-practice-for-data-test-attribute": [
+      0,
     ],
     "smarthr/best-practice-for-date": [
       2,
@@ -3048,11 +3057,26 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "fix": true,
       },
     ],
+    "smarthr/best-practice-for-tailwind-prohibit-root-margin": [
+      0,
+    ],
+    "smarthr/best-practice-for-tailwind-variants": [
+      0,
+    ],
+    "smarthr/best-practice-for-text-component": [
+      1,
+    ],
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
     "smarthr/component-name": [
       2,
+    ],
+    "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
+      1,
+    ],
+    "smarthr/design-system-guideline-prohibit-double-icons": [
+      0,
     ],
     "smarthr/format-import-path": [
       0,

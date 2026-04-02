@@ -166,6 +166,26 @@ module.exports = {
       errors: [{ messageId: 'removeIconGap' }],
     },
 
+    // iconGap属性がない場合も移行される
+    {
+      code: `<Heading><ResponseMessage status="success">Xxxx</ResponseMessage></Heading>`,
+      output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'migrateResponseMessage' }],
+    },
+    {
+      code: `<FormControl label={<ResponseMessage status="info">Xxxx</ResponseMessage>} />`,
+      output: `<FormControl label={{ text: Xxxx, icon: { prefix: <FaCircleInfoIcon /> } }} />`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'migrateResponseMessage' }],
+    },
+    {
+      code: `<Fieldset legend={<ResponseMessage status="warning">Xxxx</ResponseMessage>} />`,
+      output: `<Fieldset legend={{ text: Xxxx, icon: { prefix: <WarningIcon /> } }} />`,
+      options: v90ToV91Options,
+      errors: [{ messageId: 'migrateResponseMessage' }],
+    },
+
     // ネストが深い場合
     {
       code: `<Heading><div><span><ResponseMessage status="success" iconGap={0.5}>Xxxx</ResponseMessage></span></div></Heading>`,

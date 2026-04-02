@@ -48,6 +48,7 @@ module.exports = {
     removeRight: 'ResponseMessage の right 属性は削除されました。このエラーが表示された場合は @group-smarthrui-core に連絡してください',
     removeIconGap: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で icon.gap を使用してください',
     removeIconGapWithParentIcon: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネントに既に icon が設定されているため、手動で調整してください',
+    migrateResponseMessage: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください',
     removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
   },
 
@@ -116,37 +117,45 @@ module.exports = {
       // ResponseMessageの各属性をチェックして対応
       // - type → status リネーム
       // - right 属性削除
-      // - iconGap 属性削除と親への移行
+      // - 見出し/ラベル内のResponseMessageを親のicon属性に移行
       'JSXOpeningElement[name.name=/ResponseMessage$/]'(node) {
+        let typeAttr = null
+        let statusAttr = null
+        let iconGapAttr = null
+        let rightAttr = null
+
+        // 全属性を収集
         node.attributes.forEach((attr) => {
           if (attr.type !== 'JSXAttribute') return
-
           const attrName = attr.name.name
 
-          // 2. type → status
-          if (attrName === 'type') {
-            context.report({
-              node: attr,
-              messageId: 'renameType',
-              fix(fixer) {
-                return fixer.replaceText(attr.name, 'status')
-              },
-            })
-          }
-
-          // 3. right 削除（エラーのみ）
-          if (attrName === 'right') {
-            context.report({
-              node: attr,
-              messageId: 'removeRight',
-            })
-          }
-
-          // 4. iconGap 削除と移行
-          if (attrName === 'iconGap') {
-            handleIconGapMigration(node, attr)
-          }
+          if (attrName === 'type') typeAttr = attr
+          if (attrName === 'status') statusAttr = attr
+          if (attrName === 'iconGap') iconGapAttr = attr
+          if (attrName === 'right') rightAttr = attr
         })
+
+        // 2. type → status リネーム
+        if (typeAttr) {
+          context.report({
+            node: typeAttr,
+            messageId: 'renameType',
+            fix(fixer) {
+              return fixer.replaceText(typeAttr.name, 'status')
+            },
+          })
+        }
+
+        // 3. right 削除（エラーのみ）
+        if (rightAttr) {
+          context.report({
+            node: rightAttr,
+            messageId: 'removeRight',
+          })
+        }
+
+        // 4. 見出し/ラベル内のResponseMessageを移行
+        handleResponseMessageMigration(node, statusAttr, typeAttr, iconGapAttr)
       },
 
       // ============================================================
@@ -172,45 +181,42 @@ module.exports = {
     }
 
     // ============================================================
-    // ヘルパー関数（iconGap移行用）
+    // ヘルパー関数（ResponseMessage移行用）
     // ============================================================
 
     /**
-     * ResponseMessageのiconGap属性の移行処理
+     * ResponseMessageの移行処理
      *
-     * 以下の3パターンに対応:
+     * 見出し/ラベル内のResponseMessageを親のicon属性に移行する
+     *
+     * 以下のパターンに対応:
      * - パターンA: 親にicon属性が既にある → エラーのみ（手動対応が必要）
      * - パターンB: 親にicon属性がない → ResponseMessageと同じUIになるようiconを追加
-     * - パターンC: 適切な親がない → iconGapのみ削除
+     * - パターンC: 適切な親がない → iconGap属性があればそれだけ削除
      */
-    function handleIconGapMigration(responseMessageNode, iconGapAttr) {
-      // ResponseMessage の属性を取得
-      const statusAttr = responseMessageNode.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === 'status'
-      )
-      const typeAttr = responseMessageNode.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === 'type'
-      )
-
+    function handleResponseMessageMigration(responseMessageNode, statusAttr, typeAttr, iconGapAttr) {
       const statusValue = getAttributeValue(statusAttr || typeAttr) || 'info'
-      const iconGapValue = getAttributeValue(iconGapAttr)
+      const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr) : undefined
 
       // 親を遡って Heading/FormControl/Fieldset を探す
       const parent = findParentComponent(responseMessageNode)
 
       if (!parent) {
-        // パターンC: 適切な親が見つからない → iconGap のみ削除
-        context.report({
-          node: iconGapAttr,
-          messageId: 'removeIconGap',
-          fix(fixer) {
-            const tokenBefore = sourceCode.getTokenBefore(iconGapAttr)
-            if (tokenBefore && tokenBefore.range[1] < iconGapAttr.range[0]) {
-              return fixer.removeRange([tokenBefore.range[1], iconGapAttr.range[1]])
-            }
-            return fixer.remove(iconGapAttr)
-          },
-        })
+        // パターンC: 適切な親が見つからない
+        if (iconGapAttr) {
+          // iconGap属性がある場合はそれだけ削除
+          context.report({
+            node: iconGapAttr,
+            messageId: 'removeIconGap',
+            fix(fixer) {
+              const tokenBefore = sourceCode.getTokenBefore(iconGapAttr)
+              if (tokenBefore && tokenBefore.range[1] < iconGapAttr.range[0]) {
+                return fixer.removeRange([tokenBefore.range[1], iconGapAttr.range[1]])
+              }
+              return fixer.remove(iconGapAttr)
+            },
+          })
+        }
         return
       }
 
@@ -221,17 +227,17 @@ module.exports = {
       if (parent.hasIcon) {
         // パターンA: 親に icon がある → エラーのみ（自動修正なし）
         context.report({
-          node: iconGapAttr,
-          messageId: 'removeIconGapWithParentIcon',
+          node: iconGapAttr || responseMessageNode,
+          messageId: iconGapAttr ? 'removeIconGapWithParentIcon' : 'migrateResponseMessage',
         })
       } else {
         // パターンB: 親に icon がない → ResponseMessage の UI を再現
         const iconName = STATUS_ICON_MAP[statusValue]
         context.report({
-          node: iconGapAttr,
-          messageId: 'removeIconGap',
+          node: iconGapAttr || responseMessageNode,
+          messageId: iconGapAttr ? 'removeIconGap' : 'migrateResponseMessage',
           fix(fixer) {
-            return fixIconGapWithoutParentIcon(
+            return fixResponseMessageMigration(
               fixer,
               parent,
               responseMessageElement,
@@ -398,7 +404,7 @@ module.exports = {
     }
 
     /**
-     * 親にicon属性がない場合のiconGap移行処理
+     * ResponseMessageの移行処理（親にicon属性がない場合）
      *
      * ResponseMessageと同じUIを再現するため、親にicon属性を追加する
      *
@@ -407,12 +413,12 @@ module.exports = {
      * @param {Object} responseMessageElement - ResponseMessage要素
      * @param {string} children - ResponseMessageの子要素テキスト
      * @param {string} iconName - 追加するアイコン名
-     * @param {string|number} iconGapValue - gap値
+     * @param {string|number|undefined} iconGapValue - gap値（undefinedの場合は省略）
      * @returns {Array|Object} fix操作
      */
-    function fixIconGapWithoutParentIcon(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
-      // gap値が0.25（デフォルト値）の場合は省略
-      const iconTemplate = iconGapValue === 0.25 || iconGapValue === '0.25'
+    function fixResponseMessageMigration(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
+      // gap値がundefinedまたは0.25（デフォルト値）の場合は省略
+      const iconTemplate = !iconGapValue || iconGapValue === 0.25 || iconGapValue === '0.25'
         ? `{ prefix: <${iconName} /> }`
         : `{ prefix: <${iconName} />, gap: ${iconGapValue} }`
 

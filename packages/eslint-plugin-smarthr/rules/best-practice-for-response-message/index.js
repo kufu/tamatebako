@@ -132,14 +132,13 @@ function findParentComponent(current) {
 /**
  * ResponseMessageを適切な形式に修正
  */
-function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
+function fixResponseMessage(fixer, parent, responseMessageElement, children, iconName) {
   // 既にicon属性がある場合は自動修正しない（早期リターン）
   if (parent.iconAttr) {
     return null
   }
 
-  const gap = iconGapValue ?? 0.5
-  const iconTemplate = `{ prefix: <${iconName} />, gap: ${gap} }`
+  const iconTemplate = `{ prefix: <${iconName} /> }`
 
   if (parent.attr) {
     // FormControl/Fieldset の場合
@@ -198,23 +197,17 @@ module.exports = {
               ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
               : getJSXElementChildren(responseMessageElement, sourceCode)
 
-            // status/type属性とiconGap属性を一度に取得（速度最適化）
+            // status/type属性を取得（速度最適化）
             let statusAttr = null
-            let iconGapAttr = null
             for (const attr of node.attributes) {
               if (attr.type !== 'JSXAttribute') continue
-              const attrName = attr.name.name
-              if (attrName === 'status' || attrName === 'type') {
+              if (attr.name.name === 'status' || attr.name.name === 'type') {
                 statusAttr = attr
-              } else if (attrName === 'iconGap') {
-                iconGapAttr = attr
+                break
               }
-              // 両方見つかったら早期終了
-              if (statusAttr && iconGapAttr) break
             }
 
             const statusValue = statusAttr ? getAttributeValue(statusAttr, sourceCode) || 'info' : 'info'
-            const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : undefined
             const iconName = STATUS_ICON_MAP[statusValue] || 'FaCircleInfoIcon'
 
             return fixResponseMessage(
@@ -222,8 +215,7 @@ module.exports = {
               parent,
               responseMessageElement,
               children,
-              iconName,
-              iconGapValue
+              iconName
             )
           },
         })

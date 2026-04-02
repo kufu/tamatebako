@@ -45,12 +45,9 @@ function getAttributeValue(attr, sourceCode) {
       case 'Literal':
         return attr.value.value
       case 'JSXExpressionContainer':
-        switch (attr.value.expression.type) {
-          case 'Literal':
-            return attr.value.expression.value
-          default:
-            return sourceCode.getText(attr.value.expression)
-        }
+        return attr.value.expression.type === 'Literal'
+          ? attr.value.expression.value
+          : sourceCode.getText(attr.value.expression)
     }
   }
   return null

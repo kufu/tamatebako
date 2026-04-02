@@ -33,7 +33,7 @@ const SELECTOR = `:matches(JSXElement[openingElement.name.name=/${HEADING_PATTER
  * label/legend属性のオブジェクト形式からicon属性を取得
  */
 function getLabelIconAttribute(labelAttr) {
-  return labelAttr.value?.expression?.properties?.find((p) => p.type === 'Property' && p.key.name === 'icon') || null
+  return labelAttr.value?.expression?.properties?.find((p) => p.key?.name === 'icon') || null
 }
 
 /**

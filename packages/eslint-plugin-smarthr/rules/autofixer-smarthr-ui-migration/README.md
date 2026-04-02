@@ -13,20 +13,20 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 ```javascript
 {
   "rules": {
-    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v91" }]
+    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "90", "to": "91" }]
   }
 }
 ```
 
 ### 複数バージョンのスキップ
 
-複数のバージョンをまたぐ移行も可能です（例: `v90` → `v93`）。この場合、存在する移行ルールを自動的に適用し、実装されていないバージョンについては警告を表示します。
+複数のバージョンをまたぐ移行も可能です（例: `90` → `93`）。この場合、存在する移行ルールを自動的に適用し、実装されていないバージョンについては警告を表示します。
 
 ```javascript
 {
   "rules": {
-    // v90→v91とv92→v93のルールが適用される（v91→v92がない場合は警告）
-    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v93" }]
+    // 90→91と92→93のルールが適用される（91→92がない場合は警告）
+    "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "90", "to": "93" }]
   }
 }
 ```
@@ -37,7 +37,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 
 | バージョン | 詳細 |
 |-----------|------|
-| `v90` → `v91` | [移行ガイド](./versions/v90-to-v91.md) |
+| `90` → `91` | [移行ガイド](./versions/v90-to-v91.md) |
 
 ## 使用方法
 
@@ -49,7 +49,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 module.exports = {
   extends: ['smarthr'],
   rules: {
-    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
+    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '90', to: '91' }],
   },
 }
 ```
@@ -60,7 +60,7 @@ module.exports = {
 module.exports = {
   plugins: ['smarthr'],
   rules: {
-    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
+    'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '90', to: '91' }],
   },
 }
 ```
@@ -84,10 +84,10 @@ module.exports = {
   extends: ['smarthr'],
   rules: {
     // v91 への移行完了後はコメントアウトまたは削除
-    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v90', to: 'v91' }],
+    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '90', to: '91' }],
 
     // v92 への移行時は新しいオプションを設定
-    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'v91', to: 'v92' }],
+    // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '91', to: '92' }],
   },
 }
 ```

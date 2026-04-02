@@ -6,11 +6,11 @@
  * 使用例:
  * {
  *   "rules": {
- *     "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "v90", "to": "v91" }]
+ *     "smarthr/autofixer-smarthr-ui-migration": ["error", { "from": "90", "to": "91" }]
  *   }
  * }
  *
- * 複数バージョンをまたぐ移行も可能です（例: v90→v93）。
+ * 複数バージョンをまたぐ移行も可能です（例: 90→93）。
  * この場合、存在する移行ルール（v90→v91など）を自動的に適用し、
  * 実装されていないバージョンについては警告を表示します。
  */
@@ -32,11 +32,11 @@ module.exports = {
         properties: {
           from: {
             type: 'string',
-            pattern: '^v[0-9]+$',
+            pattern: '^[0-9]+$',
           },
           to: {
             type: 'string',
-            pattern: '^v[0-9]+$',
+            pattern: '^[0-9]+$',
           },
         },
         required: ['from', 'to'],
@@ -44,7 +44,7 @@ module.exports = {
       },
     ],
     messages: {
-      missingOptions: 'オプションで from と to を指定してください。例: { "from": "v90", "to": "v91" }',
+      missingOptions: 'オプションで from と to を指定してください。例: { "from": "90", "to": "91" }',
       unsupportedVersion: 'サポートされていないバージョンです: {{from}} to {{to}}',
       skippedVersion: 'v{{version}} の自動修正ルールが実装されていません。変更内容は https://github.com/kufu/smarthr-ui/releases から対応するversionの情報を確認してください',
       ...v90ToV91.messages,
@@ -108,22 +108,22 @@ module.exports = {
 /**
  * バージョン間の移行パスを生成する
  *
- * @param {string} from - 移行元バージョン（例: "v90"）
- * @param {string} to - 移行先バージョン（例: "v91"）
+ * @param {string} from - 移行元バージョン（例: "90"）
+ * @param {string} to - 移行先バージョン（例: "91"）
  * @returns {{ path: string[], skipped: number[] } | null} 移行パス情報、または無効な場合はnull
  *
  * @example
- * getMigrationPath('v90', 'v91')
- * // => { path: ['v90-v91'], skipped: [] }
+ * getMigrationPath('90', '91')
+ * // => { path: ['90-91'], skipped: [] }
  *
  * @example
- * getMigrationPath('v90', 'v93')
- * // v92のモジュールがない場合
- * // => { path: ['v90-v91'], skipped: [92, 93] }
+ * getMigrationPath('90', '93')
+ * // 92のモジュールがない場合
+ * // => { path: ['90-91'], skipped: [92, 93] }
  */
 function getMigrationPath(from, to) {
-  const fromNum = parseInt(from.replace('v', ''))
-  const toNum = parseInt(to.replace('v', ''))
+  const fromNum = parseInt(from)
+  const toNum = parseInt(to)
 
   if (fromNum >= toNum || isNaN(fromNum) || isNaN(toNum)) {
     return null
@@ -133,6 +133,7 @@ function getMigrationPath(from, to) {
   const skipped = []
 
   // fromからtoまでの各ステップについて、移行モジュールが存在するかチェック
+  // 内部的にはvプレフィックス付きのキーで管理（ファイル名と統一）
   for (let i = fromNum; i < toNum; i++) {
     const stepKey = `v${i}-v${i + 1}`
     if (VERSION_MODULES[stepKey]) {

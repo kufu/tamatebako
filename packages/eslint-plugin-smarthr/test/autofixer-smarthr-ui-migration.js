@@ -11,7 +11,7 @@ const ruleTester = new RuleTester({
   },
 })
 
-const v90ToV91Options = [{ from: 'v90', to: 'v91' }]
+const v90ToV91Options = [{ from: '90', to: '91' }]
 
 // ============================================================
 // ヘルパー関数: テストケース生成
@@ -73,7 +73,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
-      options: [{ from: 'v91', to: 'v92' }],
+      options: [{ from: '91', to: '92' }],
       errors: [{ messageId: 'unsupportedVersion' }],
     },
 
@@ -83,7 +83,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       output: `import { ControlledActionDialog } from 'smarthr-ui'`,
-      options: [{ from: 'v90', to: 'v92' }],
+      options: [{ from: '90', to: '92' }],
       errors: [
         { messageId: 'skippedVersion', data: { version: 'v92' } },
         { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
@@ -92,7 +92,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       output: `import { ControlledActionDialog } from 'smarthr-ui'`,
-      options: [{ from: 'v90', to: 'v93' }],
+      options: [{ from: '90', to: '93' }],
       errors: [
         { messageId: 'skippedVersion', data: { version: 'v92' } },
         { messageId: 'skippedVersion', data: { version: 'v93' } },

@@ -15,9 +15,9 @@ const STATUS_ICON_MAP = {
 }
 
 // 正規表現パターン（速度最適化のため事前に定義）
-const H_TAGS_PATTERN = '^h(1|2|3|4|5|6)'
-const HEADING_PATTERN = `((${H_TAGS_PATTERN})|(Page)?Heading)$`
-const HEADING_TAG_REGEX = /^h[1-6]$/
+const H_TAG_PATTERN = 'h[1-6]'
+const HEADING_TAG_REGEX = new RegExp(`^${H_TAG_PATTERN}$`)
+const HEADING_PATTERN = `((^${H_TAG_PATTERN})|(Page)?Heading)$`
 
 // セレクタパターン
 const RESPONSE_MESSAGE = 'JSXOpeningElement[name.name=/ResponseMessage$/]'

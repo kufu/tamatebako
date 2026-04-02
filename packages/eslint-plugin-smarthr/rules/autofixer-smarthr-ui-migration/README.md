@@ -33,21 +33,11 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 
 ## サポートされているバージョン
 
+各バージョンの破壊的変更の詳細と対応内容については、リンク先の移行ガイドを参照してください。
+
 | バージョン | 詳細 |
 |-----------|------|
 | `v90` → `v91` | [移行ガイド](./versions/v90-to-v91.md) |
-
-## 主な対応内容（v90 → v91）
-
-以下の5つの破壊的変更に対応しています：
-
-1. **Dialog コンポーネントのリネーム** - `ActionDialog` → `ControlledActionDialog` など
-2. **ResponseMessage の `type` → `status` リネーム**
-3. **ResponseMessage の `right` 属性削除**（エラー検出のみ）
-4. **ResponseMessage の `iconGap` 属性削除と親コンポーネントへの移行**
-5. **AppHeader の `arbitraryDisplayName` 属性削除**
-
-詳細は [v90 → v91 移行ガイド](./versions/v90-to-v91.md) を参照してください。
 
 ## 使用方法
 

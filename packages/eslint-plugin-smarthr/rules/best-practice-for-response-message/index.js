@@ -15,8 +15,7 @@ const STATUS_ICON_MAP = {
 }
 
 // 正規表現パターン（速度最適化のため事前に定義）
-const H_TAG_PATTERN = 'h[1-6]'
-const HEADING_PATTERN = `((^${H_TAG_PATTERN})|Heading)$`
+const HEADING_PATTERN = '((^h[1-6])|Heading)$'
 const HEADING_TAG_REGEX = /^h[1-6]$/
 const HEADING_COMPONENT_REGEX = /Heading$/
 
@@ -139,7 +138,7 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
     return null
   }
 
-  const gap = iconGapValue !== undefined ? iconGapValue : 0.5
+  const gap = iconGapValue ?? 0.5
   const iconTemplate = `{ prefix: <${iconName} />, gap: ${gap} }`
 
   if (parent.attr) {

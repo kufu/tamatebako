@@ -83,9 +83,9 @@ function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseM
 function findParentComponent(node) {
   let current = node.parent
 
+  // SELECTORが親要素（Heading/FormControl/Fieldset/h1-h6/label/legend）の存在を保証
+  // Programノードに到達する前に必ず見つかる
   while (current) {
-    if (current.type === 'Program') break
-
     if (current.type === 'JSXElement' && current.openingElement.name.type === 'JSXIdentifier') {
       const name = current.openingElement.name.name
 

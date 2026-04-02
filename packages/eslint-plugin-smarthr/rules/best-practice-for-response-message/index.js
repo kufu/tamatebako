@@ -42,19 +42,19 @@ function getLabelIconAttribute(labelAttr) {
 function getAttributeValue(attr, sourceCode) {
   if (!attr || !attr.value) return null
 
-  if (attr.value.type === 'Literal') {
-    return attr.value.value
+  switch (attr.value.type) {
+    case 'Literal':
+      return attr.value.value
+    case 'JSXExpressionContainer':
+      switch (attr.value.expression.type) {
+        case 'Literal':
+          return attr.value.expression.value
+        default:
+          return sourceCode.getText(attr.value.expression)
+      }
+    default:
+      return null
   }
-
-  if (attr.value.type === 'JSXExpressionContainer') {
-    const expr = attr.value.expression
-    if (expr.type === 'Literal') {
-      return expr.value
-    }
-    return sourceCode.getText(expr)
-  }
-
-  return null
 }
 
 /**

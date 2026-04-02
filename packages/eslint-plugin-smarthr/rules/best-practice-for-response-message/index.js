@@ -59,10 +59,7 @@ function getAttributeValue(attr, sourceCode) {
 function getJSXElementChildren(element, sourceCode) {
   if (!element.children || element.children.length === 0) return ''
 
-  return element.children
-    .map((child) => sourceCode.getText(child))
-    .join('')
-    .trim()
+  return element.children.reduce((acc, child) => acc + sourceCode.getText(child), '').trim()
 }
 
 /**
@@ -71,16 +68,12 @@ function getJSXElementChildren(element, sourceCode) {
 function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseMessageElement, sourceCode) {
   if (!headingElement.children || headingElement.children.length === 0) return ''
 
-  return headingElement.children
-    .map((child) => {
-      // ResponseMessage要素の場合は、その子要素のテキストに置き換え
-      if (child === responseMessageElement) {
-        return getJSXElementChildren(responseMessageElement, sourceCode)
-      }
-      return sourceCode.getText(child)
-    })
-    .join('')
-    .trim()
+  return headingElement.children.reduce((acc, child) => {
+    // ResponseMessage要素の場合は、その子要素のテキストに置き換え
+    return child === responseMessageElement
+      ? acc + getJSXElementChildren(responseMessageElement, sourceCode)
+      : acc + sourceCode.getText(child)
+  }, '').trim()
 }
 
 /**

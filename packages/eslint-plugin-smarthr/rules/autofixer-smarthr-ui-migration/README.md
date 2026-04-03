@@ -130,12 +130,7 @@ import { FormDialog } from '@/components/parts/smarthr-ui'
 ```
 
 **対応方法:**
-1. 独自ラッパーを更新してエイリアスをexport
-2. または、手動で移行を行う（推奨）
-
-**検証方法:**
-- テスト用ブランチで自動移行を試し、ビルドエラーを確認してから判断することを推奨します
-- 参考: [workflow PR #4512](https://github.com/kufu/workflow/pull/4512) (michiでの検証例)
+手動でsmarthr-uiラッパーのexportを調整してください。その際、可能な限りsmarthr-uiが出力する名称と揃えることを推奨します。
 
 ### 移行完了後に必要な作業
 

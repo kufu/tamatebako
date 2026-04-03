@@ -102,6 +102,41 @@ module.exports = {
 - 複雑なコード（変数経由での属性設定、動的な値など）は自動修正されない場合があります
 - 一部のケースは検出のみでエラーを表示し、手動対応が必要です
 
+### 独自のsmarthr-uiラッパーを持つプロジェクトでの使用
+
+このルールは `import { Component } from 'smarthr-ui'` のように**直接smarthr-uiからインポートしているコード**を対象としています。
+
+独自のsmarthr-uiラッパー（例: `@/components/parts/smarthr-ui`）を使用しているプロジェクトでは、以下の理由により**手動での移行を推奨**します：
+
+- 自動移行ルールはJSX要素名を変更しますが、独自ラッパーのexportは変更されません
+- 結果として、変更後のコンポーネント名が未定義エラーになる可能性があります
+
+**例:**
+```tsx
+// 独自ラッパー: @/components/parts/smarthr-ui/index.tsx
+export * from 'smarthr-ui'
+export { FormDialog } from './FormDialog'  // 独自のFormDialogラッパー
+
+// 使用側
+import { FormDialog } from '@/components/parts/smarthr-ui'
+<FormDialog>...</FormDialog>
+```
+
+このようなコードで自動移行を実行すると：
+```tsx
+// 自動修正後
+<ControlledFormDialog>...</ControlledFormDialog>
+// ❌ ControlledFormDialogは独自ラッパーにexportされていないため未定義エラー
+```
+
+**対応方法:**
+1. 独自ラッパーを更新してエイリアスをexport
+2. または、手動で移行を行う（推奨）
+
+**検証方法:**
+- テスト用ブランチで自動移行を試し、ビルドエラーを確認してから判断することを推奨します
+- 参考: [workflow PR #4512](https://github.com/kufu/workflow/pull/4512) (michiでの検証例)
+
 ### 移行完了後に必要な作業
 
 自動修正を実行した後は、必ず以下を実施してください：

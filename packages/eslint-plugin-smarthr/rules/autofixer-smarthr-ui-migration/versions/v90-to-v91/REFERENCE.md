@@ -162,6 +162,7 @@ function findTargetParent(node, sourceCode) {
 - コンポーネント名のリネーム（ActionDialog → ControlledActionDialog）
 - 属性名のリネーム（type → status）
 - 属性の削除（値が変わらない場合）
+- **未知の属性を保持したまま移行可能な場合**（Text → span など、移行先が明確な置換）
 
 ### ⚠️ エラーのみ（自動修正なし）
 
@@ -171,6 +172,7 @@ function findTargetParent(node, sourceCode) {
 - 意図が不明な場合（既存のicon属性がある状態でのiconGap削除）
 - 複数の対処方法がある場合
 - 安全性が確保できない場合
+- **未知の属性の移行先が不明確な場合**（ResponseMessage → 親のicon属性など、id/onClickをどこに移すべきか不明）
 
 ### ❌ 検出も修正もしない
 
@@ -322,6 +324,118 @@ function findTargetParent(node, sourceCode) {
   return null
 }
 ```
+
+### パターン5: 未知の属性がある場合の処理
+
+未知の属性（id, onClick, data-*, aria-*など）がある場合の対処法は、移行パターンによって異なります。
+
+#### パターンA: 未知の属性を保持したまま移行（自動修正可能）
+
+コンポーネントを別のコンポーネントやネイティブ要素に置換する場合、未知の属性もそのまま引き継げます。
+
+```javascript
+// 例: Text → span への置換
+'JSXOpeningElement[name.name="Text"]'(node) {
+  const textChildren = sourceCode.getText(element.children[0])
+
+  // 未知の属性も含めて全て保持
+  const attributes = node.attributes
+    .map(attr => sourceCode.getText(attr))
+    .join(' ')
+
+  context.report({
+    node,
+    messageId: 'replaceWithNative',
+    fix(fixer) {
+      return fixer.replaceText(
+        element,
+        `<span ${attributes}>${textChildren}</span>`
+      )
+    },
+  })
+}
+```
+
+**このパターンが適用できるケース:**
+- コンポーネント名の置換（FormDialog → ControlledFormDialog）
+- ラッパーコンポーネントからネイティブ要素への置換（Text → span）
+- 属性の移行先が明確な場合
+
+#### パターンB: 未知の属性の移行先が不明確（エラーのみ、自動修正なし）
+
+コンポーネントを削除して親に統合する場合など、未知の属性をどこに移すべきか不明確な場合は手動対応が必要です。
+
+```javascript
+/**
+ * 既知の属性以外が存在するかチェック
+ *
+ * @param {Object} node - チェック対象のJSXOpeningElement
+ * @param {...Object} knownAttrs - 既知の属性ノード（可変長引数）
+ * @returns {boolean} 未知の属性が存在する場合true
+ */
+function hasUnknownAttributes(node, ...knownAttrs) {
+  const knownSet = new Set(knownAttrs.filter(Boolean))
+  for (const attr of node.attributes) {
+    if (attr.type !== 'JSXAttribute') continue
+    if (!knownSet.has(attr)) {
+      return true
+    }
+  }
+  return false
+}
+
+// 使用例: ResponseMessage を親の icon 属性に移行
+'JSXOpeningElement[name.name=/ResponseMessage$/]'(node) {
+  // 既知の属性を収集
+  let statusAttr = null
+  let iconGapAttr = null
+  for (const attr of node.attributes) {
+    if (attr.type !== 'JSXAttribute') continue
+    if (attr.name.name === 'status') statusAttr = attr
+    if (attr.name.name === 'iconGap') iconGapAttr = attr
+  }
+
+  const hasUnknownAttrs = hasUnknownAttributes(node, statusAttr, iconGapAttr)
+
+  if (hasUnknownAttrs) {
+    // 未知の属性がある → エラーのみ（自動修正なし）
+    context.report({
+      node: iconGapAttr || node,
+      messageId: 'migrateWithUnknownAttrs',
+    })
+  } else {
+    // 未知の属性がない → 自動修正可能
+    context.report({
+      node: iconGapAttr || node,
+      messageId: 'migrate',
+      fix(fixer) {
+        // 自動修正処理
+      },
+    })
+  }
+}
+```
+
+**このパターンが必要なケース:**
+- コンポーネントを削除して親に統合（ResponseMessage → 親のicon属性）
+- 属性の移行先が複数ありえる場合
+- 属性の意味が変わる可能性がある場合
+
+**例（v90-to-v91のResponseMessage）:**
+```javascript
+// ❌ 未知の属性があるため自動修正しない
+<Heading><ResponseMessage id="foo" status="success">Xxxx</ResponseMessage></Heading>
+// → エラー: "id 属性がある場合は手動で移行してください"
+// （ResponseMessageのid属性をHeadingに移すべきか、削除すべきか不明確）
+
+// ✅ 既知の属性のみなので自動修正可能
+<Heading><ResponseMessage status="success">Xxxx</ResponseMessage></Heading>
+// → 自動修正: <Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>
+```
+
+**判断基準:**
+- **属性の移行先が明確** → パターンA（未知の属性も保持して自動修正）
+- **属性の移行先が不明確** → パターンB（エラーのみ、手動対応）
 
 ## トラブルシューティング
 

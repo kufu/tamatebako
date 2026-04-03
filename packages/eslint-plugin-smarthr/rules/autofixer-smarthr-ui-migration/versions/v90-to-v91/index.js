@@ -49,6 +49,7 @@ module.exports = {
     removeIconGap: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で icon.gap を使用してください',
     removeIconGapWithParentIcon: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネントに既に icon が設定されているため、手動で調整してください',
     migrateResponseMessage: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください',
+    migrateResponseMessageWithUnknownAttrs: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください。status/iconGap 以外の属性（id, onClick など）がある場合は手動で移行してください',
     removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
   },
 
@@ -224,11 +225,20 @@ module.exports = {
       const responseMessageElement = responseMessageNode.parent
       const children = getJSXElementChildren(responseMessageElement)
 
+      // 未知の属性をチェック（status/type/iconGap 以外の属性）
+      const hasUnknownAttrs = hasUnknownAttributes(responseMessageNode, statusAttr, typeAttr, iconGapAttr)
+
       if (parent.hasIcon) {
         // パターンA: 親に icon がある → エラーのみ（自動修正なし）
         context.report({
           node: iconGapAttr || responseMessageNode,
           messageId: iconGapAttr ? 'removeIconGapWithParentIcon' : 'migrateResponseMessage',
+        })
+      } else if (hasUnknownAttrs) {
+        // 未知の属性がある → エラーのみ（自動修正なし）
+        context.report({
+          node: iconGapAttr || responseMessageNode,
+          messageId: 'migrateResponseMessageWithUnknownAttrs',
         })
       } else {
         // パターンB: 親に icon がない → ResponseMessage の UI を再現
@@ -248,6 +258,28 @@ module.exports = {
           },
         })
       }
+    }
+
+    /**
+     * ResponseMessageに未知の属性があるかチェック
+     *
+     * @param {Object} responseMessageNode - ResponseMessageのASTノード
+     * @param {Object} statusAttr - status属性のノード
+     * @param {Object} typeAttr - type属性のノード
+     * @param {Object} iconGapAttr - iconGap属性のノード
+     * @returns {boolean} 未知の属性がある場合true
+     */
+    function hasUnknownAttributes(responseMessageNode, statusAttr, typeAttr, iconGapAttr) {
+      const knownAttrs = new Set([statusAttr, typeAttr, iconGapAttr].filter(Boolean))
+
+      for (const attr of responseMessageNode.attributes) {
+        if (attr.type !== 'JSXAttribute') continue
+        if (!knownAttrs.has(attr)) {
+          return true
+        }
+      }
+
+      return false
     }
 
     /**

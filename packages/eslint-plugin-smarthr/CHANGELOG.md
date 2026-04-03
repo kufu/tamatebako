@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.8.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.7.0...eslint-plugin-smarthr-v6.8.0) (2026-04-03)
+
+
+### Features
+
+* best-practice-for-response-messageルールを追加 ([#1178](https://github.com/kufu/tamatebako/issues/1178)) ([a04035d](https://github.com/kufu/tamatebako/commit/a04035dae52634d61b543879c2d74c3de4d967a1))
+* smarthr-ui バージョン間移行を支援する自動修正ルールを追加 ([#1183](https://github.com/kufu/tamatebako/issues/1183)) ([5d62ad6](https://github.com/kufu/tamatebako/commit/5d62ad650377260c05ac6b3cb0f04775777ba0b3))
+
+
+### Bug Fixes
+
+* **best-practice-for-text-component:** 未知の属性を保持するように修正 ([#1186](https://github.com/kufu/tamatebako/issues/1186)) ([82cf5f8](https://github.com/kufu/tamatebako/commit/82cf5f8b2e487cbb3c3030f962e735322090ce8c))
+
 ## [6.7.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.6.3...eslint-plugin-smarthr-v6.7.0) (2026-03-31)
 
 

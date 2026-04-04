@@ -319,5 +319,36 @@ module.exports = {
       errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
     },
 
+    // ============================================================
+    // 10. barrel import構造: aliasディレクトリ配下の個別ファイルも置換対象
+    // ============================================================
+    // aliasディレクトリ直下の個別ファイル
+    {
+      code: `export const ActionDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledActionDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/hoge/smarthr-ui/ActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/hoge/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
+    },
+    // aliasディレクトリのサブディレクトリ内のファイル
+    {
+      code: `export const MessageDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledMessageDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/hoge/smarthr-ui/dialogs/MessageDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/hoge/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' } }],
+    },
+    // 実際のbarrel import構造の例
+    {
+      code: `import { FormDialog as ShrFormDialog } from 'smarthr-ui'\nexport const FormDialog = (props) => <ShrFormDialog {...props} />`,
+      output: `import { ControlledFormDialog as ShrFormDialog } from 'smarthr-ui'\nexport const ControlledFormDialog = (props) => <ShrFormDialog {...props} />`,
+      filename: '/Users/test/src/hoge/smarthr-ui/FormDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/hoge/smarthr-ui' }],
+      errors: [
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
+      ],
+    },
+
   ],
 }

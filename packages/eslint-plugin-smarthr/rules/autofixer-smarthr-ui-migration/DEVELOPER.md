@@ -61,6 +61,7 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 - rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md（ユーザー向け移行ガイド）
 - rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
+- libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
 ## 対応する変更
 
@@ -71,16 +72,24 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 1. [変更内容1の説明]
    - 例: ComponentA が ComponentB にリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: `ImportDeclaration`, `JSXOpeningElement[name.name="ComponentA"]`
 
 2. [変更内容2の説明]
    - 例: propsXがpropsYにリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: `JSXAttribute[name.name="propsX"]`
 
 3. [変更内容3の説明]
    - 例: 非推奨パターンから推奨パターンへの置き換え（非破壊的）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: [該当するASTセレクター]
 
 4. ...
+
+**自動修正の判断基準:**
+- ✅ 自動修正可能: 機械的に100%正しく変換できる場合
+- ⚠️ エラーのみ: 手動確認が必要な場合（未知の属性がある、複数の対処方法がある等）
+- ❌ 検出しない: 複雑すぎる、影響範囲が広すぎる場合
 
 ## 実装内容
 
@@ -90,6 +99,26 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    - messages定義
    - createCheckers関数の実装（`createCheckers(context, sourceCode, options = {})`）
    - 必要に応じてヘルパー関数
+
+   **smarthrUiAliasオプションを利用する場合:**
+   ```javascript
+   const { rootPath } = require('../../../../libs/common')
+
+   createCheckers(context, sourceCode, options = {}) {
+     const customSmarthrUiAlias = options.smarthrUiAlias
+     const validSources = ['smarthr-ui']
+     if (customSmarthrUiAlias) {
+       validSources.push(customSmarthrUiAlias)
+     }
+
+     const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+       context.getFilename(),
+       customSmarthrUiAlias
+     )
+
+     // ... チェッカー実装
+   }
+   ```
 
 3. `versions/v[XX]-to-v[YY]/README.md` を作成（ユーザー向け移行ガイド）
    - 各変更の説明
@@ -103,6 +132,26 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 5. `versions/v[XX]-to-v[YY]/test.js` を作成
    - valid: v[YY]形式が正常に通ること
    - invalid: v[XX]形式が検出されて修正されること
+
+   **テストケースの構造:**
+   ```javascript
+   const v[XX]Tov[YY]Options = [{ from: '[XX]', to: '[YY]' }]
+
+   module.exports = {
+     valid: [
+       { code: `import { NewComponent } from 'smarthr-ui'`, options: v[XX]Tov[YY]Options },
+       { code: `<NewComponent>...</NewComponent>`, options: v[XX]Tov[YY]Options },
+     ],
+     invalid: [
+       {
+         code: `import { OldComponent } from 'smarthr-ui'`,
+         output: `import { NewComponent } from 'smarthr-ui'`,
+         options: v[XX]Tov[YY]Options,
+         errors: [{ messageId: 'renameComponent', data: { old: 'OldComponent', new: 'NewComponent', to: 'v[YY]' } }],
+       },
+     ],
+   }
+   ```
 
 6. `index.js`のVERSION_MODULESに登録
    ```javascript
@@ -194,7 +243,11 @@ createCheckers(context, sourceCode, options = {}) {
 - [ ] `versions/vXX-to-vYY/` ディレクトリを作成
 - [ ] `versions/vXX-to-vYY/index.js` を作成
   - [ ] messages定義が含まれている
-  - [ ] createCheckers関数が実装されている
+  - [ ] createCheckers関数が実装されている（`createCheckers(context, sourceCode, options = {})`）
+  - [ ] smarthrUiAliasオプションに対応している場合：
+    - [ ] `const { rootPath } = require('../../../../libs/common')` をimport
+    - [ ] `validSources`に`customSmarthrUiAlias`を追加
+    - [ ] `isAliasFile`でファイル判定を実装
   - [ ] ヘルパー関数にJSDocコメントがある
   - [ ] ファイル冒頭に変更サマリーコメントがある
 - [ ] `versions/vXX-to-vYY/README.md` を作成（ユーザー向け移行ガイド）
@@ -222,6 +275,9 @@ createCheckers(context, sourceCode, options = {}) {
 - [ ] `npm test -- test/autofixer-smarthr-ui-migration.js` が通過
 - [ ] オプション `{ from: "[XX]", to: "[YY]" }` で動作確認
 - [ ] 複数バージョンスキップ（例: `{ from: "90", to: "[YY]" }`）でも動作確認
+- [ ] smarthrUiAliasオプション対応がある場合：
+  - [ ] `{ from: "[XX]", to: "[YY]", smarthrUiAlias: "@/components/parts/smarthr-ui" }` で動作確認
+  - [ ] aliasファイル内のexport変数名が置換されることを確認
 
 ## 参考情報
 

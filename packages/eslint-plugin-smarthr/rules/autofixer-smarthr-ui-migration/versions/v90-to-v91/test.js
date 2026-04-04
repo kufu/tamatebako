@@ -48,6 +48,36 @@ module.exports = {
     { code: `<ResponseMessage status="success">Xxxx</ResponseMessage>`, options: v90ToV91Options },
     { code: `<Heading icon={{ prefix: <FaCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`, options: v90ToV91Options },
     { code: `<AppHeader email="test@example.com" />`, options: v90ToV91Options },
+
+    // smarthrUiAliasオプション: aliasファイル外では置換しない
+    {
+      code: `export const ActionDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/features/custom/ActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
+
+    // smarthrUiAliasオプション: v91形式は正常
+    {
+      code: `import { ControlledActionDialog } from '@/components/parts/smarthr-ui'`,
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
+    {
+      code: `export const ControlledActionDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/ControlledActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
+
+    // smarthrUiAliasオプション: カスタム名のexportは置換しない
+    {
+      code: `export const MyActionDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/MyActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
+    {
+      code: `export const CustomDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/CustomDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
   ],
 
   invalid: [
@@ -217,5 +247,77 @@ module.exports = {
       options: v90ToV91Options,
       errors: [{ messageId: 'removeArbitraryDisplayName' }],
     },
+
+    // ============================================================
+    // 6. smarthrUiAliasオプション: aliasからのimport
+    // ============================================================
+    {
+      code: `import { ActionDialog } from '@/components/parts/smarthr-ui'`,
+      output: `import { ControlledActionDialog } from '@/components/parts/smarthr-ui'`,
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
+    },
+
+    // ============================================================
+    // 7. smarthrUiAliasオプション: aliasファイル内のexport変数名置換
+    // ============================================================
+    {
+      code: `export const ActionDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledActionDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/ActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
+    },
+    {
+      code: `export const FormDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledFormDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/index.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } }],
+    },
+    // 複数のコンポーネントを同時にexport
+    {
+      code: `export const MessageDialog = (props) => <div>{props.children}</div>\nexport const StepFormDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledMessageDialog = (props) => <div>{props.children}</div>\nexport const ControlledStepFormDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/index.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [
+        { messageId: 'renameDialog', data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'StepFormDialog', new: 'ControlledStepFormDialog', to: 'v91' } },
+      ],
+    },
+
+    // ============================================================
+    // 8. smarthrUiAliasオプション: smarthr-ui直接importも置換される
+    // ============================================================
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      output: `import { ControlledActionDialog } from 'smarthr-ui'`,
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
+    },
+    // aliasファイル内でsmarthr-uiからimportしている場合
+    {
+      code: `import { ActionDialog as ShrActionDialog } from 'smarthr-ui'\nexport const ActionDialog = (props) => <ShrActionDialog {...props} />`,
+      output: `import { ControlledActionDialog as ShrActionDialog } from 'smarthr-ui'\nexport const ControlledActionDialog = (props) => <ShrActionDialog {...props} />`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/ActionDialog.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
+      ],
+    },
+
+    // ============================================================
+    // 9. smarthrUiAliasオプション: JSX内のコンポーネント使用も置換
+    // ============================================================
+    {
+      code: `const Wrapper = () => <ActionDialog>test</ActionDialog>`,
+      output: `const Wrapper = () => <ControlledActionDialog>test</ControlledActionDialog>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui/Wrapper.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
+    },
+
   ],
 }

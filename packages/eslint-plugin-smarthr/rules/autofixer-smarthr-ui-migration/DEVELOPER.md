@@ -88,7 +88,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
 2. `versions/v[XX]-to-v[YY]/index.js` を作成
    - messages定義
-   - createCheckers関数の実装
+   - createCheckers関数の実装（`createCheckers(context, sourceCode, options = {})`）
    - 必要に応じてヘルパー関数
 
 3. `versions/v[XX]-to-v[YY]/README.md` を作成（ユーザー向け移行ガイド）
@@ -143,6 +143,37 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - 実行速度より、後から読んだときの理解しやすさを優先してください
 - JSDocコメントを適切に追加してください
 - ディレクトリ名は必ず `vXX-to-vYY` 形式にしてください（内部キーと統一）
+
+## 共通機能：smarthrUiAlias オプション
+
+プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションが利用可能です。
+
+### createCheckers関数でのオプション利用
+
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  // aliasファイルかどうかの判定
+  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+    context.getFilename(),
+    customSmarthrUiAlias
+  )
+
+  // ...
+}
+```
+
+### 主な用途
+
+1. **importのチェック範囲拡張**: `smarthr-ui`に加えて、aliasパス（例: `@/components/parts/smarthr-ui`）からのimportも置換対象
+2. **aliasファイル内のexport変数名置換**: `smarthrUiAlias`配下のファイルで、smarthr-uiコンポーネント名と同じexport変数名を自動置換
+
+詳細は[README.md](./README.md#smarthr-ui-の-alias-を使用している場合)を参照。
 
 ## 完了後の作業
 

@@ -31,6 +31,100 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 }
 ```
 
+### smarthr-ui の alias を使用している場合
+
+プロジェクトで smarthr-ui を独自のパスから re-export している場合（例: `@/components/parts/smarthr-ui`）、`smarthrUiAlias` オプションを指定することで、alias ファイル内のコンポーネント定義も自動修正の対象になります。
+
+#### 前提条件
+
+このオプションを使用するには、`tsconfig.json` で paths 設定が必要です：
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+#### 使用方法
+
+```javascript
+{
+  "rules": {
+    "smarthr/autofixer-smarthr-ui-migration": [
+      "error",
+      {
+        "from": "90",
+        "to": "91",
+        "smarthrUiAlias": "@/components/parts/smarthr-ui"
+      }
+    ]
+  }
+}
+```
+
+#### 動作
+
+このオプションを指定すると、以下の3つが置換対象になります：
+
+1. **`smarthr-ui` からの直接 import**（`smarthrUiAlias` 指定に関わらず常に置換）
+   ```typescript
+   // Before
+   import { ActionDialog } from 'smarthr-ui'
+   // After
+   import { ControlledActionDialog } from 'smarthr-ui'
+   ```
+
+2. **alias パスからの import**
+   ```typescript
+   // Before
+   import { ActionDialog } from '@/components/parts/smarthr-ui'
+   // After
+   import { ControlledActionDialog } from '@/components/parts/smarthr-ui'
+   ```
+
+3. **alias ファイル内の export 変数名**（smarthr-ui のコンポーネント名と同じ場合のみ）
+   ```typescript
+   // @/components/parts/smarthr-ui/ActionDialog.tsx（aliasファイル）
+
+   // Before（v90 使用時）
+   import { ActionDialog as ShrActionDialog } from 'smarthr-ui'
+   export const ActionDialog = (props) => {
+     return <ShrActionDialog {...props} customProp="value" />
+   }
+
+   // After（v91 移行後）
+   import { ControlledActionDialog as ShrActionDialog } from 'smarthr-ui'
+   export const ControlledActionDialog = (props) => {
+     return <ShrActionDialog {...props} customProp="value" />
+   }
+   ```
+
+#### 制限事項
+
+- **対象ファイルの範囲:** `smarthrUiAlias` で指定されたパス配下のファイルのみ。他のディレクトリにある同名の export は変更されません
+  ```typescript
+  // src/components/parts/smarthr-ui/index.tsx → 置換される ✅
+  // src/features/custom/ActionDialog.tsx → 置換されない ✅
+  ```
+
+- **変数名の判定:** smarthr-ui が提供するコンポーネント名と完全一致する export 変数名のみ置換
+  ```typescript
+  export const ActionDialog = ...  // ✅ 置換される
+  export const MyActionDialog = ... // ❌ 置換されない
+  export const CustomDialog = ...   // ❌ 置換されない
+  ```
+
+- **export 形式:** 現在は `export const` 形式のみサポート
+  ```typescript
+  export const ActionDialog = ... // ✅ サポート
+  export function ActionDialog()  // ❌ 未サポート
+  export class ActionDialog       // ❌ 未サポート
+  ```
+
 ## サポートされているバージョン
 
 各バージョンの破壊的変更の詳細と対応内容については、リンク先の移行ガイドを参照してください。

@@ -77,11 +77,36 @@ module.exports = {
 
 ESLintのセレクターとハンドラーを返す関数です。
 
+**シグネチャ:**
 ```javascript
-createCheckers(context, sourceCode) {
-  return {
+createCheckers(context, sourceCode, options = {})
+```
+
+- `context`: ESLintのcontext
+- `sourceCode`: ESLintのsourceCode
+- `options`: ユーザーが指定したオプション（`smarthrUiAlias`など）
+
+**基本構造:**
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  // smarthrUiAliasオプションの取得
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  // aliasファイルかどうかの判定
+  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+    context.getFilename(),
+    customSmarthrUiAlias
+  )
+
+  const checkers = {
     // インポート文の処理
     ImportDeclaration(node) {
+      // smarthr-ui + smarthrUiAlias の両方をチェック
+      if (!validSources.includes(node.source.value)) return
       // ...
     },
 
@@ -95,6 +120,15 @@ createCheckers(context, sourceCode) {
       // ...
     },
   }
+
+  // aliasファイルの場合のみ、export変数名の置換を追加
+  if (isAliasFile) {
+    checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+      // export const ActionDialog = ... を置換
+    }
+  }
+
+  return checkers
 }
 ```
 
@@ -436,6 +470,99 @@ function hasUnknownAttributes(node, ...knownAttrs) {
 **判断基準:**
 - **属性の移行先が明確** → パターンA（未知の属性も保持して自動修正）
 - **属性の移行先が不明確** → パターンB（エラーのみ、手動対応）
+
+### パターン6: smarthrUiAlias オプションへの対応
+
+プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションを利用します。
+
+#### validSourcesの拡張
+
+`smarthr-ui`に加えて、aliasパスからのimportもチェック対象にします。
+
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  return {
+    ImportDeclaration(node) {
+      // smarthr-ui または @/components/parts/smarthr-ui からのimport
+      if (!validSources.includes(node.source.value)) return
+
+      // ...置換処理
+    }
+  }
+}
+```
+
+#### aliasファイル内のexport変数名置換
+
+aliasディレクトリ配下のファイルで、smarthr-uiコンポーネント名と同じ変数名をexportしている場合に置換します。
+
+```javascript
+// aliasファイルかどうかの判定
+const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+  context.getFilename(),
+  customSmarthrUiAlias
+)
+
+const checkers = {
+  // ... 通常のチェッカー
+}
+
+// aliasファイルの場合のみ、export変数名の置換を追加
+if (isAliasFile) {
+  checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+    const variableName = node.id.name
+    const newName = DIALOG_COMPONENTS[variableName]
+
+    if (newName) {
+      context.report({
+        node: node.id,
+        messageId: 'renameDialog',
+        data: { old: variableName, new: newName, to: TARGET_VERSION },
+        fix(fixer) {
+          return fixer.replaceText(node.id, newName)
+        },
+      })
+    }
+  }
+}
+
+return checkers
+```
+
+#### ファイルパスのマッチング（ヘルパー関数）
+
+```javascript
+const { rootPath } = require('../../../../libs/common')
+
+function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
+  // rootPathがある場合は絶対パスで比較
+  if (rootPath) {
+    const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
+    if (filename.includes(resolved)) {
+      return true
+    }
+  }
+
+  // テスト環境など: パスの一部としてマッチング
+  const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
+  return filename.includes(`/${pathPart}/`) || filename.endsWith(`/${pathPart}`)
+}
+```
+
+**このパターンが適用されるケース:**
+- barrel import構造でsmarthr-uiを拡張しているプロジェクト
+- `@/components/parts/smarthr-ui/ActionDialog.tsx`で`export const ActionDialog`している場合
+
+**ポイント:**
+- importチェックは`validSources`で拡張
+- export変数名の置換は`isAliasFile`条件付きで追加
+- サブディレクトリも含めてマッチング（`filename.includes(resolved)`）
 
 ## トラブルシューティング
 

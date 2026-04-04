@@ -224,6 +224,19 @@ createCheckers(context, sourceCode, options = {}) {
 
 詳細は[README.md](./README.md#smarthr-ui-の-alias-を使用している場合)を参照。
 
+### 🔄 今後の検討事項：共通化
+
+**現状:** 各versionディレクトリ（v90-to-v91など）で個別にsmarthrUiAlias関連の処理を実装しています。
+
+**検討中:** 以下の処理を共通化できる可能性があります：
+- `validSources`の拡張ロジック
+- `isFileMatchingSmarthrUiAlias`ヘルパー関数
+- export変数名の置換チェッカー追加ロジック
+
+**実装時期:** v92移行ルール追加時に、重複を確認して共通化を検討してください。共通化する場合は、以下のような場所が候補です：
+- `libs/common.js`に共通ヘルパー関数を追加
+- 各versionモジュールで共通の基底関数を提供
+
 ## 完了後の作業
 
 実装が完了したら、**必ずこのDEVELOPER.mdを更新**してください：

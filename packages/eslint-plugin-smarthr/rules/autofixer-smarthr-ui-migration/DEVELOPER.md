@@ -292,6 +292,67 @@ createCheckers(context, sourceCode, options = {}) {
   - [ ] `{ from: "[XX]", to: "[YY]", smarthrUiAlias: "@/components/parts/smarthr-ui" }` で動作確認
   - [ ] aliasファイル内のexport変数名が置換されることを確認
 
+### 実プロダクトでの検証
+
+単体テストが通過したら、実際のプロダクトで動作確認を行います。
+
+**手順:**
+
+1. **対象プロダクトの選択**
+   - ローカルにある実プロダクトを選択（例: `/works/workflow/michi/frontend`）
+
+2. **ブランチ作成**
+   - `staging` ブランチから新しいブランチを作成（`staging` がない場合は `master` または `main`）
+   ```bash
+   cd /path/to/product
+   git checkout staging  # または master/main
+   git pull
+   git checkout -b test/migrator-vXX-to-vYY
+   ```
+
+3. **migratorのコピーと設定**
+   - 開発中のmigratorを対象プロダクトにコピー
+   - `.eslintrc.js` または `eslint.config.js` でルールを有効化
+   ```javascript
+   {
+     rules: {
+       'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'XX', to: 'YY' }]
+     }
+   }
+   ```
+
+4. **初回実行**
+   ```bash
+   npm run lint:fix  # または eslint --fix .
+   ```
+
+5. **問題の修正と再実行**
+   - 実行時に出た問題（エラー、不正な変換など）を確認
+   - 問題があれば migrator の実装を修正
+   - **重要:** 再実行前に、staging が更新されていない状態（migration前の状態）に戻す
+   ```bash
+   git reset --hard HEAD  # 変更を破棄
+   # migratorを修正後、再度実行
+   npm run lint:fix
+   ```
+   - 問題が解決するまで手順5を繰り返す
+
+6. **PR作成**
+   - 問題が修正されたことを確認できたら、差分を確認しやすいよう draft で PR 作成
+   ```bash
+   git add .
+   git commit -m "test: vXX to vYY migration test"
+   git push -u origin test/migrator-vXX-to-vYY
+   gh pr create --draft --title "test: vXX to vYY migration test" --body "migratorの動作確認用PR"
+   ```
+   - PR の差分をレビューして、期待通りの変換が行われているか確認
+
+**確認ポイント:**
+- [ ] エラーが出ずに実行完了する
+- [ ] 意図した変換が正しく行われている
+- [ ] 不要な変更が含まれていない
+- [ ] エッジケースでも正しく動作する
+
 ## 参考情報
 
 ### smarthr-ui リリースノート

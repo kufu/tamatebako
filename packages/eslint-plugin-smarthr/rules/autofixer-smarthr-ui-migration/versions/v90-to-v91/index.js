@@ -518,15 +518,13 @@ module.exports = {
  * @returns {boolean} マッチする場合true
  */
 function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
-  // rootPathがある場合は絶対パスで比較を試みる
-  if (rootPath) {
-    const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
-    if (filename.includes(resolved)) {
-      return true
-    }
+  // rootPathを使って絶対パスで比較を試みる
+  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
+  if (filename.includes(resolved)) {
+    return true
   }
 
-  // rootPathでマッチしない場合（またはrootPathがない場合）:
+  // rootPathでマッチしない場合:
   // パスの一部としてマッチング（テスト環境などで使用）
   // 例: '@/components/parts/smarthr-ui' -> 'components/parts/smarthr-ui'
   const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')

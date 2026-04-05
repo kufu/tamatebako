@@ -31,6 +31,160 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 }
 ```
 
+### smarthr-ui の alias を使用している場合
+
+プロジェクトで smarthr-ui を独自のパスから re-export している場合（例: `@/components/parts/smarthr-ui`）、`smarthrUiAlias` オプションを指定することで、alias ファイル内のコンポーネント定義も自動修正の対象になります。
+
+#### 前提条件
+
+このオプションを使用するには、`tsconfig.json` で paths 設定が必要です：
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+#### 使用方法
+
+```javascript
+{
+  "rules": {
+    "smarthr/autofixer-smarthr-ui-migration": [
+      "error",
+      {
+        "from": "90",
+        "to": "91",
+        "smarthrUiAlias": "@/components/parts/smarthr-ui"
+      }
+    ]
+  }
+}
+```
+
+#### 動作
+
+このオプションを指定すると、以下の3つが置換対象になります：
+
+1. **`smarthr-ui` からの直接 import**（`smarthrUiAlias` 指定に関わらず常に置換）
+   ```typescript
+   // Before
+   import { ActionDialog } from 'smarthr-ui'
+   // After
+   import { ControlledActionDialog } from 'smarthr-ui'
+   ```
+
+2. **alias パスからの import**
+   ```typescript
+   // Before
+   import { ActionDialog } from '@/components/parts/smarthr-ui'
+   // After
+   import { ControlledActionDialog } from '@/components/parts/smarthr-ui'
+   ```
+
+3. **alias ファイル内の export 変数名**（smarthr-ui のコンポーネント名と同じ場合のみ）
+   ```typescript
+   // @/components/parts/smarthr-ui/ActionDialog.tsx（aliasファイル）
+
+   // Before（v90 使用時）
+   import { ActionDialog as ShrActionDialog } from 'smarthr-ui'
+   export const ActionDialog = (props) => {
+     return <ShrActionDialog {...props} customProp="value" />
+   }
+
+   // After（v91 移行後）
+   import { ControlledActionDialog as ShrActionDialog } from 'smarthr-ui'
+   export const ControlledActionDialog = (props) => {
+     return <ShrActionDialog {...props} customProp="value" />
+   }
+   ```
+
+#### barrel import 構造への対応
+
+`smarthrUiAlias` で指定されたパス配下のすべてのファイルが置換対象になります。
+
+**ディレクトリ形式:**
+```
+@/components/parts/smarthr-ui/
+├── index.tsx               # ✅ 置換対象
+├── ActionDialog.tsx        # ✅ 置換対象
+├── FormDialog.tsx          # ✅ 置換対象
+└── dialogs/
+    └── MessageDialog.tsx   # ✅ 置換対象（サブディレクトリも含む）
+```
+
+```typescript
+// index.tsx（barrel export）
+export { ActionDialog } from './ActionDialog'
+export { FormDialog } from './FormDialog'
+
+// または、smarthr-uiから直接re-export
+export { ActionDialog } from 'smarthr-ui'
+// → export { ControlledActionDialog } from 'smarthr-ui' に自動置換
+
+// ActionDialog.tsx
+import { ActionDialog as ShrActionDialog } from 'smarthr-ui'
+export const ActionDialog = (props) => <ShrActionDialog {...props} />
+// → export const ControlledActionDialog に自動置換
+```
+
+**単一ファイル形式:**
+```
+@/components/parts/smarthr-ui.tsx   # ✅ 置換対象
+```
+
+```typescript
+// smarthr-ui.tsx
+export const ActionDialog = (props) => <div>{props.children}</div>
+// → export const ControlledActionDialog に自動置換
+```
+
+#### 制限事項
+
+- **対象ファイルの範囲:** `smarthrUiAlias` で指定されたパス配下のファイルのみ。他のディレクトリにある同名の export は変更されません
+  ```typescript
+  // src/components/parts/smarthr-ui/index.tsx → 置換される ✅
+  // src/features/custom/ActionDialog.tsx → 置換されない ✅
+  ```
+
+- **変数名の判定:** smarthr-ui が提供するコンポーネント名と完全一致する export 変数名のみ置換
+  ```typescript
+  export const ActionDialog = ...  // ✅ 置換される
+  export const MyActionDialog = ... // ❌ 置換されない
+  export const CustomDialog = ...   // ❌ 置換されない
+  ```
+
+- **export 形式:** 現在は `export const` 形式のみサポート
+  ```typescript
+  export const ActionDialog = ... // ✅ サポート
+  export function ActionDialog()  // ❌ 未サポート
+  export class ActionDialog       // ❌ 未サポート
+  ```
+
+- **ファイル名の変更:** ファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーが表示されます（自動修正不可）
+  ```
+  // エラー例
+  smarthr-ui v91 では ActionDialog が ControlledActionDialog にリネームされました。
+  以下の手順で対応してください:
+  1. ファイル名を変更（例: git mv ActionDialog.tsx ControlledActionDialog.tsx）
+  2. このファイルをimportしている箇所を更新（例: from '@/path/ActionDialog' → from '@/path/ControlledActionDialog'）
+  ```
+
+  **対応手順:**
+  1. ファイル名を変更: `git mv ActionDialog.tsx ControlledActionDialog.tsx`
+  2. このファイルをimportしている箇所を手動で更新:
+     ```typescript
+     // Before
+     import { FormDialog } from '@/components/parts/smarthr-ui/FormDialog'
+
+     // After
+     import { ControlledFormDialog } from '@/components/parts/smarthr-ui/ControlledFormDialog'
+     ```
+
 ## サポートされているバージョン
 
 各バージョンの破壊的変更の詳細と対応内容については、リンク先の移行ガイドを参照してください。

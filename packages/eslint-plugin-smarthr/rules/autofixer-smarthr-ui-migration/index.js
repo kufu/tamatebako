@@ -38,6 +38,9 @@ module.exports = {
             type: 'string',
             pattern: '^[0-9]+$',
           },
+          smarthrUiAlias: {
+            type: 'string',
+          },
         },
         required: ['from', 'to'],
         additionalProperties: false,
@@ -90,7 +93,7 @@ module.exports = {
     // 例: v90→v92 なら [v90→v91のチェッカー] を収集
     const checkersList = path.map((stepKey) => {
       const module = VERSION_MODULES[stepKey]
-      return module.createCheckers(context, sourceCode)
+      return module.createCheckers(context, sourceCode, options)
     })
 
     const mergedCheckers = mergeCheckers(checkersList)

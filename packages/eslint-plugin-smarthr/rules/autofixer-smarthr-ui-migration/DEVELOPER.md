@@ -61,6 +61,7 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 - rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md（ユーザー向け移行ガイド）
 - rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
+- libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
 ## 対応する変更
 
@@ -71,16 +72,24 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 1. [変更内容1の説明]
    - 例: ComponentA が ComponentB にリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: `ImportDeclaration`, `JSXOpeningElement[name.name="ComponentA"]`
 
 2. [変更内容2の説明]
    - 例: propsXがpropsYにリネーム（破壊的変更）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: `JSXAttribute[name.name="propsX"]`
 
 3. [変更内容3の説明]
    - 例: 非推奨パターンから推奨パターンへの置き換え（非破壊的）
    - 自動修正: [可能/不可能/条件付き]
+   - セレクター: [該当するASTセレクター]
 
 4. ...
+
+**自動修正の判断基準:**
+- ✅ 自動修正可能: 機械的に100%正しく変換できる場合
+- ⚠️ エラーのみ: 手動確認が必要な場合（未知の属性がある、複数の対処方法がある等）
+- ❌ 検出しない: 複雑すぎる、影響範囲が広すぎる場合
 
 ## 実装内容
 
@@ -88,8 +97,28 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
 2. `versions/v[XX]-to-v[YY]/index.js` を作成
    - messages定義
-   - createCheckers関数の実装
+   - createCheckers関数の実装（`createCheckers(context, sourceCode, options = {})`）
    - 必要に応じてヘルパー関数
+
+   **smarthrUiAliasオプションを利用する場合:**
+   ```javascript
+   const { rootPath } = require('../../../../libs/common')
+
+   createCheckers(context, sourceCode, options = {}) {
+     const customSmarthrUiAlias = options.smarthrUiAlias
+     const validSources = ['smarthr-ui']
+     if (customSmarthrUiAlias) {
+       validSources.push(customSmarthrUiAlias)
+     }
+
+     const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+       context.getFilename(),
+       customSmarthrUiAlias
+     )
+
+     // ... チェッカー実装
+   }
+   ```
 
 3. `versions/v[XX]-to-v[YY]/README.md` を作成（ユーザー向け移行ガイド）
    - 各変更の説明
@@ -103,6 +132,26 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 5. `versions/v[XX]-to-v[YY]/test.js` を作成
    - valid: v[YY]形式が正常に通ること
    - invalid: v[XX]形式が検出されて修正されること
+
+   **テストケースの構造:**
+   ```javascript
+   const v[XX]Tov[YY]Options = [{ from: '[XX]', to: '[YY]' }]
+
+   module.exports = {
+     valid: [
+       { code: `import { NewComponent } from 'smarthr-ui'`, options: v[XX]Tov[YY]Options },
+       { code: `<NewComponent>...</NewComponent>`, options: v[XX]Tov[YY]Options },
+     ],
+     invalid: [
+       {
+         code: `import { OldComponent } from 'smarthr-ui'`,
+         output: `import { NewComponent } from 'smarthr-ui'`,
+         options: v[XX]Tov[YY]Options,
+         errors: [{ messageId: 'renameComponent', data: { old: 'OldComponent', new: 'NewComponent', to: 'v[YY]' } }],
+       },
+     ],
+   }
+   ```
 
 6. `index.js`のVERSION_MODULESに登録
    ```javascript
@@ -144,6 +193,50 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - JSDocコメントを適切に追加してください
 - ディレクトリ名は必ず `vXX-to-vYY` 形式にしてください（内部キーと統一）
 
+## 共通機能：smarthrUiAlias オプション
+
+プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションが利用可能です。
+
+### createCheckers関数でのオプション利用
+
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  // aliasファイルかどうかの判定
+  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+    context.getFilename(),
+    customSmarthrUiAlias
+  )
+
+  // ...
+}
+```
+
+### 主な用途
+
+1. **importのチェック範囲拡張**: `smarthr-ui`に加えて、aliasパス（例: `@/components/parts/smarthr-ui`）からのimportも置換対象
+2. **aliasファイル内のexport変数名置換**: `smarthrUiAlias`配下のファイルで、smarthr-uiコンポーネント名と同じexport変数名を自動置換
+
+詳細は[README.md](./README.md#smarthr-ui-の-alias-を使用している場合)を参照。
+
+### 🔄 今後の検討事項：共通化
+
+**現状:** 各versionディレクトリ（v90-to-v91など）で個別にsmarthrUiAlias関連の処理を実装しています。
+
+**検討中:** 以下の処理を共通化できる可能性があります：
+- `validSources`の拡張ロジック
+- `isFileMatchingSmarthrUiAlias`ヘルパー関数
+- export変数名の置換チェッカー追加ロジック
+
+**実装時期:** v92移行ルール追加時に、重複を確認して共通化を検討してください。共通化する場合は、以下のような場所が候補です：
+- `libs/common.js`に共通ヘルパー関数を追加
+- 各versionモジュールで共通の基底関数を提供
+
 ## 完了後の作業
 
 実装が完了したら、**必ずこのDEVELOPER.mdを更新**してください：
@@ -163,7 +256,11 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - [ ] `versions/vXX-to-vYY/` ディレクトリを作成
 - [ ] `versions/vXX-to-vYY/index.js` を作成
   - [ ] messages定義が含まれている
-  - [ ] createCheckers関数が実装されている
+  - [ ] createCheckers関数が実装されている（`createCheckers(context, sourceCode, options = {})`）
+  - [ ] smarthrUiAliasオプションに対応している場合：
+    - [ ] `const { rootPath } = require('../../../../libs/common')` をimport
+    - [ ] `validSources`に`customSmarthrUiAlias`を追加
+    - [ ] `isAliasFile`でファイル判定を実装
   - [ ] ヘルパー関数にJSDocコメントがある
   - [ ] ファイル冒頭に変更サマリーコメントがある
 - [ ] `versions/vXX-to-vYY/README.md` を作成（ユーザー向け移行ガイド）
@@ -191,6 +288,120 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - [ ] `npm test -- test/autofixer-smarthr-ui-migration.js` が通過
 - [ ] オプション `{ from: "[XX]", to: "[YY]" }` で動作確認
 - [ ] 複数バージョンスキップ（例: `{ from: "90", to: "[YY]" }`）でも動作確認
+- [ ] smarthrUiAliasオプション対応がある場合：
+  - [ ] `{ from: "[XX]", to: "[YY]", smarthrUiAlias: "@/components/parts/smarthr-ui" }` で動作確認
+  - [ ] aliasファイル内のexport変数名が置換されることを確認
+
+### 実プロダクトでの検証
+
+単体テストが通過したら、実際のプロダクトで動作確認を行います。
+
+**手順:**
+
+1. **対象プロダクトの選択**
+   - ローカルにある実プロダクトを選択（例: `/works/workflow/michi/frontend`）
+
+2. **ブランチ作成**
+   - `staging` ブランチから新しいブランチを作成（`staging` がない場合は `master` または `main`）
+   ```bash
+   cd /path/to/product
+   git checkout staging  # または master/main
+   git pull
+   git checkout -b test/migrator-vXX-to-vYY
+   ```
+
+3. **migratorの追加と設定**
+   - 開発中の `eslint-plugin-smarthr` を対象プロダクトに追加
+   ```bash
+   # 相対パスで開発中のパッケージを追加
+   pnpm add -D ../../../tamatebako/packages/eslint-plugin-smarthr
+   # または npm/yarn の場合
+   # npm install -D ../../../tamatebako/packages/eslint-plugin-smarthr
+   ```
+
+   - **Legacy Config形式** (`.eslintrc.js`) の場合：
+   ```javascript
+   module.exports = {
+     extends: ['smarthr'],
+     rules: {
+       'smarthr/autofixer-smarthr-ui-migration': [
+         'error',
+         { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
+       ]
+     }
+   }
+   ```
+
+   - **Flat Config形式** (`eslint.config.mjs`) の場合：
+   ```javascript
+   import smarthr from 'eslint-config-smarthr'
+   import smarthrPlugin from 'eslint-plugin-smarthr'  // 追加
+
+   export default [
+     ...smarthr,
+     {
+       plugins: {
+         'smarthr-local': smarthrPlugin,  // 別名で登録
+       },
+       rules: {
+         'smarthr-local/autofixer-smarthr-ui-migration': [
+           'error',
+           { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
+         ],
+       },
+     },
+   ]
+   ```
+   **注意:** Flat Configでは、すでに `eslint-config-smarthr` 経由で `smarthr` プラグインが登録されているため、開発中のバージョンを使用するには別名（例: `smarthr-local`）で登録する必要があります。
+
+4. **初回実行**
+   ```bash
+   npm run lint:fix  # または eslint --fix .
+   ```
+
+5. **問題の修正と再実行**
+   - 実行時に出た問題（エラー、不正な変換など）を確認
+   - 問題があれば migrator の実装を修正
+   - **重要:** 再実行前に、staging が更新されていない状態（migration前の状態）に戻す
+   ```bash
+   git reset --hard HEAD  # 変更を破棄
+   # migratorを修正後、再度実行
+   npm run lint:fix
+   ```
+   - 問題が解決するまで手順5を繰り返す
+
+6. **PR作成**
+   - 問題が修正されたことを確認できたら、差分を確認しやすいよう draft で PR 作成
+   ```bash
+   git add .
+   git commit -m "test: vXX to vYY migration test"
+   git push -u origin test/migrator-vXX-to-vYY
+   gh pr create --draft --title "test: vXX to vYY migration test" --body "migratorの動作確認用PR"
+   ```
+   - PR の差分をレビューして、期待通りの変換が行われているか確認
+
+7. **クリーンアップ**
+   - 検証完了後、対象プロダクトを元の状態に戻す
+   ```bash
+   # PRはクローズ（マージしない）
+   gh pr close test/migrator-vXX-to-vYY
+
+   # ブランチを削除
+   git checkout staging  # または master/main
+   git branch -D test/migrator-vXX-to-vYY
+   git push origin --delete test/migrator-vXX-to-vYY
+
+   # package.jsonとlockファイルを元に戻す
+   git checkout package.json pnpm-lock.yaml  # または package-lock.json/yarn.lock
+   pnpm install  # 依存関係を再インストール
+   ```
+
+**確認ポイント:**
+- [ ] エラーが出ずに実行完了する
+- [ ] 意図した変換が正しく行われている
+- [ ] 不要な変更が含まれていない
+- [ ] エッジケースでも正しく動作する
+- [ ] aliasファイル内のexport変数名も正しく置換されている（smarthrUiAliasオプション使用時）
 
 ## 参考情報
 

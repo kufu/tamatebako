@@ -77,11 +77,36 @@ module.exports = {
 
 ESLintのセレクターとハンドラーを返す関数です。
 
+**シグネチャ:**
 ```javascript
-createCheckers(context, sourceCode) {
-  return {
+createCheckers(context, sourceCode, options = {})
+```
+
+- `context`: ESLintのcontext
+- `sourceCode`: ESLintのsourceCode
+- `options`: ユーザーが指定したオプション（`smarthrUiAlias`など）
+
+**基本構造:**
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  // smarthrUiAliasオプションの取得
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  // aliasファイルかどうかの判定
+  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+    context.getFilename(),
+    customSmarthrUiAlias
+  )
+
+  const checkers = {
     // インポート文の処理
     ImportDeclaration(node) {
+      // smarthr-ui + smarthrUiAlias の両方をチェック
+      if (!validSources.includes(node.source.value)) return
       // ...
     },
 
@@ -95,6 +120,15 @@ createCheckers(context, sourceCode) {
       // ...
     },
   }
+
+  // aliasファイルの場合のみ、export変数名の置換を追加
+  if (isAliasFile) {
+    checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+      // export const ActionDialog = ... を置換
+    }
+  }
+
+  return checkers
 }
 ```
 
@@ -156,13 +190,18 @@ function findTargetParent(node, sourceCode) {
 
 ### ✅ 自動修正可能
 
-機械的に100%正しく変換できる場合のみ自動修正を実装します。
+機械的に100%正しく変換できる場合に自動修正を実装します。ただし、実用上は100%の正確性が保証できない場合でも、以下の条件を満たせば自動修正を実装して構いません：
+
+- **実際には使用されていない機能や属性**である可能性が高い
+- 置換することで**利便性が明らかに向上する**
+- 誤った変換が行われても**影響が限定的**である
 
 **例:**
 - コンポーネント名のリネーム（ActionDialog → ControlledActionDialog）
 - 属性名のリネーム（type → status）
 - 属性の削除（値が変わらない場合）
 - **未知の属性を保持したまま移行可能な場合**（Text → span など、移行先が明確な置換）
+- **理論的には100%正しくないが、実用上問題ない場合**（使用頻度が極めて低い機能の置換など）
 
 ### ⚠️ エラーのみ（自動修正なし）
 
@@ -436,6 +475,200 @@ function hasUnknownAttributes(node, ...knownAttrs) {
 **判断基準:**
 - **属性の移行先が明確** → パターンA（未知の属性も保持して自動修正）
 - **属性の移行先が不明確** → パターンB（エラーのみ、手動対応）
+
+### パターン6: smarthrUiAlias オプションへの対応
+
+プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションを利用します。
+
+#### validSourcesの拡張
+
+`smarthr-ui`に加えて、aliasパスからのimportもチェック対象にします。
+
+```javascript
+createCheckers(context, sourceCode, options = {}) {
+  const customSmarthrUiAlias = options.smarthrUiAlias
+  const validSources = ['smarthr-ui']
+  if (customSmarthrUiAlias) {
+    validSources.push(customSmarthrUiAlias)
+  }
+
+  return {
+    ImportDeclaration(node) {
+      // smarthr-ui または @/components/parts/smarthr-ui からのimport
+      if (!validSources.includes(node.source.value)) return
+
+      // ...置換処理
+    }
+  }
+}
+```
+
+#### aliasファイル内のexport変数名置換
+
+aliasディレクトリ配下のファイルで、smarthr-uiコンポーネント名と同じ変数名をexportしている場合に置換します。
+
+```javascript
+// aliasファイルかどうかの判定
+const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+  context.getFilename(),
+  customSmarthrUiAlias
+)
+
+const checkers = {
+  // ... 通常のチェッカー
+}
+
+// aliasファイルの場合のみ、export変数名の置換を追加
+if (isAliasFile) {
+  checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+    const variableName = node.id.name
+    const newName = DIALOG_COMPONENTS[variableName]
+
+    if (newName) {
+      context.report({
+        node: node.id,
+        messageId: 'renameDialog',
+        data: { old: variableName, new: newName, to: TARGET_VERSION },
+        fix(fixer) {
+          return fixer.replaceText(node.id, newName)
+        },
+      })
+    }
+  }
+}
+
+return checkers
+```
+
+#### ファイルパスのマッチング（ヘルパー関数）
+
+```javascript
+const { rootPath } = require('../../../../libs/common')
+
+function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
+  // rootPathを使って絶対パスで比較を試みる
+  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
+  if (filename.includes(resolved)) {
+    return true
+  }
+
+  // rootPathでマッチしない場合:
+  // パスの一部としてマッチング（テスト環境などで使用）
+  const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
+
+  // 以下のパターンにマッチング:
+  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
+  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
+  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
+  return (
+    filename.includes(`/${pathPart}/`) ||
+    filename.endsWith(`/${pathPart}`) ||
+    filename.includes(`/${pathPart}.`)
+  )
+}
+```
+
+**このパターンが適用されるケース:**
+- **barrel import構造**: `@/components/parts/smarthr-ui/index.tsx` + 個別ファイル
+- **個別ファイルのみ**: `@/components/parts/smarthr-ui/ActionDialog.tsx` など
+- **単一ファイル形式**: `@/components/parts/smarthr-ui.tsx` （ディレクトリではなく1つのファイル）
+
+**ポイント:**
+- importチェックは`validSources`で拡張
+- export変数名の置換は`isAliasFile`条件付きで追加
+- サブディレクトリも含めてマッチング（`filename.includes(resolved)`）
+- 単一ファイル形式にも対応（`filename.includes(\`/\${pathPart}.\`)`）
+
+### パターン7: aliasファイル名の変更チェック
+
+aliasファイルのファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーを表示します。
+
+```javascript
+checkers.Program = function(node) {
+  if (!isAliasFile) return
+
+  // ファイル名からコンポーネント名を抽出（拡張子を除く）
+  const fileBasename = filename.split('/').pop() || ''
+  const componentName = fileBasename.replace(/\.(tsx?|jsx?)$/, '')
+
+  // Dialog系コンポーネント名と一致するかチェック
+  const newName = DIALOG_COMPONENTS[componentName]
+  if (newName) {
+    const oldFile = fileBasename
+    const newFile = fileBasename.replace(componentName, newName)
+
+    context.report({
+      node,
+      messageId: 'renameAliasFile',
+      data: {
+        old: componentName,
+        new: newName,
+        to: TARGET_VERSION,
+        oldFile,
+        newFile,
+      },
+      // fixは提供しない（ファイル名の変更はESLintでは不可能）
+    })
+  }
+}
+```
+
+**このパターンが必要なケース:**
+- aliasファイルのファイル名がコンポーネント名と一致している場合
+- 例: `ActionDialog.tsx` → `ControlledActionDialog.tsx` に変更が必要
+
+**ポイント:**
+- `Program` ノードに対してチェック（ファイルごとに1回だけ実行）
+- ファイル名の変更はESLintでは不可能なので、fix関数は提供しない
+- エラーメッセージに新旧のファイル名を含める
+- export変数名の置換とは別のエラーとして表示される
+
+**エラーメッセージに含める情報:**
+- ファイル名の変更手順（`git mv` の例）
+- ファイル名変更後、import文も更新が必要であることを明記
+
+**注意:**
+- re-export（`export { ActionDialog } from 'smarthr-ui'`）にも対応するため、`ExportNamedDeclaration`チェッカーも実装が必要
+- ファイル名変更後、そのファイルをimportしている箇所も手動で更新する必要がある
+  ```typescript
+  // Before
+  import { FormDialog } from '@/components/parts/smarthr-ui/FormDialog'
+
+  // After (ファイル名変更後)
+  import { ControlledFormDialog } from '@/components/parts/smarthr-ui/ControlledFormDialog'
+  ```
+
+```javascript
+ExportNamedDeclaration(node) {
+  // sourceがない場合（通常のexport）はスキップ
+  if (!node.source) return
+  if (!validSources.includes(node.source.value)) return
+
+  node.specifiers.forEach((specifier) => {
+    if (specifier.type !== 'ExportSpecifier') return
+
+    const exportedName = specifier.exported.name
+    const localName = specifier.local.name
+    const newName = DIALOG_COMPONENTS[localName]
+
+    if (newName) {
+      context.report({
+        node: specifier,
+        messageId: 'renameDialog',
+        data: { old: localName, new: newName, to: TARGET_VERSION },
+        fix(fixer) {
+          // export { ActionDialog } のように local === exported の場合
+          if (localName === exportedName) {
+            return fixer.replaceText(specifier, newName)
+          }
+          // export { ActionDialog as MyDialog } のような場合
+          return fixer.replaceText(specifier.local, newName)
+        },
+      })
+    }
+  })
+}
+```
 
 ## トラブルシューティング
 

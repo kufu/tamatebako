@@ -13,6 +13,8 @@
  * 参考: https://github.com/kufu/smarthr-ui/releases/tag/smarthr-ui-v91.0.0
  */
 
+const { rootPath } = require('../../../../libs/common')
+
 // ============================================================
 // 定数定義
 // ============================================================
@@ -51,10 +53,56 @@ module.exports = {
     migrateResponseMessage: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください',
     migrateResponseMessageWithUnknownAttrs: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください。status/iconGap 以外の属性（id, onClick など）がある場合は手動で移行してください',
     removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
+    renameAliasFile: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from \'@/path/{{old}}\' → from \'@/path/{{new}}\'）',
   },
 
-  createCheckers(context, sourceCode) {
-    return {
+  createCheckers(context, sourceCode, options = {}) {
+    const customSmarthrUiAlias = options.smarthrUiAlias
+    const validSources = ['smarthr-ui']
+    if (customSmarthrUiAlias) {
+      validSources.push(customSmarthrUiAlias)
+    }
+
+    // 現在のファイルがaliasファイルか判定
+    const filename = context.getFilename()
+    const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
+      filename,
+      customSmarthrUiAlias
+    )
+
+    const checkers = {
+      // ============================================================
+      // 0. aliasファイル名の変更チェック
+      // ============================================================
+
+      // aliasファイルの場合、ファイル名も変更を促す
+      Program(node) {
+        if (!isAliasFile) return
+
+        // ファイル名からコンポーネント名を抽出（拡張子を除く）
+        const fileBasename = filename.split('/').pop() || ''
+        const componentName = fileBasename.replace(/\.(tsx?|jsx?)$/, '')
+
+        // Dialog系コンポーネント名と一致するかチェック
+        const newName = DIALOG_COMPONENTS[componentName]
+        if (newName) {
+          const oldFile = fileBasename
+          const newFile = fileBasename.replace(componentName, newName)
+
+          context.report({
+            node,
+            messageId: 'renameAliasFile',
+            data: {
+              old: componentName,
+              new: newName,
+              to: TARGET_VERSION,
+              oldFile,
+              newFile,
+            },
+          })
+        }
+      },
+
       // ============================================================
       // 1. Dialogコンポーネントのリネーム
       // ============================================================
@@ -63,7 +111,7 @@ module.exports = {
       // 例: import { ActionDialog } from 'smarthr-ui'
       //  → import { ControlledActionDialog } from 'smarthr-ui'
       ImportDeclaration(node) {
-        if (node.source.value !== 'smarthr-ui') return
+        if (!validSources.includes(node.source.value)) return
 
         node.specifiers.forEach((specifier) => {
           if (specifier.type !== 'ImportSpecifier') return
@@ -78,6 +126,39 @@ module.exports = {
               data: { old: importedName, new: newName, to: TARGET_VERSION },
               fix(fixer) {
                 return fixer.replaceText(specifier.imported, newName)
+              },
+            })
+          }
+        })
+      },
+
+      // export文での検出と修正（re-export）
+      // 例: export { ActionDialog } from 'smarthr-ui'
+      //  → export { ControlledActionDialog } from 'smarthr-ui'
+      ExportNamedDeclaration(node) {
+        // sourceがない場合（通常のexport）はスキップ
+        if (!node.source) return
+        if (!validSources.includes(node.source.value)) return
+
+        node.specifiers.forEach((specifier) => {
+          if (specifier.type !== 'ExportSpecifier') return
+
+          const exportedName = specifier.exported.name
+          const localName = specifier.local.name
+          const newName = DIALOG_COMPONENTS[localName]
+
+          if (newName) {
+            context.report({
+              node: specifier,
+              messageId: 'renameDialog',
+              data: { old: localName, new: newName, to: TARGET_VERSION },
+              fix(fixer) {
+                // export { ActionDialog } のように local === exported の場合
+                if (localName === exportedName) {
+                  return fixer.replaceText(specifier, newName)
+                }
+                // export { ActionDialog as MyDialog } のような場合
+                return fixer.replaceText(specifier.local, newName)
               },
             })
           }
@@ -467,5 +548,60 @@ module.exports = {
         return fixer.replaceText(attr.value, newValue)
       }
     }
+
+    // ============================================================
+    // aliasファイル内のexport変数名の置換
+    // ============================================================
+
+    // aliasファイルの場合のみ、export変数名を置換
+    if (isAliasFile) {
+      checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function (node) {
+        const variableName = node.id.name
+        const newName = DIALOG_COMPONENTS[variableName]
+
+        if (newName) {
+          context.report({
+            node: node.id,
+            messageId: 'renameDialog',
+            data: { old: variableName, new: newName, to: TARGET_VERSION },
+            fix(fixer) {
+              return fixer.replaceText(node.id, newName)
+            },
+          })
+        }
+      }
+    }
+
+    return checkers
   },
+}
+
+/**
+ * smarthrUiAliasで指定されたパスと現在のファイルパスがマッチするか判定
+ *
+ * @param {string} filename - 現在処理中のファイルパス
+ * @param {string} smarthrUiAlias - smarthrUiAliasオプションの値（例: '@/components/parts/smarthr-ui'）
+ * @returns {boolean} マッチする場合true
+ */
+function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
+  // rootPathを使って絶対パスで比較を試みる
+  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
+  if (filename.includes(resolved)) {
+    return true
+  }
+
+  // rootPathでマッチしない場合:
+  // パスの一部としてマッチング（テスト環境などで使用）
+  // 例: '@/components/parts/smarthr-ui' -> 'components/parts/smarthr-ui'
+  const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
+
+  // 以下のパターンにマッチング:
+  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
+  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
+  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
+  return (
+    filename.includes(`/${pathPart}/`) ||
+    filename.endsWith(`/${pathPart}`) ||
+    filename.includes(`/${pathPart}.`)
+  )
 }

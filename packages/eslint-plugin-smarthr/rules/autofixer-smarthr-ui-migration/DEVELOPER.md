@@ -310,16 +310,49 @@ createCheckers(context, sourceCode, options = {}) {
    git checkout -b test/migrator-vXX-to-vYY
    ```
 
-3. **migratorのコピーと設定**
-   - 開発中のmigratorを対象プロダクトにコピー
-   - `.eslintrc.js` または `eslint.config.js` でルールを有効化
+3. **migratorの追加と設定**
+   - 開発中の `eslint-plugin-smarthr` を対象プロダクトに追加
+   ```bash
+   # 相対パスで開発中のパッケージを追加
+   pnpm add -D ../../../tamatebako/packages/eslint-plugin-smarthr
+   # または npm/yarn の場合
+   # npm install -D ../../../tamatebako/packages/eslint-plugin-smarthr
+   ```
+
+   - **Legacy Config形式** (`.eslintrc.js`) の場合：
    ```javascript
-   {
+   module.exports = {
+     extends: ['smarthr'],
      rules: {
-       'smarthr/autofixer-smarthr-ui-migration': ['error', { from: 'XX', to: 'YY' }]
+       'smarthr/autofixer-smarthr-ui-migration': [
+         'error',
+         { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
+       ]
      }
    }
    ```
+
+   - **Flat Config形式** (`eslint.config.mjs`) の場合：
+   ```javascript
+   import smarthr from 'eslint-config-smarthr'
+   import smarthrPlugin from 'eslint-plugin-smarthr'  // 追加
+
+   export default [
+     ...smarthr,
+     {
+       plugins: {
+         'smarthr-local': smarthrPlugin,  // 別名で登録
+       },
+       rules: {
+         'smarthr-local/autofixer-smarthr-ui-migration': [
+           'error',
+           { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
+         ],
+       },
+     },
+   ]
+   ```
+   **注意:** Flat Configでは、すでに `eslint-config-smarthr` 経由で `smarthr` プラグインが登録されているため、開発中のバージョンを使用するには別名（例: `smarthr-local`）で登録する必要があります。
 
 4. **初回実行**
    ```bash
@@ -347,11 +380,28 @@ createCheckers(context, sourceCode, options = {}) {
    ```
    - PR の差分をレビューして、期待通りの変換が行われているか確認
 
+7. **クリーンアップ**
+   - 検証完了後、対象プロダクトを元の状態に戻す
+   ```bash
+   # PRはクローズ（マージしない）
+   gh pr close test/migrator-vXX-to-vYY
+
+   # ブランチを削除
+   git checkout staging  # または master/main
+   git branch -D test/migrator-vXX-to-vYY
+   git push origin --delete test/migrator-vXX-to-vYY
+
+   # package.jsonとlockファイルを元に戻す
+   git checkout package.json pnpm-lock.yaml  # または package-lock.json/yarn.lock
+   pnpm install  # 依存関係を再インストール
+   ```
+
 **確認ポイント:**
 - [ ] エラーが出ずに実行完了する
 - [ ] 意図した変換が正しく行われている
 - [ ] 不要な変更が含まれていない
 - [ ] エッジケースでも正しく動作する
+- [ ] aliasファイル内のexport変数名も正しく置換されている（smarthrUiAliasオプション使用時）
 
 ## 参考情報
 

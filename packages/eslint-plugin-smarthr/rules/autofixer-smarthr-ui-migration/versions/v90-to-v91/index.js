@@ -53,6 +53,7 @@ module.exports = {
     migrateResponseMessage: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください',
     migrateResponseMessageWithUnknownAttrs: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください。status/iconGap 以外の属性（id, onClick など）がある場合は手動で移行してください',
     removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
+    renameAliasFile: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。ファイル名も変更してください: {{oldFile}} → {{newFile}}',
   },
 
   createCheckers(context, sourceCode, options = {}) {
@@ -70,6 +71,38 @@ module.exports = {
     )
 
     const checkers = {
+      // ============================================================
+      // 0. aliasファイル名の変更チェック
+      // ============================================================
+
+      // aliasファイルの場合、ファイル名も変更を促す
+      Program(node) {
+        if (!isAliasFile) return
+
+        // ファイル名からコンポーネント名を抽出（拡張子を除く）
+        const fileBasename = filename.split('/').pop() || ''
+        const componentName = fileBasename.replace(/\.(tsx?|jsx?)$/, '')
+
+        // Dialog系コンポーネント名と一致するかチェック
+        const newName = DIALOG_COMPONENTS[componentName]
+        if (newName) {
+          const oldFile = fileBasename
+          const newFile = fileBasename.replace(componentName, newName)
+
+          context.report({
+            node,
+            messageId: 'renameAliasFile',
+            data: {
+              old: componentName,
+              new: newName,
+              to: TARGET_VERSION,
+              oldFile,
+              newFile,
+            },
+          })
+        }
+      },
+
       // ============================================================
       // 1. Dialogコンポーネントのリネーム
       // ============================================================
@@ -93,6 +126,39 @@ module.exports = {
               data: { old: importedName, new: newName, to: TARGET_VERSION },
               fix(fixer) {
                 return fixer.replaceText(specifier.imported, newName)
+              },
+            })
+          }
+        })
+      },
+
+      // export文での検出と修正（re-export）
+      // 例: export { ActionDialog } from 'smarthr-ui'
+      //  → export { ControlledActionDialog } from 'smarthr-ui'
+      ExportNamedDeclaration(node) {
+        // sourceがない場合（通常のexport）はスキップ
+        if (!node.source) return
+        if (!validSources.includes(node.source.value)) return
+
+        node.specifiers.forEach((specifier) => {
+          if (specifier.type !== 'ExportSpecifier') return
+
+          const exportedName = specifier.exported.name
+          const localName = specifier.local.name
+          const newName = DIALOG_COMPONENTS[localName]
+
+          if (newName) {
+            context.report({
+              node: specifier,
+              messageId: 'renameDialog',
+              data: { old: localName, new: newName, to: TARGET_VERSION },
+              fix(fixer) {
+                // export { ActionDialog } のように local === exported の場合
+                if (localName === exportedName) {
+                  return fixer.replaceText(specifier, newName)
+                }
+                // export { ActionDialog as MyDialog } のような場合
+                return fixer.replaceText(specifier.local, newName)
               },
             })
           }

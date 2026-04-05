@@ -579,6 +579,85 @@ function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
 - サブディレクトリも含めてマッチング（`filename.includes(resolved)`）
 - 単一ファイル形式にも対応（`filename.includes(\`/\${pathPart}.\`)`）
 
+### パターン7: aliasファイル名の変更チェック
+
+aliasファイルのファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーを表示します。
+
+```javascript
+checkers.Program = function(node) {
+  if (!isAliasFile) return
+
+  // ファイル名からコンポーネント名を抽出（拡張子を除く）
+  const fileBasename = filename.split('/').pop() || ''
+  const componentName = fileBasename.replace(/\.(tsx?|jsx?)$/, '')
+
+  // Dialog系コンポーネント名と一致するかチェック
+  const newName = DIALOG_COMPONENTS[componentName]
+  if (newName) {
+    const oldFile = fileBasename
+    const newFile = fileBasename.replace(componentName, newName)
+
+    context.report({
+      node,
+      messageId: 'renameAliasFile',
+      data: {
+        old: componentName,
+        new: newName,
+        to: TARGET_VERSION,
+        oldFile,
+        newFile,
+      },
+      // fixは提供しない（ファイル名の変更はESLintでは不可能）
+    })
+  }
+}
+```
+
+**このパターンが必要なケース:**
+- aliasファイルのファイル名がコンポーネント名と一致している場合
+- 例: `ActionDialog.tsx` → `ControlledActionDialog.tsx` に変更が必要
+
+**ポイント:**
+- `Program` ノードに対してチェック（ファイルごとに1回だけ実行）
+- ファイル名の変更はESLintでは不可能なので、fix関数は提供しない
+- エラーメッセージに新旧のファイル名を含める
+- export変数名の置換とは別のエラーとして表示される
+
+**注意:**
+- re-export（`export { ActionDialog } from 'smarthr-ui'`）にも対応するため、`ExportNamedDeclaration`チェッカーも実装が必要
+
+```javascript
+ExportNamedDeclaration(node) {
+  // sourceがない場合（通常のexport）はスキップ
+  if (!node.source) return
+  if (!validSources.includes(node.source.value)) return
+
+  node.specifiers.forEach((specifier) => {
+    if (specifier.type !== 'ExportSpecifier') return
+
+    const exportedName = specifier.exported.name
+    const localName = specifier.local.name
+    const newName = DIALOG_COMPONENTS[localName]
+
+    if (newName) {
+      context.report({
+        node: specifier,
+        messageId: 'renameDialog',
+        data: { old: localName, new: newName, to: TARGET_VERSION },
+        fix(fixer) {
+          // export { ActionDialog } のように local === exported の場合
+          if (localName === exportedName) {
+            return fixer.replaceText(specifier, newName)
+          }
+          // export { ActionDialog as MyDialog } のような場合
+          return fixer.replaceText(specifier.local, newName)
+        },
+      })
+    }
+  })
+}
+```
+
 ## トラブルシューティング
 
 ### Fix objects must not be overlapped

@@ -161,6 +161,14 @@ export const ActionDialog = (props) => <div>{props.children}</div>
   export class ActionDialog       // ❌ 未サポート
   ```
 
+- **ファイル名の変更:** ファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーが表示されます（自動修正不可）
+  ```
+  // エラー例
+  ActionDialog.tsx → ControlledActionDialog.tsx への変更が必要
+  FormDialog.tsx → ControlledFormDialog.tsx への変更が必要
+  ```
+  ファイル名の変更は手動で行う必要があります（例: `git mv ActionDialog.tsx ControlledActionDialog.tsx`）
+
 ## サポートされているバージョン
 
 各バージョンの破壊的変更の詳細と対応内容については、リンク先の移行ガイドを参照してください。

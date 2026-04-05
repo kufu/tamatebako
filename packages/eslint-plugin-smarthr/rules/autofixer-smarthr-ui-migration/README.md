@@ -122,6 +122,10 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 export { ActionDialog } from './ActionDialog'
 export { FormDialog } from './FormDialog'
 
+// または、smarthr-uiから直接re-export
+export { ActionDialog } from 'smarthr-ui'
+// → export { ControlledActionDialog } from 'smarthr-ui' に自動置換
+
 // ActionDialog.tsx
 import { ActionDialog as ShrActionDialog } from 'smarthr-ui'
 export const ActionDialog = (props) => <ShrActionDialog {...props} />

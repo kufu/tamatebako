@@ -623,8 +623,20 @@ checkers.Program = function(node) {
 - エラーメッセージに新旧のファイル名を含める
 - export変数名の置換とは別のエラーとして表示される
 
+**エラーメッセージに含める情報:**
+- ファイル名の変更手順（`git mv` の例）
+- ファイル名変更後、import文も更新が必要であることを明記
+
 **注意:**
 - re-export（`export { ActionDialog } from 'smarthr-ui'`）にも対応するため、`ExportNamedDeclaration`チェッカーも実装が必要
+- ファイル名変更後、そのファイルをimportしている箇所も手動で更新する必要がある
+  ```typescript
+  // Before
+  import { FormDialog } from '@/components/parts/smarthr-ui/FormDialog'
+
+  // After (ファイル名変更後)
+  import { ControlledFormDialog } from '@/components/parts/smarthr-ui/ControlledFormDialog'
+  ```
 
 ```javascript
 ExportNamedDeclaration(node) {

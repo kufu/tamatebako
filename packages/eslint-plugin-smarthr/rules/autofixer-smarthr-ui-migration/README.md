@@ -164,10 +164,22 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 - **ファイル名の変更:** ファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーが表示されます（自動修正不可）
   ```
   // エラー例
-  ActionDialog.tsx → ControlledActionDialog.tsx への変更が必要
-  FormDialog.tsx → ControlledFormDialog.tsx への変更が必要
+  smarthr-ui v91 では ActionDialog が ControlledActionDialog にリネームされました。
+  以下の手順で対応してください:
+  1. ファイル名を変更（例: git mv ActionDialog.tsx ControlledActionDialog.tsx）
+  2. このファイルをimportしている箇所を更新（例: from '@/path/ActionDialog' → from '@/path/ControlledActionDialog'）
   ```
-  ファイル名の変更は手動で行う必要があります（例: `git mv ActionDialog.tsx ControlledActionDialog.tsx`）
+
+  **対応手順:**
+  1. ファイル名を変更: `git mv ActionDialog.tsx ControlledActionDialog.tsx`
+  2. このファイルをimportしている箇所を手動で更新:
+     ```typescript
+     // Before
+     import { FormDialog } from '@/components/parts/smarthr-ui/FormDialog'
+
+     // After
+     import { ControlledFormDialog } from '@/components/parts/smarthr-ui/ControlledFormDialog'
+     ```
 
 ## サポートされているバージョン
 

@@ -546,28 +546,38 @@ return checkers
 const { rootPath } = require('../../../../libs/common')
 
 function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
-  // rootPathがある場合は絶対パスで比較
-  if (rootPath) {
-    const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
-    if (filename.includes(resolved)) {
-      return true
-    }
+  // rootPathを使って絶対パスで比較を試みる
+  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
+  if (filename.includes(resolved)) {
+    return true
   }
 
-  // テスト環境など: パスの一部としてマッチング
+  // rootPathでマッチしない場合:
+  // パスの一部としてマッチング（テスト環境などで使用）
   const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
-  return filename.includes(`/${pathPart}/`) || filename.endsWith(`/${pathPart}`)
+
+  // 以下のパターンにマッチング:
+  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
+  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
+  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
+  return (
+    filename.includes(`/${pathPart}/`) ||
+    filename.endsWith(`/${pathPart}`) ||
+    filename.includes(`/${pathPart}.`)
+  )
 }
 ```
 
 **このパターンが適用されるケース:**
-- barrel import構造でsmarthr-uiを拡張しているプロジェクト
-- `@/components/parts/smarthr-ui/ActionDialog.tsx`で`export const ActionDialog`している場合
+- **barrel import構造**: `@/components/parts/smarthr-ui/index.tsx` + 個別ファイル
+- **個別ファイルのみ**: `@/components/parts/smarthr-ui/ActionDialog.tsx` など
+- **単一ファイル形式**: `@/components/parts/smarthr-ui.tsx` （ディレクトリではなく1つのファイル）
 
 **ポイント:**
 - importチェックは`validSources`で拡張
 - export変数名の置換は`isAliasFile`条件付きで追加
 - サブディレクトリも含めてマッチング（`filename.includes(resolved)`）
+- 単一ファイル形式にも対応（`filename.includes(\`/\${pathPart}.\`)`）
 
 ## トラブルシューティング
 

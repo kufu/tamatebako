@@ -529,7 +529,13 @@ function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
   // 例: '@/components/parts/smarthr-ui' -> 'components/parts/smarthr-ui'
   const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
 
-  // パス区切り文字を考慮してマッチング
-  // /components/parts/smarthr-ui/ または /components/parts/smarthr-ui のいずれかに一致
-  return filename.includes(`/${pathPart}/`) || filename.endsWith(`/${pathPart}`)
+  // 以下のパターンにマッチング:
+  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
+  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
+  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
+  return (
+    filename.includes(`/${pathPart}/`) ||
+    filename.endsWith(`/${pathPart}`) ||
+    filename.includes(`/${pathPart}.`)
+  )
 }

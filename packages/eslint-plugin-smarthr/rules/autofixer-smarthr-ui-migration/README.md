@@ -105,8 +105,9 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 
 #### barrel import 構造への対応
 
-`smarthrUiAlias` で指定されたディレクトリ配下のすべてのファイルが置換対象になります。
+`smarthrUiAlias` で指定されたパス配下のすべてのファイルが置換対象になります。
 
+**ディレクトリ形式:**
 ```
 @/components/parts/smarthr-ui/
 ├── index.tsx               # ✅ 置換対象
@@ -124,6 +125,17 @@ export { FormDialog } from './FormDialog'
 // ActionDialog.tsx
 import { ActionDialog as ShrActionDialog } from 'smarthr-ui'
 export const ActionDialog = (props) => <ShrActionDialog {...props} />
+// → export const ControlledActionDialog に自動置換
+```
+
+**単一ファイル形式:**
+```
+@/components/parts/smarthr-ui.tsx   # ✅ 置換対象
+```
+
+```typescript
+// smarthr-ui.tsx
+export const ActionDialog = (props) => <div>{props.children}</div>
 // → export const ControlledActionDialog に自動置換
 ```
 

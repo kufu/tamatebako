@@ -78,6 +78,13 @@ module.exports = {
       filename: '/Users/test/src/components/parts/smarthr-ui/CustomDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
     },
+
+    // smarthrUiAliasオプション: 単一ファイル形式でもv91形式は正常
+    {
+      code: `export const ControlledFormDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+    },
   ],
 
   invalid: [
@@ -284,6 +291,14 @@ module.exports = {
       filename: '/Users/test/src/components/parts/smarthr-ui/dialogs/MessageDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [{ messageId: 'renameDialog', data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' } }],
+    },
+    // 単一ファイル形式も対象
+    {
+      code: `export const FormDialog = (props) => <div>{props.children}</div>`,
+      output: `export const ControlledFormDialog = (props) => <div>{props.children}</div>`,
+      filename: '/Users/test/src/components/parts/smarthr-ui.tsx',
+      options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
+      errors: [{ messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } }],
     },
 
   ],

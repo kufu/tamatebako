@@ -177,6 +177,7 @@ ruleTester.run('component-name', rule, {
     { code: 'const SegmentedControlHoge = styled(FugaSegmentedControl)``', errors: [ { message: messageInheritance({ extended: 'SegmentedControlHoge', matcher: '/SegmentedControl$/' }) } ]  },
     { code: `import { FormDialog as HogeDialog } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeDialog', matcher: /FormDialog$/, base: 'FormDialog' }) } ] },
     { code: 'const PaginationFuga = styled(FugaPagination)``', errors: [ { message: messageInheritance({ extended: 'PaginationFuga', matcher: /Pagination$/ }) } ]  },
+    { code: 'const PanelAny = styled(FugaPanel)``', errors: [ { message: messageInheritance({ extended: 'PanelAny', matcher: /Panel$/ }) } ]  },
     { code: `import { HogeSideNav as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Nav$/, base: 'HogeSideNav' }) }, { message: messageImportAs({ extended: 'Hoge', matcher: /SideNav$/, base: 'HogeSideNav' }) } ] },
     { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [ { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /AccordionPanel$/ }) } ]  },
     { code: `import { HogeFilterDropdown as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /FilterDropdown$/, base: 'HogeFilterDropdown' }) } ] },

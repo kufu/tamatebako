@@ -79,7 +79,7 @@ const EXPECTED_NAMES = {
   'AnchorButton$': 'AnchorButton$',
   'Base$': 'Base$',  // 後方互換性のために残す
   'BaseColumn$': 'BaseColumn$',
-  '(?<!Accordion|RadioButton)Panel$': 'Panel$',
+  'Panel$': 'Panel$',
   'Center$': 'Center$',
   'Check(B|b)ox$': 'Checkbox$',
   'Check(B|b)ox(e)?s$': 'Checkboxes$',
@@ -157,7 +157,7 @@ const UNEXPECTED_NAMES = {
   '(T|^t)extarea$': '(Textarea)$',
   'Base$': '(Base)$',  // 後方互換性のために残す
   'BaseColumn$': '(BaseColumn)$',
-  '(?<!Accordion|RadioButton)Panel$': '((?<!Accordion|RadioButton)Panel)$',
+  'Panel$': '(Panel)$',
   'Center$': '(Center)$',
   'Check(B|b)ox$': '(Checkbox)$',
   'Check(B|b)ox(e)?s$': '(Checkboxes)$',

@@ -21,7 +21,8 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
   '(L|l)egend(s)$',
   '(S|s)elect(s)?',
   '(T|t)extarea(s)?',
-  'AccordionPanel(s)?',
+  'Accordion(s)?',
+  'AccordionPanel(s)?',  // 後方互換性のために残す
   'Anchor',
   'DisclosureTrigger?',
   'DropZone(s)?',

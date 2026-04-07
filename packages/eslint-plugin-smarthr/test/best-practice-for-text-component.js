@@ -105,6 +105,11 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text as="p" className="shr-text-sm custom-class">text</Text>`, output: `<Text as="p" size="S" className="custom-class">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom-class"', 'shr-text-sm', 'p') }] },
     { code: `<Text className="shr-text-lg shr-font-bold custom-one custom-two">text</Text>`, output: `<Text size="L" weight="bold" className="custom-one custom-two">text</Text>`, errors: [{ message: errorConvertibleShr('size="L" weight="bold" className="custom-one custom-two"', 'shr-text-lg, shr-font-bold') }] },
 
+    // パターン2-4: shr-プレフィックスがあるが変換不可能なクラスのみ（spanに変換）
+    { code: `<Text className="shr-w-[10rem]">text</Text>`, output: `<span className="shr-w-[10rem]">text</span>`, errors: [{ message: errorUnnecessaryClassName('shr-w-[10rem]') }] },
+    { code: `<Text className="shr-inline-block shr-mr-0.5">text</Text>`, output: `<span className="shr-inline-block shr-mr-0.5">text</span>`, errors: [{ message: errorUnnecessaryClassName('shr-inline-block shr-mr-0.5') }] },
+    { code: `<Text as="p" className="shr-bg-background shr-block">text</Text>`, output: `<p className="shr-bg-background shr-block">text</p>`, errors: [{ message: errorUnnecessaryAsClassName('p') }] },
+
     // パターン3: 属性とclassNameの矛盾
     { code: `<Text size="M" className="shr-text-sm">text</Text>`, errors: [{ message: errorConflictingProps('shr-text-sm') }] },
     { code: `<Text weight="bold" className="shr-font-normal">text</Text>`, errors: [{ message: errorConflictingProps('shr-font-normal') }] },

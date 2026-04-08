@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./test-fixtures/*", "./src/*"],
-      "~/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "@test/*": ["./test-fixtures/*"]
     }
   }
 }

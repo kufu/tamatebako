@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.1...eslint-plugin-smarthr-v6.10.0) (2026-04-08)
+
+
+### Features
+
+* **a11y-heading-in-sectioning-content:** Scrollerコンポーネントを許可リストに追加 ([#1204](https://github.com/kufu/tamatebako/issues/1204)) ([7131d5c](https://github.com/kufu/tamatebako/commit/7131d5c2b6feb55ac44f952250f58db962153399))
+
+
+### Bug Fixes
+
+* **best-practice-for-text-component:** key属性対応とコードの最適化 ([#1205](https://github.com/kufu/tamatebako/issues/1205)) ([1c9821c](https://github.com/kufu/tamatebako/commit/1c9821c1d2c4f5d8b09f2a1a1f7e18310aecc31e))
+
 ## [6.9.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.0...eslint-plugin-smarthr-v6.9.1) (2026-04-07)
 
 

@@ -40,25 +40,20 @@ const REGEX_CLASSNAME_SPLIT = /\s+/
 const CONVERTIBLE_SHR_CLASSES = Object.keys(CLASS_TO_PROP_MAP).join('|')
 const CONVERTIBLE_SHR_PATTERN = `(^|\\s)(${CONVERTIBLE_SHR_CLASSES})(\\s|$)`
 
-const ATTR_AS = 'JSXAttribute[name.name="as"]'
 const ATTR_CLASSNAME = 'JSXAttribute[name.name="className"]'
-const ATTR_TEXT_PROPS = 'JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/]'
 const LITERAL_TYPE = '[value.type="Literal"]'
 
 const TEXT_OPENING = 'JSXOpeningElement[name.name="Text"]'
 const HAS_ANY_ATTR = ':has(JSXAttribute)'
-const NOT_HAS_ANY_ATTR = ':not(:has(JSXAttribute))'
-const HAS_TEXT_PROPS = `:has(${ATTR_TEXT_PROPS})`
-const NOT_HAS_TEXT_PROPS = `:not(${HAS_TEXT_PROPS})`
+const HAS_TEXT_PROPS = ':has(JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/])'
 const CHILD_CLASSNAME_LITERAL = `> ${ATTR_CLASSNAME}${LITERAL_TYPE}`
 const HAS_CONVERTIBLE_SHR_CLASS = `[value.value=/${CONVERTIBLE_SHR_PATTERN}/]`
-const NOT_HAS_CONVERTIBLE_SHR_CLASS = `:not(${HAS_CONVERTIBLE_SHR_CLASS})`
-const NOT_HAS_CLASSNAME = `:not(:has(${ATTR_CLASSNAME}))`
-const NOT_HAS_SPREAD = ':not(:has(JSXSpreadAttribute))'
-const NOT_HAS_AS_VARIABLE = `:not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
+const HAS_SPREAD = ':has(JSXSpreadAttribute)'
+const NOT_HAS_SPREAD = `:not(${HAS_SPREAD})`
+const NOT_HAS_AS_VARIABLE = ':not(:has(JSXAttribute[name.name="as"]:not([value.type="Literal"])))'
 
 // セレクタ構築用の共通パターン
-const TEXT_WITHOUT_TEXT_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}`
+const TEXT_WITHOUT_TEXT_PROPS = `${TEXT_OPENING}:not(${HAS_TEXT_PROPS})`
 const CLASSNAME_WITH_CONVERTIBLE_SHR = `${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
 
 // ============================================================
@@ -66,12 +61,12 @@ const CLASSNAME_WITH_CONVERTIBLE_SHR = `${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTI
 // ============================================================
 // Stage 1: shr-クラス → Text属性変換
 const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_WITHOUT_TEXT_PROPS}${NOT_HAS_SPREAD} ${CLASSNAME_WITH_CONVERTIBLE_SHR}`
-const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD = `${TEXT_WITHOUT_TEXT_PROPS}:has(JSXSpreadAttribute) ${CLASSNAME_WITH_CONVERTIBLE_SHR}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD = `${TEXT_WITHOUT_TEXT_PROPS}${HAS_SPREAD} ${CLASSNAME_WITH_CONVERTIBLE_SHR}`
 
 // Stage 2: Text専用属性なし → HTML要素変換
-const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}${NOT_HAS_ANY_ATTR}${NOT_HAS_SPREAD}`
-const SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME = `${TEXT_WITHOUT_TEXT_PROPS}${NOT_HAS_CLASSNAME}${HAS_ANY_ATTR}${NOT_HAS_SPREAD}${NOT_HAS_AS_VARIABLE}`
-const SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME = `${TEXT_WITHOUT_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_CONVERTIBLE_SHR_CLASS})${NOT_HAS_SPREAD}${NOT_HAS_AS_VARIABLE}`
+const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(${HAS_ANY_ATTR})${NOT_HAS_SPREAD}`
+const SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME = `${TEXT_WITHOUT_TEXT_PROPS}:not(:has(${ATTR_CLASSNAME}))${HAS_ANY_ATTR}${NOT_HAS_SPREAD}${NOT_HAS_AS_VARIABLE}`
+const SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME = `${TEXT_WITHOUT_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}:not(${HAS_CONVERTIBLE_SHR_CLASS}))${NOT_HAS_SPREAD}${NOT_HAS_AS_VARIABLE}`
 
 // 矛盾検出
 const SELECTOR_CONFLICTING_PROPS_SHR = `${TEXT_OPENING}${HAS_TEXT_PROPS}${NOT_HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}`

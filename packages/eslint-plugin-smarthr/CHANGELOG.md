@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.10.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.0...eslint-plugin-smarthr-v6.10.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* **require-barrel-import:** next.jsの特殊文字パスでのバグ修正とリファクタリング ([#1210](https://github.com/kufu/tamatebako/issues/1210)) ([458cfe9](https://github.com/kufu/tamatebako/commit/458cfe90084cbcee936bcb375216f5807880edd7))
+
 ## [6.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.1...eslint-plugin-smarthr-v6.10.0) (2026-04-08)
 
 

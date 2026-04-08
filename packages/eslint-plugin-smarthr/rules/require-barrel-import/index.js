@@ -164,6 +164,11 @@ const findBarrelFile = (importedPath, importerDir) => {
   let currentPath = importedPath
   let barrel = undefined
 
+  // すべてのreplacePaths配下のルートディレクトリを計算
+  const allRootPaths = Object.values(replacePaths)
+    .flat()
+    .map(p => path.resolve(`${CWD}/${p.replace(/\/\*$/, '')}`))
+
   // ディレクトリ指定の場合、そのindex.tsを指していることは自明なので一階層上から探索
   if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) {
     pathSegments.pop()
@@ -172,9 +177,9 @@ const findBarrelFile = (importedPath, importerDir) => {
 
   while (pathSegments.length > 0) {
     // 以下の場合は探索終了
-    // 1. root pathに到達した場合
+    // 1. いずれかのreplacePathsのルートに到達した場合
     // 2. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
-    if (importerDir === rootPath || isImportedInsideImporter(importerDir, currentPath)) {
+    if (allRootPaths.includes(currentPath) || isImportedInsideImporter(importerDir, currentPath)) {
       break
     }
 

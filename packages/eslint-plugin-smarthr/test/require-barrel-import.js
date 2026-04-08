@@ -157,13 +157,56 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
     },
 
-    // ============================================================
-    // 注意: 親階層からのimport + barrelなしのテストケースは、
-    // 実装のバグ（line 177の条件）により現在テスト不可。
-    // barrel探索がrootPathを超えてパッケージルートまで進んでしまう。
-    // 正しい条件: if (currentPath === rootPath || ...)
-    // 現在の条件: if (importerDir === rootPath || ...)
-    // ============================================================
+    // 親階層からのimport + barrelなし（エラーにならない）
+    {
+      code: `import { helper } from '../utils/helper'`,
+      filename: (() => {
+        createFixture('parent-import-no-barrel', {
+          // index.tsx なし（barrelなし）
+          'Button': {
+            'Button.tsx': '',
+          },
+          'utils': {
+            'helper.ts': '',
+          },
+        })
+        return `${fixturesRoot}/parent-import-no-barrel/Button/Button.tsx`
+      })(),
+    },
+
+    // Next.js特殊文字パス - 親階層からのimport + barrelなし
+    {
+      code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
+      filename: (() => {
+        createFixture('nextjs-parent-no-barrel', {
+          // index.tsx なし（barrelなし）
+          'AddUserRoleDialog': {
+            'AddUserRoleDialog.tsx': '',
+          },
+          'hooks': {
+            'createUserRoleAction.ts': '',
+          },
+        })
+        return `${fixturesRoot}/nextjs-parent-no-barrel/AddUserRoleDialog/AddUserRoleDialog.tsx`
+      })(),
+    },
+
+    // Dynamic Routes - 親階層からのimport + barrelなし
+    {
+      code: `import { api } from '../api/client'`,
+      filename: (() => {
+        createFixture('dynamic-route-parent-no-barrel', {
+          // index.tsx なし（barrelなし）
+          '[id]': {
+            'DetailPage.tsx': '',
+          },
+          'api': {
+            'client.ts': '',
+          },
+        })
+        return `${fixturesRoot}/dynamic-route-parent-no-barrel/[id]/DetailPage.tsx`
+      })(),
+    },
 
     // ============================================================
     // Path alias - 同階層からのimport（エラーにならない）
@@ -199,6 +242,23 @@ ruleTester.run('require-barrel-import', rule, {
           },
         })
         return `${fixturesRoot}/path-alias-no-barrel/components/Button/Button.tsx`
+      })(),
+    },
+
+    // Path alias - 親階層からのimport + barrelなし
+    {
+      code: `import { helper } from '@test/path-alias-parent-no-barrel/utils/helper'`,
+      filename: (() => {
+        createFixture('path-alias-parent-no-barrel', {
+          // index.tsx なし（barrelなし）
+          'Button': {
+            'Button.tsx': '',
+          },
+          'utils': {
+            'helper.ts': '',
+          },
+        })
+        return `${fixturesRoot}/path-alias-parent-no-barrel/Button/Button.tsx`
       })(),
     },
   ],

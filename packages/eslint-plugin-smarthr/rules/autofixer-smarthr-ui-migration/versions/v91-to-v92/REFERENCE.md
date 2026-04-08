@@ -36,24 +36,190 @@ const SIZE_COMPONENTS = [
 }
 ```
 
-### 2. decorators 属性の検出（エラーのみ、自動修正なし）
+### 2. decorators 属性の削除と noResultText の移行
 
-複雑な移行が必要な場合は、エラーのみ表示して手動対応を促します。
+v92では decorators 属性が削除されました。Combobox コンポーネントのみ、`noResultText` を新しい独立した属性に移行する必要があります。
+
+#### 2-1. noResultText抽出のヘルパー関数
+
+```javascript
+/**
+ * decorators属性からnoResultTextを抽出し、移行可能かチェック
+ *
+ * @param {Object} decoratorsNode - decorators属性のASTノード
+ * @returns {Object} 解析結果
+ *   - type: 'spread' | 'migratable' | 'not-migratable' | 'no-result-text' | 'invalid'
+ *   - value?: string (migratableの場合)
+ *   - isStringLiteral?: boolean (migratableの場合)
+ */
+function extractNoResultText(decoratorsNode) {
+  // decorators={{ ... }} の形式か確認
+  if (!decoratorsNode.value || decoratorsNode.value.type !== 'JSXExpressionContainer') {
+    return { type: 'invalid' }
+  }
+
+  const expression = decoratorsNode.value.expression
+  if (expression.type !== 'ObjectExpression') {
+    return { type: 'invalid' }
+  }
+
+  // spread syntaxが含まれているかチェック
+  const hasSpread = expression.properties.some((prop) => prop.type === 'SpreadElement')
+  if (hasSpread) {
+    return { type: 'spread' }
+  }
+
+  // noResultTextプロパティを探す
+  const noResultTextProp = expression.properties.find(
+    (prop) => prop.type === 'Property' && prop.key.name === 'noResultText'
+  )
+
+  if (!noResultTextProp) {
+    return { type: 'no-result-text' }
+  }
+
+  const value = noResultTextProp.value
+
+  // ArrowFunctionExpressionで、引数なし、returnなしのパターンのみ対応
+  if (
+    value.type !== 'ArrowFunctionExpression' ||
+    value.params.length > 0 ||
+    value.body.type === 'BlockStatement'
+  ) {
+    return { type: 'not-migratable' }
+  }
+
+  // bodyの式を抽出
+  const bodyExpression = value.body
+  const bodyText = sourceCode.getText(bodyExpression)
+
+  // 文字列リテラルの場合は値を抽出（クォートを除く）
+  const isStringLiteral = bodyExpression.type === 'Literal' && typeof bodyExpression.value === 'string'
+
+  return {
+    type: 'migratable',
+    value: isStringLiteral ? bodyExpression.value : bodyText,
+    isStringLiteral,
+  }
+}
+```
+
+**ポイント:**
+- **spread syntax検出**: `SpreadElement` の存在をチェック
+- **noResultTextの有無**: プロパティが存在するかチェック
+- **自動移行可能性**: arrow function で引数なし、returnなし（`() => expression`）のみ対応
+- **戻り値のtype分類**: spread / migratable / not-migratable / no-result-text / invalid
+
+#### 2-2. decorators属性のチェッカー（条件分岐）
 
 ```javascript
 'JSXAttribute[name.name="decorators"]'(node) {
   const componentName = node.parent.name.name
 
-  if (DECORATORS_COMPONENTS.includes(componentName)) {
-    context.report({
-      node,
-      messageId: 'removeDecorators',
-      data: { component: componentName, to: TARGET_VERSION },
-      // fixは提供しない
-    })
+  if (!DECORATORS_COMPONENTS.includes(componentName)) return
+
+  // Comboboxコンポーネントの場合、noResultTextの移行を試みる
+  if (COMBOBOX_COMPONENTS.includes(componentName)) {
+    const result = extractNoResultText(node)
+
+    // spread syntaxがある場合 → エラーのみ（手動対応）
+    if (result.type === 'spread') {
+      context.report({
+        node,
+        messageId: 'migrateNoResultTextManually',
+        data: { component: componentName, to: TARGET_VERSION },
+        // fixなし
+      })
+      return
+    }
+
+    // noResultTextが自動移行可能な場合
+    if (result.type === 'migratable') {
+      context.report({
+        node,
+        messageId: 'removeDecorators',
+        data: { component: componentName, to: TARGET_VERSION },
+        fix(fixer) {
+          const fixes = []
+
+          // 1. noResultText属性を追加
+          const { value, isStringLiteral } = result
+          const noResultTextAttr = isStringLiteral
+            ? ` noResultText="${value}"`
+            : ` noResultText={${value}}`
+          fixes.push(fixer.insertTextAfter(node.parent.name, noResultTextAttr))
+
+          // 2. decorators属性を削除
+          const tokenBefore = sourceCode.getTokenBefore(node)
+          if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+            fixes.push(fixer.removeRange([tokenBefore.range[1], node.range[1]]))
+          } else {
+            fixes.push(fixer.remove(node))
+          }
+
+          return fixes
+        },
+      })
+      return
+    }
+
+    // noResultTextが存在するが自動移行不可能な場合 → エラーのみ（手動対応）
+    if (result.type === 'not-migratable') {
+      context.report({
+        node,
+        messageId: 'migrateNoResultTextManually',
+        data: { component: componentName, to: TARGET_VERSION },
+        // fixなし
+      })
+      return
+    }
+
+    // noResultTextがない場合 → decoratorsを削除
+    if (result.type === 'no-result-text') {
+      context.report({
+        node,
+        messageId: 'removeDecorators',
+        data: { component: componentName, to: TARGET_VERSION },
+        fix(fixer) {
+          const tokenBefore = sourceCode.getTokenBefore(node)
+          if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+            return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+          }
+          return fixer.remove(node)
+        },
+      })
+      return
+    }
   }
+
+  // 他のコンポーネントの場合 → decorators属性を削除するのみ
+  context.report({
+    node,
+    messageId: 'removeDecorators',
+    data: { component: componentName, to: TARGET_VERSION },
+    fix(fixer) {
+      const tokenBefore = sourceCode.getTokenBefore(node)
+      if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+        return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+      }
+      return fixer.remove(node)
+    },
+  })
 }
 ```
+
+**処理フロー:**
+1. **Comboboxの場合:**
+   - spread syntax → エラーのみ（`migrateNoResultTextManually`）
+   - noResultText自動移行可能 → noResultText追加 + decorators削除
+   - noResultText自動移行不可能 → エラーのみ（`migrateNoResultTextManually`）
+   - noResultTextなし → decorators削除のみ
+2. **他のコンポーネント（SearchInput, Textarea, InformationPanel）:**
+   - decorators削除のみ
+
+**メッセージID:**
+- `removeDecorators`: decorators削除（自動修正あり）
+- `migrateNoResultTextManually`: noResultTextの手動移行が必要（自動修正なし）
 
 ## ファイル構造
 
@@ -325,6 +491,115 @@ function createDialogRenameTests(oldName, newName) {
 createDialogRenameTests('ActionDialog', 'ControlledActionDialog').import,
 createDialogRenameTests('ActionDialog', 'ControlledActionDialog').jsx,
 ```
+
+### decorators属性のテストパターン（v91→v92特有）
+
+#### パターン1: Combobox - noResultText自動移行
+
+```javascript
+// 文字列リテラル
+{
+  code: `<MultiCombobox decorators={{ noResultText: () => '該当なし' }} items={[]} />`,
+  output: `<MultiCombobox noResultText="該当なし" items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+
+// 変数参照
+{
+  code: `<MultiCombobox decorators={{ noResultText: () => message }} items={[]} />`,
+  output: `<MultiCombobox noResultText={message} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+
+// 関数呼び出し
+{
+  code: `<SingleCombobox decorators={{ noResultText: () => getMessage() }} items={[]} />`,
+  output: `<SingleCombobox noResultText={getMessage()} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'SingleCombobox', to: 'v92' } }],
+},
+
+// テンプレートリテラル
+{
+  code: `<MultiCombobox decorators={{ noResultText: () => \`\${count}件該当\` }} items={[]} />`,
+  output: `<MultiCombobox noResultText={\`\${count}件該当\`} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+```
+
+#### パターン2: Combobox - noResultText + 他のプロパティ
+
+```javascript
+// noResultTextのみ移行、他は削除
+{
+  code: `<MultiCombobox decorators={{ noResultText: () => '該当なし', selectedListAriaLabel: () => '選択済み' }} items={[]} />`,
+  output: `<MultiCombobox noResultText="該当なし" items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+```
+
+#### パターン3: Combobox - noResultTextがない
+
+```javascript
+// decorators削除のみ
+{
+  code: `<MultiCombobox decorators={{ selectedListAriaLabel: () => '選択済み' }} items={[]} />`,
+  output: `<MultiCombobox items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+```
+
+#### パターン4: Combobox - 手動対応が必要（エラーのみ、outputなし）
+
+```javascript
+// returnあり
+{
+  code: `<MultiCombobox decorators={{ noResultText: () => { return '該当なし' } }} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+
+// 引数あり
+{
+  code: `<MultiCombobox decorators={{ noResultText: (defaultText) => defaultText }} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+
+// spread syntax
+{
+  code: `<MultiCombobox decorators={{ ...baseDecorators, noResultText: () => '該当なし' }} items={[]} />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+},
+```
+
+#### パターン5: 他のコンポーネント - decorators削除のみ
+
+```javascript
+{
+  code: `<SearchInput decorators={{ clearButtonLabel: () => 'Clear' }} />`,
+  output: `<SearchInput />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'SearchInput', to: 'v92' } }],
+},
+{
+  code: `<Textarea decorators={{ visibleWordLength: () => '0/100' }} />`,
+  output: `<Textarea />`,
+  options: v91ToV92Options,
+  errors: [{ messageId: 'removeDecorators', data: { component: 'Textarea', to: 'v92' } }],
+},
+```
+
+**ポイント:**
+- **outputあり**: 自動修正が行われる
+- **outputなし**: エラーのみ（手動対応が必要）
+- **messageId**: `removeDecorators`（自動修正）または `migrateNoResultTextManually`（手動対応）
 
 ## よくある実装パターン
 

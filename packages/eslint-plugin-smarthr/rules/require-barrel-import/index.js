@@ -49,8 +49,13 @@ const REPLACE_PATHS_INFO = Object.entries(replacePaths).map(([key, values]) => {
   }
 })
 
-// すべてのreplacePaths配下のルートディレクトリを事前計算
-const ALL_ROOT_PATHS = REPLACE_PATHS_INFO.flatMap(info => info.resolvedPaths)
+// @/ と ~/ のパスのみをrootとする（READMEの仕様通り）
+const ALL_ROOT_PATHS = (() => {
+  const rootKeys = ['@/', '~/']
+  return REPLACE_PATHS_INFO
+    .filter(info => rootKeys.includes(info.key))
+    .flatMap(info => info.resolvedPaths)
+})()
 
 /**
  * Path aliasを絶対パスに変換する

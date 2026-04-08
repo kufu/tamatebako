@@ -212,7 +212,7 @@ ruleTester.run('require-barrel-import', rule, {
     // Path alias - 同階層からのimport（エラーにならない）
     // ============================================================
     {
-      code: `import { useMenu } from '@test/path-alias-same-level/Menu/hooks/useMenu'`,
+      code: `import { useMenu } from '~/path-alias-same-level/Menu/hooks/useMenu'`,
       filename: (() => {
         createFixture('path-alias-same-level', {
           'Menu': {
@@ -229,7 +229,7 @@ ruleTester.run('require-barrel-import', rule, {
 
     // Path alias - 同階層サブディレクトリ + barrelなし
     {
-      code: `import { helper } from '@test/path-alias-no-barrel/components/Button/utils/helper'`,
+      code: `import { helper } from '~/path-alias-no-barrel/components/Button/utils/helper'`,
       filename: (() => {
         createFixture('path-alias-no-barrel', {
           'components': {
@@ -247,7 +247,7 @@ ruleTester.run('require-barrel-import', rule, {
 
     // Path alias - 親階層からのimport + barrelなし
     {
-      code: `import { helper } from '@test/path-alias-parent-no-barrel/utils/helper'`,
+      code: `import { helper } from '~/path-alias-parent-no-barrel/utils/helper'`,
       filename: (() => {
         createFixture('path-alias-parent-no-barrel', {
           // index.tsx なし（barrelなし）
@@ -350,7 +350,7 @@ ruleTester.run('require-barrel-import', rule, {
     // Path alias - 親階層からのimport（barrelあり）
     // ============================================================
     {
-      code: `import { createUserRole } from '@test/path-alias-parent-import-with-barrel/components/hooks/createUserRoleAction'`,
+      code: `import { createUserRole } from '~/path-alias-parent-import-with-barrel/components/hooks/createUserRoleAction'`,
       filename: (() => {
         createFixture('path-alias-parent-import-with-barrel', {
           'components': {
@@ -374,7 +374,7 @@ ruleTester.run('require-barrel-import', rule, {
 
     // Path alias + Next.js特殊文字パス - 親階層からのimport
     {
-      code: `import { createUserRole } from '@test/path-alias-nextjs-parent/app/(private)/settings/user_roles/_components/hooks/createUserRoleAction'`,
+      code: `import { createUserRole } from '~/path-alias-nextjs-parent/app/(private)/settings/user_roles/_components/hooks/createUserRoleAction'`,
       filename: (() => {
         createFixture('path-alias-nextjs-parent', {
           'app': {

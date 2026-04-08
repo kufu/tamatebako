@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
+      // ルール実装で使用
       "@/*": ["./src/*"],
-      "~/*": ["./src/*"],
-      "@test/*": ["./test-fixtures/*"]
+      // テスト用
+      "~/*": ["./test-fixtures/*"]
     }
   }
 }

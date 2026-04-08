@@ -9,7 +9,7 @@ const runLintWithFixtures = async (configFile, target) => {
     files: target
   })
 
-  return JSON.parse(result.output).reduce((output, { source, warnings }) => {
+  return result.results.reduce((output, { source, warnings }) => {
     return Object.assign(output, {
       [path.basename(source)]: warnings.map(({ rule, severity, text }) => ({ rule, severity, text }))
     })

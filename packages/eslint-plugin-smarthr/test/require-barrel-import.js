@@ -71,147 +71,90 @@ afterAll(() => {
   cleanupFixtures()
 })
 
-// ============================================================
-// Fixtureの作成
-// ============================================================
-
-// 同階層・サブディレクトリからのimport
-createFixture('same-level-import', {
-  'Menu': {
-    'MenuItem.tsx': '',
-    'index.tsx': 'export {}',
-    'hooks': {
-      'useMenu.ts': '',
-    },
-  },
-})
-
-// Next.js App Router特殊文字パス - 同階層import
-createFixture('nextjs-special-chars', {
-  'app': {
-    '(private)': {
-      'settings': {
-        'user_roles': {
-          '_components': {
-            'index.tsx': 'export {}',
-            'AddUserRoleDialog': {
-              'index.tsx': 'export {}',
-              'AddUserRoleDialog.tsx': '',
-              'hooks': {
-                'useUsers.ts': '',
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-})
-
-// Dynamic Routes - [id]パス
-createFixture('nextjs-dynamic-route', {
-  'app': {
-    'items': {
-      '[id]': {
-        'index.tsx': 'export {}',
-        'DetailPage.tsx': '',
-        'hooks': {
-          'useDetail.ts': '',
-        },
-      },
-    },
-  },
-})
-
-// barrel が存在しない場合
-createFixture('no-barrel', {
-  'components': {
-    'Button': {
-      'Button.tsx': '',
-      'utils': {
-        'helper.ts': '',
-      },
-    },
-  },
-})
-
-// 親階層からのimport（barrelが存在する場合）
-createFixture('parent-import-with-barrel', {
-  'components': {
-    'index.tsx': 'export {}',
-    'AddDialog': {
-      'AddDialog.tsx': '',
-    },
-    'hooks': {
-      'createUserRoleAction.ts': '',
-    },
-  },
-})
-
-// Next.js特殊文字パス - 親階層からのimport
-createFixture('nextjs-parent-import', {
-  'app': {
-    '(private)': {
-      'settings': {
-        'user_roles': {
-          '_components': {
-            'index.tsx': 'export {}',
-            'AddUserRoleDialog': {
-              'AddUserRoleDialog.tsx': '',
-            },
-            'hooks': {
-              'createUserRoleAction.ts': '',
-            },
-          },
-        },
-      },
-    },
-  },
-})
-
-// [id] Dynamic Routes - 親階層からのimport
-createFixture('dynamic-route-parent-import', {
-  'app': {
-    'items': {
-      'index.tsx': 'export {}',
-      '[id]': {
-        'DetailPage.tsx': '',
-      },
-      'api': {
-        'client.ts': '',
-      },
-    },
-  },
-})
-
-// ============================================================
-// テストケース
-// ============================================================
-
 ruleTester.run('require-barrel-import', rule, {
   valid: [
     // 同階層・サブディレクトリからのimport（エラーにならない）
     {
       code: `import { useMenu } from './hooks/useMenu'`,
-      filename: `${fixturesRoot}/same-level-import/Menu/MenuItem.tsx`,
+      filename: (() => {
+        createFixture('same-level-import', {
+          'Menu': {
+            'MenuItem.tsx': '',
+            'index.tsx': 'export {}',
+            'hooks': {
+              'useMenu.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/same-level-import/Menu/MenuItem.tsx`
+      })(),
     },
 
     // Next.js App Router特殊文字パス - 同階層import
     {
       code: `import { useUsers } from './hooks/useUsers'`,
-      filename: `${fixturesRoot}/nextjs-special-chars/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`,
+      filename: (() => {
+        createFixture('nextjs-special-chars', {
+          'app': {
+            '(private)': {
+              'settings': {
+                'user_roles': {
+                  '_components': {
+                    'index.tsx': 'export {}',
+                    'AddUserRoleDialog': {
+                      'index.tsx': 'export {}',
+                      'AddUserRoleDialog.tsx': '',
+                      'hooks': {
+                        'useUsers.ts': '',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/nextjs-special-chars/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`
+      })(),
     },
 
     // Dynamic Routes - [id]パス
     {
       code: `import { useDetail } from './hooks/useDetail'`,
-      filename: `${fixturesRoot}/nextjs-dynamic-route/app/items/[id]/DetailPage.tsx`,
+      filename: (() => {
+        createFixture('nextjs-dynamic-route', {
+          'app': {
+            'items': {
+              '[id]': {
+                'index.tsx': 'export {}',
+                'DetailPage.tsx': '',
+                'hooks': {
+                  'useDetail.ts': '',
+                },
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/nextjs-dynamic-route/app/items/[id]/DetailPage.tsx`
+      })(),
     },
 
     // barrel が存在しない場合
     {
       code: `import { helper } from './utils/helper'`,
-      filename: `${fixturesRoot}/no-barrel/components/Button/Button.tsx`,
+      filename: (() => {
+        createFixture('no-barrel', {
+          'components': {
+            'Button': {
+              'Button.tsx': '',
+              'utils': {
+                'helper.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/no-barrel/components/Button/Button.tsx`
+      })(),
     },
   ],
 
@@ -219,7 +162,20 @@ ruleTester.run('require-barrel-import', rule, {
     // 親階層からのimport（barrelが存在する場合）
     {
       code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
-      filename: `${fixturesRoot}/parent-import-with-barrel/components/AddDialog/AddDialog.tsx`,
+      filename: (() => {
+        createFixture('parent-import-with-barrel', {
+          'components': {
+            'index.tsx': 'export {}',
+            'AddDialog': {
+              'AddDialog.tsx': '',
+            },
+            'hooks': {
+              'createUserRoleAction.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/parent-import-with-barrel/components/AddDialog/AddDialog.tsx`
+      })(),
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
@@ -230,7 +186,28 @@ ruleTester.run('require-barrel-import', rule, {
     // Next.js特殊文字パス - 親階層からのimport
     {
       code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
-      filename: `${fixturesRoot}/nextjs-parent-import/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`,
+      filename: (() => {
+        createFixture('nextjs-parent-import', {
+          'app': {
+            '(private)': {
+              'settings': {
+                'user_roles': {
+                  '_components': {
+                    'index.tsx': 'export {}',
+                    'AddUserRoleDialog': {
+                      'AddUserRoleDialog.tsx': '',
+                    },
+                    'hooks': {
+                      'createUserRoleAction.ts': '',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/nextjs-parent-import/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`
+      })(),
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
@@ -241,7 +218,22 @@ ruleTester.run('require-barrel-import', rule, {
     // [id] Dynamic Routes - 親階層からのimport
     {
       code: `import { api } from '../api/client'`,
-      filename: `${fixturesRoot}/dynamic-route-parent-import/app/items/[id]/DetailPage.tsx`,
+      filename: (() => {
+        createFixture('dynamic-route-parent-import', {
+          'app': {
+            'items': {
+              'index.tsx': 'export {}',
+              '[id]': {
+                'DetailPage.tsx': '',
+              },
+              'api': {
+                'client.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/dynamic-route-parent-import/app/items/[id]/DetailPage.tsx`
+      })(),
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,

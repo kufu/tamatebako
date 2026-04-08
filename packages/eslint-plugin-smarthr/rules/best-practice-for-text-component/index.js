@@ -52,17 +52,14 @@ const CHILD_CLASSNAME_LITERAL = `> ${ATTR_CLASSNAME}${LITERAL_TYPE}`
 const HAS_CONVERTIBLE_SHR_CLASS = `[value.value=/${CONVERTIBLE_SHR_PATTERN}/]`
 const NOT_HAS_CONVERTIBLE_SHR_CLASS = `:not(${HAS_CONVERTIBLE_SHR_CLASS})`
 const NOT_HAS_CLASSNAME = `:not(:has(${ATTR_CLASSNAME}))`
+const NOT_HAS_SPREAD = ':not(:has(JSXSpreadAttribute))'
 
 // ============================================================
 // ESLintセレクタ
 // ============================================================
-// spread attributesは静的解析できないため除外
-const NOT_HAS_SPREAD = ':not(:has(JSXSpreadAttribute))'
-const HAS_SPREAD = ':has(JSXSpreadAttribute)'
-
 // Stage 1: shr-クラス → Text属性変換
 const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${NOT_HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
-const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:has(JSXSpreadAttribute) ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
 
 // Stage 2: Text専用属性なし → HTML要素変換
 const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))${NOT_HAS_SPREAD}`

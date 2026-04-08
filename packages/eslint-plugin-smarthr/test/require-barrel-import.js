@@ -156,6 +156,43 @@ ruleTester.run('require-barrel-import', rule, {
         return `${fixturesRoot}/no-barrel/components/Button/Button.tsx`
       })(),
     },
+
+    // ============================================================
+    // Path alias - 同階層からのimport（エラーにならない）
+    // ============================================================
+    {
+      code: `import { useMenu } from '@/path-alias-same-level/Menu/hooks/useMenu'`,
+      filename: (() => {
+        createFixture('path-alias-same-level', {
+          'Menu': {
+            'MenuItem.tsx': '',
+            'index.tsx': 'export {}',
+            'hooks': {
+              'useMenu.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/path-alias-same-level/Menu/MenuItem.tsx`
+      })(),
+    },
+
+    // Path alias - 親階層からのimport（barrelなし）
+    {
+      code: `import { helper } from '@/path-alias-no-barrel/components/Button/utils/helper'`,
+      filename: (() => {
+        createFixture('path-alias-no-barrel', {
+          'components': {
+            'Button': {
+              'Button.tsx': '',
+              'utils': {
+                'helper.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/path-alias-no-barrel/components/Button/Button.tsx`
+      })(),
+    },
   ],
 
   invalid: [
@@ -233,6 +270,64 @@ ruleTester.run('require-barrel-import', rule, {
           },
         })
         return `${fixturesRoot}/dynamic-route-parent-import/app/items/[id]/DetailPage.tsx`
+      })(),
+      errors: [
+        {
+          message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
+        },
+      ],
+    },
+
+    // ============================================================
+    // Path alias - 親階層からのimport（barrelあり）
+    // ============================================================
+    {
+      code: `import { createUserRole } from '@/path-alias-parent-import-with-barrel/components/hooks/createUserRoleAction'`,
+      filename: (() => {
+        createFixture('path-alias-parent-import-with-barrel', {
+          'components': {
+            'index.tsx': 'export {}',
+            'AddDialog': {
+              'AddDialog.tsx': '',
+            },
+            'hooks': {
+              'createUserRoleAction.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/path-alias-parent-import-with-barrel/components/AddDialog/AddDialog.tsx`
+      })(),
+      errors: [
+        {
+          message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
+        },
+      ],
+    },
+
+    // Path alias + Next.js特殊文字パス - 親階層からのimport
+    {
+      code: `import { createUserRole } from '@/path-alias-nextjs-parent/app/(private)/settings/user_roles/_components/hooks/createUserRoleAction'`,
+      filename: (() => {
+        createFixture('path-alias-nextjs-parent', {
+          'app': {
+            '(private)': {
+              'settings': {
+                'user_roles': {
+                  '_components': {
+                    'index.tsx': 'export {}',
+                    'AddUserRoleDialog': {
+                      'AddUserRoleDialog.tsx': '',
+                    },
+                    'hooks': {
+                      'createUserRoleAction.ts': '',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/path-alias-nextjs-parent/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`
       })(),
       errors: [
         {

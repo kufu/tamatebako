@@ -158,33 +158,46 @@ module.exports = {
     createSizeConversionTest('InputFile', 'default', 'M'),
 
     // ============================================================
-    // 3. decorators属性削除（エラーのみ）
+    // 3. decorators属性削除（自動修正あり）
     // ============================================================
 
     {
       code: `<MultiCombobox decorators={{ noResultText: () => 'No results' }} items={[]} />`,
+      output: `<MultiCombobox items={[]} />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
     },
     {
       code: `<SingleCombobox decorators={{ noResultText: () => 'No results' }} items={[]} />`,
+      output: `<SingleCombobox items={[]} />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'SingleCombobox', to: 'v92' } }],
     },
     {
       code: `<SearchInput decorators={{ clearButtonLabel: () => 'Clear' }} />`,
+      output: `<SearchInput />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'SearchInput', to: 'v92' } }],
     },
     {
       code: `<Textarea decorators={{ visibleWordLength: () => '0/100' }} />`,
+      output: `<Textarea />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'Textarea', to: 'v92' } }],
     },
     {
       code: `<InformationPanel decorators={{ openButtonLabel: () => 'Open' }} />`,
+      output: `<InformationPanel />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'InformationPanel', to: 'v92' } }],
+    },
+
+    // decorators属性が複数属性の間にある場合
+    {
+      code: `<MultiCombobox name="test" decorators={{ noResultText: () => 'No results' }} items={[]} />`,
+      output: `<MultiCombobox name="test" items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
     },
 
     // ============================================================

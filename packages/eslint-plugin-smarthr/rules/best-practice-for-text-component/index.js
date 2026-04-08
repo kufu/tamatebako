@@ -151,13 +151,12 @@ module.exports = {
         const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
         const openingElement = classNameAttrNode.parent
         const sourceCode = context.sourceCode || context.getSourceCode()
-        const asValue = getAttributeLiteralValue(openingElement, 'as')
 
         context.report({
           node: openingElement,
           message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <Text${asValue ? ` as="${asValue}"` : ''} ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
+ - 推奨: <Text ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
           fix(fixer) {

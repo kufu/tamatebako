@@ -31,9 +31,9 @@ const errorUnnecessaryAsClassName = (tag) => `Textコンポーネントの機能
  - <${tag}>要素にclassNameを移動してください
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`
 
-const errorConvertibleShr = (suggestion, convertible, as = null) => `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
+const errorConvertibleShr = (suggestion, convertible) => `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <Text${as ? ` as="${as}"` : ''} ${suggestion}>
+ - 推奨: <Text ${suggestion}>
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`
 
@@ -115,12 +115,12 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text className="shr-text-lg shr-font-bold shr-text-grey">text</Text>`, output: `<Text size="L" weight="bold" color="TEXT_GREY">text</Text>`, errors: [{ message: errorConvertibleShr('size="L" weight="bold" color="TEXT_GREY"', 'shr-text-lg, shr-font-bold, shr-text-grey') }] },
 
     // パターン2-2: className + as（すべて変換可能）
-    { code: `<Text as="p" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },
-    { code: `<Text as="p" className="shr-text-sm shr-font-bold">text</Text>`, output: `<Text as="p" size="S" weight="bold">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" weight="bold"', 'shr-text-sm, shr-font-bold', 'p') }] },
+    { code: `<Text as="p" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
+    { code: `<Text as="p" className="shr-text-sm shr-font-bold">text</Text>`, output: `<Text as="p" size="S" weight="bold">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" weight="bold"', 'shr-text-sm, shr-font-bold') }] },
 
     // パターン2-3: 一部のみ変換可能
     { code: `<Text className="shr-text-sm custom-class">text</Text>`, output: `<Text size="S" className="custom-class">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom-class"', 'shr-text-sm') }] },
-    { code: `<Text as="p" className="shr-text-sm custom-class">text</Text>`, output: `<Text as="p" size="S" className="custom-class">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom-class"', 'shr-text-sm', 'p') }] },
+    { code: `<Text as="p" className="shr-text-sm custom-class">text</Text>`, output: `<Text as="p" size="S" className="custom-class">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom-class"', 'shr-text-sm') }] },
     { code: `<Text className="shr-text-lg shr-font-bold custom-one custom-two">text</Text>`, output: `<Text size="L" weight="bold" className="custom-one custom-two">text</Text>`, errors: [{ message: errorConvertibleShr('size="L" weight="bold" className="custom-one custom-two"', 'shr-text-lg, shr-font-bold') }] },
 
     // パターン2-4: shr-プレフィックスがあるが変換不可能なクラスのみ（spanに変換）
@@ -146,13 +146,13 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text as="p" className="custom" id="foo">text</Text>`, output: `<p className="custom" id="foo">text</p>`, errors: [{ message: errorUnnecessaryAsClassName('p') }] },
     { code: `<Text id="foo" className="shr-text-sm">text</Text>`, output: `<Text size="S" id="foo">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
     { code: `<Text id="foo" className="shr-text-sm custom">text</Text>`, output: `<Text size="S" id="foo" className="custom">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom"', 'shr-text-sm') }] },
-    { code: `<Text as="p" id="foo" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S" id="foo">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },
-    { code: `<Text as="p" id="foo" onClick={handler} className="shr-text-sm custom">text</Text>`, output: `<Text as="p" size="S" id="foo" onClick={handler} className="custom">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom"', 'shr-text-sm', 'p') }] },
+    { code: `<Text as="p" id="foo" className="shr-text-sm">text</Text>`, output: `<Text as="p" size="S" id="foo">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
+    { code: `<Text as="p" id="foo" onClick={handler} className="shr-text-sm custom">text</Text>`, output: `<Text as="p" size="S" id="foo" onClick={handler} className="custom">text</Text>`, errors: [{ message: errorConvertibleShr('size="S" className="custom"', 'shr-text-sm') }] },
 
     // key属性対応テスト（追加のエッジケース）
     { code: `<Text key={itemId}>content</Text>`, output: `<span key={itemId}>content</span>`, errors: [{ message: errorUnnecessaryClassName('') }] },
     { code: `<Text key="item-1" className="shr-text-sm">text</Text>`, output: `<Text size="S" key="item-1">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
-    { code: `<Text key="item-1" as="p" className="shr-text-sm">text</Text>`, output: `<Text key="item-1" as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },
+    { code: `<Text key="item-1" as="p" className="shr-text-sm">text</Text>`, output: `<Text key="item-1" as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm') }] },
     { code: `<Text key="item-1" id="foo">content</Text>`, output: `<span key="item-1" id="foo">content</span>`, errors: [{ message: errorUnnecessaryClassName('') }] },
     { code: `<Text key="item-1" as="p" id="foo">content</Text>`, output: `<p key="item-1" id="foo">content</p>`, errors: [{ message: /.*/ }] },
     { code: `<Text key="item-1" className="custom" id="foo">text</Text>`, output: `<span key="item-1" className="custom" id="foo">text</span>`, errors: [{ message: errorUnnecessaryClassName('custom') }] },

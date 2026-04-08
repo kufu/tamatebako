@@ -533,9 +533,39 @@ function hasUnknownAttributes(node, ...knownAttrs) {
 
 プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションを利用します。
 
-#### validSourcesの拡張
+#### 共通ヘルパー関数の使用（v92以降）
 
-`smarthr-ui`に加えて、aliasパスからのimportもチェック対象にします。
+`helpers.js` に共通化されたヘルパー関数を使用します。これにより、重複コードを書く必要がありません。
+
+```javascript
+const { setupSmarthrUiAliasOptions } = require('../../helpers')
+
+createCheckers(context, sourceCode, options = {}) {
+  // 1行でセットアップ完了
+  const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
+
+  return {
+    ImportDeclaration(node) {
+      // smarthr-ui または @/components/parts/smarthr-ui からのimport
+      if (!validSources.includes(node.source.value)) return
+
+      // ...置換処理
+    }
+  }
+}
+```
+
+**setupSmarthrUiAliasOptionsの戻り値:**
+- `validSources`: `['smarthr-ui']` または `['smarthr-ui', '@/components/parts/smarthr-ui']`
+- `isAliasFile`: 現在のファイルがaliasファイルかどうか（boolean）
+- `filename`: 現在のファイルパス（文字列）
+
+#### validSourcesの拡張（レガシー実装、参考用）
+
+v90-to-v91では手動で実装していましたが、v92以降は`setupSmarthrUiAliasOptions`を使用してください。
+
+<details>
+<summary>レガシー実装例（非推奨）</summary>
 
 ```javascript
 createCheckers(context, sourceCode, options = {}) {
@@ -555,6 +585,8 @@ createCheckers(context, sourceCode, options = {}) {
   }
 }
 ```
+
+</details>
 
 #### aliasファイル内のexport変数名置換
 
@@ -593,32 +625,33 @@ if (isAliasFile) {
 return checkers
 ```
 
-#### ファイルパスのマッチング（ヘルパー関数）
+#### ファイルパスのマッチング
+
+v92以降では `setupSmarthrUiAliasOptions` に含まれているため、個別に実装する必要はありません。
+
+`isAliasFile` の値を直接使用してください：
 
 ```javascript
-const { rootPath } = require('../../../../libs/common')
+const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
 
-function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
-  // rootPathを使って絶対パスで比較を試みる
-  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
-  if (filename.includes(resolved)) {
-    return true
-  }
-
-  // rootPathでマッチしない場合:
-  // パスの一部としてマッチング（テスト環境などで使用）
-  const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
-
-  // 以下のパターンにマッチング:
-  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
-  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
-  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
-  return (
-    filename.includes(`/${pathPart}/`) ||
-    filename.endsWith(`/${pathPart}`) ||
-    filename.includes(`/${pathPart}.`)
-  )
+// aliasファイル専用の処理
+if (isAliasFile) {
+  // ...
 }
+```
+
+**内部実装の詳細:**
+
+`helpers.js` の `isFileMatchingSmarthrUiAlias` 関数が以下のパターンをマッチングします：
+
+1. **ディレクトリ形式**: `/components/parts/smarthr-ui/index.tsx`
+2. **個別ファイル**: `/components/parts/smarthr-ui/ActionDialog.tsx`
+3. **単一ファイル形式**: `/components/parts/smarthr-ui.tsx`
+
+低レベルのマッチング処理が必要な場合のみ、`helpers.js` から直接importできます：
+
+```javascript
+const { isFileMatchingSmarthrUiAlias } = require('../../helpers')
 ```
 
 **このパターンが適用されるケース:**
@@ -722,6 +755,64 @@ ExportNamedDeclaration(node) {
   })
 }
 ```
+
+## 共通化の状況と今後の方針
+
+### 現在共通化されている機能（v92時点）
+
+以下の機能は `../../helpers.js` に共通化されています：
+
+1. **setupSmarthrUiAliasOptions**: validSources拡張とaliasファイル判定を一括で行う
+2. **isFileMatchingSmarthrUiAlias**: ファイルパスマッチング（低レベル）
+
+これにより、各versionファイルで約30行の重複コードが削減されました。
+
+### 将来的な共通化の候補
+
+現時点（v92）では以下のパターンが各versionで繰り返されていますが、**読みやすさ重視の方針**により共通化を見送っています。
+
+#### 共通化候補のパターン
+
+| パターン | 繰り返し箇所 | 共通化の可能性 |
+|---------|------------|--------------|
+| ImportDeclaration | v90-to-v91, v91-to-v92 | 構造は同じだが、マッピング定数とmessageIdが異なる |
+| ExportNamedDeclaration | v90-to-v91, v91-to-v92 | 同上 |
+| JSXOpeningElement | v90-to-v91, v91-to-v92 | セレクター正規表現が異なる |
+| Program（ファイル名変更） | v90-to-v91, v91-to-v92 | マッピング定数のみ異なる |
+| VariableDeclarator（export変数） | v90-to-v91, v91-to-v92 | マッピング定数のみ異なる |
+
+#### 共通化を見送る理由
+
+1. **読みやすさの優先**: このルールは一時的な使用を想定し、後から読む人が理解しやすいことを重視
+2. **version特有のロジック**: 将来のversionで微妙に異なる処理が必要になる可能性
+3. **過度な抽象化のリスク**: ヘルパー関数のパラメータが複雑になり、かえって読みにくくなる
+
+#### 再検討のタイミング
+
+以下の条件を満たした場合、共通化を再検討してください：
+
+- **v93, v94などが追加され、パターンが確立**: 3つ以上のversionで同じパターンが繰り返される
+- **明確な抽象化が可能**: パラメータが単純で、特殊ケースが少ない
+- **読みやすさを損なわない**: ヘルパー関数の実装が直感的で理解しやすい
+
+**実装候補:**
+
+```javascript
+// helpers.js に追加する場合の例
+function createComponentRenameCheckers({ componentMap, messageId, targetVersion, validSources }) {
+  return {
+    ImportDeclaration(node) { /* ... */ },
+    ExportNamedDeclaration(node) { /* ... */ },
+    // JSXセレクターは動的に生成が難しいため除外
+  }
+}
+```
+
+**注意:**
+共通化を進める際は、必ず以下を確認してください：
+- 新しいversionで同じパターンが使えるか
+- ヘルパー関数のパラメータが複雑すぎないか
+- REFERENCE.mdに実装例を記載し、次の開発者が理解できるか
 
 ## 複数バージョンスキップ時の衝突検出
 

@@ -325,23 +325,39 @@ create(context) {
 
 プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションが利用可能です。
 
+### 共通ヘルパー関数の使用
+
+`helpers.js` に共通のヘルパー関数が用意されています。これにより、各versionファイルで重複コードを書く必要がありません。
+
+**利用可能なヘルパー:**
+- `setupSmarthrUiAliasOptions(context, options)`: validSources拡張とaliasファイル判定を一括で行う
+- `isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias)`: ファイルパスマッチング（低レベル、通常は不要）
+
 ### createCheckers関数でのオプション利用
 
 ```javascript
+const { setupSmarthrUiAliasOptions } = require('../../helpers')
+
 createCheckers(context, sourceCode, options = {}) {
-  const customSmarthrUiAlias = options.smarthrUiAlias
-  const validSources = ['smarthr-ui']
-  if (customSmarthrUiAlias) {
-    validSources.push(customSmarthrUiAlias)
+  // 1行でセットアップ完了
+  const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
+
+  // validSourcesを使ってimportをチェック
+  const checkers = {
+    ImportDeclaration(node) {
+      if (!validSources.includes(node.source.value)) return
+      // ...
+    },
   }
 
-  // aliasファイルかどうかの判定
-  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
-    context.getFilename(),
-    customSmarthrUiAlias
-  )
+  // aliasファイルの場合のみ、export変数名の置換を追加
+  if (isAliasFile) {
+    checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+      // ...
+    }
+  }
 
-  // ...
+  return checkers
 }
 ```
 
@@ -352,18 +368,39 @@ createCheckers(context, sourceCode, options = {}) {
 
 詳細は[README.md](./README.md#smarthr-ui-の-alias-を使用している場合)を参照。
 
-### 🔄 今後の検討事項：共通化
+### ✅ 共通化済みの機能
 
-**現状:** 各versionディレクトリ（v90-to-v91など）で個別にsmarthrUiAlias関連の処理を実装しています。
+以下の機能は `helpers.js` に共通化されています（v92移行ルール追加時に実装）：
 
-**検討中:** 以下の処理を共通化できる可能性があります：
-- `validSources`の拡張ロジック
-- `isFileMatchingSmarthrUiAlias`ヘルパー関数
-- export変数名の置換チェッカー追加ロジック
+- `setupSmarthrUiAliasOptions`: validSources拡張とaliasファイル判定
+- `isFileMatchingSmarthrUiAlias`: ファイルパスマッチング
 
-**実装時期:** v92移行ルール追加時に、重複を確認して共通化を検討してください。共通化する場合は、以下のような場所が候補です：
-- `libs/common.js`に共通ヘルパー関数を追加
-- 各versionモジュールで共通の基底関数を提供
+これにより、各versionファイルで約30行の重複コードが削減されました。
+
+### 🔄 将来的な共通化の検討事項
+
+**現状（v92時点）:**
+各versionディレクトリで以下のパターンが繰り返されています：
+- ImportDeclarationチェッカー（コンポーネント名リネーム）
+- ExportNamedDeclarationチェッカー（re-export対応）
+- JSXOpeningElementチェッカー（JSX要素のリネーム）
+- Programチェッカー（aliasファイル名変更エラー）
+- VariableDeclaratorチェッカー（aliasファイル内のexport変数名置換）
+
+**共通化の可能性:**
+これらのチェッカーは構造が似ていますが、以下の理由で現時点では見送っています：
+
+1. **読みやすさ優先の方針**: このルールは「一時的な使用」を想定し、読みやすさを重視
+2. **version特有のロジック**: 各versionで微妙に異なる処理が必要になる可能性
+3. **パターンの確立**: v93, v94... と増えて明確なパターンが確立されてから検討すべき
+
+**再検討のタイミング:**
+- v93, v94などが追加され、パターンが安定した時点
+- チェッカー生成ヘルパー（`createComponentRenameCheckers`など）の実装を検討
+- その際は `helpers.js` に追加し、REFERENCE.mdに「共通パターン」として記載
+
+**注意:**
+共通化を進める際は、抽象化しすぎて読みにくくならないよう注意してください。ヘルパー関数のパラメータが複雑になる場合は、重複を許容する方が保守性が高い場合もあります。
 
 ## 完了後の作業
 

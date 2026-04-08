@@ -58,9 +58,11 @@ const NOT_HAS_CLASSNAME = `:not(:has(${ATTR_CLASSNAME}))`
 // ============================================================
 // spread attributesは静的解析できないため除外
 const NOT_HAS_SPREAD = ':not(:has(JSXSpreadAttribute))'
+const HAS_SPREAD = ':has(JSXSpreadAttribute)'
 
 // Stage 1: shr-クラス → Text属性変換
 const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${NOT_HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
 
 // Stage 2: Text専用属性なし → HTML要素変換
 const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))${NOT_HAS_SPREAD}`
@@ -146,7 +148,7 @@ module.exports = {
   },
   create(context) {
     return {
-      // Stage 1: shr-クラス → Text属性変換
+      // Stage 1: shr-クラス → Text属性変換（spread attributesなし）
       [SELECTOR_CONVERTIBLE_SHR_TO_PROPS]: (classNameAttrNode) => {
         const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
         const openingElement = classNameAttrNode.parent
@@ -175,6 +177,21 @@ module.exports = {
             }
             return fixes
           },
+        })
+      },
+
+      // Stage 1: shr-クラス → Text属性変換（spread attributesあり、fixなし）
+      [SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_SPREAD]: (classNameAttrNode) => {
+        const { convertible } = categorizeClassNames(classNameAttrNode)
+        const openingElement = classNameAttrNode.parent
+
+        context.report({
+          node: openingElement,
+          message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
+ - 変換可能なクラス: ${convertible}
+ - spread attributes ({...props}) があるため自動修正できません。手動で修正してください
+ - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
         })
       },
 

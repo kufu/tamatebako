@@ -100,8 +100,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.4(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.9.1
-        version: 6.9.1(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.10.0
+        version: 6.10.0(eslint@9.39.4(jiti@2.4.2))
       globals:
         specifier: ^17.4.0
         version: 17.4.0
@@ -3856,14 +3856,14 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-smarthr@6.8.0:
-    resolution: {integrity: sha512-IjviF/nfb43LZ3nc5is5WblY3RhNIQBYW9faSiTxsjT+Vwdn/nKLJIINLKaYNpEggL/L4UTHqJIBJ4sJ9jJHPw==}
+  eslint-plugin-smarthr@6.10.0:
+    resolution: {integrity: sha512-S4xMGcQ7cHygiFlzZ46bdu4pWdVdrGkXgIoSG4Tfa8F2Qn36cZ9hIDXzbbvgkqH1L02Mu7mfj/ug/NZC0ie4og==}
     engines: {node: '>=24.14.1'}
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.9.1:
-    resolution: {integrity: sha512-a0hKHKr43QdpfGVVI1YQXC42axPwr2cqyUhTBGJLagweolfJReZ4tMqWDqgGzaZioYq5LV9mRucYVt/cdGaBQw==}
+  eslint-plugin-smarthr@6.8.0:
+    resolution: {integrity: sha512-IjviF/nfb43LZ3nc5is5WblY3RhNIQBYW9faSiTxsjT+Vwdn/nKLJIINLKaYNpEggL/L4UTHqJIBJ4sJ9jJHPw==}
     engines: {node: '>=24.14.1'}
     peerDependencies:
       eslint: ^9
@@ -11574,12 +11574,12 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-smarthr@6.8.0(eslint@9.39.4(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.10.0(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.9.1(eslint@9.39.4(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.8.0(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

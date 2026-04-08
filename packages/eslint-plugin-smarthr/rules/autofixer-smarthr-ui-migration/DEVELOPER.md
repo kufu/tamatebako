@@ -56,10 +56,10 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 ## 参考にするファイル
 
 必ず以下のファイルを読んで、実装パターンを踏襲してください（最新のversionディレクトリを参照）：
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/REFERENCE.md（実装パターンの詳細説明）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/index.js（実装例）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md（ユーザー向け移行ガイド）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js（テストケース）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/REFERENCE.md（実装パターンの詳細説明）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/index.js（実装例）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/README.md（ユーザー向け移行ガイド）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
 - libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
@@ -90,6 +90,18 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - ✅ 自動修正可能: 機械的に100%正しく変換できる場合
 - ⚠️ エラーのみ: 手動確認が必要な場合（未知の属性がある、複数の対処方法がある等）
 - ❌ 検出しない: 複雑すぎる、影響範囲が広すぎる場合
+
+**escape hatch用classNameの確認（重要）:**
+
+コンポーネント名が変更される場合、escape hatch用className（例: `smarthr-ui-ComponentName`）も変更される可能性があります。
+
+1. **確認方法**: smarthr-uiのPRの差分を確認し、`smarthr-ui-` で始まるclassNameが変更されているか調査
+2. **変更がある場合**: CSS/SCSS/styled-components等での使用箇所を検出・置換するチェッカーを追加
+3. **変更がない場合**: README.mdに「escape hatch classNameの変更なし」と明記
+
+**例（v91→v92の場合）:**
+- RemoteTriggerダイアログのリネームがあったが、内部的にはControlledダイアログを使用しているため、className変更なし
+- サイズ指定の大文字統一はReact propsの値変更のみで、className生成ロジックには影響なし
 
 ## 実装内容
 
@@ -413,7 +425,7 @@ https://github.com/kufu/smarthr-ui/releases
 
 各versionディレクトリに`REFERENCE.md`があり、実装パターンや注意点が記載されています。
 
-**最新version:** [v90-to-v91/REFERENCE.md](./versions/v90-to-v91/REFERENCE.md)
+**最新version:** [v91-to-v92/REFERENCE.md](./versions/v91-to-v92/REFERENCE.md)
 
 このドキュメントには以下が含まれます：
 - ファイル構造と各セクションの説明

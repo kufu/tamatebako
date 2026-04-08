@@ -55,24 +55,17 @@ const NOT_HAS_NON_KEY_ATTRS = `:not(:has(JSXAttribute[name.name!="key"]))`
 
 // 完全なESLintセレクタ（事前計算）
 // ============================================================
-// 第1段階: shr-クラス → Text属性変換
+// Stage 1: shr-クラス → Text属性変換
 // ============================================================
-const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_AS}${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_SHR_CLASS}`
-const SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_AS = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE})${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_SHR_CLASS}`
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_SHR_CLASS}`
 
 // ============================================================
-// 第2段階: Text専用属性なし → HTML要素変換
-// （shr-クラスがない場合のみ実行）
+// Stage 2: Text専用属性なし → HTML要素変換（shr-クラスがない場合のみ）
 // ============================================================
 const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))`
-const SELECTOR_UNNECESSARY_TEXT_ONLY_KEY = `${TEXT_OPENING}${HAS_KEY}:not(:has(JSXAttribute[name.name!="key"]))`
-const SELECTOR_UNNECESSARY_TEXT_ONLY_AS = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE}):not(:has(${ATTR_CLASSNAME})):not(:has(JSXAttribute[name.name!=/^(key|as)$/]))`
-const SELECTOR_UNNECESSARY_TEXT_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_AS}${NOT_HAS_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS}):not(:has(JSXAttribute[name.name!=/^(key|className)$/]))`
-const SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE}):has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS})${NOT_HAS_TEXT_PROPS}:not(:has(JSXAttribute[name.name!=/^(key|as|className)$/]))`
-const SELECTOR_UNNECESSARY_TEXT_OTHER_ATTRS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:not(:has(${ATTR_AS})):not(:has(${ATTR_CLASSNAME})):has(JSXAttribute[name.name!="key"])`
-const SELECTOR_UNNECESSARY_TEXT_AS_OTHER_ATTRS = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE})${NOT_HAS_TEXT_PROPS}:not(:has(${ATTR_CLASSNAME})):has(JSXAttribute[name.name!=/^(key|as)$/])`
-const SELECTOR_UNNECESSARY_TEXT_CLASSNAME_OTHER_ATTRS = `${TEXT_OPENING}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS})${NOT_HAS_AS}${NOT_HAS_TEXT_PROPS}:has(JSXAttribute[name.name!=/^(key|className)$/])`
-const SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME_OTHER_ATTRS = `${TEXT_OPENING}:has(${ATTR_AS}${LITERAL_TYPE}):has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS})${NOT_HAS_TEXT_PROPS}:has(JSXAttribute[name.name!=/^(key|as|className)$/])`
+// as属性がある場合はリテラルのみ（変数は除外）
+const SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:not(:has(${ATTR_CLASSNAME})):has(JSXAttribute):not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
+const SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_SHR_CLASS}):not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
 
 // ============================================================
 // 矛盾検出
@@ -156,174 +149,41 @@ module.exports = {
   },
   create(context) {
     return {
-      // パターン1-1: 属性なし
-      [SELECTOR_UNNECESSARY_TEXT_NO_ATTRS]: (node) => {
-        context.report({
-          node,
-          message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
- - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
-        })
-      },
-
-      // パターン1-1b: key属性のみ
-      [SELECTOR_UNNECESSARY_TEXT_ONLY_KEY]: (node) => {
-        context.report({
-          node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <span>
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-          fix(fixer) {
-            const jsxElement = node.parent
-
-            return [
-              fixer.replaceText(node.name, 'span'),
-              fixer.replaceText(jsxElement.closingElement.name, 'span')
-            ]
-          },
-        })
-      },
-
-      // パターン1-2: as属性のみ（文字列リテラル）
-      [SELECTOR_UNNECESSARY_TEXT_ONLY_AS]: (node) => {
-        const tagName = getAttributeLiteralValue(node, 'as')
-
-        context.report({
-          node,
-          message: `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${tagName}>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
- - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
-          fix(fixer) {
-            const jsxElement = node.parent
-            const sourceCode = context.sourceCode || context.getSourceCode()
-            const asAttrNode = getAttributeNode(node, 'as')
-
-            // 属性とその前のスペースを含めて削除
-            const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
-            const rangeStart = tokenBefore.range[1]
-            const rangeEnd = asAttrNode.range[1]
-
-            return [
-              fixer.removeRange([rangeStart, rangeEnd]),
-              fixer.replaceText(node.name, tagName),
-              fixer.replaceText(jsxElement.closingElement.name, tagName)
-            ]
-          },
-        })
-      },
-
-      // パターン2-1: classNameのみ（asなし）、Text属性なし、shr-クラスあり
+      // Stage 1: shr-クラス → Text属性変換
       [SELECTOR_CONVERTIBLE_SHR_TO_PROPS]: (classNameAttrNode) => {
         const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
         const openingElement = classNameAttrNode.parent
         const jsxElement = openingElement.parent
-
-        // 変換可能なクラスが0個の場合、spanに変換（パターン1-3と同じ動作）
-        if (!propSuggestions) {
-          const classNameText = `className="${classNameAttrNode.value.value}"`
-          context.report({
-            node: openingElement,
-            message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <span ${classNameText}>
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-            fix(fixer) {
-              return [
-                fixer.replaceText(openingElement.name, 'span'),
-                fixer.replaceText(jsxElement.closingElement.name, 'span')
-              ]
-            },
-          })
-          return
-        }
-
-        // 変換可能なクラスがある場合、属性に変換
-        context.report({
-          node: openingElement,
-          message: `classNameで指定されたshr-プレフィックスのクラスは、Textコンポーネントの属性に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <Text ${propSuggestions}${nonConvertible ? ` className="${nonConvertible}"` : ''}>
- - 変換可能なクラス: ${convertible}
- - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
-          fix(fixer) {
-            const sourceCode = context.sourceCode || context.getSourceCode()
-            const fixes = []
-
-            if (nonConvertible) {
-              // classNameの値を更新（属性自体は残す）
-              fixes.push(fixer.replaceText(classNameAttrNode.value, `"${nonConvertible}"`))
-            } else {
-              // className属性全体を削除（shr-クラスのみの場合）
-              const tokenBefore = sourceCode.getTokenBefore(classNameAttrNode)
-              const rangeStart = tokenBefore.range[1]
-              const rangeEnd = classNameAttrNode.range[1]
-              fixes.push(fixer.removeRange([rangeStart, rangeEnd]))
-            }
-
-            // 新しいpropsを追加
-            fixes.push(fixer.insertTextAfter(openingElement.name, ` ${propSuggestions}`))
-
-            return fixes
-          },
-        })
-      },
-
-      // パターン1-3: classNameのみ（asなし）、Text属性なし、shr-クラスなし
-      [SELECTOR_UNNECESSARY_TEXT_CLASSNAME]: (node) => {
-        const classNameValue = getAttributeLiteralValue(node, 'className')
-        const classNameText = `className="${classNameValue}"`
-
-        context.report({
-          node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <span ${classNameText}>
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-          fix(fixer) {
-            const jsxElement = node.parent
-
-            return [
-              fixer.replaceText(node.name, 'span'),
-              fixer.replaceText(jsxElement.closingElement.name, 'span')
-            ]
-          },
-        })
-      },
-
-      // パターン2-2, 2-3: className + as（文字列リテラル）、Text属性なし、shr-クラスあり
-      [SELECTOR_CONVERTIBLE_SHR_TO_PROPS_WITH_AS]: (classNameAttrNode) => {
-        const { nonConvertible, propSuggestions, convertible } = categorizeClassNames(classNameAttrNode)
-        const openingElement = classNameAttrNode.parent
-        const jsxElement = openingElement.parent
+        const sourceCode = context.sourceCode || context.getSourceCode()
         const asValue = getAttributeLiteralValue(openingElement, 'as')
 
-        // 変換可能なクラスが0個の場合、as属性で指定されたタグに変換（パターン1-4と同じ動作）
+        // 変換可能なクラスが0個の場合、HTML要素に変換
         if (!propSuggestions) {
-          const classNameValue = getAttributeLiteralValue(openingElement, 'className')
+          const tagName = asValue || 'span'
+          const classNameValue = classNameAttrNode.value.value
           const classNameText = `className="${classNameValue}"`
           context.report({
             node: openingElement,
-            message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
+            message: asValue
+              ? `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - <${asValue}>要素にclassNameを移動してください
+ - <${tagName}>要素にclassNameを移動してください
+ - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`
+              : `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
+ - 推奨: <span ${classNameText}>
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
             fix(fixer) {
-              const sourceCode = context.sourceCode || context.getSourceCode()
-              const asAttrNode = getAttributeNode(openingElement, 'as')
-
-              // 属性とその前のスペースを含めて削除
-              const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
-              const rangeStart = tokenBefore.range[1]
-              const rangeEnd = asAttrNode.range[1]
-
-              return [
-                fixer.removeRange([rangeStart, rangeEnd]),
-                fixer.replaceText(openingElement.name, asValue),
-                fixer.replaceText(jsxElement.closingElement.name, asValue)
-              ]
+              const fixes = []
+              // as属性があれば削除
+              if (asValue) {
+                const asAttrNode = getAttributeNode(openingElement, 'as')
+                const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
+                fixes.push(fixer.removeRange([tokenBefore.range[1], asAttrNode.range[1]]))
+              }
+              fixes.push(fixer.replaceText(openingElement.name, tagName))
+              fixes.push(fixer.replaceText(jsxElement.closingElement.name, tagName))
+              return fixes
             },
           })
           return
@@ -338,170 +198,115 @@ module.exports = {
  - 変換可能なクラス: ${convertible}
  - shr-プレフィックスのクラスをTextの属性に置き換えることで、型安全性が向上し、意図がより明確になります`,
           fix(fixer) {
-            const sourceCode = context.sourceCode || context.getSourceCode()
             const fixes = []
-
             if (nonConvertible) {
-              // classNameの値を更新（属性自体は残す）
               fixes.push(fixer.replaceText(classNameAttrNode.value, `"${nonConvertible}"`))
             } else {
-              // className属性全体を削除（shr-クラスのみの場合）
               const tokenBefore = sourceCode.getTokenBefore(classNameAttrNode)
-              const rangeStart = tokenBefore.range[1]
-              const rangeEnd = classNameAttrNode.range[1]
-              fixes.push(fixer.removeRange([rangeStart, rangeEnd]))
+              fixes.push(fixer.removeRange([tokenBefore.range[1], classNameAttrNode.range[1]]))
             }
-
-            // 新しいpropsを追加（as属性がある場合はその後ろに挿入）
             const asAttrNode = getAttributeNode(openingElement, 'as')
             if (asAttrNode) {
               fixes.push(fixer.insertTextAfter(asAttrNode, ` ${propSuggestions}`))
             } else {
               fixes.push(fixer.insertTextAfter(openingElement.name, ` ${propSuggestions}`))
             }
-
             return fixes
           },
         })
       },
 
-      // パターン1-4: className + as（文字列リテラル）、Text属性なし、shr-クラスなし
-      [SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME]: (node) => {
-        const tagName = getAttributeLiteralValue(node, 'as')
-        const classNameValue = getAttributeLiteralValue(node, 'className')
-        const classNameText = `className="${classNameValue}"`
-
+      // Stage 2: 属性なし
+      [SELECTOR_UNNECESSARY_TEXT_NO_ATTRS]: (node) => {
         context.report({
           node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
+          message: `属性を持たないTextコンポーネントは、<span>に置き換えるか、要素を削除してテキストのみにすることを検討してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - <${tagName}>要素にclassNameを移動してください
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-          fix(fixer) {
-            const jsxElement = node.parent
-            const sourceCode = context.sourceCode || context.getSourceCode()
-
-            // as属性を見つける
-            const asAttr = node.attributes.find(attr => attr.type === 'JSXAttribute' && attr.name.name === 'as')
-
-            // 属性とその前のスペースを含めて削除
-            const tokenBefore = sourceCode.getTokenBefore(asAttr)
-            const rangeStart = tokenBefore.range[1]
-            const rangeEnd = asAttr.range[1]
-
-            return [
-              fixer.removeRange([rangeStart, rangeEnd]),
-              fixer.replaceText(node.name, tagName),
-              fixer.replaceText(jsxElement.closingElement.name, tagName)
-            ]
-          },
+ - Textコンポーネントに属性がない場合、直接HTML要素を使用するか、不要な要素を削除することでシンプルになります
+ - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`,
         })
       },
 
-      // パターン1-5: その他の属性（id, onClick等）のみ
-      [SELECTOR_UNNECESSARY_TEXT_OTHER_ATTRS]: (node) => {
+      // Stage 2: classNameなし
+      [SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME]: (node) => {
+        const asValue = getAttributeLiteralValue(node, 'as')
+        const tagName = asValue || 'span'
+        const sourceCode = context.sourceCode || context.getSourceCode()
+
         context.report({
           node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
+          message: asValue
+            ? `as属性のみを持つTextコンポーネントは、ネイティブHTML要素（<${tagName}>）に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
+ - Textコンポーネントにas以外の属性がない場合、直接HTML要素を使用することでシンプルになります
+ - weight、size、color等の属性がある場合は、Textコンポーネントのまま利用してください`
+            : `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - 推奨: <span>
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
           fix(fixer) {
             const jsxElement = node.parent
-
-            return [
-              fixer.replaceText(node.name, 'span'),
-              fixer.replaceText(jsxElement.closingElement.name, 'span')
-            ]
+            const fixes = []
+            // as属性があれば削除
+            if (asValue) {
+              const asAttrNode = getAttributeNode(node, 'as')
+              const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
+              fixes.push(fixer.removeRange([tokenBefore.range[1], asAttrNode.range[1]]))
+            }
+            fixes.push(fixer.replaceText(node.name, tagName))
+            fixes.push(fixer.replaceText(jsxElement.closingElement.name, tagName))
+            return fixes
           },
         })
       },
 
-      // パターン1-6: as + その他の属性
-      [SELECTOR_UNNECESSARY_TEXT_AS_OTHER_ATTRS]: (node) => {
-        const tagName = getAttributeLiteralValue(node, 'as')
-
-        context.report({
-          node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<${tagName}>）に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - 推奨: <${tagName}>
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-          fix(fixer) {
-            const jsxElement = node.parent
-            const sourceCode = context.sourceCode || context.getSourceCode()
-            const asAttrNode = getAttributeNode(node, 'as')
-
-            // 属性とその前のスペースを含めて削除
-            const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
-            const rangeStart = tokenBefore.range[1]
-            const rangeEnd = asAttrNode.range[1]
-
-            return [
-              fixer.removeRange([rangeStart, rangeEnd]),
-              fixer.replaceText(node.name, tagName),
-              fixer.replaceText(jsxElement.closingElement.name, tagName)
-            ]
-          },
-        })
-      },
-
-      // パターン1-7: className + その他の属性
-      [SELECTOR_UNNECESSARY_TEXT_CLASSNAME_OTHER_ATTRS]: (node) => {
+      // Stage 2: classNameあり
+      [SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME]: (node) => {
+        const asValue = getAttributeLiteralValue(node, 'as')
         const classNameValue = getAttributeLiteralValue(node, 'className')
+        const tagName = asValue || 'span'
+        const sourceCode = context.sourceCode || context.getSourceCode()
+
+        // key属性があり、かつその他の属性（key, as, className以外）がある場合のみclassNameを非表示
         const hasKey = node.attributes.some(attr => attr.type === 'JSXAttribute' && attr.name.name === 'key')
-        const classNameText = !hasKey && classNameValue ? ` className="${classNameValue}"` : ''
+        const hasOtherAttrs = node.attributes.some(attr =>
+          attr.type === 'JSXAttribute' &&
+          attr.name.name !== 'key' &&
+          attr.name.name !== 'as' &&
+          attr.name.name !== 'className'
+        )
+        const classNameText = (hasKey && hasOtherAttrs) ? '' : (classNameValue ? ` className="${classNameValue}"` : '')
 
         context.report({
           node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
+          message: asValue
+            ? `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
+ - <${tagName}>要素にclassNameを移動してください
+ - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`
+            : `Textコンポーネントの機能を使用していないため、ネイティブHTML要素（<span>）に置き換えてください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
  - 推奨: <span${classNameText}>
  - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
           fix(fixer) {
             const jsxElement = node.parent
-
-            return [
-              fixer.replaceText(node.name, 'span'),
-              fixer.replaceText(jsxElement.closingElement.name, 'span')
-            ]
+            const fixes = []
+            // as属性があれば削除
+            if (asValue) {
+              const asAttrNode = getAttributeNode(node, 'as')
+              const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
+              fixes.push(fixer.removeRange([tokenBefore.range[1], asAttrNode.range[1]]))
+            }
+            fixes.push(fixer.replaceText(node.name, tagName))
+            fixes.push(fixer.replaceText(jsxElement.closingElement.name, tagName))
+            return fixes
           },
         })
       },
 
-      // パターン1-8: as + className + その他の属性
-      [SELECTOR_UNNECESSARY_TEXT_AS_CLASSNAME_OTHER_ATTRS]: (node) => {
-        const tagName = getAttributeLiteralValue(node, 'as')
-
-        context.report({
-          node,
-          message: `Textコンポーネントの機能を使用していないため、ネイティブHTML要素に置き換えてください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-text-component
- - <${tagName}>要素にclassNameを移動してください
- - Textコンポーネントの機能（weight、size、color等）を使用しない場合は、直接HTML要素を使用することでシンプルになります`,
-          fix(fixer) {
-            const jsxElement = node.parent
-            const sourceCode = context.sourceCode || context.getSourceCode()
-            const asAttrNode = getAttributeNode(node, 'as')
-
-            // 属性とその前のスペースを含めて削除
-            const tokenBefore = sourceCode.getTokenBefore(asAttrNode)
-            const rangeStart = tokenBefore.range[1]
-            const rangeEnd = asAttrNode.range[1]
-
-            return [
-              fixer.removeRange([rangeStart, rangeEnd]),
-              fixer.replaceText(node.name, tagName),
-              fixer.replaceText(jsxElement.closingElement.name, tagName)
-            ]
-          },
-        })
-      },
-
-      // パターン3: Text属性あり、classNameにshr-クラスあり（矛盾）
+      // 矛盾検出
       [SELECTOR_CONFLICTING_PROPS_SHR]: (classNameAttrNode) => {
         const convertible = getConvertible(classNameAttrNode)
-
         if (convertible) {
           context.report({
             node: classNameAttrNode.parent,

@@ -47,12 +47,17 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
-      output: `import { ControlledActionDialog } from 'smarthr-ui'`,
       options: [{ from: '90', to: '93' }],
-      errors: [
-        { messageId: 'skippedVersion', data: { version: 'v93' } },
-        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
-      ],
+      errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '93', middle: '91' } }],
+    },
+
+    // ============================================================
+    // v90→v92 競合テスト（コンポーネント名の衝突により禁止）
+    // ============================================================
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      options: [{ from: '90', to: '92' }],
+      errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '92', middle: '91' } }],
     },
 
     // ============================================================

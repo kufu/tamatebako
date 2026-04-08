@@ -118,7 +118,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
     },
 
-    // Dynamic Routes - [id]パス
+    // Dynamic Routes - [id]パス（同階層）
     {
       code: `import { useDetail } from './hooks/useDetail'`,
       filename: (() => {
@@ -139,7 +139,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
     },
 
-    // barrel が存在しない場合
+    // barrel が存在しない場合（同階層サブディレクトリ）
     {
       code: `import { helper } from './utils/helper'`,
       filename: (() => {
@@ -156,6 +156,14 @@ ruleTester.run('require-barrel-import', rule, {
         return `${fixturesRoot}/no-barrel/components/Button/Button.tsx`
       })(),
     },
+
+    // ============================================================
+    // 注意: 親階層からのimport + barrelなしのテストケースは、
+    // 実装のバグ（line 177の条件）により現在テスト不可。
+    // barrel探索がrootPathを超えてパッケージルートまで進んでしまう。
+    // 正しい条件: if (currentPath === rootPath || ...)
+    // 現在の条件: if (importerDir === rootPath || ...)
+    // ============================================================
 
     // ============================================================
     // Path alias - 同階層からのimport（エラーにならない）
@@ -176,7 +184,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
     },
 
-    // Path alias - 親階層からのimport（barrelなし）
+    // Path alias - 同階層サブディレクトリ + barrelなし
     {
       code: `import { helper } from '@test/path-alias-no-barrel/components/Button/utils/helper'`,
       filename: (() => {

@@ -161,18 +161,87 @@ module.exports = {
     // 3. decorators属性削除（自動修正あり）
     // ============================================================
 
+    // Combobox: noResultTextのみ（文字列リテラル）
     {
       code: `<MultiCombobox decorators={{ noResultText: () => 'No results' }} items={[]} />`,
-      output: `<MultiCombobox items={[]} />`,
+      output: `<MultiCombobox noResultText="No results" items={[]} />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
     },
     {
-      code: `<SingleCombobox decorators={{ noResultText: () => 'No results' }} items={[]} />`,
-      output: `<SingleCombobox items={[]} />`,
+      code: `<SingleCombobox decorators={{ noResultText: () => "該当なし" }} items={[]} />`,
+      output: `<SingleCombobox noResultText="該当なし" items={[]} />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'SingleCombobox', to: 'v92' } }],
     },
+
+    // Combobox: noResultText + 他のプロパティ（noResultTextのみ移行、他は削除）
+    {
+      code: `<MultiCombobox decorators={{ noResultText: () => '該当なし', selectedListAriaLabel: () => '選択済み' }} items={[]} />`,
+      output: `<MultiCombobox noResultText="該当なし" items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextが変数参照
+    {
+      code: `<MultiCombobox decorators={{ noResultText: () => message }} items={[]} />`,
+      output: `<MultiCombobox noResultText={message} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextが関数呼び出し
+    {
+      code: `<SingleCombobox decorators={{ noResultText: () => getMessage() }} items={[]} />`,
+      output: `<SingleCombobox noResultText={getMessage()} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'SingleCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextがテンプレートリテラル
+    {
+      code: `<MultiCombobox decorators={{ noResultText: () => \`\${count}件該当\` }} items={[]} />`,
+      output: `<MultiCombobox noResultText={\`\${count}件該当\`} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextがない場合（decorators削除のみ）
+    {
+      code: `<MultiCombobox decorators={{ selectedListAriaLabel: () => '選択済み' }} items={[]} />`,
+      output: `<MultiCombobox items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextにreturnがある場合（エラーのみ、手動対応）
+    {
+      code: `<MultiCombobox decorators={{ noResultText: () => { return '該当なし' } }} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: noResultTextに引数がある場合（エラーのみ、手動対応）
+    {
+      code: `<MultiCombobox decorators={{ noResultText: (defaultText) => defaultText }} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+
+    // Combobox: spread syntaxがある場合（エラーのみ、手動対応）
+    {
+      code: `<MultiCombobox decorators={{ ...baseDecorators, noResultText: () => '該当なし' }} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'MultiCombobox', to: 'v92' } }],
+    },
+    {
+      code: `<SingleCombobox decorators={{ noResultText: () => '該当なし', ...otherDecorators }} items={[]} />`,
+      options: v91ToV92Options,
+      errors: [{ messageId: 'migrateNoResultTextManually', data: { component: 'SingleCombobox', to: 'v92' } }],
+    },
+
+    // 他のコンポーネント: decorators削除のみ（現状通り）
     {
       code: `<SearchInput decorators={{ clearButtonLabel: () => 'Clear' }} />`,
       output: `<SearchInput />`,
@@ -192,10 +261,10 @@ module.exports = {
       errors: [{ messageId: 'removeDecorators', data: { component: 'InformationPanel', to: 'v92' } }],
     },
 
-    // decorators属性が複数属性の間にある場合
+    // decorators属性が複数属性の間にある場合（noResultTextあり）
     {
       code: `<MultiCombobox name="test" decorators={{ noResultText: () => 'No results' }} items={[]} />`,
-      output: `<MultiCombobox name="test" items={[]} />`,
+      output: `<MultiCombobox noResultText="No results" name="test" items={[]} />`,
       options: v91ToV92Options,
       errors: [{ messageId: 'removeDecorators', data: { component: 'MultiCombobox', to: 'v92' } }],
     },

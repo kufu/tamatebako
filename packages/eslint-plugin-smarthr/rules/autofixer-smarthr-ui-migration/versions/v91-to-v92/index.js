@@ -62,6 +62,12 @@ const DECORATORS_COMPONENTS = [
   'InformationPanel',
 ]
 
+// Comboboxコンポーネント（noResultTextの移行が必要）
+const COMBOBOX_COMPONENTS = [
+  'MultiCombobox',
+  'SingleCombobox',
+]
+
 // v92を示す定数（メッセージで使用）
 const TARGET_VERSION = 'v92'
 
@@ -74,11 +80,72 @@ module.exports = {
     renameRemoteTriggerDialog: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました（RemoteTrigger版が推奨版になりました）',
     convertSizeValue: 'smarthr-ui {{to}} ではサイズ指定が大文字に統一されました: size="{{old}}" → size="{{new}}"',
     removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました（smarthr-ui内部で自動的に翻訳されるようになりました）',
+    migrateNoResultTextManually: '{{component}} の decorators.noResultText を手動で移行してください。noResultText属性として独立しました。詳細: https://github.com/kufu/smarthr-ui/pull/6238',
     renameAliasFile: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from \'@/path/{{old}}\' → from \'@/path/{{new}}\'）',
   },
 
   createCheckers(context, sourceCode, options = {}) {
     const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
+
+    /**
+     * decorators属性からnoResultTextを抽出し、移行可能かチェック
+     *
+     * @param {Object} decoratorsNode - decorators属性のASTノード
+     * @returns {Object} 解析結果
+     *   - type: 'spread' | 'migratable' | 'not-migratable' | 'no-result-text' | 'invalid'
+     *   - value?: string (migratableの場合)
+     *   - isStringLiteral?: boolean (migratableの場合)
+     */
+    function extractNoResultText(decoratorsNode) {
+      // decorators={{ ... }} の形式か確認
+      if (!decoratorsNode.value || decoratorsNode.value.type !== 'JSXExpressionContainer') {
+        return { type: 'invalid' }
+      }
+
+      const expression = decoratorsNode.value.expression
+      if (expression.type !== 'ObjectExpression') {
+        return { type: 'invalid' }
+      }
+
+      // spread syntaxが含まれているかチェック
+      const hasSpread = expression.properties.some((prop) => prop.type === 'SpreadElement')
+      if (hasSpread) {
+        return { type: 'spread' }
+      }
+
+      // noResultTextプロパティを探す
+      const noResultTextProp = expression.properties.find(
+        (prop) => prop.type === 'Property' && prop.key.name === 'noResultText'
+      )
+
+      if (!noResultTextProp) {
+        return { type: 'no-result-text' }
+      }
+
+      const value = noResultTextProp.value
+
+      // ArrowFunctionExpressionで、引数なし、returnなしのパターンのみ対応
+      if (
+        value.type !== 'ArrowFunctionExpression' ||
+        value.params.length > 0 ||
+        value.body.type === 'BlockStatement'
+      ) {
+        return { type: 'not-migratable' }
+      }
+
+      // bodyの式を抽出
+      const bodyExpression = value.body
+      const bodyText = sourceCode.getText(bodyExpression)
+
+      // 文字列リテラルの場合は値を抽出（クォートを除く）
+      const isStringLiteral = bodyExpression.type === 'Literal' && typeof bodyExpression.value === 'string'
+
+      return {
+        type: 'migratable',
+        value: isStringLiteral ? bodyExpression.value : bodyText,
+        isStringLiteral,
+      }
+    }
 
     const checkers = {
       // ============================================================
@@ -225,21 +292,95 @@ module.exports = {
       'JSXAttribute[name.name="decorators"]'(node) {
         const componentName = node.parent.name.name
 
-        if (DECORATORS_COMPONENTS.includes(componentName)) {
-          context.report({
-            node,
-            messageId: 'removeDecorators',
-            data: { component: componentName, to: TARGET_VERSION },
-            fix(fixer) {
-              // 属性とその前のスペース/改行を削除
-              const tokenBefore = sourceCode.getTokenBefore(node)
-              if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
-                return fixer.removeRange([tokenBefore.range[1], node.range[1]])
-              }
-              return fixer.remove(node)
-            },
-          })
+        if (!DECORATORS_COMPONENTS.includes(componentName)) return
+
+        // Comboboxコンポーネントの場合、noResultTextの移行を試みる
+        if (COMBOBOX_COMPONENTS.includes(componentName)) {
+          const result = extractNoResultText(node)
+
+          // spread syntaxがある場合 → エラーのみ（手動対応）
+          if (result.type === 'spread') {
+            context.report({
+              node,
+              messageId: 'migrateNoResultTextManually',
+              data: { component: componentName, to: TARGET_VERSION },
+              // fixなし
+            })
+            return
+          }
+
+          // noResultTextが自動移行可能な場合
+          if (result.type === 'migratable') {
+            context.report({
+              node,
+              messageId: 'removeDecorators',
+              data: { component: componentName, to: TARGET_VERSION },
+              fix(fixer) {
+                const fixes = []
+
+                // 1. noResultText属性を追加
+                const { value, isStringLiteral } = result
+                const noResultTextAttr = isStringLiteral
+                  ? ` noResultText="${value}"`
+                  : ` noResultText={${value}}`
+                fixes.push(fixer.insertTextAfter(node.parent.name, noResultTextAttr))
+
+                // 2. decorators属性を削除
+                const tokenBefore = sourceCode.getTokenBefore(node)
+                if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+                  fixes.push(fixer.removeRange([tokenBefore.range[1], node.range[1]]))
+                } else {
+                  fixes.push(fixer.remove(node))
+                }
+
+                return fixes
+              },
+            })
+            return
+          }
+
+          // noResultTextが存在するが自動移行不可能な場合 → エラーのみ（手動対応）
+          if (result.type === 'not-migratable') {
+            context.report({
+              node,
+              messageId: 'migrateNoResultTextManually',
+              data: { component: componentName, to: TARGET_VERSION },
+              // fixなし
+            })
+            return
+          }
+
+          // noResultTextがない場合 → decoratorsを削除
+          if (result.type === 'no-result-text') {
+            context.report({
+              node,
+              messageId: 'removeDecorators',
+              data: { component: componentName, to: TARGET_VERSION },
+              fix(fixer) {
+                const tokenBefore = sourceCode.getTokenBefore(node)
+                if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+                  return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+                }
+                return fixer.remove(node)
+              },
+            })
+            return
+          }
         }
+
+        // 他のコンポーネントの場合 → decorators属性を削除するのみ
+        context.report({
+          node,
+          messageId: 'removeDecorators',
+          data: { component: componentName, to: TARGET_VERSION },
+          fix(fixer) {
+            const tokenBefore = sourceCode.getTokenBefore(node)
+            if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+              return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+            }
+            return fixer.remove(node)
+          },
+        })
       },
 
       // ============================================================

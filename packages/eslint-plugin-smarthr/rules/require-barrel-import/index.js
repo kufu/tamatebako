@@ -31,62 +31,169 @@ const SCHEMA = [
   }
 ]
 
-const entriedReplacePaths = Object.entries(replacePaths)
 const CWD = process.cwd()
 const REGEX_UNNECESSARY_SLASH = /(\/)+/g
 const REGEX_ROOT_PATH = new RegExp(`^${rootPath}/index\.`)
 const REGEX_INDEX_FILE = /\/index\.(ts|js)x?$/
 const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 
-// 正規表現を事前生成してキャッシュ
-const entriedReplacePathsWithRegex = entriedReplacePaths.map(([key, values]) => [
+// Path aliasの正規表現を事前生成してキャッシュ
+const entriedReplacePathsWithRegex = Object.entries(replacePaths).map(([key, values]) => [
   key,
   values,
   new RegExp(`^${key}(.+)$`),
   values.map(v => new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`))
 ])
 
-const calculateAbsoluteImportPath = (source) => {
-  if (source[0] === '/') {
-    return source
+/**
+ * Path aliasを絶対パスに変換する
+ * @param {string} importPath - import文のパス（例: '@/components/Button'）
+ * @returns {string} 絶対パス（例: '/path/to/src/components/Button'）
+ */
+const resolvePathAlias = (importPath) => {
+  if (importPath[0] === '/') {
+    return importPath
   }
 
-  return entriedReplacePathsWithRegex.reduce((prev, [key, values, keyRegex]) => {
-    if (source === prev) {
-      return values.reduce((p, v) => {
-        if (prev === p && keyRegex.test(keyRegex)) {
-          return p.replace(keyRegex, `${path.resolve(`${CWD}/${v}`)}/$1`)
+  return entriedReplacePathsWithRegex.reduce((result, [key, values, keyRegex]) => {
+    if (result === importPath) {
+      return values.reduce((resolved, value) => {
+        if (resolved === result && keyRegex.test(result)) {
+          return resolved.replace(keyRegex, `${path.resolve(`${CWD}/${value}`)}/$1`)
         }
-
-        return p
-      }, prev)
+        return resolved
+      }, result)
     }
-
-    return prev
-  }, source)
+    return result
+  }, importPath)
 }
-const calculateReplacedImportPath = (source) => {
-  return entriedReplacePathsWithRegex.reduce((prev, [key, values, keyRegex, valueRegexes]) => {
-    if (source === prev) {
-      return values.reduce((p, v, index) => {
-        if (prev === p) {
-          const regexp = valueRegexes[index]
 
-          if (regexp.test(prev)) {
-            return p.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
+/**
+ * 絶対パスをPath aliasに変換する
+ * @param {string} absolutePath - 絶対パス（例: '/path/to/src/components/Button'）
+ * @returns {string} Path alias（例: '@/components/Button'）
+ */
+const convertToPathAlias = (absolutePath) => {
+  return entriedReplacePathsWithRegex.reduce((result, [key, values, keyRegex, valueRegexes]) => {
+    if (result === absolutePath) {
+      return values.reduce((converted, value, index) => {
+        if (converted === result) {
+          const regexp = valueRegexes[index]
+          if (regexp.test(converted)) {
+            return converted.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
           }
         }
-
-        return p
-      }, prev)
+        return converted
+      }, result)
     }
-
-    return prev
-  }, source)
+    return result
+  }, absolutePath)
 }
 
-const pickImportedName = (s) => s.imported?.name
-const findExistsSync = (p) => fs.existsSync(p)
+/**
+ * import先がimport元の内部にあるかチェック（同階層・サブディレクトリからのimport）
+ * （Next.js App Routerの特殊文字パスにも対応）
+ * @param {string} importerDir - import元のディレクトリ
+ * @param {string} importedPath - import先のパス
+ * @returns {boolean}
+ */
+const isImportedInsideImporter = (importerDir, importedPath) => {
+  return importedPath === importerDir || importedPath.startsWith(importerDir + '/')
+}
+
+/**
+ * allowedImportsオプションに基づいて、特定のimportが許可されているかチェックする
+ * @param {object} node - ImportDeclaration node
+ * @param {string} importerDir - import元のディレクトリ
+ * @param {Array} targetAllowedImports - 適用されるallowedImportsのキー配列
+ * @param {object} allowedImportsConfig - allowedImportsの設定
+ * @returns {{ shouldSkip: boolean, deniedModules: Array }} チェック結果
+ */
+const checkAllowedImports = (node, importerDir, targetAllowedImports, allowedImportsConfig) => {
+  let isDenyPath = false
+  let deniedModules = []
+
+  for (const allowedKey of targetAllowedImports) {
+    const allowedOption = allowedImportsConfig[allowedKey]
+
+    for (const targetModule in allowedOption) {
+      const actualTarget = targetModule[0] !== '.'
+        ? targetModule
+        : path.resolve(`${CWD}/${targetModule}`)
+
+      let importSource = node.source.value
+
+      // 絶対パスの場合は、import元ディレクトリを基準に解決
+      if (actualTarget[0] === '/') {
+        importSource = path.resolve(`${importerDir}/${importSource}`)
+      }
+
+      if (actualTarget !== importSource) {
+        continue
+      }
+
+      const allowedModules = allowedOption[targetModule] || true
+
+      if (!Array.isArray(allowedModules)) {
+        isDenyPath = true
+        deniedModules.push(true)
+      } else {
+        const importedNames = node.specifiers.map(s => s.imported?.name)
+        const notAllowedModules = importedNames.filter(name => !allowedModules.includes(name))
+        deniedModules.push(notAllowedModules)
+      }
+    }
+  }
+
+  // 完全に許可されている場合はスキップ
+  const shouldSkip =
+    (isDenyPath && deniedModules[0] === true) ||
+    (!isDenyPath && deniedModules.length === 1 && deniedModules[0].length === 0)
+
+  return { shouldSkip, deniedModules }
+}
+
+/**
+ * import先のパスから親方向に barrel ファイルを探索する
+ * @param {string} importedPath - import先の絶対パス
+ * @param {string} importerDir - import元のディレクトリ
+ * @returns {string|undefined} 見つかったbarrelファイルのパス
+ */
+const findBarrelFile = (importedPath, importerDir) => {
+  const pathSegments = importedPath.split('/')
+  let currentPath = importedPath
+  let barrel = undefined
+
+  // ディレクトリ指定の場合、そのindex.tsを指していることは自明なので一階層上から探索
+  if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) {
+    pathSegments.pop()
+    currentPath = pathSegments.join('/')
+  }
+
+  while (pathSegments.length > 0) {
+    // 以下の場合は探索終了
+    // 1. root pathに到達した場合
+    // 2. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
+    if (importerDir === rootPath || isImportedInsideImporter(importerDir, currentPath)) {
+      break
+    }
+
+    // 現在のパスにbarrelファイルがあるかチェック
+    const foundBarrel = TARGET_EXTS
+      .map(ext => `${currentPath}/index.${ext}`)
+      .find(filePath => fs.existsSync(filePath))
+
+    if (foundBarrel) {
+      barrel = foundBarrel
+    }
+
+    // 一階層上に移動
+    pathSegments.pop()
+    currentPath = pathSegments.join('/')
+  }
+
+  return barrel
+}
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -99,108 +206,78 @@ module.exports = {
   create(context) {
     const option = context.options[0] || {}
 
-    if (option.ignores && option.ignores.some((i) => (new RegExp(i)).test(context.filename))) {
-      return {}
+    // ignoresオプションでスキップ対象のファイルかチェック
+    if (option.ignores) {
+      const isIgnored = option.ignores.some(pattern =>
+        new RegExp(pattern).test(context.filename)
+      )
+      if (isIgnored) {
+        return {}
+      }
     }
 
-    const dir = getParentDir(context.filename)
+    const importerDir = getParentDir(context.filename)
+
+    // このファイルに適用されるallowedImportsのキーを収集
     const targetAllowedImports = []
     if (option?.allowedImports) {
-      for (const regex in option.allowedImports) {
-        if ((new RegExp(regex)).test(context.filename)) {
-          targetAllowedImports.push(regex)
+      for (const pattern in option.allowedImports) {
+        if (new RegExp(pattern).test(context.filename)) {
+          targetAllowedImports.push(pattern)
         }
       }
     }
 
     return {
       ImportDeclaration: (node) => {
-        let isDenyPath = false
-        let deniedModules = []
-
-        for (const allowedKey of targetAllowedImports) {
-          const allowedOption = option.allowedImports[allowedKey]
-
-          for (const targetModule in allowedOption) {
-            const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
-            let sourceValue = node.source.value
-
-            if (actualTarget[0] === '/') {
-              sourceValue = path.resolve(`${dir}/${sourceValue}`)
-            }
-
-            if (actualTarget !== sourceValue) {
-              continue
-            }
-
-            let allowedModules = allowedOption[targetModule] || true
-
-            if (!Array.isArray(allowedModules)) {
-              isDenyPath = true
-              deniedModules.push(true)
-            } else {
-              deniedModules.push(node.specifiers.map(pickImportedName).filter(i => allowedModules.indexOf(i) == -1))
-            }
-          }
-        }
-
-        if (
-          isDenyPath && deniedModules[0] === true ||
-          !isDenyPath && deniedModules.length === 1 && deniedModules[0].length === 0
-        ) {
+        // allowedImportsチェック
+        const { shouldSkip, deniedModules } = checkAllowedImports(
+          node,
+          importerDir,
+          targetAllowedImports,
+          option.allowedImports || {}
+        )
+        if (shouldSkip) {
           return
         }
 
-        let sourceValue = node.source.value
+        // import先のパスを絶対パスに変換
+        let importedPath = node.source.value
 
-        if (sourceValue[0] === '.') {
-          sourceValue = path.resolve(`${dir}/${sourceValue}`)
+        // 相対パスの場合、絶対パスに変換
+        if (importedPath[0] === '.') {
+          importedPath = path.resolve(`${importerDir}/${importedPath}`)
         }
 
-        sourceValue = calculateAbsoluteImportPath(sourceValue)
+        // Path alias（@/, ~/など）を絶対パスに変換
+        importedPath = resolvePathAlias(importedPath)
 
-        if (sourceValue[0] !== '/') {
+        // 絶対パスでない場合（node_modulesなど）はスキップ
+        if (importedPath[0] !== '/') {
           return
         }
 
-        const sources = sourceValue.split('/')
+        // barrel ファイルを探索
+        const barrelPath = findBarrelFile(importedPath, importerDir)
 
-        // HINT: directoryの場合、indexファイルからimportしていることは自明であるため、一階層上からチェックする
-        if (fs.existsSync(sourceValue) && fs.statSync(sourceValue).isDirectory()) {
-          sources.pop()
-          sourceValue = sources.join('/')
+        // barrel が見つからない、またはroot pathのindex.tsの場合はスキップ
+        if (!barrelPath || REGEX_ROOT_PATH.test(barrelPath)) {
+          return
         }
 
-        let barrel = undefined
+        // barrel パスをPath aliasに変換
+        const barrelWithAlias = convertToPathAlias(barrelPath)
+        const barrelDirWithAlias = barrelWithAlias.replace(REGEX_INDEX_FILE, '')
+        const uniqueDeniedModules = [...new Set(deniedModules.flat())]
 
-        while (sources.length > 0) {
-          // HINT: 以下の場合は即終了
-          // - import元以下のimportだった場合
-          // - rootまで捜索した場合
-          if (
-            dir === rootPath ||
-            dir.match(new RegExp(`^${sourceValue}`))
-          ) {
-            break
-          }
-
-          barrel = TARGET_EXTS.map((e) => `${sourceValue}/index.${e}`).find(findExistsSync) || barrel
-
-          sources.pop()
-          sourceValue = sources.join('/')
-        }
-
-        if (barrel && !barrel.match(REGEX_ROOT_PATH)) {
-          barrel = calculateReplacedImportPath(barrel)
-          const noExt = barrel.replace(REGEX_INDEX_FILE, '')
-          deniedModules = [...new Set(deniedModules.flat())]
-
-          context.report({
-            node,
-            message: `${deniedModules.length ? `${deniedModules.join(', ')} は ${noExt} からimportしてください` :  `${noExt} からimportするか、${barrel} のbarrelファイルを削除して直接import可能にしてください`}
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-          });
-        }
+        // エラーを報告
+        context.report({
+          node,
+          message: uniqueDeniedModules.length
+            ? `${uniqueDeniedModules.join(', ')} は ${barrelDirWithAlias} からimportしてください`
+            : `${barrelDirWithAlias} からimportするか、${barrelWithAlias} のbarrelファイルを削除して直接import可能にしてください`
+              + '\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import',
+        })
       },
     }
   },

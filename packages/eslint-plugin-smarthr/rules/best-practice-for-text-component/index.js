@@ -267,15 +267,8 @@ module.exports = {
         const tagName = asValue || 'span'
         const sourceCode = context.sourceCode || context.getSourceCode()
 
-        // key属性があり、かつその他の属性（key, as, className以外）がある場合のみclassNameを非表示
-        const hasKey = node.attributes.some(attr => attr.type === 'JSXAttribute' && attr.name.name === 'key')
-        const hasOtherAttrs = node.attributes.some(attr =>
-          attr.type === 'JSXAttribute' &&
-          attr.name.name !== 'key' &&
-          attr.name.name !== 'as' &&
-          attr.name.name !== 'className'
-        )
-        const classNameText = (hasKey && hasOtherAttrs) ? '' : (classNameValue ? ` className="${classNameValue}"` : '')
+        // classNameは常に表示（fixerが自動で保持するため）
+        const classNameText = classNameValue ? ` className="${classNameValue}"` : ''
 
         context.report({
           node,

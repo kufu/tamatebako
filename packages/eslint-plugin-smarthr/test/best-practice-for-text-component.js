@@ -149,6 +149,6 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text key="item-1" as="p" className="shr-text-sm">text</Text>`, output: `<Text key="item-1" as="p" size="S">text</Text>`, errors: [{ message: errorConvertibleShr('size="S"', 'shr-text-sm', 'p') }] },
     { code: `<Text key="item-1" id="foo">content</Text>`, output: `<span key="item-1" id="foo">content</span>`, errors: [{ message: errorUnnecessaryClassName('') }] },
     { code: `<Text key="item-1" as="p" id="foo">content</Text>`, output: `<p key="item-1" id="foo">content</p>`, errors: [{ message: /.*/ }] },
-    { code: `<Text key="item-1" className="custom" id="foo">text</Text>`, output: `<span key="item-1" className="custom" id="foo">text</span>`, errors: [{ message: errorUnnecessaryClassName('') }] },
+    { code: `<Text key="item-1" className="custom" id="foo">text</Text>`, output: `<span key="item-1" className="custom" id="foo">text</span>`, errors: [{ message: errorUnnecessaryClassName('custom') }] },
   ]
 })

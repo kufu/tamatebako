@@ -208,8 +208,8 @@ importers:
         specifier: ^13.0.0
         version: 13.0.0(postcss@8.5.8)(stylelint@17.6.0(typescript@5.9.3))
       stylelint-config-standard:
-        specifier: ^38.0.0
-        version: 38.0.0(stylelint@17.6.0(typescript@5.9.3))
+        specifier: ^40.0.0
+        version: 40.0.0(stylelint@17.6.0(typescript@5.9.3))
       vitest:
         specifier: ^4.1.2
         version: 4.1.2(@types/node@20.19.37)(jsdom@26.1.0)(vite@7.2.1(@types/node@20.19.37)(jiti@2.4.2)(terser@5.36.0)(yaml@2.8.1))
@@ -6614,11 +6614,11 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  stylelint-config-recommended@16.0.0:
-    resolution: {integrity: sha512-4RSmPjQegF34wNcK1e1O3Uz91HN8P1aFdFzio90wNK9mjgAI19u5vsU868cVZboKzCaa5XbpvtTzAAGQAxpcXA==}
-    engines: {node: '>=18.12.0'}
+  stylelint-config-recommended@18.0.0:
+    resolution: {integrity: sha512-mxgT2XY6YZ3HWWe3Di8umG6aBmWmHTblTgu/f10rqFXnyWxjKWwNdjSWkgkwCtxIKnqjSJzvFmPT5yabVIRxZg==}
+    engines: {node: '>=20.19.0'}
     peerDependencies:
-      stylelint: ^16.16.0
+      stylelint: ^17.0.0
 
   stylelint-config-sass-guidelines@13.0.0:
     resolution: {integrity: sha512-YJT0X8h0OqyEo7ys3EycV5CGWt2rrkEYE8sHSN6sFnrxbXvHiy4KJFHDOWfyb3eWR6wtYpM+yIyvR2Plc8+pCg==}
@@ -6627,11 +6627,11 @@ packages:
       postcss: ^8.4.21
       stylelint: ^17.1.0
 
-  stylelint-config-standard@38.0.0:
-    resolution: {integrity: sha512-uj3JIX+dpFseqd/DJx8Gy3PcRAJhlEZ2IrlFOc4LUxBX/PNMEQ198x7LCOE2Q5oT9Vw8nyc4CIL78xSqPr6iag==}
-    engines: {node: '>=18.12.0'}
+  stylelint-config-standard@40.0.0:
+    resolution: {integrity: sha512-EznGJxOUhtWck2r6dJpbgAdPATIzvpLdK9+i5qPd4Lx70es66TkBPljSg4wN3Qnc6c4h2n+WbUrUynQ3fanjHw==}
+    engines: {node: '>=20.19.0'}
     peerDependencies:
-      stylelint: ^16.18.0
+      stylelint: ^17.0.0
 
   stylelint-scss@7.0.0:
     resolution: {integrity: sha512-H88kCC+6Vtzj76NsC8rv6x/LW8slBzIbyeSjsKVlS+4qaEJoDrcJR4L+8JdrR2ORdTscrBzYWiiT2jq6leYR1Q==}
@@ -14972,7 +14972,7 @@ snapshots:
     optionalDependencies:
       '@babel/core': 7.29.0
 
-  stylelint-config-recommended@16.0.0(stylelint@17.6.0(typescript@5.9.3)):
+  stylelint-config-recommended@18.0.0(stylelint@17.6.0(typescript@5.9.3)):
     dependencies:
       stylelint: 17.6.0(typescript@5.9.3)
 
@@ -14984,10 +14984,10 @@ snapshots:
       stylelint: 17.6.0(typescript@5.9.3)
       stylelint-scss: 7.0.0(stylelint@17.6.0(typescript@5.9.3))
 
-  stylelint-config-standard@38.0.0(stylelint@17.6.0(typescript@5.9.3)):
+  stylelint-config-standard@40.0.0(stylelint@17.6.0(typescript@5.9.3)):
     dependencies:
       stylelint: 17.6.0(typescript@5.9.3)
-      stylelint-config-recommended: 16.0.0(stylelint@17.6.0(typescript@5.9.3))
+      stylelint-config-recommended: 18.0.0(stylelint@17.6.0(typescript@5.9.3))
 
   stylelint-scss@7.0.0(stylelint@17.6.0(typescript@5.9.3)):
     dependencies:
@@ -15469,7 +15469,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-      postcss: 8.5.6
+      postcss: 8.5.8
       rollup: 4.52.5
       tinyglobby: 0.2.15
     optionalDependencies:

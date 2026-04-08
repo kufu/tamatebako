@@ -723,6 +723,219 @@ ExportNamedDeclaration(node) {
 }
 ```
 
+## 複数バージョンスキップ時の衝突検出
+
+複数のバージョンをスキップする移行（例: v90→v93）では、コンポーネント名の衝突が発生する可能性があります。新しいバージョンを追加する際は、過去のバージョンとの組み合わせで衝突が起こらないか検証してください。
+
+### 衝突が発生する仕組み
+
+ESLintは`--fix`実行時にstaged fixesという仕組みを使用します。これは、1回の修正で新たにルール違反が生じた場合、自動的に再実行される機能です。
+
+**問題のシナリオ（v90→v92の場合）:**
+
+```javascript
+// 元のコード
+import { ActionDialog, RemoteTriggerActionDialog } from 'smarthr-ui'
+
+// 1回目の自動修正（v90→v91とv91→v92が同時に適用）
+// - ActionDialog → ControlledActionDialog (v90→v91)
+// - RemoteTriggerActionDialog → ActionDialog (v91→v92)
+import { ControlledActionDialog, ActionDialog } from 'smarthr-ui'
+
+// ESLintが自動的に再実行される（staged fixes）
+// 2回目の自動修正で、新しく生成されたActionDialogがさらに変換される
+// - ActionDialog → ControlledActionDialog (v90→v91が再度適用)
+import { ControlledActionDialog, ControlledActionDialog } from 'smarthr-ui'
+// ❌ 重複！元のRemoteTriggerActionDialogの情報が失われる
+```
+
+**原因の分析:**
+1. v90→v91で`ActionDialog`→`ControlledActionDialog`というルールがある
+2. v91→v92で`RemoteTriggerActionDialog`→`ActionDialog`というルールがある
+3. 同時に実行すると、2のルールで新しく生成された`ActionDialog`が、1のルールによって再度変換されてしまう
+4. 結果として、元のコンポーネント名の情報が失われる
+
+### 衝突の検出パターン
+
+新しいバージョンを追加する際は、以下をチェックしてください：
+
+**チェック項目:**
+- 今回のバージョンで**リネーム先**となる名前が、過去のバージョンで**リネーム元**だった名前と一致しないか
+
+**例:**
+```
+v90→v91: ActionDialog → ControlledActionDialog（リネーム元: ActionDialog）
+v91→v92: RemoteTriggerActionDialog → ActionDialog（リネーム先: ActionDialog）
+→ ❌ 衝突！「ActionDialog」が両方に登場
+```
+
+### 衝突検出の実装
+
+衝突が発見された場合、`index.js`の`getMigrationPath()`関数に衝突検出ロジックを追加します。
+
+**実装例（rules/autofixer-smarthr-ui-migration/index.js）:**
+
+```javascript
+/**
+ * バージョン間の移行パスを生成する
+ *
+ * @param {string} from - 移行元バージョン（例: "90"）
+ * @param {string} to - 移行先バージョン（例: "91"）
+ * @returns {{ path: string[], skipped: number[], conflict?: boolean, conflictData?: object } | null}
+ */
+function getMigrationPath(from, to) {
+  const fromNum = parseInt(from)
+  const toNum = parseInt(to)
+
+  if (fromNum >= toNum || isNaN(fromNum) || isNaN(toNum)) {
+    return null
+  }
+
+  const path = []
+  const skipped = []
+
+  // fromからtoまでの各ステップについて、移行モジュールが存在するかチェック
+  for (let i = fromNum; i < toNum; i++) {
+    const stepKey = `v${i}-v${i + 1}`
+    if (VERSION_MODULES[stepKey]) {
+      path.push(stepKey)
+    } else {
+      skipped.push(i + 1)
+    }
+  }
+
+  if (path.length === 0) {
+    return null
+  }
+
+  // ============================================================
+  // コンポーネント名衝突の検出
+  // ============================================================
+  // v90→v91とv91→v92の両方が含まれる場合、ActionDialogの名前が衝突する
+  // (v90のActionDialog→ControlledActionDialog、v91のRemoteTriggerActionDialog→ActionDialog)
+  if (path.includes('v90-v91') && path.includes('v91-v92')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '91',  // 中間バージョン（段階的に実行する際の区切り）
+      },
+    }
+  }
+
+  return { path, skipped }
+}
+```
+
+**meta.messagesにエラーメッセージを追加:**
+
+```javascript
+module.exports = {
+  meta: {
+    // ...
+    messages: {
+      // ...
+      conflictingMigration: 'v{{from}}→v{{to}}の一気実行はコンポーネント名の衝突により正しく動作しません。段階的に実行してください: 1. { "from": "{{from}}", "to": "{{middle}}" } を実行 2. { "from": "{{middle}}", "to": "{{to}}" } を実行',
+    },
+  },
+  // ...
+}
+```
+
+**create()関数で衝突をチェック:**
+
+```javascript
+create(context) {
+  const options = context.options[0]
+
+  // ... オプション必須チェック ...
+
+  const { from, to } = options
+  const migrationResult = getMigrationPath(from, to)
+
+  if (!migrationResult) {
+    // サポートされていないバージョン
+    return {
+      Program(node) {
+        context.report({
+          node,
+          messageId: 'unsupportedVersion',
+          data: { from, to },
+        })
+      },
+    }
+  }
+
+  // コンポーネント名衝突の検出
+  if (migrationResult.conflict) {
+    return {
+      Program(node) {
+        context.report({
+          node,
+          messageId: 'conflictingMigration',
+          data: migrationResult.conflictData,
+        })
+      },
+    }
+  }
+
+  // ... 通常の処理 ...
+}
+```
+
+### テストケースの追加
+
+衝突が検出されることを確認するテストケースを追加します。
+
+**test/autofixer-smarthr-ui-migration.js:**
+
+```javascript
+ruleTester.run('autofixer-smarthr-ui-migration', rule, {
+  valid: [
+    // ... 既存のケース ...
+  ],
+
+  invalid: [
+    // ... 既存のケース ...
+
+    // ============================================================
+    // v90→v92 競合テスト（コンポーネント名の衝突により禁止）
+    // ============================================================
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      options: [{ from: '90', to: '92' }],
+      errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '92', middle: '91' } }],
+    },
+
+    // v90→v93 も同様に衝突
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'`,
+      options: [{ from: '90', to: '93' }],
+      errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '93', middle: '91' } }],
+    },
+  ],
+})
+```
+
+### 衝突検出のチェックリスト
+
+新しいバージョンを追加する際は、以下を確認してください：
+
+- [ ] **過去のリネーム元との衝突チェック**: 今回のリネーム先が、過去のバージョンでリネーム元だった名前と一致しないか
+- [ ] **衝突が発見された場合**:
+  - [ ] `getMigrationPath()`に衝突検出ロジックを追加
+  - [ ] `conflictingMigration`メッセージに中間バージョンを含める
+  - [ ] テストケースで衝突検出を確認
+  - [ ] DEVELOPER.mdとREFERENCE.mdに衝突の理由と対策を記載
+
+### 参考実装
+
+- [v91→v92追加時のコミット](https://github.com/kufu/tamatebako/commit/dc29036): v90→v92衝突検出の実装例
+- [index.js:L178-L192](../index.js): 実際の衝突検出コード
+
 ## トラブルシューティング
 
 ### Fix objects must not be overlapped

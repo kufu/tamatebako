@@ -37,13 +37,25 @@ const REGEX_ROOT_PATH = new RegExp(`^${rootPath}/index\.`)
 const REGEX_INDEX_FILE = /\/index\.(ts|js)x?$/
 const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 
-// Path aliasの正規表現を事前生成してキャッシュ
-const entriedReplacePathsWithRegex = Object.entries(replacePaths).map(([key, values]) => [
-  key,
-  values,
-  new RegExp(`^${key}(.+)$`),
-  values.map(v => new RegExp(`^${path.resolve(`${CWD}/${v}`)}(.+)$`))
-])
+// Path aliasの情報を事前計算してキャッシュ
+const REPLACE_PATHS_INFO = Object.entries(replacePaths).map(([key, values]) => {
+  const resolvedPaths = values.map(v => path.resolve(`${CWD}/${v.replace(/\/\*$/, '')}`))
+  return {
+    key,
+    values,
+    keyRegex: new RegExp(`^${key}(.+)$`),
+    resolvedPaths,
+    valueRegexes: resolvedPaths.map(p => new RegExp(`^${p}(.+)$`))
+  }
+})
+
+// @/ と ~/ のパスのみをrootとする（READMEの仕様通り）
+const ALL_ROOT_PATHS = (() => {
+  const rootKeys = ['@/', '~/']
+  return REPLACE_PATHS_INFO
+    .filter(info => rootKeys.includes(info.key))
+    .flatMap(info => info.resolvedPaths)
+})()
 
 /**
  * Path aliasを絶対パスに変換する
@@ -55,17 +67,13 @@ const resolvePathAlias = (importPath) => {
     return importPath
   }
 
-  return entriedReplacePathsWithRegex.reduce((result, [key, values, keyRegex]) => {
-    if (result === importPath) {
-      return values.reduce((resolved, value) => {
-        if (resolved === result && keyRegex.test(result)) {
-          return resolved.replace(keyRegex, `${path.resolve(`${CWD}/${value}`)}/$1`)
-        }
-        return resolved
-      }, result)
+  for (const { keyRegex, resolvedPaths } of REPLACE_PATHS_INFO) {
+    if (keyRegex.test(importPath)) {
+      return importPath.replace(keyRegex, `${resolvedPaths[0]}/$1`)
     }
-    return result
-  }, importPath)
+  }
+
+  return importPath
 }
 
 /**
@@ -74,20 +82,15 @@ const resolvePathAlias = (importPath) => {
  * @returns {string} Path alias（例: '@/components/Button'）
  */
 const convertToPathAlias = (absolutePath) => {
-  return entriedReplacePathsWithRegex.reduce((result, [key, values, keyRegex, valueRegexes]) => {
-    if (result === absolutePath) {
-      return values.reduce((converted, value, index) => {
-        if (converted === result) {
-          const regexp = valueRegexes[index]
-          if (regexp.test(converted)) {
-            return converted.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
-          }
-        }
-        return converted
-      }, result)
+  for (const { key, valueRegexes } of REPLACE_PATHS_INFO) {
+    for (const regexp of valueRegexes) {
+      if (regexp.test(absolutePath)) {
+        return absolutePath.replace(regexp, `${key}/$1`).replace(REGEX_UNNECESSARY_SLASH, '/')
+      }
     }
-    return result
-  }, absolutePath)
+  }
+
+  return absolutePath
 }
 
 /**
@@ -172,9 +175,9 @@ const findBarrelFile = (importedPath, importerDir) => {
 
   while (pathSegments.length > 0) {
     // 以下の場合は探索終了
-    // 1. root pathに到達した場合
+    // 1. いずれかのreplacePathsのルートに到達した場合
     // 2. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
-    if (importerDir === rootPath || isImportedInsideImporter(importerDir, currentPath)) {
+    if (ALL_ROOT_PATHS.includes(currentPath) || isImportedInsideImporter(importerDir, currentPath)) {
       break
     }
 

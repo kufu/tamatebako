@@ -193,25 +193,25 @@ ruleTester.run('require-barrel-import', rule, {
     // 同階層・サブディレクトリからのimport（エラーにならない）
     {
       code: `import { useMenu } from './hooks/useMenu'`,
-      filename: path.join(sameLevelImportFixture, 'Menu', 'MenuItem.tsx'),
+      filename: `${sameLevelImportFixture}/Menu/MenuItem.tsx`,
     },
 
     // Next.js App Router特殊文字パス - 同階層import
     {
       code: `import { useUsers } from './hooks/useUsers'`,
-      filename: path.join(nextjsSpecialCharsFixture, 'app', '(private)', 'settings', 'user_roles', '_components', 'AddUserRoleDialog', 'AddUserRoleDialog.tsx'),
+      filename: `${nextjsSpecialCharsFixture}/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`,
     },
 
     // Dynamic Routes - [id]パス
     {
       code: `import { useDetail } from './hooks/useDetail'`,
-      filename: path.join(nextjsDynamicRouteFixture, 'app', 'items', '[id]', 'DetailPage.tsx'),
+      filename: `${nextjsDynamicRouteFixture}/app/items/[id]/DetailPage.tsx`,
     },
 
     // barrel が存在しない場合
     {
       code: `import { helper } from './utils/helper'`,
-      filename: path.join(noBarrelFixture, 'components', 'Button', 'Button.tsx'),
+      filename: `${noBarrelFixture}/components/Button/Button.tsx`,
     },
   ],
 
@@ -219,7 +219,7 @@ ruleTester.run('require-barrel-import', rule, {
     // 親階層からのimport（barrelが存在する場合）
     {
       code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
-      filename: path.join(parentImportWithBarrelFixture, 'components', 'AddDialog', 'AddDialog.tsx'),
+      filename: `${parentImportWithBarrelFixture}/components/AddDialog/AddDialog.tsx`,
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
@@ -230,7 +230,7 @@ ruleTester.run('require-barrel-import', rule, {
     // Next.js特殊文字パス - 親階層からのimport
     {
       code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
-      filename: path.join(nextjsParentImportFixture, 'app', '(private)', 'settings', 'user_roles', '_components', 'AddUserRoleDialog', 'AddUserRoleDialog.tsx'),
+      filename: `${nextjsParentImportFixture}/app/(private)/settings/user_roles/_components/AddUserRoleDialog/AddUserRoleDialog.tsx`,
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
@@ -241,7 +241,7 @@ ruleTester.run('require-barrel-import', rule, {
     // [id] Dynamic Routes - 親階層からのimport
     {
       code: `import { api } from '../api/client'`,
-      filename: path.join(dynamicRouteParentImportFixture, 'app', 'items', '[id]', 'DetailPage.tsx'),
+      filename: `${dynamicRouteParentImportFixture}/app/items/[id]/DetailPage.tsx`,
       errors: [
         {
           message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,

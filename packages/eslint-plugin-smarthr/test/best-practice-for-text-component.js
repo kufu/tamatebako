@@ -69,6 +69,12 @@ ruleTester.run('best-practice-for-text-component', rule, {
     { code: `<Text size="M" className={customClass}>text</Text>` },
     // as が変数の場合
     { code: `<Text as={component}>text</Text>` },
+    // spread attributes は静的解析できないのでスキップ
+    { code: `<Text {...props}>content</Text>` },
+    { code: `<Text {...props} className="custom">content</Text>` },
+    { code: `<Text className="custom" {...props}>content</Text>` },
+    { code: `<Text as="p" {...props}>content</Text>` },
+    { code: `<Text size="M" {...props}>content</Text>` },
     // key + Text専用属性（size等）→ valid
     { code: `<Text key="item-1" size="M">text</Text>` },
     { code: `<Text key={itemId} weight="bold">text</Text>` },

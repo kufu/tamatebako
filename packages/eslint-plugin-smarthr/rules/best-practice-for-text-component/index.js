@@ -1,6 +1,8 @@
 const SCHEMA = []
 
+// ============================================================
 // smarthr-ui/Textコンポーネントのクラス名とプロパティのマッピング
+// ============================================================
 const CLASS_TO_PROP_MAP = {
   // size
   'shr-text-2xs': { prop: 'size', value: 'XXS' },
@@ -32,56 +34,48 @@ const CLASS_TO_PROP_MAP = {
 
 const REGEX_CLASSNAME_SPLIT = /\s+/
 
-// 変換可能なshr-クラスの正規表現を生成（CLASS_TO_PROP_MAPから）
+// ============================================================
+// ESLintセレクタ構築用の定数
+// ============================================================
 const CONVERTIBLE_SHR_CLASSES = Object.keys(CLASS_TO_PROP_MAP).join('|')
 const CONVERTIBLE_SHR_PATTERN = `(^|\\s)(${CONVERTIBLE_SHR_CLASSES})(\\s|$)`
 
-// ESLintセレクタの基本要素
 const ATTR_AS = 'JSXAttribute[name.name="as"]'
 const ATTR_CLASSNAME = 'JSXAttribute[name.name="className"]'
-const ATTR_KEY = 'JSXAttribute[name.name="key"]'
 const ATTR_TEXT_PROPS = 'JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/]'
 const LITERAL_TYPE = '[value.type="Literal"]'
-const HAS_CONVERTIBLE_SHR_CLASS = `[value.value=/${CONVERTIBLE_SHR_PATTERN}/]`
-const HAS_SHR_CLASS = '[value.value=/shr-/]'
 
-// ESLintセレクタの共通部分
 const TEXT_OPENING = 'JSXOpeningElement[name.name="Text"]'
-const NOT_HAS_AS = `:not(:has(${ATTR_AS}))`
 const HAS_TEXT_PROPS = `:has(${ATTR_TEXT_PROPS})`
 const NOT_HAS_TEXT_PROPS = `:not(${HAS_TEXT_PROPS})`
 const CHILD_CLASSNAME_LITERAL = `> ${ATTR_CLASSNAME}${LITERAL_TYPE}`
-const NOT_HAS_SHR_CLASS = `:not(${HAS_SHR_CLASS})`
+const HAS_CONVERTIBLE_SHR_CLASS = `[value.value=/${CONVERTIBLE_SHR_PATTERN}/]`
 const NOT_HAS_CONVERTIBLE_SHR_CLASS = `:not(${HAS_CONVERTIBLE_SHR_CLASS})`
-const CHILD_AS_LITERAL = `> ${ATTR_AS}${LITERAL_TYPE}`
-const HAS_KEY = `:has(${ATTR_KEY})`
-const NOT_HAS_KEY = `:not(:has(${ATTR_KEY}))`
 const NOT_HAS_CLASSNAME = `:not(:has(${ATTR_CLASSNAME}))`
-const NOT_HAS_NON_KEY_ATTRS = `:not(:has(JSXAttribute[name.name!="key"]))`
-
-// 完全なESLintセレクタ（事前計算）
-// ============================================================
-// Stage 1: shr-クラス → Text属性変換（変換可能なshr-クラスのみ）
-// ============================================================
-const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
 
 // ============================================================
-// Stage 2: Text専用属性なし → HTML要素変換（変換可能なshr-クラスがない場合のみ）
+// ESLintセレクタ
 // ============================================================
-const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))`
-// as属性がある場合はリテラルのみ（変数は除外）
-const SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:not(:has(${ATTR_CLASSNAME})):has(JSXAttribute):not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
-const SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_CONVERTIBLE_SHR_CLASS}):not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
+// spread attributesは静的解析できないため除外
+const NOT_HAS_SPREAD = ':not(:has(JSXSpreadAttribute))'
 
-// ============================================================
+// Stage 1: shr-クラス → Text属性変換
+const SELECTOR_CONVERTIBLE_SHR_TO_PROPS = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${NOT_HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}${HAS_CONVERTIBLE_SHR_CLASS}`
+
+// Stage 2: Text専用属性なし → HTML要素変換
+const SELECTOR_UNNECESSARY_TEXT_NO_ATTRS = `${TEXT_OPENING}:not(:has(JSXAttribute))${NOT_HAS_SPREAD}`
+const SELECTOR_UNNECESSARY_TEXT_NO_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}${NOT_HAS_CLASSNAME}:has(JSXAttribute)${NOT_HAS_SPREAD}:not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
+const SELECTOR_UNNECESSARY_TEXT_WITH_CLASSNAME = `${TEXT_OPENING}${NOT_HAS_TEXT_PROPS}:has(${ATTR_CLASSNAME}${LITERAL_TYPE}${NOT_HAS_CONVERTIBLE_SHR_CLASS})${NOT_HAS_SPREAD}:not(:has(${ATTR_AS}:not(${LITERAL_TYPE})))`
+
 // 矛盾検出
+const SELECTOR_CONFLICTING_PROPS_SHR = `${TEXT_OPENING}${HAS_TEXT_PROPS}${NOT_HAS_SPREAD} ${CHILD_CLASSNAME_LITERAL}`
+
 // ============================================================
-const SELECTOR_CONFLICTING_PROPS_SHR = `${TEXT_OPENING}${HAS_TEXT_PROPS} ${CHILD_CLASSNAME_LITERAL}`
+// ヘルパー関数
+// ============================================================
 
 /**
- * className属性の変換可能なクラス名のみを取得（パターン3専用: 矛盾チェック）
- * セレクタで [value.type="Literal"] を保証しているため、必ず文字列リテラル
- * trim-props ルールで先頭・末尾の空白は禁止されているため、trim() は不要
+ * className属性から変換可能なクラス名のみを抽出（矛盾検出用）
  */
 function getConvertible(classNameAttrNode) {
   const classNames = classNameAttrNode.value.value.split(REGEX_CLASSNAME_SPLIT)
@@ -97,9 +91,7 @@ function getConvertible(classNameAttrNode) {
 }
 
 /**
- * className属性のクラス名を解析し、1回のループで全ての情報を生成（パターン2-1, 2-2, 2-3専用）
- * セレクタで [value.type="Literal"] を保証しているため、必ず文字列リテラル
- * trim-props ルールで先頭・末尾の空白は禁止されているため、trim() は不要
+ * className属性を変換可能/不可能に分類し、Text属性ペアを生成
  */
 function categorizeClassNames(classNameAttrNode) {
   const classNames = classNameAttrNode.value.value.split(REGEX_CLASSNAME_SPLIT)
@@ -125,8 +117,7 @@ function categorizeClassNames(classNameAttrNode) {
 }
 
 /**
- * 指定した属性の値を取得（文字列リテラルのみ）
- * セレクタで [value.type="Literal"] を保証しているため、型チェックは不要
+ * 属性の文字列リテラル値を取得
  */
 function getAttributeLiteralValue(openingElement, attrName) {
   const attr = openingElement.attributes.find(
@@ -136,7 +127,7 @@ function getAttributeLiteralValue(openingElement, attrName) {
 }
 
 /**
- * 指定した属性名の属性ノードを取得
+ * 属性ノードを取得
  */
 function getAttributeNode(openingElement, attrName) {
   return openingElement.attributes.find(

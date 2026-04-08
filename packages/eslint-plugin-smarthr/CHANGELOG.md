@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.9.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.0...eslint-plugin-smarthr-v6.9.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* **best-practice-for-text-component:** 変換不可能なshr-クラスのみの場合に不要なスペースが挿入される問題を修正 ([#1199](https://github.com/kufu/tamatebako/issues/1199)) ([ad942fc](https://github.com/kufu/tamatebako/commit/ad942fcfa2484013fe82fd1c9d9b94c097a0e27a))
+
 ## [6.9.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.8.0...eslint-plugin-smarthr-v6.9.0) (2026-04-05)
 
 

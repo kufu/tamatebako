@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import type { Provider } from 'next-auth/providers'
+import type { Provider } from 'next-auth/providers/index'
 
 type Arguments = {
   smarthrUrl: string

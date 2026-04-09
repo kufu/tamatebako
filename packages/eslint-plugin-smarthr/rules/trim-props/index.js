@@ -22,10 +22,13 @@ module.exports = {
     }
 
     return {
+      // esquery は :matches()・:has() 内での > (子結合子) を解釈できないため、
+      // 1つの複合セレクターではなく個別のセレクターに分割している
       'JSXAttribute > Literal[value=/(^ | $)/]': checker,
-      'JSXAttribute > JSXExpressionContainer > TemplateLiteral > TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/])': (node) => {
-        checker(node.parent)
-      },
+      'JSXAttribute > JSXExpressionContainer > TemplateLiteral > TemplateElement:matches(:first-child[value.raw=/^ /],:last-child[value.raw=/ $/])':
+        (node) => {
+          checker(node.parent)
+        },
     }
   },
 }

@@ -132,6 +132,41 @@ module.exports = {
       errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } }],
     },
 
+    // typeof型参照
+    {
+      code: `import { RemoteTriggerActionDialog } from 'smarthr-ui'
+type Props = ComponentProps<typeof RemoteTriggerActionDialog>`,
+      output: `import { ActionDialog } from 'smarthr-ui'
+type Props = ComponentProps<typeof ActionDialog>`,
+      options: v91ToV92Options,
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+      ],
+    },
+
+    // 複数のtypeof型参照
+    {
+      code: `import { RemoteTriggerFormDialog } from 'smarthr-ui'
+type RefType = ElementRef<typeof RemoteTriggerFormDialog>
+const handleAction: ComponentPropsWithoutRef<typeof RemoteTriggerFormDialog>['onClickClose'] = () => {}`,
+      output: `import { FormDialog } from 'smarthr-ui'
+type RefType = ElementRef<typeof FormDialog>
+const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] = () => {}`,
+      options: v91ToV92Options,
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerFormDialog', new: 'FormDialog', to: 'v92' } },
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerFormDialog', new: 'FormDialog', to: 'v92' } },
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerFormDialog', new: 'FormDialog', to: 'v92' } },
+      ],
+    },
+
     // ============================================================
     // 2. サイズ指定の大文字統一
     // ============================================================

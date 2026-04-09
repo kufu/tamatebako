@@ -259,6 +259,24 @@ module.exports = {
         }
       },
 
+      // typeof型参照での検出と修正
+      // 例: typeof RemoteTriggerActionDialog → typeof ActionDialog
+      'TSTypeQuery > Identifier'(node) {
+        const componentName = node.name
+        const newName = REMOTE_TRIGGER_DIALOG_COMPONENTS[componentName]
+
+        if (newName) {
+          context.report({
+            node,
+            messageId: 'renameRemoteTriggerDialog',
+            data: { old: componentName, new: newName, to: TARGET_VERSION },
+            fix(fixer) {
+              return fixer.replaceText(node, newName)
+            },
+          })
+        }
+      },
+
       // ============================================================
       // 2. サイズ指定の大文字統一
       // ============================================================

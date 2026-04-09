@@ -18,6 +18,7 @@ import {
   RemoteTriggerMessageDialog,
   RemoteTriggerStepFormDialog
 } from 'smarthr-ui'
+type Props = ComponentProps<typeof RemoteTriggerActionDialog>
 
 // Correct（自動修正）
 import {
@@ -26,6 +27,7 @@ import {
   MessageDialog,
   StepFormDialog
 } from 'smarthr-ui'
+type Props = ComponentProps<typeof ActionDialog>
 ```
 
 **対応コンポーネント:**
@@ -33,6 +35,12 @@ import {
 - `RemoteTriggerFormDialog` → `FormDialog`
 - `RemoteTriggerMessageDialog` → `MessageDialog`
 - `RemoteTriggerStepFormDialog` → `StepFormDialog`
+
+**自動修正される箇所:**
+- import文
+- JSX要素（開始タグ・終了タグ）
+- export文（re-export）
+- typeof型参照（`typeof RemoteTriggerActionDialog` など）
 
 **注意:** 制御型（Controlled版）は変更ありません。
 - `ControlledActionDialog`、`ControlledFormDialog` などはそのまま使用できます

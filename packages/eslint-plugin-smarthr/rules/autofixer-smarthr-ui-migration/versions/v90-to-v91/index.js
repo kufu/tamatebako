@@ -181,6 +181,24 @@ module.exports = {
         }
       },
 
+      // typeof型参照での検出と修正
+      // 例: typeof ActionDialog → typeof ControlledActionDialog
+      'TSTypeQuery > Identifier'(node) {
+        const componentName = node.name
+        const newName = DIALOG_COMPONENTS[componentName]
+
+        if (newName) {
+          context.report({
+            node,
+            messageId: 'renameDialog',
+            data: { old: componentName, new: newName, to: TARGET_VERSION },
+            fix(fixer) {
+              return fixer.replaceText(node, newName)
+            },
+          })
+        }
+      },
+
       // ============================================================
       // 2, 3, 4. ResponseMessageの属性変更
       // ============================================================

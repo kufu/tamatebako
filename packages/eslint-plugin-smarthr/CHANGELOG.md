@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.10.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.1...eslint-plugin-smarthr-v6.10.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* **test:** typescript-eslint v8のparserに更新 ([#1217](https://github.com/kufu/tamatebako/issues/1217)) ([e44ac27](https://github.com/kufu/tamatebako/commit/e44ac27e26afc9cbe26244afd38e62bb65aecaa4))
+
+## [6.10.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.0...eslint-plugin-smarthr-v6.10.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* **require-barrel-import:** next.jsの特殊文字パスでのバグ修正とリファクタリング ([#1210](https://github.com/kufu/tamatebako/issues/1210)) ([458cfe9](https://github.com/kufu/tamatebako/commit/458cfe90084cbcee936bcb375216f5807880edd7))
+
 ## [6.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.1...eslint-plugin-smarthr-v6.10.0) (2026-04-08)
 
 

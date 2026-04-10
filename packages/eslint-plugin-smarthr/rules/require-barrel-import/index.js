@@ -105,6 +105,24 @@ const isImportedInsideImporter = (importerDir, importedPath) => {
 }
 
 /**
+ * 2つのパスの共通の親ディレクトリを見つける
+ * @param {string} path1 - パス1
+ * @param {string} path2 - パス2
+ * @returns {string} 共通の親ディレクトリの絶対パス
+ */
+const findCommonParent = (path1, path2) => {
+  const segments1 = path1.split('/')
+  const segments2 = path2.split('/')
+
+  let i = 0
+  while (i < segments1.length && i < segments2.length && segments1[i] === segments2[i]) {
+    i++
+  }
+
+  return segments1.slice(0, i).join('/')
+}
+
+/**
  * allowedImportsオプションに基づいて、特定のimportが許可されているかチェックする
  * @param {object} node - ImportDeclaration node
  * @param {string} importerDir - import元のディレクトリ
@@ -167,6 +185,10 @@ const findBarrelFile = (importedPath, importerDir) => {
   let currentPath = importedPath
   let barrel = undefined
 
+  // import元とimport先の共通の親ディレクトリを見つける
+  // 共通の親のbarrelファイルは除外する（同じディレクトリツリー内の相対importには適用されない）
+  const commonParent = findCommonParent(importerDir, importedPath)
+
   // ディレクトリ指定の場合、そのindex.tsを指していることは自明なので一階層上から探索
   if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) {
     pathSegments.pop()
@@ -175,9 +197,10 @@ const findBarrelFile = (importedPath, importerDir) => {
 
   while (pathSegments.length > 0) {
     // 以下の場合は探索終了
-    // 1. いずれかのreplacePathsのルートに到達した場合
-    // 2. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
-    if (ALL_ROOT_PATHS.includes(currentPath) || isImportedInsideImporter(importerDir, currentPath)) {
+    // 1. 共通の親ディレクトリに到達した場合（commonParent自体のbarrelは除外）
+    // 2. いずれかのreplacePathsのルートに到達した場合
+    // 3. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
+    if (currentPath === commonParent || ALL_ROOT_PATHS.includes(currentPath) || isImportedInsideImporter(importerDir, currentPath)) {
       break
     }
 

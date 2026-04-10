@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.10.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.2...eslint-plugin-smarthr-v6.10.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* **require-barrel-import:** commonParentのbarrelを除外して同一ツリー内の相対importを許可 ([#1222](https://github.com/kufu/tamatebako/issues/1222)) ([fe5a68c](https://github.com/kufu/tamatebako/commit/fe5a68cd50a6f76dde0c403dd1ec33e5b1dd5d57))
+* trim-propsのセレクターをesquery互換へ修正し、ESLint 9.xでのクラッシュを解消 ([#1214](https://github.com/kufu/tamatebako/issues/1214)) ([d2345a0](https://github.com/kufu/tamatebako/commit/d2345a0623ebbf0f805c7c8a6b2b957ac21b0ffd))
+
 ## [6.10.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.1...eslint-plugin-smarthr-v6.10.2) (2026-04-09)
 
 

@@ -30,7 +30,7 @@ const generateTemplateLiteralSelector = (attributes) =>
 
 const REGEX_IGNORE_FILENAME = /\.(spec|test|stories)\./
 const REGEX_IGNORE_TEXT = /^\s*(\.|\+|\-|〜|：|:|（|）|\(|\)|,|\*|\/|[0-9]+)\s*$/
-const checkIgnoreText = (text) => !IGNORE_TEXT_REGEX.test(text)
+const checkIgnoreText = (text) => !REGEX_IGNORE_TEXT.test(text)
 
 const someReportTemplateLiteralError = (quasi) => quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked)
 
@@ -62,7 +62,7 @@ module.exports = {
       if (checkIgnoreText(node.value.value)) {
         context.report({
           node,
-          message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+          message: `${node.parent.name.name}の${node.name.name}属性に文字列リテラル "${node.value.value.trim()}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`,
         })
       }
@@ -106,7 +106,7 @@ module.exports = {
       if (checkIgnoreText(node.value)) {
         context.report({
           node,
-          message: `子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+          message: `子要素に文字列リテラル "${node.value.trim()}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`,
         })
       }

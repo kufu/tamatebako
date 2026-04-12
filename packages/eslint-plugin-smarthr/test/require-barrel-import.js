@@ -331,7 +331,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
+          message: /バレルファイルを経由してimportしてください/,
         },
       ],
     },
@@ -363,7 +363,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
+          message: /バレルファイルを経由してimportしてください/,
         },
       ],
     },
@@ -387,7 +387,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /からimportするか、.*のbarrelファイルを削除して直接import可能にしてください/,
+          message: /バレルファイルを経由してimportしてください/,
         },
       ],
     },

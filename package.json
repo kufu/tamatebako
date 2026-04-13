@@ -27,7 +27,7 @@
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "lerna": "^9.0.7",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.2",
     "prettier-config-smarthr": "^1.0.1",
     "react": "^19.2.5",
     "rimraf": "^5.0.10",

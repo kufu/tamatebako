@@ -4,6 +4,9 @@
  * eslint-config-smarthr の oxlint 版。
  * プロダクト横断で共有するルールセットを定義する。
  *
+ * NOTE: ESLint / oxlint 併用期間中は、ルールの追加・変更時に
+ * eslint-config-smarthr (packages/eslint-config-smarthr/index.js) にも同じ修正を適用すること。
+ *
  * @type {import('oxlint').OxlintConfig}
  */
 const config = {

@@ -5,6 +5,9 @@ import typescript from './configs/typescript.js'
 import smarthr from 'eslint-plugin-smarthr'
 
 /**
+ * NOTE: ESLint / oxlint 併用期間中は、ルールの追加・変更時に
+ * oxlint-config-smarthr (packages/oxlint-config-smarthr/index.js) にも同じ修正を適用すること。
+ *
  * @type {import('eslint').Linter.Config[]}
  */
 export default [

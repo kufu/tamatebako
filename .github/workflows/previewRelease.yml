@@ -1,0 +1,13 @@
+name: Preview Release
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  previewRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - run: pnpx pkg-pr-new publish packages/oxlint-config-smarthr

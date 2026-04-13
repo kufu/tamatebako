@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kufu/tamatebako.git",
+    "url": "git+git@github.com:kufu/tamatebako.git",
     "directory": "packages/oxlint-config-smarthr"
   },
   "keywords": [

@@ -3,6 +3,8 @@ name: Preview Release
 on:
   pull_request:
     types: [opened, reopened, synchronize]
+    paths:
+      - 'packages/oxlint-config-smarthr/**'
 
 jobs:
   previewRelease:

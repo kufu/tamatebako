@@ -22,7 +22,9 @@ import smarthrConfig from 'oxlint-config-smarthr'
 
 export default defineConfig({
   extends: [smarthrConfig],
-  plugins: ['typescript', 'import', 'unicorn', 'react', 'jsx-a11y'],
+  // NOTE: plugins / jsPlugins は extends によって上書きされるため、
+  // 共有設定分も含めて必要なプラグインをすべて再宣言する必要があります。
+  plugins: ['typescript', 'import', 'react', 'jsx-a11y'],
   jsPlugins: ['eslint-plugin-smarthr'],
   rules: {
     // プロダクト固有のルール

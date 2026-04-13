@@ -14,10 +14,7 @@
     "directory": "packages/oxlint-config-smarthr"
   },
   "scripts": {
-    "test": "vitest run"
-  },
-  "devDependencies": {
-    "vitest": "^4.1.4"
+    "test": "oxlint --config index.js --print-config > /dev/null"
   },
   "keywords": [
     "oxlint"

@@ -223,7 +223,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
     'eslint-plugin-smarthr/best-practice-for-remote-trigger-dialog': 'error',
     'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off',
-    'eslint-plugin-smarthr/best-practice-for-spread-syntax': 'error',
+    'eslint-plugin-smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],
     'eslint-plugin-smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
     'eslint-plugin-smarthr/best-practice-for-tailwind-variants': 'off',
     'eslint-plugin-smarthr/best-practice-for-text-component': 'warn',

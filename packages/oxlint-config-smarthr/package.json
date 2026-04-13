@@ -13,6 +13,12 @@
     "url": "git+git@github.com:kufu/tamatebako.git",
     "directory": "packages/oxlint-config-smarthr"
   },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.4"
+  },
   "keywords": [
     "oxlint"
   ],

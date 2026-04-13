@@ -2,19 +2,19 @@
 
 [![npm version](https://badge.fury.io/js/oxlint-config-smarthr.svg)](https://badge.fury.io/js/oxlint-config-smarthr)
 
-A sharable oxlint config for SmartHR.
-This is intended to use at a project for React + TypeScript.
+SmartHR 全社共通の oxlint 設定です。
+React + TypeScript プロジェクトでの利用を想定しています。
 
-## Install
+## インストール
 
 ```sh
-pnpm add --dev oxlint eslint-plugin-smarthr // install peerDependencies
+pnpm add --dev oxlint eslint-plugin-smarthr # peerDependencies
 pnpm add --dev oxlint-config-smarthr
 ```
 
-## How to use
+## 使い方
 
-Import the config and add it to `extends` in your `oxlint.config.ts`.
+`oxlint.config.ts` で設定をインポートし、`extends` に追加してください。
 
 ```ts
 import { defineConfig } from 'oxlint'
@@ -25,12 +25,12 @@ export default defineConfig({
   plugins: ['typescript', 'import', 'unicorn', 'react', 'jsx-a11y'],
   jsPlugins: ['eslint-plugin-smarthr'],
   rules: {
-    // your project's rules
+    // プロダクト固有のルール
   },
 })
 ```
 
-Run `oxlint`!
+`oxlint` を実行してください。
 
 ```sh
 pnpm oxlint

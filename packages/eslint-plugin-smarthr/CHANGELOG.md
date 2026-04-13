@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.10.4](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.3...eslint-plugin-smarthr-v6.10.4) (2026-04-13)
+
+
+### Bug Fixes
+
+* **require-i18n-text:** 許容する記号の拡充と、テストコードでの除外設定を追加 ([#1225](https://github.com/kufu/tamatebako/issues/1225)) ([705113f](https://github.com/kufu/tamatebako/commit/705113f9b599bb77bec35b2c9b28825603d581ea))
+
 ## [6.10.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.2...eslint-plugin-smarthr-v6.10.3) (2026-04-10)
 
 

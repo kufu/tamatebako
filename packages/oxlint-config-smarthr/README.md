@@ -39,16 +39,7 @@ pnpm oxlint
 ## Type-aware linting
 
 この共有設定には `options.typeAware` は含まれていません。
-TypeScript の型情報を利用するルール（`typescript/dot-notation` など）を有効にするには、各プロダクトの `oxlint.config.ts` で設定してください。
+TypeScript の型情報を利用するルール（`typescript/dot-notation` など）を有効にするには、追加パッケージをインストールし、設定ファイルを調整してください。
 
-```ts
-export default defineConfig({
-  extends: [smarthrConfig],
-  options: {
-    typeAware: true,
-  },
-  // ...
-})
-```
-
-type-aware linting を利用するには別途セットアップが必要です。詳しくは [oxc-project/oxc](https://github.com/oxc-project/oxc) のドキュメントを参照してください。
+```bash
+pnpm add -D oxlint-tsgolint

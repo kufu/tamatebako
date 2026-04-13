@@ -15,6 +15,7 @@
     "packages/stylelint-config-smarthr": {},
     "packages/use-bulk-check": {},
     "packages/use-virtual-scroll": {},
-    "packages/wareki": {}
+    "packages/wareki": {},
+    "packages/oxlint-config-smarthr": {}
   }
 }

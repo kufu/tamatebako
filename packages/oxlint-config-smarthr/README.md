@@ -1,5 +1,7 @@
 # oxlint-config-smarthr
 
+[![npm version](https://badge.fury.io/js/oxlint-config-smarthr.svg)](https://badge.fury.io/js/oxlint-config-smarthr)
+
 A sharable oxlint config for SmartHR.
 This is intended to use at a project for React + TypeScript.
 

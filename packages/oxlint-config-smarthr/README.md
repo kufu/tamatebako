@@ -51,4 +51,4 @@ export default defineConfig({
 })
 ```
 
-type-aware linting を利用するには `tsgo` のインストールが必要です。
+type-aware linting を利用するには別途セットアップが必要です。詳しくは [oxc-project/oxc](https://github.com/oxc-project/oxc) のドキュメントを参照してください。

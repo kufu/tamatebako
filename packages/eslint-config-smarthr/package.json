@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-smarthr",
-  "version": "13.11.3",
+  "version": "13.11.4",
   "description": "A sharable ESLint config for SmartHR",
   "type": "module",
   "exports": {

@@ -16,7 +16,6 @@ const config = {
     es2016: true,
   },
   rules: {
-    // NOTE: no-unused-vars は oxlint の correctness カテゴリでデフォルト有効のため明示していない
 
     // === ESLint recommended ===
     'constructor-super': 'error',

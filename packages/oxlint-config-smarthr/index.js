@@ -16,6 +16,8 @@ const config = {
     es2016: true,
   },
   rules: {
+    // NOTE: no-unused-vars は oxlint の correctness カテゴリでデフォルト有効のため明示していない
+
     // === ESLint recommended ===
     'constructor-super': 'error',
     'for-direction': 'error',
@@ -94,7 +96,7 @@ const config = {
     'no-script-url': 'warn',
     'no-self-compare': 'error',
     'no-sequences': 'error',
-    'no-shadow': ['error'],
+    'no-shadow': 'error',
     'no-throw-literal': 'error',
     'no-unmodified-loop-condition': 'warn',
     'no-unused-expressions': 'error',
@@ -245,7 +247,8 @@ const config = {
     'eslint-plugin-smarthr/trim-props': 'error',
   },
   overrides: [
-    // TypeScript files: disable JS-only rules and adjust severity
+    // TypeScript ファイルでは TypeScript コンパイラが検出するルールを無効化し、
+    // prefer-const / prefer-spread は TS の型推論により安全に適用できるため error に引き上げる
     {
       files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
       rules: {

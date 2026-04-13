@@ -30,7 +30,7 @@ export default defineConfig({
 })
 ```
 
-`oxlint` を実行してください。
+`oxlint` コマンドで実行可能です。 eslint で使用できる大半のコマンドを利用できます。
 
 ```sh
 pnpm oxlint

@@ -56,10 +56,10 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 ## 参考にするファイル
 
 必ず以下のファイルを読んで、実装パターンを踏襲してください（最新のversionディレクトリを参照）：
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/REFERENCE.md（実装パターンの詳細説明）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/index.js（実装例）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/README.md（ユーザー向け移行ガイド）
-- rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test.js（テストケース）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/REFERENCE.md（実装パターンの詳細説明）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/index.js（実装例）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/README.md（ユーザー向け移行ガイド）
+- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
 - libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
@@ -90,6 +90,18 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - ✅ 自動修正可能: 機械的に100%正しく変換できる場合
 - ⚠️ エラーのみ: 手動確認が必要な場合（未知の属性がある、複数の対処方法がある等）
 - ❌ 検出しない: 複雑すぎる、影響範囲が広すぎる場合
+
+**escape hatch用classNameの確認（重要）:**
+
+コンポーネント名が変更される場合、escape hatch用className（例: `smarthr-ui-ComponentName`）も変更される可能性があります。
+
+1. **確認方法**: smarthr-uiのPRの差分を確認し、`smarthr-ui-` で始まるclassNameが変更されているか調査
+2. **変更がある場合**: CSS/SCSS/styled-components等での使用箇所を検出・置換するチェッカーを追加
+3. **変更がない場合**: README.mdに「escape hatch classNameの変更なし」と明記
+
+**例（v91→v92の場合）:**
+- RemoteTriggerダイアログのリネームがあったが、内部的にはControlledダイアログを使用しているため、className変更なし
+- サイズ指定の大文字統一はReact propsの値変更のみで、className生成ロジックには影響なし
 
 ## 実装内容
 
@@ -193,27 +205,159 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 - JSDocコメントを適切に追加してください
 - ディレクトリ名は必ず `vXX-to-vYY` 形式にしてください（内部キーと統一）
 
+## 複数バージョンスキップ時の考慮事項
+
+複数のバージョンをスキップする移行（例: v90→v93）では、コンポーネント名の衝突が発生する可能性があります。
+
+### 問題が起こるケース
+
+**例: v90→v92の一気実行**
+
+v90→v91とv91→v92の両方が実行されると、以下のような衝突が発生します：
+
+```javascript
+// 元のコード
+import { ActionDialog, RemoteTriggerActionDialog } from 'smarthr-ui'
+
+// 1回目の自動修正（v90→v91 + v91→v92が同時に適用）
+import { ControlledActionDialog, ActionDialog } from 'smarthr-ui'
+
+// ESLintは自動的に再実行される（staged fixes）
+// 2回目の自動修正で、上記のActionDialogがさらに変換される
+import { ControlledActionDialog, ControlledActionDialog } from 'smarthr-ui'
+// ❌ 重複！RemoteTriggerActionDialogの情報が失われる
+```
+
+**原因:**
+- v90→v91: `ActionDialog` → `ControlledActionDialog`
+- v91→v92: `RemoteTriggerActionDialog` → `ActionDialog`
+- ESLintのstaged fixesにより、2回目の自動修正で新しく生成された`ActionDialog`がさらに`ControlledActionDialog`に変換されてしまう
+
+### 衝突検出の実装
+
+このような衝突が予想される場合、`getMigrationPath()`関数で検出し、実行を禁止します。
+
+**実装例（index.js）:**
+
+```javascript
+function getMigrationPath(from, to) {
+  // ... 既存のロジック ...
+
+  // コンポーネント名衝突の検出
+  if (path.includes('v90-v91') && path.includes('v91-v92')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '91',
+      },
+    }
+  }
+
+  return { path, skipped }
+}
+```
+
+**エラーメッセージ（messages）:**
+
+```javascript
+messages: {
+  conflictingMigration: 'v{{from}}→v{{to}}の一気実行はコンポーネント名の衝突により正しく動作しません。段階的に実行してください: 1. { "from": "{{from}}", "to": "{{middle}}" } を実行 2. { "from": "{{middle}}", "to": "{{to}}" } を実行',
+  // ...
+}
+```
+
+**create()での使用:**
+
+```javascript
+create(context) {
+  // ... オプションチェック ...
+
+  const migrationResult = getMigrationPath(from, to)
+
+  // 衝突検出
+  if (migrationResult.conflict) {
+    return {
+      Program(node) {
+        context.report({
+          node,
+          messageId: 'conflictingMigration',
+          data: migrationResult.conflictData,
+        })
+      },
+    }
+  }
+
+  // ... 通常の処理 ...
+}
+```
+
+### 新バージョン追加時のチェック項目
+
+新しいバージョンを追加する際は、以下を確認してください：
+
+1. **過去のバージョンとの衝突可能性を確認**
+   - 今回リネームするコンポーネント名が、過去のバージョンでリネーム**元**だった名前と一致しないか
+   - 例: v90で`ActionDialog`→`ControlledActionDialog`、v92で`RemoteTriggerActionDialog`→`ActionDialog`の場合、`ActionDialog`という名前が衝突
+
+2. **衝突が発見された場合**
+   - `getMigrationPath()`に衝突検出ロジックを追加
+   - `conflictingMigration`メッセージで段階的な実行を促す
+
+3. **テストケースを追加**
+   - 衝突するバージョン組み合わせでエラーが表示されることを確認
+   ```javascript
+   {
+     code: `import { ActionDialog } from 'smarthr-ui'`,
+     options: [{ from: '90', to: '92' }],
+     errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '92', middle: '91' } }],
+   },
+   ```
+
+### 参考実装
+
+- [v91→v92追加時のコミット](https://github.com/kufu/tamatebako/commit/dc29036): v90→v92衝突検出の実装例
+
 ## 共通機能：smarthrUiAlias オプション
 
 プロジェクト固有のsmarthr-ui aliasパスに対応するため、`smarthrUiAlias`オプションが利用可能です。
 
+### 共通ヘルパー関数の使用
+
+`helpers.js` に共通のヘルパー関数が用意されています。これにより、各versionファイルで重複コードを書く必要がありません。
+
+**利用可能なヘルパー:**
+- `setupSmarthrUiAliasOptions(context, options)`: validSources拡張とaliasファイル判定を一括で行う
+- `isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias)`: ファイルパスマッチング（低レベル、通常は不要）
+
 ### createCheckers関数でのオプション利用
 
 ```javascript
+const { setupSmarthrUiAliasOptions } = require('../../helpers')
+
 createCheckers(context, sourceCode, options = {}) {
-  const customSmarthrUiAlias = options.smarthrUiAlias
-  const validSources = ['smarthr-ui']
-  if (customSmarthrUiAlias) {
-    validSources.push(customSmarthrUiAlias)
+  // 1行でセットアップ完了
+  const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
+
+  // validSourcesを使ってimportをチェック
+  const checkers = {
+    ImportDeclaration(node) {
+      if (!validSources.includes(node.source.value)) return
+      // ...
+    },
   }
 
-  // aliasファイルかどうかの判定
-  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
-    context.getFilename(),
-    customSmarthrUiAlias
-  )
+  // aliasファイルの場合のみ、export変数名の置換を追加
+  if (isAliasFile) {
+    checkers['ExportNamedDeclaration > VariableDeclaration > VariableDeclarator'] = function(node) {
+      // ...
+    }
+  }
 
-  // ...
+  return checkers
 }
 ```
 
@@ -224,18 +368,39 @@ createCheckers(context, sourceCode, options = {}) {
 
 詳細は[README.md](./README.md#smarthr-ui-の-alias-を使用している場合)を参照。
 
-### 🔄 今後の検討事項：共通化
+### ✅ 共通化済みの機能
 
-**現状:** 各versionディレクトリ（v90-to-v91など）で個別にsmarthrUiAlias関連の処理を実装しています。
+以下の機能は `helpers.js` に共通化されています（v92移行ルール追加時に実装）：
 
-**検討中:** 以下の処理を共通化できる可能性があります：
-- `validSources`の拡張ロジック
-- `isFileMatchingSmarthrUiAlias`ヘルパー関数
-- export変数名の置換チェッカー追加ロジック
+- `setupSmarthrUiAliasOptions`: validSources拡張とaliasファイル判定
+- `isFileMatchingSmarthrUiAlias`: ファイルパスマッチング
 
-**実装時期:** v92移行ルール追加時に、重複を確認して共通化を検討してください。共通化する場合は、以下のような場所が候補です：
-- `libs/common.js`に共通ヘルパー関数を追加
-- 各versionモジュールで共通の基底関数を提供
+これにより、各versionファイルで約30行の重複コードが削減されました。
+
+### 🔄 将来的な共通化の検討事項
+
+**現状（v92時点）:**
+各versionディレクトリで以下のパターンが繰り返されています：
+- ImportDeclarationチェッカー（コンポーネント名リネーム）
+- ExportNamedDeclarationチェッカー（re-export対応）
+- JSXOpeningElementチェッカー（JSX要素のリネーム）
+- Programチェッカー（aliasファイル名変更エラー）
+- VariableDeclaratorチェッカー（aliasファイル内のexport変数名置換）
+
+**共通化の可能性:**
+これらのチェッカーは構造が似ていますが、以下の理由で現時点では見送っています：
+
+1. **読みやすさ優先の方針**: このルールは「一時的な使用」を想定し、読みやすさを重視
+2. **version特有のロジック**: 各versionで微妙に異なる処理が必要になる可能性
+3. **パターンの確立**: v93, v94... と増えて明確なパターンが確立されてから検討すべき
+
+**再検討のタイミング:**
+- v93, v94などが追加され、パターンが安定した時点
+- チェッカー生成ヘルパー（`createComponentRenameCheckers`など）の実装を検討
+- その際は `helpers.js` に追加し、REFERENCE.mdに「共通パターン」として記載
+
+**注意:**
+共通化を進める際は、抽象化しすぎて読みにくくならないよう注意してください。ヘルパー関数のパラメータが複雑になる場合は、重複を許容する方が保守性が高い場合もあります。
 
 ## 完了後の作業
 
@@ -413,7 +578,7 @@ https://github.com/kufu/smarthr-ui/releases
 
 各versionディレクトリに`REFERENCE.md`があり、実装パターンや注意点が記載されています。
 
-**最新version:** [v90-to-v91/REFERENCE.md](./versions/v90-to-v91/REFERENCE.md)
+**最新version:** [v91-to-v92/REFERENCE.md](./versions/v91-to-v92/REFERENCE.md)
 
 このドキュメントには以下が含まれます：
 - ファイル構造と各セクションの説明

@@ -192,6 +192,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 | バージョン | 詳細 |
 |-----------|------|
 | `90` → `91` | [移行ガイド](./versions/v90-to-v91/README.md) |
+| `91` → `92` | [移行ガイド](./versions/v91-to-v92/README.md) |
 
 ## 使用方法
 

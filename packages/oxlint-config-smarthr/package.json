@@ -1,6 +1,6 @@
 {
   "name": "oxlint-config-smarthr",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A sharable oxlint config for SmartHR",
   "type": "module",
   "exports": {

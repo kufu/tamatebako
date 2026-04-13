@@ -16,6 +16,8 @@
     "packages/use-bulk-check": {},
     "packages/use-virtual-scroll": {},
     "packages/wareki": {},
-    "packages/oxlint-config-smarthr": {}
+    "packages/oxlint-config-smarthr": {
+      "initial-version": "0.1.0"
+    }
   }
 }

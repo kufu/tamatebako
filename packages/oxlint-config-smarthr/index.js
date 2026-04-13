@@ -9,9 +9,6 @@
 const config = {
   plugins: ['typescript', 'import', 'unicorn', 'react', 'jsx-a11y'],
   jsPlugins: ['eslint-plugin-smarthr'],
-  categories: {
-    correctness: 'off',
-  },
   options: {
     typeAware: true,
   },

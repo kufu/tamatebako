@@ -5,9 +5,6 @@
   "license": "MIT",
   "description": "A sharable ESLint plugin for SmartHR",
   "main": "index.js",
-  "engines": {
-    "node": ">=24.14.1"
-  },
   "scripts": {
     "test": "jest"
   },

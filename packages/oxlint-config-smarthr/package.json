@@ -1,0 +1,33 @@
+{
+  "name": "oxlint-config-smarthr",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A sharable oxlint config for SmartHR",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/oxlint-config-smarthr"
+  },
+  "keywords": [
+    "oxlint"
+  ],
+  "author": "SmartHR",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/oxlint-config-smarthr",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "peerDependencies": {
+    "oxlint": ">=0.16.0",
+    "eslint-plugin-smarthr": ">=6.0.0"
+  }
+}

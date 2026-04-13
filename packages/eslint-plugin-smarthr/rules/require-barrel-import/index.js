@@ -296,13 +296,36 @@ module.exports = {
         const barrelDirWithAlias = barrelWithAlias.replace(REGEX_INDEX_FILE, '')
         const uniqueDeniedModules = [...new Set(deniedModules.flat())]
 
+        // importしているモジュール名を取得
+        const importedModules = node.specifiers
+          .map(s => s.imported?.name || s.local?.name)
+          .filter(Boolean)
+          .join(', ')
+
+        // 推奨されるimportパスを生成（元の記法に合わせる）
+        let suggestedImportPath = barrelDirWithAlias
+        if (node.source.value[0] === '.') {
+          // 相対パスの場合、barrelDirへの相対パスを計算
+          const barrelDirAbsolute = resolvePathAlias(barrelDirWithAlias)
+          const relativePath = path.relative(importerDir, barrelDirAbsolute)
+          suggestedImportPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+        }
+
         // エラーを報告
         context.report({
           node,
           message: uniqueDeniedModules.length
             ? `${uniqueDeniedModules.join(', ')} は ${barrelDirWithAlias} からimportしてください`
-            : `${barrelDirWithAlias} からimportするか、${barrelWithAlias} のbarrelファイルを削除して直接import可能にしてください`
-              + '\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import',
+            : `バレルファイルを経由してimportしてください
+
+検出されたバレル: ${barrelWithAlias}
+現在のimport:      import { ${importedModules} } from '${node.source.value}'
+推奨されるimport:  import { ${importedModules} } from '${suggestedImportPath}'
+
+注意: バレルファイルに ${importedModules} のexportが必要です。
+      存在しない場合は ${path.basename(barrelPath)} に追加してください。
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
         })
       },
     }

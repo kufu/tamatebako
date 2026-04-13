@@ -247,8 +247,7 @@ const config = {
     'eslint-plugin-smarthr/trim-props': 'error',
   },
   overrides: [
-    // TypeScript ファイルでは TypeScript コンパイラが検出するルールを無効化し、
-    // prefer-const / prefer-spread は TS の型推論により安全に適用できるため error に引き上げる
+    // TypeScript files: disable JS-only rules and adjust severity
     {
       files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
       rules: {

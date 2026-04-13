@@ -245,30 +245,6 @@ const config = {
     'eslint-plugin-smarthr/require-import': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',
   },
-  overrides: [
-    // TypeScript files: disable JS-only rules and adjust severity
-    {
-      files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
-      rules: {
-        'constructor-super': 'off',
-        'no-class-assign': 'off',
-        'no-const-assign': 'off',
-        'no-dupe-class-members': 'off',
-        'no-dupe-keys': 'off',
-        'no-func-assign': 'off',
-        'no-import-assign': 'off',
-        'no-new-native-nonconstructor': 'off',
-        'no-obj-calls': 'off',
-        'no-redeclare': 'off',
-        'no-setter-return': 'off',
-        'no-this-before-super': 'off',
-        'no-unsafe-negation': 'off',
-        'no-with': 'off',
-        'prefer-const': ['error', { destructuring: 'all', ignoreReadBeforeAssign: true }],
-        'prefer-spread': 'error',
-      },
-    },
-  ],
 }
 
 export default config

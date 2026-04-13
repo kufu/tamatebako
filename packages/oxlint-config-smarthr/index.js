@@ -194,7 +194,7 @@ const config = {
 
     // === eslint-plugin-smarthr ===
     'eslint-plugin-smarthr/a11y-anchor-has-href-attribute': 'error',
-    // "eslint-plugin-smarthr/a11y-aria-labelledby": "warn", // oxlint 未対応
+    'eslint-plugin-smarthr/a11y-aria-labelledby': 'warn',
     'eslint-plugin-smarthr/a11y-clickable-element-has-text': 'error',
     'eslint-plugin-smarthr/a11y-form-control-in-form': 'error',
     'eslint-plugin-smarthr/a11y-heading-in-sectioning-content': 'error',
@@ -206,10 +206,10 @@ const config = {
     'eslint-plugin-smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-placeholder': 'error',
-    // "eslint-plugin-smarthr/a11y-prohibit-overflow-hidden": "warn", // oxlint 未対応
+    'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'warn',
     'eslint-plugin-smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-    // "eslint-plugin-smarthr/a11y-scroller-has-tabindex": "warn", // oxlint 未対応
+    'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'warn',
     'eslint-plugin-smarthr/a11y-trigger-has-button': 'error',
     'eslint-plugin-smarthr/best-practice-for-async-current-target': 'error',
     'eslint-plugin-smarthr/best-practice-for-button-element': 'error',
@@ -225,10 +225,10 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-spread-syntax': 'error',
     'eslint-plugin-smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
     'eslint-plugin-smarthr/best-practice-for-tailwind-variants': 'off',
-    // "eslint-plugin-smarthr/best-practice-for-text-component": "warn", // oxlint 未対応
+    'eslint-plugin-smarthr/best-practice-for-text-component': 'warn',
     'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
     'eslint-plugin-smarthr/component-name': 'error',
-    // "eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon": "warn", // oxlint 未対応
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
     'eslint-plugin-smarthr/format-import-path': 'off',
     'eslint-plugin-smarthr/format-translate-component': 'off',

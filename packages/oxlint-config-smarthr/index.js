@@ -172,7 +172,7 @@ const config = {
     'react/void-dom-elements-no-children': 'error',
 
     // === TypeScript ===
-    // 'typescript/dot-notation' は type-aware linting が必要なため、各プロダクト側で設定すること
+    'typescript/dot-notation': 'error',
     'typescript/no-duplicate-enum-values': 'error',
     'typescript/no-empty-object-type': 'error',
     'typescript/no-extra-non-null-assertion': 'error',

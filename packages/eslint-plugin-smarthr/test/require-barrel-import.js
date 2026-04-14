@@ -370,7 +370,7 @@ ruleTester.run('require-barrel-import', rule, {
 
     // Path alias - import先の親にbarrel
     {
-      code: `import { api } from '~/path-alias-import-parent-barrel/components/api/client'`,
+      code: `import { api } from '@/path-alias-import-parent-barrel/components/api/client'`,
       filename: (() => {
         createFixture('path-alias-import-parent-barrel', {
           'components': {

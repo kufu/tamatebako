@@ -47,10 +47,11 @@ tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroo
 
 `index` 以外にbarrelファイルとして扱うファイル名を配列で指定します（拡張子なし）。
 
-Next.jsなどで使用される `client.ts` や `server.ts` をbarrelファイルとして扱いたい場合に使用します。
+Next.jsなどで使用される `client.ts` をbarrelファイルとして扱いたい場合に使用します。
 
 - デフォルト: `[]`（`index.*` のみがbarrelファイル）
-- 例: `['client', 'server']` を指定すると、`client.ts`, `client.tsx`, `server.ts`, `server.tsx` などもbarrelファイルとして扱われます
+- 例: `['client']` を指定すると、`client.ts`, `client.tsx` などもbarrelファイルとして扱われます
+- 複数指定も可能: `['client', 'server']` を指定すると、`server.ts`, `server.tsx` なども追加されます
 
 #### 優先順位とチェックルール
 
@@ -75,7 +76,7 @@ route/
 
 **index.ts経由のre-export対応:**
 
-子で`index.ts`を見つけた場合でも、親方向に`client.ts`や`server.ts`があれば、そちらを優先します。
+子で`index.ts`を見つけた場合でも、親方向に`client.ts`があれば、そちらを優先します。
 
 ```typescript
 // 子が index.ts、親が client.ts のパターン
@@ -114,7 +115,7 @@ export * from './edit'
 
 **4. 階層の一貫性チェック**
 
-子ディレクトリで`client.ts`や`server.ts`を使用している場合、親ディレクトリにも同名のbarrelを作成することを促します。これにより、プロジェクト全体でbarrel構造の一貫性を保ちます。
+子ディレクトリで`client.ts`を使用している場合、親ディレクトリにも同名のbarrelを作成することを促します。これにより、プロジェクト全体でbarrel構造の一貫性を保ちます。
 
 ```typescript
 // 例: client.tsパターンの一貫性チェック
@@ -146,7 +147,7 @@ export * from './edit/client'
         //     '@/hoge/fuga': true // ['abc', 'def'] と指定すると個別に指定
         //   }
         // },
-        // additionalBarrelFileNames: ['client', 'server'], // Next.jsなどでclient.ts, server.tsをbarrelとして扱う
+        // additionalBarrelFileNames: ['client'], // Next.jsなどでclient.tsをbarrelとして扱う
       }
     ],
   },

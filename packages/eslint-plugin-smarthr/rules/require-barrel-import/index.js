@@ -114,6 +114,25 @@ const findCommonParent = (path1, path2) => {
 }
 
 /**
+ * 指定されたbarrelファイル名の候補パスを生成する
+ * @param {string} dir - ディレクトリパス
+ * @param {Array<string>} fileNames - barrelファイル名の配列
+ * @returns {Array<string>} パス候補の配列
+ */
+const generateBarrelFilePaths = (dir, fileNames) => {
+  return fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
+}
+
+/**
+ * パスからファイル名（拡張子なし）を抽出する
+ * @param {string} filePath - ファイルパス
+ * @returns {string} ファイル名（拡張子なし）
+ */
+const extractFileName = (filePath) => {
+  return filePath.split('/').pop().replace(REGEX_BARREL_FILE_EXT, '')
+}
+
+/**
  * allowedImportsオプションに基づいて、特定のimportが許可されているかチェックする
  * @param {object} node - ImportDeclaration node
  * @param {string} importerDir - import元のディレクトリ
@@ -212,12 +231,11 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
       : barrelFileNames
 
     // 現在のパスにbarrelファイルがあるかチェック
-    const foundBarrel = searchFileNames
-      .flatMap(name => TARGET_EXTS.map(ext => `${currentPath}/${name}.${ext}`))
+    const foundBarrel = generateBarrelFilePaths(currentPath, searchFileNames)
       .find(filePath => fs.existsSync(filePath))
 
     if (foundBarrel) {
-      const fileName = foundBarrel.split('/').pop().replace(/\.(ts|tsx|js|jsx)$/, '')
+      const fileName = extractFileName(foundBarrel)
 
       if (!foundBarrelFileName) {
         // 最初に見つかったbarrel
@@ -237,8 +255,7 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
       // 異なるファイル名の場合は上書きしない（最も近いbarrelを維持）
     } else if (foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName)) {
       // client.tsを探していたが見つからなかった場合、index.tsがあるかチェック
-      const indexBarrel = TARGET_EXTS
-        .map(ext => `${currentPath}/index.${ext}`)
+      const indexBarrel = generateBarrelFilePaths(currentPath, ['index'])
         .find(filePath => fs.existsSync(filePath))
 
       if (indexBarrel && !missingBarrel) {
@@ -328,21 +345,8 @@ module.exports = {
           return
         }
 
-        // barrelファイル自体、または同じディレクトリの他のbarrelファイルからimportしている場合はスキップ
-        // 同じディレクトリに index.ts と client.ts がある場合、どちらからのimportも許容する
-        const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
-        const barrelFileNames = [...additionalBarrelFileNames, 'index']
-        const allBarrelsInSameDir = barrelFileNames
-          .flatMap(name => TARGET_EXTS.map(ext => `${barrelDir}/${name}.${ext}`))
-          .filter(filePath => fs.existsSync(filePath))
-
-        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
-        const isImportingFromBarrel = importedPathWithExts.some(p => allBarrelsInSameDir.includes(p))
-        if (isImportingFromBarrel) {
-          return
-        }
-
         // 親階層でclient.ts/server.tsが見つからず、index.tsのみ見つかった場合
+        // barrelファイル自体からのimportでも一貫性チェックは実行
         if (missingBarrel) {
           const missingBarrelWithAlias = convertToPathAlias(`${missingBarrel.parentDir}/${missingBarrel.fileName}`)
           const existingBarrelWithAlias = convertToPathAlias(barrelPath).replace(REGEX_BARREL_FILE_EXT, '')
@@ -359,6 +363,19 @@ export * from '${existingBarrelWithAlias}'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
           })
+          return
+        }
+
+        // barrelファイル自体、または同じディレクトリの他のbarrelファイルからimportしている場合はスキップ
+        // 同じディレクトリに index.ts と client.ts がある場合、どちらからのimportも許容する
+        const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
+        const barrelFileNames = [...additionalBarrelFileNames, 'index']
+        const allBarrelsInSameDir = generateBarrelFilePaths(barrelDir, barrelFileNames)
+          .filter(filePath => fs.existsSync(filePath))
+
+        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
+        const isImportingFromBarrel = importedPathWithExts.some(p => allBarrelsInSameDir.includes(p))
+        if (isImportingFromBarrel) {
           return
         }
 

@@ -58,8 +58,12 @@ beforeAll(() => {
   createFixture({
     'components': {
       'Page.tsx': '',
+      'Header.tsx': '',
       'Header.presentational.tsx': '',
-      'List.container.tsx': '',
+      'utils.ts': '',
+      'Button.jsx': '',
+      'helper.js': '',
+      'List.container.ts': '',
       'Button.stories.tsx': '',
     },
     'modules': {

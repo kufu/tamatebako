@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "paths": {
+      // format-import-pathルールのテスト用パス
+      // 実際のプロダクトコードはこのパッケージには存在しない
       "@/*": ["./test-fixtures/format-import-path/*"],
       "~/*": ["./test-fixtures/*"]
     }

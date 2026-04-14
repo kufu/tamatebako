@@ -632,5 +632,98 @@ ruleTester.run('require-barrel-import', rule, {
         },
       ],
     },
+
+    // additionalBarrelFileNames - 複雑なネスト: 子=index, 中間=client, 親=index
+    {
+      code: `import { Component } from './route/edit/components/Component'`,
+      filename: (() => {
+        createFixture('barrel-file-names-nested-mixed', {
+          'Page.tsx': '',  // importer
+          'route': {
+            'index.ts': 'export {}',  // 親 (index)
+            'edit': {
+              'client.ts': 'export {}',  // 中間 (client)
+              'components': {
+                'index.ts': 'export {}',  // 子 (index) - 最も近い
+                'Component.tsx': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-nested-mixed/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/edit\/components/,  // 最も近いindex.ts（components）が検出される
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - 複雑なネスト: 全てclient.ts
+    {
+      code: `import { Component } from './route/edit/components/Component'`,
+      filename: (() => {
+        createFixture('barrel-file-names-nested-all-client', {
+          'Page.tsx': '',  // importer
+          'route': {
+            'client.ts': 'export {}',  // 親 (client)
+            'edit': {
+              'client.ts': 'export {}',  // 中間 (client)
+              'components': {
+                'client.ts': 'export {}',  // 子 (client) - 同名なので探索を続ける
+                'Component.tsx': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-nested-all-client/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/client/,  // より親のclient.tsが検出される
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - 複雑なネスト: 子=client, 中間=index, 親=なし
+    {
+      code: `import { Component } from './route/edit/components/Component'`,
+      filename: (() => {
+        createFixture('barrel-file-names-nested-reverse', {
+          'Page.tsx': '',  // importer
+          'route': {
+            // barrelなし
+            'edit': {
+              'index.ts': 'export {}',  // 中間 (index)
+              'components': {
+                'client.ts': 'export {}',  // 子 (client) - 最も近い
+                'Component.tsx': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-nested-reverse/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/edit\/components\/client/,  // 最も近いclient.tsが検出される
+        },
+      ],
+    },
   ],
 })

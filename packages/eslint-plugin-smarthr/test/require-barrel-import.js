@@ -112,6 +112,52 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
+    // additionalBarrelFileNames - 同じディレクトリにindex.tsとclient.tsがある場合、index.tsからimportもOK
+    {
+      code: `import { fetchUser } from './api'`,
+      filename: (() => {
+        createFixture('barrel-file-names-both-index', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'index.ts': 'export {}',
+              'client.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-both-index/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - 同じディレクトリにindex.tsとclient.tsがある場合、client.tsからimportもOK
+    {
+      code: `import { fetchUser } from './api/client'`,
+      filename: (() => {
+        createFixture('barrel-file-names-both-client', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'index.ts': 'export {}',
+              'client.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-both-client/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+    },
+
     // Next.js App Router特殊文字パス - 同階層import
     {
       code: `import { useUsers } from './hooks/useUsers'`,
@@ -496,23 +542,23 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
-    // additionalBarrelFileNames - index.tsを見つけた後も親のclient.tsを探索
+    // additionalBarrelFileNames - 異なるファイル名の場合は最も近いbarrelを優先
     {
       code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
       filename: (() => {
-        createFixture('barrel-file-names-index-then-client', {
+        createFixture('barrel-file-names-nearest-priority', {
           'Page.tsx': '',  // importer
           'route': {
-            'client.ts': 'export {}',  // 親のclient.tsが優先される
+            'client.ts': 'export {}',  // 親のclient.ts
             'edit': {
-              'index.ts': 'export {}',  // index.tsを見つけた後も探索を続ける
+              'index.ts': 'export {}',  // より近いindex.tsが優先される
               '_hooks': {
                 'useFormContext.ts': '',
               },
             },
           },
         })
-        return `${fixturesRoot}/barrel-file-names-index-then-client/Page.tsx`
+        return `${fixturesRoot}/barrel-file-names-nearest-priority/Page.tsx`
       })(),
       options: [
         {
@@ -521,7 +567,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/client\.ts/,  // client.tsが検出される（index.tsではない）
+          message: /route\/edit/,  // 最も近いindex.ts（route/edit）が検出される
         },
       ],
     },
@@ -552,6 +598,37 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /route\/client\.ts/,  // より親のclient.tsが検出される
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - 親にclient.tsがなくindex.tsのみの場合、client.ts作成を促す
+    {
+      code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
+      filename: (() => {
+        createFixture('barrel-file-names-missing-client', {
+          'Page.tsx': '',  // importer
+          'route': {
+            'index.ts': 'export {}',  // index.tsのみ
+            // client.ts なし
+            'edit': {
+              'client.ts': 'export {}',  // 子にはclient.tsがある
+              '_hooks': {
+                'useFormContext.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-missing-client/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/client\.ts を作成して.*edit\/client のexportをまとめてください/,
         },
       ],
     },

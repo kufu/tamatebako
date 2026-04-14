@@ -26,6 +26,7 @@ const SCHEMA = [
         additionalProperties: true,
       },
       ignores: { type: 'array', items: { type: 'string' }, default: [] },
+      additionalBarrelFileNames: { type: 'array', items: { type: 'string' }, default: [] },
     },
     additionalProperties: false,
   }
@@ -178,19 +179,23 @@ const checkAllowedImports = (node, importerDir, targetAllowedImports, allowedImp
  * import先のパスから親方向に barrel ファイルを探索する
  * @param {string} importedPath - import先の絶対パス
  * @param {string} importerDir - import元のディレクトリ
+ * @param {Array<string>} additionalBarrelFileNames - 追加でbarrelファイルとして扱うファイル名（拡張子なし、例: ['client', 'server']）
  * @returns {string|undefined} 見つかったbarrelファイルのパス
  */
-const findBarrelFile = (importedPath, importerDir) => {
+const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = []) => {
   const pathSegments = importedPath.split('/')
   let currentPath = importedPath
   let barrel = undefined
+
+  // 優先順位: 追加指定されたファイル名 > index
+  const barrelFileNames = [...additionalBarrelFileNames, 'index']
 
   // import元とimport先の共通の親ディレクトリを見つける
   // 共通の親のbarrelファイルは除外する（同じディレクトリツリー内の相対importには適用されない）
   const commonParent = findCommonParent(importerDir, importedPath)
 
-  // ディレクトリ指定の場合、そのindex.tsを指していることは自明なので一階層上から探索
-  if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) {
+  // ディレクトリ指定の場合、またはファイルが存在しない場合は親ディレクトリから探索
+  if (!fs.existsSync(currentPath) || (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory())) {
     pathSegments.pop()
     currentPath = pathSegments.join('/')
   }
@@ -199,14 +204,14 @@ const findBarrelFile = (importedPath, importerDir) => {
     // 以下の場合は探索終了
     // 1. 共通の親ディレクトリに到達した場合（commonParent自体のbarrelは除外）
     // 2. いずれかのreplacePathsのルートに到達した場合
-    // 3. import先がimport元の内部にある場合（同階層・サブディレクトリからのimport）
-    if (currentPath === commonParent || ALL_ROOT_PATHS.includes(currentPath) || isImportedInsideImporter(importerDir, currentPath)) {
+    if (currentPath === commonParent || ALL_ROOT_PATHS.includes(currentPath)) {
       break
     }
 
     // 現在のパスにbarrelファイルがあるかチェック
-    const foundBarrel = TARGET_EXTS
-      .map(ext => `${currentPath}/index.${ext}`)
+    // 優先順位に従って探索（additionalBarrelFileNames → index）
+    const foundBarrel = barrelFileNames
+      .flatMap(name => TARGET_EXTS.map(ext => `${currentPath}/${name}.${ext}`))
       .find(filePath => fs.existsSync(filePath))
 
     if (foundBarrel) {
@@ -284,10 +289,17 @@ module.exports = {
         }
 
         // barrel ファイルを探索
-        const barrelPath = findBarrelFile(importedPath, importerDir)
+        const additionalBarrelFileNames = option.additionalBarrelFileNames || []
+        const barrelPath = findBarrelFile(importedPath, importerDir, additionalBarrelFileNames)
 
         // barrel が見つからない、またはroot pathのindex.tsの場合はスキップ
         if (!barrelPath || REGEX_ROOT_PATH.test(barrelPath)) {
+          return
+        }
+
+        // barrelファイル自体からimportしている場合はスキップ
+        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
+        if (importedPathWithExts.includes(barrelPath)) {
           return
         }
 

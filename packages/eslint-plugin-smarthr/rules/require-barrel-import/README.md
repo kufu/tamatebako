@@ -43,6 +43,16 @@ tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroo
 
 特定のファイルから特定のimportを許可する設定を記述できます。
 
+### additionalBarrelFileNames
+
+`index` 以外にbarrelファイルとして扱うファイル名を配列で指定します（拡張子なし）。
+
+Next.jsなどで使用される `client.ts` や `server.ts` をbarrelファイルとして扱いたい場合に使用します。
+
+- デフォルト: `[]`（`index.*` のみがbarrelファイル）
+- 例: `['client', 'server']` を指定すると、`client.ts`, `client.tsx`, `server.ts`, `server.tsx` などもbarrelファイルとして扱われます
+- 優先順位: 指定したファイル名 > `index`（同じディレクトリに `client.ts` と `index.ts` がある場合、`client.ts` が優先されます）
+
 ## rules
 
 ```js
@@ -50,13 +60,16 @@ tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroo
   rules: {
     'smarthr/require-barrel-import': [
       'error',
-      // ignores: ['\\/test\\/'], // 除外したいファイルの正規表現
-      // allowedImports: {
-      //   '/any/path/': { // 正規表現でチェックするファイルを指定
-      //     // import制御するファイル (相対パスを指定する場合、.eslintrc.js を基準とする)
-      //     '@/hoge/fuga': true // ['abc', 'def'] と指定すると個別に指定
-      //   }
-      // },
+      {
+        // ignores: ['\\/test\\/'], // 除外したいファイルの正規表現
+        // allowedImports: {
+        //   '/any/path/': { // 正規表現でチェックするファイルを指定
+        //     // import制御するファイル (相対パスを指定する場合、.eslintrc.js を基準とする)
+        //     '@/hoge/fuga': true // ['abc', 'def'] と指定すると個別に指定
+        //   }
+        // },
+        // additionalBarrelFileNames: ['client', 'server'], // Next.jsなどでclient.ts, server.tsをbarrelとして扱う
+      }
     ],
   },
 }

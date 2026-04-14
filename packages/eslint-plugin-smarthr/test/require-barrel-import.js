@@ -90,6 +90,28 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
     },
 
+    // additionalBarrelFileNames - client.tsからimport（エラーにならない）
+    {
+      code: `import { fetchUser } from './api/client'`,
+      filename: (() => {
+        createFixture('barrel-file-names-valid', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'client.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-valid/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+    },
+
     // Next.js App Router特殊文字パス - 同階層import
     {
       code: `import { useUsers } from './hooks/useUsers'`,
@@ -388,6 +410,88 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /バレルファイルを経由してimportしてください/,
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - client.tsをbarrelとして扱う
+    {
+      code: `import { fetchUser } from './api/user'`,
+      filename: (() => {
+        createFixture('barrel-file-names-client', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'client.ts': 'export {}',  // client.tsがbarrel
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-client/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /バレルファイルを経由してimportしてください/,
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - server.tsをbarrelとして扱う
+    {
+      code: `import { getServerData } from './server-api/data'`,
+      filename: (() => {
+        createFixture('barrel-file-names-server', {
+          'lib': {
+            'App.tsx': '',
+            'server-api': {
+              'server.ts': 'export {}',  // server.tsがbarrel
+              'data.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-server/lib/App.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /バレルファイルを経由してimportしてください/,
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - client.tsがindexより優先される
+    {
+      code: `import { fetchUser } from './api/user'`,
+      filename: (() => {
+        createFixture('barrel-file-names-priority', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'client.ts': 'export {}',  // client.tsが優先
+              'index.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-priority/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /client\.ts/,  // client.tsが検出される
         },
       ],
     },

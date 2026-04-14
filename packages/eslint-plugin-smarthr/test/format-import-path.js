@@ -1,6 +1,7 @@
+const fs = require('fs')
+const path = require('path')
 const rule = require('../rules/format-import-path')
 const RuleTester = require('eslint').RuleTester
-const path = require('path')
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -11,8 +12,101 @@ const ruleTester = new RuleTester({
   },
 })
 
+// テストフィクスチャのルートディレクトリ
+const fixturesRoot = path.join(__dirname, '..', 'test-fixtures', 'format-import-path')
+
+/**
+ * テスト用のファイル構造を作成するヘルパー
+ */
+function createFixture(structure) {
+  // ディレクトリが既に存在する場合は削除
+  if (fs.existsSync(fixturesRoot)) {
+    fs.rmSync(fixturesRoot, { recursive: true, force: true })
+  }
+
+  // ディレクトリとファイルを再帰的に作成
+  function createStructure(dir, struct) {
+    fs.mkdirSync(dir, { recursive: true })
+
+    for (const [name, content] of Object.entries(struct)) {
+      const fullPath = path.join(dir, name)
+
+      if (typeof content === 'object' && content !== null) {
+        // ディレクトリ
+        createStructure(fullPath, content)
+      } else {
+        // ファイル
+        fs.writeFileSync(fullPath, content || '')
+      }
+    }
+  }
+
+  createStructure(fixturesRoot, structure)
+}
+
+/**
+ * テスト終了後のクリーンアップ
+ */
+function cleanupFixtures() {
+  if (fs.existsSync(fixturesRoot)) {
+    fs.rmSync(fixturesRoot, { recursive: true, force: true })
+  }
+}
+
+// テスト開始時にフィクスチャを作成
+beforeAll(() => {
+  createFixture({
+    'components': {
+      'Page.tsx': '',
+      'Header.presentational.tsx': '',
+      'List.container.tsx': '',
+      'Button.stories.tsx': '',
+    },
+    'modules': {
+      'utils': {
+        'helper.ts': '',
+        'validator.ts': '',
+      },
+    },
+    'crews': {
+      'modules': {
+        'utils': {
+          'common.ts': '',
+        },
+      },
+      'index': {
+        'adapters': {
+          'index.ts': '',
+          'api.ts': '',
+        },
+        'slices': {
+          'slice.ts': '',
+        },
+        'views': {
+          'index.ts': '',
+          'parts': {
+            'Abc.tsx': '',
+          },
+        },
+      },
+      'show': {
+        'views': {
+          'parts': {
+            'ShowPart.tsx': '',
+          },
+        },
+      },
+    },
+  })
+})
+
+// テスト終了後にクリーンアップ
+afterAll(() => {
+  cleanupFixtures()
+})
+
 const DOMAIN_RULE_ARGS = {
-  globalModuleDir: ['./src/modules'],
+  globalModuleDir: ['./test-fixtures/format-import-path/modules'],
   domainModuleDir: ['modules'],
   domainConstituteDir: ['components', 'hooks', 'utils'],
   format: { all: 'relative' },
@@ -20,7 +114,7 @@ const DOMAIN_RULE_ARGS = {
 
 // テスト用のファイルパスを作成
 const createFilePath = (relativePath) => {
-  return path.resolve(__dirname, '../src', relativePath)
+  return path.join(fixturesRoot, relativePath)
 }
 
 ruleTester.run('format-import-path', rule, {

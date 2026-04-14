@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      // ルール実装で使用
-      "@/*": ["./src/*"],
-      // テスト用
+      "@/*": ["./test-fixtures/format-import-path/*"],
       "~/*": ["./test-fixtures/*"]
     }
   }

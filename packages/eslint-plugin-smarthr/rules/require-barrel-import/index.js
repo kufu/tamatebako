@@ -36,6 +36,7 @@ const CWD = process.cwd()
 const REGEX_UNNECESSARY_SLASH = /(\/)+/g
 const REGEX_ROOT_PATH = new RegExp(`^${rootPath}/index\.`)
 const REGEX_INDEX_FILE = /\/index\.(ts|js)x?$/
+const REGEX_BARREL_FILE_EXT = /\.(ts|js)x?$/
 const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 
 // Path aliasの情報を事前計算してキャッシュ
@@ -189,6 +190,11 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
     currentPath = pathSegments.join('/')
   }
 
+  // 見つかったbarrelのファイル名を記録
+  // additionalBarrelFileNames（client, server等）が見つかった場合のみ、親方向には同じファイル名のみ探索
+  // index.tsが見つかった場合は、親方向にもadditionalBarrelFileNamesを探し続ける
+  let foundBarrelFileName = null
+
   while (pathSegments.length > 0) {
     // 以下の場合は探索終了
     // 1. 共通の親ディレクトリに到達した場合（commonParent自体のbarrelは除外）
@@ -197,14 +203,30 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
       break
     }
 
+    // 探索するファイル名を決定
+    // - まだ見つかっていない、またはindexが見つかった → 全てのbarrelFileNamesを探す
+    // - additionalBarrelFileNames（client, server）が見つかった → 同じファイル名のみ探す
+    const searchFileNames = (foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName))
+      ? [foundBarrelFileName]
+      : barrelFileNames
+
     // 現在のパスにbarrelファイルがあるかチェック
-    // 優先順位に従って探索（additionalBarrelFileNames → index）
-    const foundBarrel = barrelFileNames
+    const foundBarrel = searchFileNames
       .flatMap(name => TARGET_EXTS.map(ext => `${currentPath}/${name}.${ext}`))
       .find(filePath => fs.existsSync(filePath))
 
     if (foundBarrel) {
       barrel = foundBarrel
+      const fileName = foundBarrel.split('/').pop().replace(/\.(ts|tsx|js|jsx)$/, '')
+
+      if (!foundBarrelFileName) {
+        // 最初に見つかったbarrelのファイル名を記録
+        foundBarrelFileName = fileName
+      } else if (additionalBarrelFileNames.includes(fileName)) {
+        // より親でadditionalBarrelFileNamesが見つかった場合は切り替え
+        // （indexからclient/serverへの切り替えを許可）
+        foundBarrelFileName = fileName
+      }
     }
 
     // 一階層上に移動
@@ -293,7 +315,10 @@ module.exports = {
 
         // barrel パスをPath aliasに変換
         const barrelWithAlias = convertToPathAlias(barrelPath)
-        const barrelDirWithAlias = barrelWithAlias.replace(REGEX_INDEX_FILE, '')
+        // barrelファイルの拡張子を除去（index.ts → ディレクトリパス、client.ts → client）
+        const barrelDirWithAlias = REGEX_INDEX_FILE.test(barrelWithAlias)
+          ? barrelWithAlias.replace(REGEX_INDEX_FILE, '')
+          : barrelWithAlias.replace(REGEX_BARREL_FILE_EXT, '')
         const uniqueDeniedModules = [...new Set(deniedModules.flat())]
 
         // importしているモジュール名を取得

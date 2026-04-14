@@ -468,7 +468,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
-    // additionalBarrelFileNames - client.tsがindexより優先される
+    // additionalBarrelFileNames - client.tsがindexより優先される（同じディレクトリ内）
     {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
@@ -492,6 +492,66 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /client\.ts/,  // client.tsが検出される
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - index.tsを見つけた後も親のclient.tsを探索
+    {
+      code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
+      filename: (() => {
+        createFixture('barrel-file-names-index-then-client', {
+          'Page.tsx': '',  // importer
+          'route': {
+            'client.ts': 'export {}',  // 親のclient.tsが優先される
+            'edit': {
+              'index.ts': 'export {}',  // index.tsを見つけた後も探索を続ける
+              '_hooks': {
+                'useFormContext.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-index-then-client/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/client\.ts/,  // client.tsが検出される（index.tsではない）
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - より親のclient.tsを優先
+    {
+      code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
+      filename: (() => {
+        createFixture('barrel-file-names-parent-priority', {
+          'Page.tsx': '',  // importer
+          'route': {
+            'client.ts': 'export {}',  // 親のclient.tsが優先される
+            'edit': {
+              'client.ts': 'export {}',  // こちらではなく親が検出される
+              '_hooks': {
+                'useFormContext.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-parent-priority/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /route\/client\.ts/,  // より親のclient.tsが検出される
         },
       ],
     },

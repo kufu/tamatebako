@@ -63,7 +63,7 @@ const calculateDomainNode = (calclatedContext, node) => {
       replacedPath = exts.map((j) => `${replacedPath}${j}`).find((j) => fs.existsSync(j)) || replacedPath
     }
 
-    replacedPath = replacedPath.replace(/^(.+?)((\/index)?\.[a-z0-9]+|\/)$/, '$1')
+    replacedPath = replacedPath.replace(/^(.+?)((\/index)?\.(js|jsx|ts|tsx)|\/)$/, '$1')
   }
 
   const resolvedImportPath = replacedPath[0] === '/' ? replacedPath : ''

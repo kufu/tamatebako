@@ -195,7 +195,7 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
   const commonParent = findCommonParent(importerDir, importedPath)
 
   // ディレクトリ指定の場合、またはファイルが存在しない場合は親ディレクトリから探索
-  if (!fs.existsSync(currentPath) || (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory())) {
+  if (!fs.existsSync(currentPath) || fs.statSync(currentPath).isDirectory()) {
     pathSegments.pop()
     currentPath = pathSegments.join('/')
   }

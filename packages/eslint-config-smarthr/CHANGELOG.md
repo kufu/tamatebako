@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.12.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.11.4...eslint-config-smarthr-v13.12.0) (2026-04-14)
+
+
+内部的な変更のみのため影響なし
 ## [13.11.4](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.11.3...eslint-config-smarthr-v13.11.4) (2026-04-13)
 
 

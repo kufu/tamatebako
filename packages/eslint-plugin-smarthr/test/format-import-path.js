@@ -110,7 +110,7 @@ afterAll(() => {
 })
 
 const DOMAIN_RULE_ARGS = {
-  globalModuleDir: ['./test-fixtures/format-import-path/modules'],
+  globalModuleDir: ['@/format-import-path/modules'],
   domainModuleDir: ['modules'],
   domainConstituteDir: ['components', 'hooks', 'utils'],
   format: { all: 'relative' },
@@ -165,7 +165,7 @@ ruleTester.run('format-import-path', rule, {
 
     // 絶対パスで記述されている場合
     {
-      code: `import { helper } from '@/modules/utils/helper'`,
+      code: `import { helper } from '@/format-import-path/modules/utils/helper'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [{
         ...DOMAIN_RULE_ARGS,
@@ -252,7 +252,7 @@ ruleTester.run('format-import-path', rule, {
 
     // 同じドメイン内のimportは絶対パスから相対パスに変換される
     {
-      code: `import { Abc } from '@/crews/index/views/parts/Abc'`,
+      code: `import { Abc } from '@/format-import-path/crews/index/views/parts/Abc'`,
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
@@ -261,7 +261,7 @@ ruleTester.run('format-import-path', rule, {
 
     // 同じディレクトリ内のimport
     {
-      code: `import { api } from '@/crews/index/adapters/api'`,
+      code: `import { api } from '@/format-import-path/crews/index/adapters/api'`,
       output: `import { api } from './api'`,
       filename: createFilePath('crews/index/adapters/index.ts'),
       options: [DOMAIN_RULE_ARGS],
@@ -270,7 +270,7 @@ ruleTester.run('format-import-path', rule, {
 
     // 親ディレクトリへのimport
     {
-      code: `import { slice } from '@/crews/index/slices/slice'`,
+      code: `import { slice } from '@/format-import-path/crews/index/slices/slice'`,
       output: `import { slice } from '../slices/slice'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
@@ -284,13 +284,13 @@ ruleTester.run('format-import-path', rule, {
     // 相対パスから絶対パスに変換される
     {
       code: `import { Abc } from './parts/Abc'`,
-      output: `import { Abc } from '@/crews/index/views/parts/Abc'`,
+      output: `import { Abc } from '@/format-import-path/crews/index/views/parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [{
         ...DOMAIN_RULE_ARGS,
         format: { all: 'absolute' },
       }],
-      errors: [{ message: '@/crews/index/views/parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [{ message: '@/format-import-path/crews/index/views/parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
     },
 
     // ============================================================
@@ -312,7 +312,7 @@ ruleTester.run('format-import-path', rule, {
 
     // autoモード: より短い方（相対パス）が選択される
     {
-      code: `import { Abc } from '@/crews/index/views/parts/Abc'`,
+      code: `import { Abc } from '@/format-import-path/crews/index/views/parts/Abc'`,
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [{
@@ -325,13 +325,13 @@ ruleTester.run('format-import-path', rule, {
     // autoモード: 遠いファイルは絶対パスが選択される
     {
       code: `import { helper } from '../../../modules/utils/helper'`,
-      output: `import { helper } from '@/modules/utils/helper'`,
+      output: `import { helper } from '@/format-import-path/modules/utils/helper'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [{
         ...DOMAIN_RULE_ARGS,
         format: { all: 'auto' },
       }],
-      errors: [{ message: '@/modules/utils/helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [{ message: '@/format-import-path/modules/utils/helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
     },
   ],
 })

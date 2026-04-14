@@ -460,6 +460,34 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
+    // additionalBarrelFileNames - index.tsとclient.tsが両方ある場合、複数の選択肢を表示
+    {
+      code: `import { fetchUser } from './api/user'`,
+      filename: (() => {
+        createFixture('barrel-file-names-multiple-options', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'index.ts': 'export {}',
+              'client.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-multiple-options/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /推奨されるimport（以下のいずれか）[\s\S]*client\.ts[\s\S]*index\.ts/,
+        },
+      ],
+    },
+
     // additionalBarrelFileNames - client.tsをbarrelとして扱う
     {
       code: `import { fetchUser } from './api/user'`,

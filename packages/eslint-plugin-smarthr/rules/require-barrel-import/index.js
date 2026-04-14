@@ -393,6 +393,28 @@ export * from '${existingBarrelWithAlias}'
           return name ? (acc ? `${acc}, ${name}` : name) : acc
         }, '')
 
+        // 同じディレクトリにある全てのbarrelファイルをエラーメッセージ用に変換
+        const barrelSuggestions = allBarrelsInSameDir.map(filePath => {
+          const pathWithAlias = convertToPathAlias(filePath)
+          const dirWithAlias = REGEX_INDEX_FILE.test(pathWithAlias)
+            ? pathWithAlias.replace(REGEX_INDEX_FILE, '')
+            : pathWithAlias.replace(REGEX_BARREL_FILE_EXT, '')
+
+          // 元の記法に合わせたimportパスを生成
+          let importPath = dirWithAlias
+          if (node.source.value[0] === '.') {
+            const dirAbsolute = resolvePathAlias(dirWithAlias)
+            const relativePath = path.relative(importerDir, dirAbsolute)
+            importPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+          }
+
+          return {
+            barrelFile: pathWithAlias,
+            importPath,
+            fileName: path.basename(filePath)
+          }
+        })
+
         // 推奨されるimportパスを生成（元の記法に合わせる）
         let suggestedImportPath = barrelDirWithAlias
         if (node.source.value[0] === '.') {
@@ -402,6 +424,21 @@ export * from '${existingBarrelWithAlias}'
           suggestedImportPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`
         }
 
+        // エラーメッセージを生成
+        let suggestionsMessage = ''
+        if (barrelSuggestions.length > 1) {
+          suggestionsMessage = '\n推奨されるimport（以下のいずれか）:\n' +
+            barrelSuggestions.map(({ importPath, fileName }) =>
+              `  - import { ${importedModules} } from '${importPath}' // ${fileName}`
+            ).join('\n')
+        } else {
+          suggestionsMessage = `\n推奨されるimport:  import { ${importedModules} } from '${suggestedImportPath}'`
+        }
+
+        const barrelFilesInfo = barrelSuggestions.length > 1
+          ? barrelSuggestions.map(({ barrelFile }) => barrelFile).join(', ')
+          : barrelWithAlias
+
         // エラーを報告
         context.report({
           node,
@@ -409,12 +446,11 @@ export * from '${existingBarrelWithAlias}'
             ? `${uniqueDeniedModules.join(', ')} は ${barrelDirWithAlias} からimportしてください`
             : `バレルファイルを経由してimportしてください
 
-検出されたバレル: ${barrelWithAlias}
-現在のimport:      import { ${importedModules} } from '${node.source.value}'
-推奨されるimport:  import { ${importedModules} } from '${suggestedImportPath}'
+検出されたバレル: ${barrelFilesInfo}
+現在のimport:      import { ${importedModules} } from '${node.source.value}'${suggestionsMessage}
 
 注意: バレルファイルに ${importedModules} のexportが必要です。
-      存在しない場合は ${path.basename(barrelPath)} に追加してください。
+      存在しない場合は対象のファイルに追加してください。
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
         })

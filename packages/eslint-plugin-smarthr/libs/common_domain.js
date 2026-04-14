@@ -63,7 +63,8 @@ const calculateDomainNode = (calclatedContext, node) => {
       replacedPath = exts.map((j) => `${replacedPath}${j}`).find((j) => fs.existsSync(j)) || replacedPath
     }
 
-    replacedPath = replacedPath.replace(/^(.+?)((\/index)?\.[a-z0-9]+|\/)$/, '$1')
+    // 拡張子を除去（.presentational.tsx のような複数の拡張子にも対応）
+    replacedPath = replacedPath.replace(/^(.+?)((\/index)?(\.[a-z0-9]+)+|\/)$/, '$1')
   }
 
   const resolvedImportPath = replacedPath[0] === '/' ? replacedPath : ''

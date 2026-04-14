@@ -1,0 +1,22 @@
+name: Preview Release
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - 'packages/oxlint-config-smarthr/**'
+
+jobs:
+  previewRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: 'package.json'
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+      - run: pnpx pkg-pr-new publish packages/oxlint-config-smarthr

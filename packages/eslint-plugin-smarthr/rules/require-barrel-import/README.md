@@ -73,6 +73,25 @@ route/
 // → route/index.ts を推奨（より親のbarrel）
 ```
 
+**index.ts経由のre-export対応:**
+
+子で`index.ts`を見つけた場合でも、親方向に`client.ts`や`server.ts`があれば、そちらを優先します。
+
+```typescript
+// 子が index.ts、親が client.ts のパターン
+route/
+  client.ts  ← これを推奨
+  edit/
+    index.ts
+
+// import { Foo } from './route/edit/Foo'
+// → route/client.ts を推奨（親のclient.tsが見つかった）
+
+// この場合、route/client.ts で edit/index.ts をre-exportする想定：
+// route/client.ts
+export * from './edit'
+```
+
 **3. 階層の一貫性チェック**
 
 子ディレクトリで`client.ts`や`server.ts`を使用している場合、親ディレクトリにも同名のbarrelを作成することを促します。これにより、プロジェクト全体でbarrel構造の一貫性を保ちます。

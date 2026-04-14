@@ -87,7 +87,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Header } from './Header'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/Header に修正してください/ }],
     },
 
     // .ts は除去される
@@ -96,7 +96,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { utils } from './utils'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/utils に修正してください/ }],
     },
 
     // .jsx は除去される
@@ -105,7 +105,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Button } from './Button'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/Button に修正してください/ }],
     },
 
     // .js は除去される
@@ -114,7 +114,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { helper } from './helper'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/helper に修正してください/ }],
     },
 
     // ============================================================
@@ -127,7 +127,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Header } from './Header.presentational'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/Header\.presentational に修正してください/ }],
     },
 
     // .container.ts → .container (.tsのみ除去)
@@ -136,7 +136,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { List } from './List.container'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/List\.container に修正してください/ }],
     },
 
     // .stories.tsx → .stories (.tsxのみ除去)
@@ -145,7 +145,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { meta } from './Button.stories'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/Button\.stories に修正してください/ }],
     },
 
     // ============================================================
@@ -158,7 +158,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/parts\/Abc に修正してください/ }],
     },
 
     // 同じディレクトリ内のimport
@@ -167,7 +167,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { api } from './api'`,
       filename: createFilePath('crews/index/adapters/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/api に修正してください/ }],
     },
 
     // 親ディレクトリへのimport
@@ -176,7 +176,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { slice } from '../slices/slice'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\.\/slices\/slice に修正してください/ }],
     },
 
     // ============================================================
@@ -192,7 +192,7 @@ ruleTester.run('format-import-path', rule, {
         ...DOMAIN_RULE_ARGS,
         format: { all: 'absolute' },
       }],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /@\/crews\/index\/views\/parts\/Abc に修正してください/ }],
     },
 
     // ============================================================
@@ -205,7 +205,7 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/parts\/Abc に修正してください/ }],
     },
 
     // ============================================================
@@ -221,7 +221,7 @@ ruleTester.run('format-import-path', rule, {
         ...DOMAIN_RULE_ARGS,
         format: { all: 'auto' },
       }],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /\.\/parts\/Abc に修正してください/ }],
     },
 
     // autoモード: 遠いファイルは絶対パスが選択される
@@ -233,7 +233,7 @@ ruleTester.run('format-import-path', rule, {
         ...DOMAIN_RULE_ARGS,
         format: { all: 'auto' },
       }],
-      errors: [{ message: /に修正してください/ }],
+      errors: [{ message: /@\/modules\/utils\/helper に修正してください/ }],
     },
   ],
 })

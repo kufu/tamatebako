@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.12.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.11.4...eslint-config-smarthr-v13.12.0) (2026-04-14)
+
+
+### Features
+
+* **oxlint-config-smarthr:** Oxlint のための共通設定パッケージを追加 ([#1239](https://github.com/kufu/tamatebako/issues/1239)) ([c66e5ac](https://github.com/kufu/tamatebako/commit/c66e5ac28b67ecf33660d522e7fa2a25e506014d))
+
 ## [13.11.4](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.11.3...eslint-config-smarthr-v13.11.4) (2026-04-13)
 
 

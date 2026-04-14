@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.11.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.4...eslint-plugin-smarthr-v6.11.0) (2026-04-14)
+
+
+### Features
+
+* **autofixer-smarthr-ui-migration:** v91→v92移行ルールを追加 ([#1209](https://github.com/kufu/tamatebako/issues/1209)) ([c29bf7c](https://github.com/kufu/tamatebako/commit/c29bf7c628e25216245f4082354a88add7e650b2))
+* **require-barrel-import:** エラーメッセージを詳細化して実用性を向上 ([#1227](https://github.com/kufu/tamatebako/issues/1227)) ([e2280e5](https://github.com/kufu/tamatebako/commit/e2280e5e47bfb5c9a2b89bd08331a0b2643c278e))
+
+
+### Bug Fixes
+
+* **eslint-plugin-smarthr:** 不要な engines フィールドを削除 ([#1240](https://github.com/kufu/tamatebako/issues/1240)) ([678cfc6](https://github.com/kufu/tamatebako/commit/678cfc6fa4b05eb8547f45c135d27d44f51a7fc7))
+* **format-import-path:** 複数の拡張子(.presentational.tsx等)に対応 ([#1242](https://github.com/kufu/tamatebako/issues/1242)) ([9f51b41](https://github.com/kufu/tamatebako/commit/9f51b41e1be02f6d6f982f1211c4bfb516179119))
+
 ## [6.10.4](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.3...eslint-plugin-smarthr-v6.10.4) (2026-04-13)
 
 

@@ -92,7 +92,27 @@ route/
 export * from './edit'
 ```
 
-**3. 階層の一貫性チェック**
+**3. エラーメッセージの表示**
+
+`additionalBarrelFileNames`が設定されている場合、エラーメッセージには存在しないbarrelファイルも含めて全ての選択肢が表示されます。
+
+```typescript
+// 例: additionalBarrelFileNames: ['client'] 設定時、index.tsのみ存在
+検出されたバレル: @/components/api/index.ts
+現在のimport:      import { fetchUser } from '@/components/api/user'
+推奨されるimport（以下のいずれか）:
+  - import { fetchUser } from '@/components/api' // index.ts
+  - import { fetchUser } from '@/components/api/client' // client.ts (作成が必要)
+
+※ 存在しないバレルファイルは必要に応じて作成してください。
+```
+
+- `index.ts`が優先的に表示されます（常に最初）
+- 存在しないファイルには `(作成が必要)` マークが表示されます
+- 存在しないファイルがある場合、注意メッセージが追加されます
+- 「検出されたバレル」には実際に存在するファイルのみが表示されます
+
+**4. 階層の一貫性チェック**
 
 子ディレクトリで`client.ts`や`server.ts`を使用している場合、親ディレクトリにも同名のbarrelを作成することを促します。これにより、プロジェクト全体でbarrel構造の一貫性を保ちます。
 

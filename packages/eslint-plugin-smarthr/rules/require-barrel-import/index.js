@@ -393,8 +393,21 @@ export * from '${existingBarrelWithAlias}'
           return name ? (acc ? `${acc}, ${name}` : name) : acc
         }, '')
 
-        // 同じディレクトリにある全てのbarrelファイルをエラーメッセージ用に変換
-        const barrelSuggestions = allBarrelsInSameDir.map(filePath => {
+        // エラーメッセージ用：additionalBarrelFileNamesが設定されている場合は
+        // 存在しないファイルも含めて全ての選択肢を表示する
+        const hasAdditionalBarrels = option?.additionalBarrelFileNames?.length > 0
+
+        // barrelファイル名ごとに、最初に見つかった拡張子のファイルのみを使う
+        const barrelFilesToShow = hasAdditionalBarrels
+          ? barrelFileNames.map(name => {
+              // 各barrelファイル名について、存在する拡張子を優先、なければ.tsを使う
+              const candidates = TARGET_EXTS.map(ext => `${barrelDir}/${name}.${ext}`)
+              return candidates.find(filePath => fs.existsSync(filePath)) || `${barrelDir}/${name}.ts`
+            })
+          : allBarrelsInSameDir // 存在するもののみ
+
+        // 同じディレクトリにある（または設定された）全てのbarrelファイルをエラーメッセージ用に変換
+        const barrelSuggestions = barrelFilesToShow.map(filePath => {
           const pathWithAlias = convertToPathAlias(filePath)
           const dirWithAlias = REGEX_INDEX_FILE.test(pathWithAlias)
             ? pathWithAlias.replace(REGEX_INDEX_FILE, '')
@@ -411,7 +424,8 @@ export * from '${existingBarrelWithAlias}'
           return {
             barrelFile: pathWithAlias,
             importPath,
-            fileName: path.basename(filePath)
+            fileName: path.basename(filePath),
+            exists: fs.existsSync(filePath)
           }
         })
 
@@ -425,18 +439,40 @@ export * from '${existingBarrelWithAlias}'
         }
 
         // エラーメッセージを生成
+        // barrelファイルが複数ある場合、またはadditionalBarrelFileNamesが設定されている場合は
+        // 複数選択肢形式で表示（存在しないファイルも含めて全ての選択肢を示す）
+        const shouldShowAllSuggestions = barrelSuggestions.length > 1 || hasAdditionalBarrels
+
         let suggestionsMessage = ''
-        if (barrelSuggestions.length > 1) {
+        if (shouldShowAllSuggestions) {
+          // index.ts を優先的に表示するためにソート
+          const sortedSuggestions = [...barrelSuggestions].sort((a, b) => {
+            const isAIndex = a.fileName.startsWith('index.')
+            const isBIndex = b.fileName.startsWith('index.')
+            if (isAIndex && !isBIndex) return -1
+            if (!isAIndex && isBIndex) return 1
+            return 0
+          })
+
           suggestionsMessage = '\n推奨されるimport（以下のいずれか）:\n' +
-            barrelSuggestions.map(({ importPath, fileName }) =>
-              `  - import { ${importedModules} } from '${importPath}' // ${fileName}`
+            sortedSuggestions.map(({ importPath, fileName, exists }) =>
+              `  - import { ${importedModules} } from '${importPath}' // ${fileName}${exists ? '' : ' (作成が必要)'}`
             ).join('\n')
+
+          // 存在しないファイルがある場合は作成を促すメッセージを追加
+          const missingBarrels = barrelSuggestions.filter(({ exists }) => !exists)
+          if (missingBarrels.length > 0) {
+            suggestionsMessage += '\n\n※ 存在しないバレルファイルは必要に応じて作成してください。'
+          }
         } else {
           suggestionsMessage = `\n推奨されるimport:  import { ${importedModules} } from '${suggestedImportPath}'`
         }
 
-        const barrelFilesInfo = barrelSuggestions.length > 1
-          ? barrelSuggestions.map(({ barrelFile }) => barrelFile).join(', ')
+        // 「検出されたバレル」には実際に存在するファイルのみを表示
+        // 複数のbarrelファイルが存在する場合は全て表示、1つの場合は従来通り
+        const existingBarrels = barrelSuggestions.filter(({ exists }) => exists)
+        const barrelFilesInfo = existingBarrels.length > 1
+          ? existingBarrels.map(({ barrelFile }) => barrelFile).join(', ')
           : barrelWithAlias
 
         // エラーを報告

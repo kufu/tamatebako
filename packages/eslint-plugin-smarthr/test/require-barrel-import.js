@@ -483,7 +483,61 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /推奨されるimport（以下のいずれか）[\s\S]*client\.ts[\s\S]*index\.ts/,
+          message: /推奨されるimport（以下のいずれか）[\s\S]*index\.ts[\s\S]*client\.ts/,
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - index.tsのみ存在する場合、存在しないclient.tsも選択肢に表示
+    {
+      code: `import { fetchUser } from './api/user'`,
+      filename: (() => {
+        createFixture('barrel-file-names-with-missing-client', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'index.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-with-missing-client/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /推奨されるimport（以下のいずれか）[\s\S]*index\.ts[\s\S]*client\.ts \(作成が必要\)[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
+        },
+      ],
+    },
+
+    // additionalBarrelFileNames - client.tsのみ存在する場合、存在しないindex.tsも選択肢に表示
+    {
+      code: `import { fetchUser } from './api/user'`,
+      filename: (() => {
+        createFixture('barrel-file-names-with-missing-index', {
+          'components': {
+            'Page.tsx': '',
+            'api': {
+              'client.ts': 'export {}',
+              'user.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-file-names-with-missing-index/components/Page.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /推奨されるimport（以下のいずれか）[\s\S]*index\.ts \(作成が必要\)[\s\S]*client\.ts[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
         },
       ],
     },

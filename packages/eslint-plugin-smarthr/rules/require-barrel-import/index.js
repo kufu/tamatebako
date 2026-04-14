@@ -328,6 +328,20 @@ module.exports = {
           return
         }
 
+        // barrelファイル自体、または同じディレクトリの他のbarrelファイルからimportしている場合はスキップ
+        // 同じディレクトリに index.ts と client.ts がある場合、どちらからのimportも許容する
+        const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
+        const barrelFileNames = [...additionalBarrelFileNames, 'index']
+        const allBarrelsInSameDir = barrelFileNames
+          .flatMap(name => TARGET_EXTS.map(ext => `${barrelDir}/${name}.${ext}`))
+          .filter(filePath => fs.existsSync(filePath))
+
+        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
+        const isImportingFromBarrel = importedPathWithExts.some(p => allBarrelsInSameDir.includes(p))
+        if (isImportingFromBarrel) {
+          return
+        }
+
         // 親階層でclient.ts/server.tsが見つからず、index.tsのみ見つかった場合
         if (missingBarrel) {
           const missingBarrelWithAlias = convertToPathAlias(`${missingBarrel.parentDir}/${missingBarrel.fileName}`)
@@ -345,20 +359,6 @@ export * from '${existingBarrelWithAlias}'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
           })
-          return
-        }
-
-        // barrelファイル自体、または同じディレクトリの他のbarrelファイルからimportしている場合はスキップ
-        // 同じディレクトリに index.ts と client.ts がある場合、どちらからのimportも許容する
-        const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
-        const barrelFileNames = [...additionalBarrelFileNames, 'index']
-        const allBarrelsInSameDir = barrelFileNames
-          .flatMap(name => TARGET_EXTS.map(ext => `${barrelDir}/${name}.${ext}`))
-          .filter(filePath => fs.existsSync(filePath))
-
-        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
-        const isImportingFromBarrel = importedPathWithExts.some(p => allBarrelsInSameDir.includes(p))
-        if (isImportingFromBarrel) {
           return
         }
 

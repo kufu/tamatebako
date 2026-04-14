@@ -95,17 +95,6 @@ const convertToPathAlias = (absolutePath) => {
 }
 
 /**
- * import先がimport元の内部にあるかチェック（同階層・サブディレクトリからのimport）
- * （Next.js App Routerの特殊文字パスにも対応）
- * @param {string} importerDir - import元のディレクトリ
- * @param {string} importedPath - import先のパス
- * @returns {boolean}
- */
-const isImportedInsideImporter = (importerDir, importedPath) => {
-  return importedPath === importerDir || importedPath.startsWith(importerDir + '/')
-}
-
-/**
  * 2つのパスの共通の親ディレクトリを見つける
  * @param {string} path1 - パス1
  * @param {string} path2 - パス2
@@ -185,7 +174,7 @@ const checkAllowedImports = (node, importerDir, targetAllowedImports, allowedImp
 const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = []) => {
   const pathSegments = importedPath.split('/')
   let currentPath = importedPath
-  let barrel = undefined
+  let barrel
 
   // 優先順位: 追加指定されたファイル名 > index
   const barrelFileNames = [...additionalBarrelFileNames, 'index']
@@ -239,9 +228,8 @@ module.exports = {
 
     // ignoresオプションでスキップ対象のファイルかチェック
     if (option.ignores) {
-      const isIgnored = option.ignores.some(pattern =>
-        new RegExp(pattern).test(context.filename)
-      )
+      const ignorePatterns = option.ignores.map(pattern => new RegExp(pattern))
+      const isIgnored = ignorePatterns.some(regex => regex.test(context.filename))
       if (isIgnored) {
         return {}
       }
@@ -309,10 +297,10 @@ module.exports = {
         const uniqueDeniedModules = [...new Set(deniedModules.flat())]
 
         // importしているモジュール名を取得
-        const importedModules = node.specifiers
-          .map(s => s.imported?.name || s.local?.name)
-          .filter(Boolean)
-          .join(', ')
+        const importedModules = node.specifiers.reduce((acc, s) => {
+          const name = s.imported?.name || s.local?.name
+          return name ? (acc ? `${acc}, ${name}` : name) : acc
+        }, '')
 
         // 推奨されるimportパスを生成（元の記法に合わせる）
         let suggestedImportPath = barrelDirWithAlias

@@ -158,6 +158,21 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
+    // 同じディレクトリで非バレルファイルをimport（エラーにならない）
+    {
+      code: `import { ButtonProps } from './types'`,
+      filename: (() => {
+        createFixture('same-dir-non-barrel', {
+          'Button': {
+            'index.tsx': 'export {}',
+            'Button.tsx': '',
+            'types.ts': '',
+          },
+        })
+        return `${fixturesRoot}/same-dir-non-barrel/Button/Button.tsx`
+      })(),
+    },
+
     // Next.js App Router特殊文字パス - 同階層import
     {
       code: `import { useUsers } from './hooks/useUsers'`,
@@ -804,6 +819,182 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /route\/edit\/components\/client/,  // 最も近いclient.tsが検出される
+        },
+      ],
+    },
+
+    // ============================================================
+    // 【新規】同じディレクトリまたは子階層からバレルファイルを経由するimport
+    // ============================================================
+
+    // 1. 同じディレクトリでバレルファイルを経由（from '.'）
+    {
+      code: `import { Button } from '.'`,
+      filename: (() => {
+        createFixture('same-dir-barrel-dot', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/same-dir-barrel-dot/Button/Button.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 2. 同じディレクトリでバレルファイルを経由（from './index'）
+    {
+      code: `import { Button } from './index'`,
+      filename: (() => {
+        createFixture('same-dir-barrel-index', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/same-dir-barrel-index/Button/Button.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 3. 同じディレクトリでclient.tsを経由（from './client'）
+    {
+      code: `import { ButtonPresentation } from './client'`,
+      filename: (() => {
+        createFixture('same-dir-barrel-client', {
+          'Button': {
+            'Button.container.tsx': '',
+            'Button.presentation.tsx': '',
+            'client.ts': 'export { ButtonPresentation } from "./Button.presentation"',
+          },
+        })
+        return `${fixturesRoot}/same-dir-barrel-client/Button/Button.container.tsx`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 4. 親ディレクトリのバレルを子階層から経由（from '..'）
+    {
+      code: `import { Button } from '..'`,
+      filename: (() => {
+        createFixture('child-dir-parent-barrel-dot', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+            '_utils': {
+              'helper.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/child-dir-parent-barrel-dot/Button/_utils/helper.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 5. 親ディレクトリのバレルを子階層から経由（from '../index'）
+    {
+      code: `import { Button } from '../index'`,
+      filename: (() => {
+        createFixture('child-dir-parent-barrel-index', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+            '_utils': {
+              'helper.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/child-dir-parent-barrel-index/Button/_utils/helper.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 6. path aliasで同じディレクトリのバレルを経由
+    {
+      code: `import { Button } from '@/same-dir-path-alias-barrel/Button'`,
+      filename: (() => {
+        createFixture('same-dir-path-alias-barrel', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/same-dir-path-alias-barrel/Button/Button.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 7. path aliasでバレルディレクトリの子階層から経由
+    {
+      code: `import { Button } from '@/child-dir-path-alias-barrel/Button'`,
+      filename: (() => {
+        createFixture('child-dir-path-alias-barrel', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+            '_utils': {
+              'helper.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/child-dir-path-alias-barrel/Button/_utils/helper.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // 8. 孫ディレクトリからバレルを経由（from '../../index'）
+    {
+      code: `import { Button } from '../../index'`,
+      filename: (() => {
+        createFixture('grandchild-dir-barrel', {
+          'Button': {
+            'index.tsx': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+            '_utils': {
+              '_helpers': {
+                'deep.ts': '',
+              },
+            },
+          },
+        })
+        return `${fixturesRoot}/grandchild-dir-barrel/Button/_utils/_helpers/deep.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
         },
       ],
     },

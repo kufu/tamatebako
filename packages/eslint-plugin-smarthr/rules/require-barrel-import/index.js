@@ -256,10 +256,13 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
       break
     }
 
+    // 追加指定されたbarrelファイル（client.ts, server.ts等）が見つかっているか
+    const isAdditionalBarrelFound = foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName)
+
     // 探索するファイル名を決定
     // - まだ見つかっていない、またはindexが見つかった → 全てのbarrelFileNamesを探す
     // - additionalBarrelFileNames（client, server）が見つかった → 同じファイル名のみ探す
-    const searchFileNames = (foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName))
+    const searchFileNames = isAdditionalBarrelFound
       ? [foundBarrelFileName]
       : barrelFileNames
 
@@ -277,7 +280,7 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
       } else if (fileName === foundBarrelFileName) {
         // 同じファイル名の場合は、より親を優先（上書き）
         barrel = foundBarrel
-      } else if (foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName) && fileName === 'index') {
+      } else if (isAdditionalBarrelFound && fileName === 'index') {
         // client.tsを探していたが、親でindex.tsしか見つからなかった場合
         // client.tsを作成してexportをまとめるよう促す
         missingBarrel = {
@@ -286,7 +289,7 @@ const findBarrelFile = (importedPath, importerDir, additionalBarrelFileNames = [
         }
       }
       // 異なるファイル名の場合は上書きしない（最も近いbarrelを維持）
-    } else if (foundBarrelFileName && additionalBarrelFileNames.includes(foundBarrelFileName)) {
+    } else if (isAdditionalBarrelFound) {
       // client.tsを探していたが見つからなかった場合、index.tsがあるかチェック
       const indexBarrel = generateBarrelFilePaths(currentPath, ['index'])
         .find(filePath => fs.existsSync(filePath))

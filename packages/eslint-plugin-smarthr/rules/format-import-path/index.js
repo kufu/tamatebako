@@ -28,7 +28,11 @@ const DIR_SEPARATE_REGEX = /\//g
 const MULTIPLE_DIR_SEPARATE_REGEX =/(\/)+/g
 const TRAILING_SLASH_REGEX = /^(.+?)\/$/
 
-const dirCount = (dir) => dir.match(DIR_SEPARATE_REGEX).length
+const dirCount = (dir) => {
+  if (!dir) return 0
+  const matches = dir.match(DIR_SEPARATE_REGEX)
+  return matches ? matches.length : 0
+}
 
 const convertType = (calcContext, calcDomainNode) => {
   const { option: { format: { all, outside, globalModule, module, domain, lower } } } = calcContext

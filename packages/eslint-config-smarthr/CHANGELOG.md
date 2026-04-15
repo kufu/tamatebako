@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.0.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.12.1...eslint-config-smarthr-v14.0.0) (2026-04-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* a11y-delegate-element-has-role-presentation を削除し、best-practice-for-interactive-elementを追加 ([#1017](https://github.com/kufu/tamatebako/issues/1017))
+* **best-practice-for-spread-syntax:** best-practice-for-spread-syntaxのチェック対象をObject内のスプレッド構文に広げ、autofixするように修正 ([#1009](https://github.com/kufu/tamatebako/issues/1009))
+* smarthr/jsx-start-with-spread-attributesをsmarthr/best-practice-for-spread-syntaxに変更 ([#995](https://github.com/kufu/tamatebako/issues/995))
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850))
+
+### Features
+
+* a11y-aria-labelledby ruleをwarnで追加 ([#1101](https://github.com/kufu/tamatebako/issues/1101)) ([2e49345](https://github.com/kufu/tamatebako/commit/2e49345e0ea864eea591573ca1f0a8583b09d053))
+* a11y-delegate-element-has-role-presentation を削除し、best-practice-for-interactive-elementを追加 ([#1017](https://github.com/kufu/tamatebako/issues/1017)) ([2fb307a](https://github.com/kufu/tamatebako/commit/2fb307ae0b0e098371d6c3d3d87ef72bc5b061af))
+* **best-practice-for-spread-syntax:** best-practice-for-spread-syntaxのチェック対象をObject内のスプレッド構文に広げ、autofixするように修正 ([#1009](https://github.com/kufu/tamatebako/issues/1009)) ([d334970](https://github.com/kufu/tamatebako/commit/d33497002710301b738f7e16382540a5ba35d36f))
+* **eslint-config-smarthr:** eslint-plugin-smarthrを6.8.0に更新 ([#1189](https://github.com/kufu/tamatebako/issues/1189)) ([272b811](https://github.com/kufu/tamatebako/commit/272b811526283c206cf9cd3529b83ab02014c4b1))
+* eslint-config-smarthrに新規ルールをwarnで追加 ([#1177](https://github.com/kufu/tamatebako/issues/1177)) ([a460117](https://github.com/kufu/tamatebako/commit/a46011794914710270e7c5c5eb5a3b2c9f665729))
+* **eslint-config:** eslint-plugin-smarthr 6.10.0に更新 ([#1207](https://github.com/kufu/tamatebako/issues/1207)) ([1c54f44](https://github.com/kufu/tamatebako/commit/1c54f44fada190ae96b545af3717b09fbad8f0f3))
+* **eslint-config:** eslint-plugin-smarthr 6.9.0に更新（smarthrUiAliasオプション対応） ([#1193](https://github.com/kufu/tamatebako/issues/1193)) ([c03a504](https://github.com/kufu/tamatebako/commit/c03a504bda6f1b3e53f8f84fad236f3f54b15861))
+* eslint-plugin-smarthr@3.0.0にupdate ([#927](https://github.com/kufu/tamatebako/issues/927)) ([3505b34](https://github.com/kufu/tamatebako/commit/3505b34135513bbeb1f769233dcbc92315b03e16))
+* eslint-plugin-smarthr@3.1.0にupdate ([#942](https://github.com/kufu/tamatebako/issues/942)) ([4312d7c](https://github.com/kufu/tamatebako/commit/4312d7c3408623c181e22579b97f2360b8cc8539))
+* eslint-plugin-smarthrを2.3.0にupdate ([#910](https://github.com/kufu/tamatebako/issues/910)) ([2b47ff7](https://github.com/kufu/tamatebako/commit/2b47ff77a4a9a0c1ffcee3b7cf97582f569ae14d))
+* eslint-plugin-smarthrをv2.4.0にupdate ([#916](https://github.com/kufu/tamatebako/issues/916)) ([46ed4f0](https://github.com/kufu/tamatebako/commit/46ed4f0487c71d7211a65d3036d4f68d62d6b9f6))
+* **oxlint-config-smarthr:** Oxlint のための共通設定パッケージを追加 ([#1239](https://github.com/kufu/tamatebako/issues/1239)) ([c66e5ac](https://github.com/kufu/tamatebako/commit/c66e5ac28b67ecf33660d522e7fa2a25e506014d))
+* react/jsx-curly-brace-presenceをerrorに変更 ([#1145](https://github.com/kufu/tamatebako/issues/1145)) ([e45c93a](https://github.com/kufu/tamatebako/commit/e45c93a239c57655f00675e27f83d866dacd6cd5))
+* require-i18n-textをwarnとして追加 ([#901](https://github.com/kufu/tamatebako/issues/901)) ([ecf2e67](https://github.com/kufu/tamatebako/commit/ecf2e67f16dbf99522cca9e70b9e24eed0748909))
+* smarthr/best-practice-for-prohibit-import-smarthr-ui-localをwarnで導入 ([#949](https://github.com/kufu/tamatebako/issues/949)) ([0f1c3f9](https://github.com/kufu/tamatebako/commit/0f1c3f9050fe8e39f73108aeb3c7701cbbeba3b3))
+* smarthr/jsx-start-with-spread-attributesをsmarthr/best-practice-for-spread-syntaxに変更 ([#995](https://github.com/kufu/tamatebako/issues/995)) ([12082bf](https://github.com/kufu/tamatebako/commit/12082bfc09c0c3ba402584c3d7bfe317a9e5e5e9))
+* TdCheckboxの利用を推奨するルールをconfigに追加 ([#794](https://github.com/kufu/tamatebako/issues/794)) ([1dd4de3](https://github.com/kufu/tamatebako/commit/1dd4de3dd25c0dad6f7519bcd72e6f813b33e88b))
+* update eslint-plugin-smarthr to 6.6.3 ([#1148](https://github.com/kufu/tamatebako/issues/1148)) ([a3f6d51](https://github.com/kufu/tamatebako/commit/a3f6d51768e25cc02f1e3cf3f2cca451b09de643))
+* update eslint-plugin-smarthr@3.3.0 ([#955](https://github.com/kufu/tamatebako/issues/955)) ([633c6bb](https://github.com/kufu/tamatebako/commit/633c6bbdc82945977be5f7477d280393b9f14f45))
+* update eslint-plugin-smarthr@3.4.0 ([#975](https://github.com/kufu/tamatebako/issues/975)) ([62a51bb](https://github.com/kufu/tamatebako/commit/62a51bbeacf9390de7701e44cdd5913bdc39ae9e))
+* update eslint-plugin-smarthr@3.5.0 ([#982](https://github.com/kufu/tamatebako/issues/982)) ([97bb251](https://github.com/kufu/tamatebako/commit/97bb251264a6211277eb82f180cca66668cdd0c2))
+* update eslint-plugin-smarthr@6.1.0 ([#1029](https://github.com/kufu/tamatebako/issues/1029)) ([8214fd9](https://github.com/kufu/tamatebako/commit/8214fd9b1f15f09f4af30358826b32f1239c2a5d))
+* update eslint-plugin-smarthr@6.2.0 ([#1033](https://github.com/kufu/tamatebako/issues/1033)) ([8a13982](https://github.com/kufu/tamatebako/commit/8a139826241780a21a2f836201004154f54a46f4))
+* update eslint-plugin-smarthr@6.4.0 ([#1085](https://github.com/kufu/tamatebako/issues/1085)) ([69117b9](https://github.com/kufu/tamatebako/commit/69117b9ca4aff562665608a42ffd175110e5c5fc))
+* update eslint-plugin-smarthr@6.6.0 ([#1122](https://github.com/kufu/tamatebako/issues/1122)) ([039a06c](https://github.com/kufu/tamatebako/commit/039a06c0f0ee375bf4bea7d5415b87b3c2f5c1b3))
+* update-eslint-plugin-smarthr@6.3.0 ([#1072](https://github.com/kufu/tamatebako/issues/1072)) ([c93d8dc](https://github.com/kufu/tamatebako/commit/c93d8dc9a55b41995d99500e49beb6689924a254))
+* warnで運用されていたルールをerrorに変更する ([#950](https://github.com/kufu/tamatebako/issues/950)) ([c53556f](https://github.com/kufu/tamatebako/commit/c53556f13394dff3a58b78e66ab79fe13c3302f4))
+
+
+### Bug Fixes
+
+* **eslint-config-smarthr:** eslint-plugin-smarthr 6.10.4に更新 ([#1233](https://github.com/kufu/tamatebako/issues/1233)) ([b9d9113](https://github.com/kufu/tamatebako/commit/b9d911320b2edcf6ff4c5cc93e1239921925ddac))
+* **eslint-config-smarthr:** eslint-plugin-smarthrを6.9.1に更新 ([#1202](https://github.com/kufu/tamatebako/issues/1202)) ([fc53439](https://github.com/kufu/tamatebako/commit/fc53439da2dd0156cdd2118ebe6560ca52eecee6))
+* **eslint-config:** eslint-plugin-smarthr 6.10.1に更新 ([#1212](https://github.com/kufu/tamatebako/issues/1212)) ([5038c58](https://github.com/kufu/tamatebako/commit/5038c580a6bc69b4693821cb83e3e8b729ef12d0))
+* **eslint-config:** eslint-plugin-smarthr 6.10.2に更新 ([#1219](https://github.com/kufu/tamatebako/issues/1219)) ([abd72f1](https://github.com/kufu/tamatebako/commit/abd72f1abe88bb0b324593e5f118df68fee55af3))
+* **eslint-config:** eslint-plugin-smarthr 6.10.3に更新 ([#1223](https://github.com/kufu/tamatebako/issues/1223)) ([ab2f92e](https://github.com/kufu/tamatebako/commit/ab2f92e008479186563f3522563a0066e02b73ea))
+* eslint-plugin-smarthr@3.3.1 ([#962](https://github.com/kufu/tamatebako/issues/962)) ([24bbfed](https://github.com/kufu/tamatebako/commit/24bbfedf3a7f366c04aab668363c1aefcb1e56b3))
+* eslint-plugin-smarthr@3.3.2にupdate ([#971](https://github.com/kufu/tamatebako/issues/971)) ([52c916a](https://github.com/kufu/tamatebako/commit/52c916a4a819213e0d429182653982e2408a006d))
+* eslint-plugin-smarthr@4.0.2にupdate ([#1007](https://github.com/kufu/tamatebako/issues/1007)) ([ad9170e](https://github.com/kufu/tamatebako/commit/ad9170e61ba0aaf3a2b313585a470fceb878c3e0))
+* update eslint-config-smarthr@3.5.1 ([#989](https://github.com/kufu/tamatebako/issues/989)) ([cd8a798](https://github.com/kufu/tamatebako/commit/cd8a7987f11bb1874c44139c879cf79e77d75875))
+* update eslint-plugin-smarthr ([#1042](https://github.com/kufu/tamatebako/issues/1042)) ([665a587](https://github.com/kufu/tamatebako/commit/665a587c83bef52d4d4c7dd55c517d9a7d45c683))
+* update eslint-plugin-smarthr@4.0.1 ([#1001](https://github.com/kufu/tamatebako/issues/1001)) ([4365ce0](https://github.com/kufu/tamatebako/commit/4365ce0d0cdd9feb80f23a47aee180e06bdca7de))
+* update eslint-plugin-smarthr@6.0.1 ([#1021](https://github.com/kufu/tamatebako/issues/1021)) ([a4728f0](https://github.com/kufu/tamatebako/commit/a4728f0fc48057092de66b6d3831a7285640e00d))
+* update eslint-plugin-smarthr@6.0.2 ([#1025](https://github.com/kufu/tamatebako/issues/1025)) ([c38d958](https://github.com/kufu/tamatebako/commit/c38d9587a49ca795948b89adf57fd39a37cb0c98))
+* update eslint-plugin-smartrh@6.6.1 ([#1126](https://github.com/kufu/tamatebako/issues/1126)) ([3d1f70d](https://github.com/kufu/tamatebako/commit/3d1f70dacc4171d2f14691eb4d5ed2dac7eb0126))
+* update eslint-plugin-smartrh@6.6.2 ([#1130](https://github.com/kufu/tamatebako/issues/1130)) ([23dff8d](https://github.com/kufu/tamatebako/commit/23dff8dd609f19268cbb809f8824a9f4ae35783a))
+* update-eslint-plugin-smarthr@6.2.2 ([#1053](https://github.com/kufu/tamatebako/issues/1053)) ([a6cbe31](https://github.com/kufu/tamatebako/commit/a6cbe31c43468cb75e7e15ed5fc5710047e6aec4))
+* update-eslint-plugin-smarthr@6.2.3 ([#1060](https://github.com/kufu/tamatebako/issues/1060)) ([2697763](https://github.com/kufu/tamatebako/commit/2697763b412fa0591e270dcfb1382fa3dfcc346b))
+
+
+### Code Refactoring
+
+* eslint rule の smarthr/a11y-replace-unreadable-symbolを削除 ([#850](https://github.com/kufu/tamatebako/issues/850)) ([68336f8](https://github.com/kufu/tamatebako/commit/68336f8df42fcfe0c3a8375671377cc62b2be711))
+
 ## [13.12.1](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v13.12.0...eslint-config-smarthr-v13.12.1) (2026-04-15)
 
 

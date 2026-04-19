@@ -30,6 +30,6 @@
   },
   "peerDependencies": {
     "oxlint": ">=1.0.0",
-    "eslint-plugin-smarthr": ">=6.0.0"
+    "eslint-plugin-smarthr": ">=6.12.1"
   }
 }

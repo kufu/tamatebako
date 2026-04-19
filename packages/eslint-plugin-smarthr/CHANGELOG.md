@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.12.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.12.0...eslint-plugin-smarthr-v6.12.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* **v91-to-v92:** button/anchorButton系変種コンポーネントのsize属性変換に対応 ([#1251](https://github.com/kufu/tamatebako/issues/1251)) ([14335be](https://github.com/kufu/tamatebako/commit/14335bef82fa38ebe04b0b16fda5e5cd06165cae))
+
 ## [6.12.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.11.0...eslint-plugin-smarthr-v6.12.0) (2026-04-15)
 
 

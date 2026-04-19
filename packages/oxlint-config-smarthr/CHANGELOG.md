@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.1...oxlint-config-smarthr-v0.1.2) (2026-04-19)
+
+
+### Bug Fixes
+
+* update eslint-config-smarthr to 14.0.1 ([#1259](https://github.com/kufu/tamatebako/issues/1259)) ([0f9e2a8](https://github.com/kufu/tamatebako/commit/0f9e2a801c9424f503e3446d9615f9ca7554a474))
+
 ## [0.1.1](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.0...oxlint-config-smarthr-v0.1.1) (2026-04-19)
 
 

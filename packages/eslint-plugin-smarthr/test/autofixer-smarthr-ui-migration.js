@@ -2,6 +2,7 @@ const rule = require('../rules/autofixer-smarthr-ui-migration')
 const RuleTester = require('eslint').RuleTester
 const v90ToV91Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test')
 const v91ToV92Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/test')
+const v92ToV93Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v92-to-v93/test')
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -17,6 +18,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
   valid: [
     ...v90ToV91Tests.valid,
     ...v91ToV92Tests.valid,
+    ...v92ToV93Tests.valid,
   ],
 
   invalid: [
@@ -29,7 +31,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
-      options: [{ from: '92', to: '93' }],
+      options: [{ from: '93', to: '94' }],
       errors: [{ messageId: 'unsupportedVersion' }],
     },
 
@@ -37,12 +39,10 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     // 複数バージョンスキップ
     // ============================================================
     {
-      code: `import { RemoteTriggerActionDialog } from 'smarthr-ui'`,
-      output: `import { ActionDialog } from 'smarthr-ui'`,
-      options: [{ from: '91', to: '93' }],
+      code: `import { DropZone } from 'smarthr-ui'`,
+      options: [{ from: '92', to: '94' }],
       errors: [
-        { messageId: 'skippedVersion', data: { version: 'v93' } },
-        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+        { messageId: 'skippedVersion', data: { version: 'v94' } },
       ],
     },
     {
@@ -65,5 +65,6 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     // ============================================================
     ...v90ToV91Tests.invalid,
     ...v91ToV92Tests.invalid,
+    ...v92ToV93Tests.invalid,
   ],
 })

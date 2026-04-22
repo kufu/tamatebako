@@ -53,9 +53,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 
   return {
     // 単純禁止パターン（条件なしで禁止）
-    'ImportDeclaration, VariableDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration'(node) {
-      reportPurityError(node)
-    },
+    'ImportDeclaration, VariableDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration': reportPurityError,
 
     // 条件付き禁止パターン: 関数定義、クラス定義
     'FunctionDeclaration, ClassDeclaration'(node) {

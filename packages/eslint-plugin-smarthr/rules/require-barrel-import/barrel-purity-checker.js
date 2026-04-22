@@ -52,21 +52,10 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       })
     },
 
-    // 条件付き禁止パターン: 関数定義
-    FunctionDeclaration(node) {
-      // export default function() {} の場合、ExportDefaultDeclarationで既にエラーが出るのでスキップ
-      if (insideExportDefault) {
-        return
-      }
-      context.report({
-        node,
-        message: PURITY_ERROR_MESSAGE,
-      })
-    },
-
-    // 条件付き禁止パターン: クラス定義
-    ClassDeclaration(node) {
-      // export default class {} の場合、ExportDefaultDeclarationで既にエラーが出るのでスキップ
+    // 条件付き禁止パターン: 関数定義、クラス定義
+    'FunctionDeclaration, ClassDeclaration'(node) {
+      // export default function() {} / export default class {} の場合、
+      // ExportDefaultDeclarationで既にエラーが出るのでスキップ
       if (insideExportDefault) {
         return
       }

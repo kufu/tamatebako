@@ -67,6 +67,91 @@ import { buttonUtils } from '../utils'   // OK
 import { Button } from '@/components/Button'  // OK
 ```
 
+## バレルファイルの純粋性チェック
+
+バレルファイル（index.ts、client.ts等）内では、**re-export のみを行うべき**であり、それ以外の実装は禁止されます。
+
+### なぜ純粋性が必要なのか
+
+バレルファイルはディレクトリ外部へのエクスポート（公開API定義）が責務です。ロジックや定義を含むと、以下の問題が発生します：
+
+1. **責務の混在**: エクスポート定義とロジック実装が混在し、ファイルの役割が不明確になる
+2. **メンテナンス性の低下**: バレルファイルが肥大化し、何をexportしているか把握しづらくなる
+3. **テスト困難**: ロジックはテスト対象であるべきだが、バレル内に書くとテストしづらい
+4. **分割の妨げ**: 実装はそれぞれ専用ファイルに分離すべき
+
+### ❌ 禁止されるパターン
+
+```typescript
+// ❌ import文の使用
+import { Button } from './Button'
+
+// ❌ 変数定義
+const DEFAULT_SIZE = 'medium'
+export const sizes = ['small', 'medium', 'large']
+
+// ❌ 関数定義
+function helper() {
+  return 'value'
+}
+
+// ❌ export function
+export function createConfig() {
+  return { theme: 'light' }
+}
+
+// ❌ クラス定義
+class Util {}
+export class Helper {}
+
+// ❌ export default
+export default function Component() {
+  return <div />
+}
+
+// ❌ 既存定義のexport
+const value = 'test'
+export { value }
+```
+
+### ✅ 許可されるパターン
+
+```typescript
+// ✅ re-export（named export）
+export { Button } from './Button'
+export { Input, TextArea } from './Input'
+
+// ✅ re-export（wildcard export）
+export * from './utils'
+export * from './hooks'
+
+// ✅ TypeScript型定義（型は実行時の責務ではないため許可）
+export type { ButtonProps } from './Button'
+export interface ComponentAPI {
+  render: () => void
+}
+export type Size = 'small' | 'medium' | 'large'
+```
+
+### 正しい実装方法
+
+ロジックや定義が必要な場合は、専用ファイルを作成してそこからre-exportします：
+
+```typescript
+// ❌ 悪い例: index.ts内で定義
+// components/Button/index.ts
+export const DEFAULT_SIZE = 'medium'
+export { Button } from './Button'
+
+// ✅ 良い例: 専用ファイルを作成
+// components/Button/constants.ts
+export const DEFAULT_SIZE = 'medium'
+
+// components/Button/index.ts
+export { Button } from './Button'
+export { DEFAULT_SIZE } from './constants'
+```
+
 ## config
 
 ### 必須設定

@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const { replacePaths, rootPath } = require('../../libs/common')
 const { getParentDir } = require('../../libs/util')
+const { createBarrelPurityVisitor } = require('./barrel-purity-checker')
 
 const SCHEMA = [
   {
@@ -343,7 +344,14 @@ module.exports = {
       }
     }
 
-    return {
+    // バレルファイル名のリストを作成
+    const additionalBarrelFileNames = option.additionalBarrelFileNames || []
+    const barrelFileNames = [...additionalBarrelFileNames, 'index']
+
+    // バレルファイルの純粋性チェックのビジターを作成
+    const purityVisitor = createBarrelPurityVisitor(context, barrelFileNames)
+
+    const importVisitor = {
       ImportDeclaration: (node) => {
         // allowedImportsチェック
         const { shouldSkip, deniedModules } = checkAllowedImports(
@@ -570,6 +578,20 @@ export * from '${existingBarrelWithAlias}'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
         })
+      },
+    }
+
+    // purityVisitorとimportVisitorをマージ
+    // ImportDeclarationは両方にあるので、両方を実行する必要がある
+    return {
+      ...purityVisitor,
+      ImportDeclaration: (node) => {
+        // purity checkerのImportDeclarationを先に実行
+        if (purityVisitor.ImportDeclaration) {
+          purityVisitor.ImportDeclaration(node)
+        }
+        // 既存のimportチェックを実行
+        importVisitor.ImportDeclaration(node)
       },
     }
   },

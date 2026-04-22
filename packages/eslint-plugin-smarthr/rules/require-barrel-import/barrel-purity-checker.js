@@ -43,13 +43,18 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
   // export default declaration内の宣言かどうかを追跡
   let insideExportDefault = false
 
+  // エラー報告の共通処理
+  const reportPurityError = (node) => {
+    context.report({
+      node,
+      message: PURITY_ERROR_MESSAGE,
+    })
+  }
+
   return {
     // 単純禁止パターン（条件なしで禁止）
     'ImportDeclaration, VariableDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration'(node) {
-      context.report({
-        node,
-        message: PURITY_ERROR_MESSAGE,
-      })
+      reportPurityError(node)
     },
 
     // 条件付き禁止パターン: 関数定義、クラス定義
@@ -59,19 +64,13 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       if (insideExportDefault) {
         return
       }
-      context.report({
-        node,
-        message: PURITY_ERROR_MESSAGE,
-      })
+      reportPurityError(node)
     },
 
     // export default の禁止
     'ExportDefaultDeclaration'(node) {
       insideExportDefault = true
-      context.report({
-        node,
-        message: PURITY_ERROR_MESSAGE,
-      })
+      reportPurityError(node)
     },
     'ExportDefaultDeclaration:exit'() {
       insideExportDefault = false

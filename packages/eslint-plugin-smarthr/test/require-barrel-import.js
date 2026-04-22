@@ -1216,12 +1216,10 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
-    // 16. バレルファイル内でexport { foo } (sourceなし)
+    // 16. バレルファイル内で変数定義とexport { foo }
+    // export { foo } は定義（const foo）が禁止されているため、実質的に発生しない
     {
-      code: `
-        const foo = 'bar'
-        export { foo }
-      `,
+      code: `const foo = 'bar'`,
       filename: (() => {
         createFixture('barrel-purity-export-local', {
           'utils': {
@@ -1231,9 +1229,6 @@ ruleTester.run('require-barrel-import', rule, {
         return `${fixturesRoot}/barrel-purity-export-local/utils/index.ts`
       })(),
       errors: [
-        {
-          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
-        },
         {
           message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },

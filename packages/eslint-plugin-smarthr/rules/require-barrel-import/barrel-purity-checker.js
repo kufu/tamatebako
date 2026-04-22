@@ -76,25 +76,6 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
     'ExportDefaultDeclaration:exit'() {
       insideExportDefault = false
     },
-
-    // sourceなしのexport（export { foo }）の禁止
-    ExportNamedDeclaration(node) {
-      // export ... from '...' の形式はOK（sourceがある場合）
-      if (node.source) {
-        return
-      }
-
-      // 宣言付きexport（export const, export function等）はすでに他のルールで検出
-      if (node.declaration) {
-        return
-      }
-
-      // export { foo } の形式は禁止
-      context.report({
-        node,
-        message: PURITY_ERROR_MESSAGE,
-      })
-    },
   }
 }
 

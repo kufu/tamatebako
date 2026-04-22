@@ -57,12 +57,11 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 
     // 条件付き禁止パターン: 関数定義、クラス定義
     'FunctionDeclaration, ClassDeclaration'(node) {
-      // export default function() {} / export default class {} の場合、
+      // export default function() {} / export default class {} の場合は
       // ExportDefaultDeclarationで既にエラーが出るのでスキップ
-      if (insideExportDefault) {
-        return
+      if (!insideExportDefault) {
+        reportPurityError(node)
       }
-      reportPurityError(node)
     },
 
     // export default の禁止

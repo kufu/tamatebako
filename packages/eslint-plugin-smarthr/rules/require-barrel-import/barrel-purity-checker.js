@@ -21,7 +21,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: 'import 文',
     baseMessage: `バレルファイル内で import 文は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: import文、変数定義、関数定義、クラス定義
 許可: export { ... } from '...'
 
@@ -31,7 +33,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: '変数定義',
     baseMessage: `バレルファイル内で変数定義は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: import文、変数定義、関数定義、クラス定義
 許可: export { ... } from '...'
 
@@ -41,7 +45,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: '関数定義',
     baseMessage: `バレルファイル内で関数定義は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: import文、変数定義、関数定義、クラス定義
 許可: export { ... } from '...'
 
@@ -51,7 +57,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: 'クラス定義',
     baseMessage: `バレルファイル内でクラス定義は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: import文、変数定義、関数定義、クラス定義
 許可: export { ... } from '...'
 
@@ -61,7 +69,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: 'export default',
     baseMessage: `バレルファイル内で export default は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: import文、変数定義、関数定義、クラス定義、export default
 許可: export { ... } from '...'
 
@@ -71,7 +81,9 @@ const PURITY_ERROR_MESSAGES = {
     subject: '既存の定義をexport',
     baseMessage: `バレルファイル内で、既存の定義をexportすることは禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
 禁止: export { foo } （定義済みの変数をexport）
 許可: export { foo } from './module'
 
@@ -81,7 +93,7 @@ const PURITY_ERROR_MESSAGES = {
     subject: '型定義',
     baseMessage: `バレルファイル内で型定義は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
 型定義は専用ファイルに記述し、そこから re-export してください。
 
 禁止: export type Size = 'small' | 'medium' | 'large'
@@ -93,7 +105,7 @@ const PURITY_ERROR_MESSAGES = {
     subject: 'インターフェース定義',
     baseMessage: `バレルファイル内でインターフェース定義は禁止されています。
 
-バレルファイルは re-export のみを行うべきです。
+バレルファイルは設置されたディレクトリ外へのexportが責務です。
 型定義は専用ファイルに記述し、そこから re-export してください。
 
 禁止: export interface ComponentAPI { ... }

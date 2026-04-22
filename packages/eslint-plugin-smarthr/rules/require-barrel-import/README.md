@@ -121,10 +121,6 @@ export { value }
 export { Button } from './Button'
 export { Input, TextArea } from './Input'
 
-// ✅ re-export（wildcard export）
-export * from './utils'
-export * from './hooks'
-
 // ✅ TypeScript型定義（型は実行時の責務ではないため許可）
 export type { ButtonProps } from './Button'
 export interface ComponentAPI {

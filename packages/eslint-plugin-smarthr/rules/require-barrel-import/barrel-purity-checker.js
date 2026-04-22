@@ -12,17 +12,6 @@ const isBarrelFile = (filePath, barrelFileNames) => {
 }
 
 /**
- * エラーメッセージ（全ノードタイプ共通）
- */
-const PURITY_ERROR_MESSAGE = `バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-許可: export { ... } from '...'
-      export type { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`
-
-/**
  * バレルファイルの純粋性をチェックするビジター
  * バレルファイルは re-export のみを行うべきで、以下は禁止:
  * - import文
@@ -47,7 +36,13 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
   const reportPurityError = (node) => {
     context.report({
       node,
-      message: PURITY_ERROR_MESSAGE,
+      message: `バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
+
+許可: export { ... } from '...'
+      export type { ... } from '...'
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
     })
   }
 

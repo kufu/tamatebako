@@ -149,6 +149,38 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
       })
     },
+
+    // TypeScript型エイリアスの禁止
+    TSTypeAliasDeclaration(node) {
+      context.report({
+        node,
+        message: `バレルファイル内で型定義は禁止されています。
+
+バレルファイルは re-export のみを行うべきです。
+型定義は専用ファイルに記述し、そこから re-export してください。
+
+禁止: export type Size = 'small' | 'medium' | 'large'
+許可: export type { Size } from './types'
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+      })
+    },
+
+    // TypeScriptインターフェース定義の禁止
+    TSInterfaceDeclaration(node) {
+      context.report({
+        node,
+        message: `バレルファイル内でインターフェース定義は禁止されています。
+
+バレルファイルは re-export のみを行うべきです。
+型定義は専用ファイルに記述し、そこから re-export してください。
+
+禁止: export interface ComponentAPI { ... }
+許可: export type { ComponentAPI } from './types'
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+      })
+    },
   }
 }
 

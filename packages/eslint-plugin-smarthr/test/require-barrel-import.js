@@ -462,23 +462,17 @@ ruleTester.run('require-barrel-import', rule, {
       options: [{ additionalBarrelFileNames: ['client', 'server'] }],
     },
 
-    // TypeScript型定義は許可（型は実行時の責務ではない）
+    // TypeScript型のre-exportは許可
     {
-      code: `
-        export type { ButtonProps } from './Button'
-        export interface ComponentAPI {
-          render: () => void
-        }
-        export type UtilType = string | number
-      `,
+      code: `export type { ButtonProps } from './Button'`,
       filename: (() => {
-        createFixture('barrel-purity-valid-types', {
+        createFixture('barrel-purity-valid-type-reexport', {
           'components': {
             'index.tsx': '',
             'Button.tsx': '',
           },
         })
-        return `${fixturesRoot}/barrel-purity-valid-types/components/index.tsx`
+        return `${fixturesRoot}/barrel-purity-valid-type-reexport/components/index.tsx`
       })(),
       languageOptions: {
         parser: require('typescript-eslint').parser,
@@ -1262,6 +1256,48 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /バレルファイル内で import 文は禁止されています/,
+        },
+      ],
+    },
+
+    // 18. バレルファイル内で型エイリアス定義
+    {
+      code: `export type Size = 'small' | 'medium' | 'large'`,
+      filename: (() => {
+        createFixture('barrel-purity-type-alias', {
+          'components': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-type-alias/components/index.ts`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        {
+          message: /バレルファイル内で型定義は禁止されています/,
+        },
+      ],
+    },
+
+    // 19. バレルファイル内でインターフェース定義
+    {
+      code: `export interface ComponentAPI { render: () => void }`,
+      filename: (() => {
+        createFixture('barrel-purity-interface', {
+          'components': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-interface/components/index.ts`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        {
+          message: /バレルファイル内でインターフェース定義は禁止されています/,
         },
       ],
     },

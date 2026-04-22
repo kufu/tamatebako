@@ -112,6 +112,12 @@ export default function Component() {
 // ❌ 既存定義のexport
 const value = 'test'
 export { value }
+
+// ❌ 型定義
+export type Size = 'small' | 'medium' | 'large'
+export interface ComponentAPI {
+  render: () => void
+}
 ```
 
 ### ✅ 許可されるパターン
@@ -121,12 +127,9 @@ export { value }
 export { Button } from './Button'
 export { Input, TextArea } from './Input'
 
-// ✅ TypeScript型定義（型は実行時の責務ではないため許可）
+// ✅ TypeScript型のre-export
 export type { ButtonProps } from './Button'
-export interface ComponentAPI {
-  render: () => void
-}
-export type Size = 'small' | 'medium' | 'large'
+export type { Size, ComponentAPI } from './types'
 ```
 
 ### 正しい実装方法
@@ -137,15 +140,20 @@ export type Size = 'small' | 'medium' | 'large'
 // ❌ 悪い例: index.ts内で定義
 // components/Button/index.ts
 export const DEFAULT_SIZE = 'medium'
+export type Size = 'small' | 'medium' | 'large'
 export { Button } from './Button'
 
 // ✅ 良い例: 専用ファイルを作成
 // components/Button/constants.ts
 export const DEFAULT_SIZE = 'medium'
 
+// components/Button/types.ts
+export type Size = 'small' | 'medium' | 'large'
+
 // components/Button/index.ts
 export { Button } from './Button'
 export { DEFAULT_SIZE } from './constants'
+export type { Size } from './types'
 ```
 
 ## config

@@ -69,11 +69,11 @@ import { Button } from '@/components/Button'  // OK
 
 ## バレルファイルの純粋性チェック
 
-バレルファイル（index.ts、client.ts等）内では、**re-export のみを行うべき**であり、それ以外の実装は禁止されます。
+バレルファイル（index.ts、client.ts等）は**設置されたディレクトリ外へのexportが責務**です。それ以外の実装（import文、変数定義、関数定義など）は禁止されます。
 
 ### なぜ純粋性が必要なのか
 
-バレルファイルはディレクトリ外部へのエクスポート（公開API定義）が責務です。ロジックや定義を含むと、以下の問題が発生します：
+バレルファイルの責務はディレクトリ外部へのexport（公開API定義）のみです。ロジックや定義を含むと、以下の問題が発生します：
 
 1. **責務の混在**: エクスポート定義とロジック実装が混在し、ファイルの役割が不明確になる
 2. **メンテナンス性の低下**: バレルファイルが肥大化し、何をexportしているか把握しづらくなる
@@ -108,10 +108,6 @@ export class Helper {}
 export default function Component() {
   return <div />
 }
-
-// ❌ 既存定義のexport
-const value = 'test'
-export { value }
 
 // ❌ 型定義
 export type Size = 'small' | 'medium' | 'large'

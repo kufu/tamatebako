@@ -1103,7 +1103,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で import 文は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1121,7 +1121,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で変数定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1139,7 +1139,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で関数定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1157,7 +1157,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で関数定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1175,7 +1175,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内でクラス定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1193,7 +1193,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内でクラス定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1211,7 +1211,7 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で export default は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1232,10 +1232,10 @@ ruleTester.run('require-barrel-import', rule, {
       })(),
       errors: [
         {
-          message: /バレルファイル内で変数定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
         {
-          message: /バレルファイル内で、既存の定義をexportすることは禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1255,7 +1255,7 @@ ruleTester.run('require-barrel-import', rule, {
       options: [{ additionalBarrelFileNames: ['client', 'server'] }],
       errors: [
         {
-          message: /バレルファイル内で import 文は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1276,7 +1276,7 @@ ruleTester.run('require-barrel-import', rule, {
       },
       errors: [
         {
-          message: /バレルファイル内で型定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },
@@ -1297,7 +1297,7 @@ ruleTester.run('require-barrel-import', rule, {
       },
       errors: [
         {
-          message: /バレルファイル内でインターフェース定義は禁止されています/,
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },

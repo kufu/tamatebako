@@ -14,114 +14,68 @@ const isBarrelFile = (filePath, barrelFileNames) => {
 }
 
 /**
- * ノードタイプごとのエラーメッセージ定義
+ * 基本エラーメッセージ（全ノードタイプ共通）
  */
-const PURITY_ERROR_MESSAGES = {
-  ImportDeclaration: {
-    subject: 'import 文',
-    baseMessage: `バレルファイル内で import 文は禁止されています。
+const BASE_MESSAGE = `バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。`
 
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: import文、変数定義、関数定義、クラス定義
-許可: export { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-  },
-  VariableDeclaration: {
-    subject: '変数定義',
-    baseMessage: `バレルファイル内で変数定義は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: import文、変数定義、関数定義、クラス定義
-許可: export { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-  },
-  FunctionDeclaration: {
-    subject: '関数定義',
-    baseMessage: `バレルファイル内で関数定義は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: import文、変数定義、関数定義、クラス定義
-許可: export { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-  },
-  ClassDeclaration: {
-    subject: 'クラス定義',
-    baseMessage: `バレルファイル内でクラス定義は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: import文、変数定義、関数定義、クラス定義
-許可: export { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-  },
+/**
+ * ノードタイプごとの追加情報
+ */
+const ADDITIONAL_DETAILS = {
   ExportDefaultDeclaration: {
-    subject: 'export default',
-    baseMessage: `バレルファイル内で export default は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: import文、変数定義、関数定義、クラス定義、export default
-許可: export { ... } from '...'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+    prohibited: 'import文、変数定義、関数定義、クラス定義、export default',
   },
   ExportNamedDeclaration: {
-    subject: '既存の定義をexport',
-    baseMessage: `バレルファイル内で、既存の定義をexportすることは禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。
-
-禁止: export { foo } （定義済みの変数をexport）
-許可: export { foo } from './module'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+    prohibited: 'export { foo } （定義済みの変数をexport）',
+    allowed: 'export { foo } from \'./module\'',
   },
   TSTypeAliasDeclaration: {
-    subject: '型定義',
-    baseMessage: `バレルファイル内で型定義は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-型定義は専用ファイルに記述し、そこから re-export してください。
-
-禁止: export type Size = 'small' | 'medium' | 'large'
-許可: export type { Size } from './types'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+    note: '型定義は専用ファイルに記述し、そこから re-export してください。',
+    prohibited: 'export type Size = \'small\' | \'medium\' | \'large\'',
+    allowed: 'export type { Size } from \'./types\'',
   },
   TSInterfaceDeclaration: {
-    subject: 'インターフェース定義',
-    baseMessage: `バレルファイル内でインターフェース定義は禁止されています。
-
-バレルファイルは設置されたディレクトリ外へのexportが責務です。
-型定義は専用ファイルに記述し、そこから re-export してください。
-
-禁止: export interface ComponentAPI { ... }
-許可: export type { ComponentAPI } from './types'
-
-詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+    note: '型定義は専用ファイルに記述し、そこから re-export してください。',
+    prohibited: 'export interface ComponentAPI { ... }',
+    allowed: 'export type { ComponentAPI } from \'./types\'',
   },
 }
 
 /**
- * エラーメッセージを取得
+ * エラーメッセージを生成
  * @param {string} nodeType - ノードタイプ
  * @returns {string} エラーメッセージ
  */
 const createPurityErrorMessage = (nodeType) => {
-  return PURITY_ERROR_MESSAGES[nodeType].baseMessage
+  const details = ADDITIONAL_DETAILS[nodeType]
+
+  let message = BASE_MESSAGE
+
+  if (details) {
+    message += '\n'
+    if (details.note) {
+      message += `\n${details.note}`
+    }
+    if (details.prohibited || details.allowed) {
+      message += '\n'
+      if (details.prohibited) {
+        message += `\n禁止: ${details.prohibited}`
+      }
+      if (details.allowed) {
+        message += `\n許可: ${details.allowed}`
+      }
+    }
+  } else {
+    // 標準的な禁止・許可リスト
+    message += `\n
+禁止: import文、変数定義、関数定義、クラス定義
+許可: export { ... } from '...'`
+  }
+
+  message += '\n\n詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import'
+
+  return message
 }
 
 /**

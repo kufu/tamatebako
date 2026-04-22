@@ -1,7 +1,5 @@
 const path = require('path')
 
-const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
-
 /**
  * バレルファイル名のパターンにマッチするかチェック
  * @param {string} filePath - ファイルパス
@@ -14,69 +12,15 @@ const isBarrelFile = (filePath, barrelFileNames) => {
 }
 
 /**
- * 基本エラーメッセージ（全ノードタイプ共通）
+ * エラーメッセージ（全ノードタイプ共通）
  */
-const BASE_MESSAGE = `バレルファイルは設置されたディレクトリ外へのexportが責務です。
-実装などexport以外の記述は別ファイルに書き出してください。`
+const PURITY_ERROR_MESSAGE = `バレルファイルは設置されたディレクトリ外へのexportが責務です。
+実装などexport以外の記述は別ファイルに書き出してください。
 
-/**
- * ノードタイプごとの追加情報
- */
-const ADDITIONAL_DETAILS = {
-  ExportDefaultDeclaration: {
-    prohibited: 'import文、変数定義、関数定義、クラス定義、export default',
-  },
-  ExportNamedDeclaration: {
-    prohibited: 'export { foo } （定義済みの変数をexport）',
-    allowed: 'export { foo } from \'./module\'',
-  },
-  TSTypeAliasDeclaration: {
-    note: '型定義は専用ファイルに記述し、そこから re-export してください。',
-    prohibited: 'export type Size = \'small\' | \'medium\' | \'large\'',
-    allowed: 'export type { Size } from \'./types\'',
-  },
-  TSInterfaceDeclaration: {
-    note: '型定義は専用ファイルに記述し、そこから re-export してください。',
-    prohibited: 'export interface ComponentAPI { ... }',
-    allowed: 'export type { ComponentAPI } from \'./types\'',
-  },
-}
+許可: export { ... } from '...'
+      export type { ... } from '...'
 
-/**
- * エラーメッセージを生成
- * @param {string} nodeType - ノードタイプ
- * @returns {string} エラーメッセージ
- */
-const createPurityErrorMessage = (nodeType) => {
-  const details = ADDITIONAL_DETAILS[nodeType]
-
-  let message = BASE_MESSAGE
-
-  if (details) {
-    message += '\n'
-    if (details.note) {
-      message += `\n${details.note}`
-    }
-    if (details.prohibited || details.allowed) {
-      message += '\n'
-      if (details.prohibited) {
-        message += `\n禁止: ${details.prohibited}`
-      }
-      if (details.allowed) {
-        message += `\n許可: ${details.allowed}`
-      }
-    }
-  } else {
-    // 標準的な禁止・許可リスト
-    message += `\n
-禁止: import文、変数定義、関数定義、クラス定義
-許可: export { ... } from '...'`
-  }
-
-  message += '\n\n詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import'
-
-  return message
-}
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`
 
 /**
  * バレルファイルの純粋性をチェックするビジター
@@ -104,7 +48,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
     'ImportDeclaration, VariableDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration'(node) {
       context.report({
         node,
-        message: createPurityErrorMessage(node.type),
+        message: PURITY_ERROR_MESSAGE,
       })
     },
 
@@ -116,7 +60,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       }
       context.report({
         node,
-        message: createPurityErrorMessage(node.type),
+        message: PURITY_ERROR_MESSAGE,
       })
     },
 
@@ -128,7 +72,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       }
       context.report({
         node,
-        message: createPurityErrorMessage(node.type),
+        message: PURITY_ERROR_MESSAGE,
       })
     },
 
@@ -137,7 +81,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       insideExportDefault = true
       context.report({
         node,
-        message: createPurityErrorMessage(node.type),
+        message: PURITY_ERROR_MESSAGE,
       })
     },
     'ExportDefaultDeclaration:exit'() {
@@ -159,7 +103,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       // export { foo } の形式は禁止
       context.report({
         node,
-        message: createPurityErrorMessage(node.type),
+        message: PURITY_ERROR_MESSAGE,
       })
     },
   }

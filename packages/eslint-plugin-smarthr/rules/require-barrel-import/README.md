@@ -123,8 +123,41 @@ export type { ButtonProps } from './Button'
 export type { Size, ComponentAPI } from './types'
 
 // ✅ default exportのre-export
+export { default } from './Component'           // default → default
+export { default as Button } from './Button'    // default → named
+export { Button as default } from './Button'    // named → default
+```
+
+#### 💡 Tips: default exportのre-export
+
+バレルファイルで default export を扱う場合、以下の3つのパターンがあります：
+
+```typescript
+// パターン1: default → default
+// Component.tsx が export default Component している場合
 export { default } from './Component'
-export { default as Button } from './Button'
+// → このバレルからも default として再エクスポート
+
+// パターン2: default → named
+// Component.tsx が export default Component している場合
+export { default as Component } from './Component'
+// → default を Component という名前で再エクスポート
+
+// パターン3: named → default
+// Button.tsx が export const Button = ... している場合
+export { Button as default } from './Button'
+// → named export の Button を default として再エクスポート
+```
+
+**重要:** バレルファイル内で `export default` を直接記述することはできません。常に `from` 句を使った re-export である必要があります。
+
+```typescript
+// ❌ 禁止: バレルファイル内で直接 export default
+const Component = () => { ... }
+export default Component
+
+// ✅ 許可: 別ファイルから re-export
+export { Component as default } from './Component'
 ```
 
 ### 正しい実装方法

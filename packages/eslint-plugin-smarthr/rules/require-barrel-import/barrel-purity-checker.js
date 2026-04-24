@@ -36,9 +36,11 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
       message: `バレルファイルは設置されたディレクトリ外へのexportが責務です。
 実装などexport以外の記述は別ファイルに書き出してください。
 
-許可: export { ... } from '...'
-      export type { ... } from '...'
-      export default hoge
+許可されるパターン:
+  export { ... } from '...'
+  export type { ... } from '...'
+  export { default } from '...'
+  export { Foo as default } from '...'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
     })

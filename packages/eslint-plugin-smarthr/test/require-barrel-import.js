@@ -506,6 +506,20 @@ ruleTester.run('require-barrel-import', rule, {
         return `${fixturesRoot}/barrel-purity-valid-default-as-reexport/components/index.ts`
       })(),
     },
+
+    // 【検証】named exportをdefaultとしてre-export
+    {
+      code: `export { Button as default } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-named-as-default', {
+          'components': {
+            'index.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-named-as-default/components/index.ts`
+      })(),
+    },
   ],
 
   invalid: [

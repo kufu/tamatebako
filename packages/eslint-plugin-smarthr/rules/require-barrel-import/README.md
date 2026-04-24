@@ -104,11 +104,6 @@ export function createConfig() {
 class Util {}
 export class Helper {}
 
-// ❌ export default
-export default function Component() {
-  return <div />
-}
-
 // ❌ 型定義
 export type Size = 'small' | 'medium' | 'large'
 export interface ComponentAPI {
@@ -126,6 +121,10 @@ export { Input, TextArea } from './Input'
 // ✅ TypeScript型のre-export
 export type { ButtonProps } from './Button'
 export type { Size, ComponentAPI } from './types'
+
+// ✅ default exportのre-export
+export { default } from './Component'
+export { default as Button } from './Button'
 ```
 
 ### 正しい実装方法

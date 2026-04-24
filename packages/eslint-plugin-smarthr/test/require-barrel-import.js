@@ -478,6 +478,34 @@ ruleTester.run('require-barrel-import', rule, {
         parser: require('typescript-eslint').parser,
       },
     },
+
+    // default exportのre-exportは許可
+    {
+      code: `export { default } from './Component'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-default-reexport', {
+          'components': {
+            'index.ts': '',
+            'Component.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-default-reexport/components/index.ts`
+      })(),
+    },
+
+    // default exportのre-export（as付き）は許可
+    {
+      code: `export { default as Button } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-default-as-reexport', {
+          'components': {
+            'index.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-default-as-reexport/components/index.ts`
+      })(),
+    },
   ],
 
   invalid: [
@@ -1198,25 +1226,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
-    // 15. バレルファイル内でexport default
-    {
-      code: `export default function() {}`,
-      filename: (() => {
-        createFixture('barrel-purity-export-default', {
-          'components': {
-            'index.tsx': '',
-          },
-        })
-        return `${fixturesRoot}/barrel-purity-export-default/components/index.tsx`
-      })(),
-      errors: [
-        {
-          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
-        },
-      ],
-    },
-
-    // 16. バレルファイル内で変数定義とexport { foo }
+    // 15. バレルファイル内で変数定義とexport { foo }
     // export { foo } は定義（const foo）が禁止されているため、実質的に発生しない
     {
       code: `const foo = 'bar'`,
@@ -1290,6 +1300,42 @@ ruleTester.run('require-barrel-import', rule, {
       languageOptions: {
         parser: require('typescript-eslint').parser,
       },
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 20. 【検証用】バレルファイル内でexport default function（禁止）
+    {
+      code: `export default function Page() { return null }`,
+      filename: (() => {
+        createFixture('barrel-purity-export-default-function', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-default-function/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 21. 【検証用】バレルファイル内でexport default class（禁止）
+    {
+      code: `export default class MyComponent {}`,
+      filename: (() => {
+        createFixture('barrel-purity-export-default-class', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-default-class/components/index.tsx`
+      })(),
       errors: [
         {
           message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,

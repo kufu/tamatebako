@@ -29,9 +29,6 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
     return {}
   }
 
-  // export default declaration内の宣言かどうかを追跡
-  let insideExportDefault = false
-
   // エラー報告の共通処理
   const reportPurityError = (node) => {
     context.report({
@@ -41,32 +38,15 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 
 許可: export { ... } from '...'
       export type { ... } from '...'
+      export default hoge
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
     })
   }
 
   return {
-    // 単純禁止パターン（条件なしで禁止）
-    'ImportDeclaration, VariableDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration': reportPurityError,
-
-    // 条件付き禁止パターン: 関数定義、クラス定義
-    'FunctionDeclaration, ClassDeclaration'(node) {
-      // export default function() {} / export default class {} の場合は
-      // ExportDefaultDeclarationで既にエラーが出るのでスキップ
-      if (!insideExportDefault) {
-        reportPurityError(node)
-      }
-    },
-
-    // export default の禁止
-    'ExportDefaultDeclaration'(node) {
-      insideExportDefault = true
-      reportPurityError(node)
-    },
-    'ExportDefaultDeclaration:exit'() {
-      insideExportDefault = false
-    },
+    // 禁止パターン
+    'ImportDeclaration, VariableDeclaration, FunctionDeclaration, ClassDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration': reportPurityError,
   }
 }
 

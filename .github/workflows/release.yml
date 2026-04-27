@@ -39,10 +39,7 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install
-      - run: |
-          npm install -g npm@latest
-          echo "Updated npm version: $(npm -v)"
-      - run: pnpm release --no-push --no-private --yes
+      - run: pnpm release
 
   notify:
     runs-on: ubuntu-latest

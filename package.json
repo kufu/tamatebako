@@ -12,7 +12,7 @@
     "tsc": "tsc --build packages --force",
     "lint": "eslint '**/*.{ts,tsx}'",
     "prerelease": "pnpm build && pnpm lint && pnpm test",
-    "release": "pnpm -r publish",
+    "release": "pnpm -r publish --dry-run",
     "prepare": "husky"
   },
   "author": "SmartHR",

@@ -24,28 +24,4 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install
-      - run: |
-          echo "=== pnpm install 後 ==="
-          git diff
-      - run: |
-          npm install -g npm@latest
-          echo "Updated npm version: $(npm -v)"
-      - run: |
-          echo "=== npm install -g npm@latest 後 ==="
-          git diff
-      - run: pnpm build
-      - run: |
-          echo "=== pnpm build 後 ==="
-          git diff
-      - run: pnpm lint
-      - run: |
-          echo "=== pnpm lint 後 ==="
-          git diff
-      - run: pnpm test
-      - run: |
-          echo "=== pnpm test 後 ==="
-          git diff
-      - run: pnpm release --no-push --no-private --yes
-      - run: |
-          echo "=== pnpm release --dry-run 後 ==="
-          git diff
+      - run: pnpm release

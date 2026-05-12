@@ -36,6 +36,6 @@
     "jest-environment-jsdom": "^30.3.0",
     "next-intl": "^4.4.0",
     "react": "^19.2.5",
-    "use-intl": "^4.9.2"
+    "use-intl": "^4.11.1"
   }
 }

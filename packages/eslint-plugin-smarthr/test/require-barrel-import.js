@@ -392,6 +392,134 @@ ruleTester.run('require-barrel-import', rule, {
         parser: require('typescript-eslint').parser,
       },
     },
+
+    // ========================================
+    // バレルファイルの純粋性チェック - 許可されるパターン
+    // ========================================
+
+    // バレルファイルでexport { ... } from '...' は許可
+    {
+      code: `export { Button } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-export-named', {
+          'components': {
+            'index.tsx': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-export-named/components/index.tsx`
+      })(),
+    },
+
+    // バレルファイルでexport * from '...' は許可
+    {
+      code: `export * from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-export-all', {
+          'components': {
+            'index.tsx': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-export-all/components/index.tsx`
+      })(),
+    },
+
+    // バレルファイルで複数のre-exportは許可
+    {
+      code: `
+        export { Button } from './Button'
+        export { Input } from './Input'
+        export * from './utils'
+      `,
+      filename: (() => {
+        createFixture('barrel-purity-valid-multiple', {
+          'components': {
+            'index.tsx': '',
+            'Button.tsx': '',
+            'Input.tsx': '',
+            'utils': {
+              'index.ts': '',
+            },
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-multiple/components/index.tsx`
+      })(),
+    },
+
+    // additionalBarrelFileNames（client.ts）でもre-exportは許可
+    {
+      code: `export { api } from './api'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-client', {
+          'services': {
+            'client.ts': '',
+            'api.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-client/services/client.ts`
+      })(),
+      options: [{ additionalBarrelFileNames: ['client', 'server'] }],
+    },
+
+    // TypeScript型のre-exportは許可
+    {
+      code: `export type { ButtonProps } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-type-reexport', {
+          'components': {
+            'index.tsx': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-type-reexport/components/index.tsx`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+    },
+
+    // default exportのre-exportは許可
+    {
+      code: `export { default } from './Component'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-default-reexport', {
+          'components': {
+            'index.ts': '',
+            'Component.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-default-reexport/components/index.ts`
+      })(),
+    },
+
+    // default exportのre-export（as付き）は許可
+    {
+      code: `export { default as Button } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-default-as-reexport', {
+          'components': {
+            'index.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-default-as-reexport/components/index.ts`
+      })(),
+    },
+
+    // 【検証】named exportをdefaultとしてre-export
+    {
+      code: `export { Button as default } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-valid-named-as-default', {
+          'components': {
+            'index.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-valid-named-as-default/components/index.ts`
+      })(),
+    },
   ],
 
   invalid: [
@@ -995,6 +1123,236 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています/,
+        },
+      ],
+    },
+
+    // ========================================
+    // バレルファイルの純粋性チェック
+    // ========================================
+
+    // 9. バレルファイル内でimport文を使用
+    {
+      code: `import { Button } from './Button'`,
+      filename: (() => {
+        createFixture('barrel-purity-import', {
+          'components': {
+            'index.tsx': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-import/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 10. バレルファイル内で変数定義
+    {
+      code: `const foo = 'bar'`,
+      filename: (() => {
+        createFixture('barrel-purity-const', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-const/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 11. バレルファイル内で関数定義
+    {
+      code: `function helper() { return 'test' }`,
+      filename: (() => {
+        createFixture('barrel-purity-function', {
+          'utils': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-function/utils/index.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 12. バレルファイル内でexport function
+    {
+      code: `export function helper() { return 'test' }`,
+      filename: (() => {
+        createFixture('barrel-purity-export-function', {
+          'utils': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-function/utils/index.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 13. バレルファイル内でクラス定義
+    {
+      code: `class MyClass {}`,
+      filename: (() => {
+        createFixture('barrel-purity-class', {
+          'models': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-class/models/index.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 14. バレルファイル内でexport class
+    {
+      code: `export class MyClass {}`,
+      filename: (() => {
+        createFixture('barrel-purity-export-class', {
+          'models': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-class/models/index.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 15. バレルファイル内で変数定義とexport { foo }
+    // export { foo } は定義（const foo）が禁止されているため、実質的に発生しない
+    {
+      code: `const foo = 'bar'`,
+      filename: (() => {
+        createFixture('barrel-purity-export-local', {
+          'utils': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-local/utils/index.ts`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 17. additionalBarrelFileNames（client.ts）でもpurityチェック
+    {
+      code: `import { api } from './api'`,
+      filename: (() => {
+        createFixture('barrel-purity-client', {
+          'services': {
+            'client.ts': '',
+            'api.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-client/services/client.ts`
+      })(),
+      options: [{ additionalBarrelFileNames: ['client', 'server'] }],
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 18. バレルファイル内で型エイリアス定義
+    {
+      code: `export type Size = 'small' | 'medium' | 'large'`,
+      filename: (() => {
+        createFixture('barrel-purity-type-alias', {
+          'components': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-type-alias/components/index.ts`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 19. バレルファイル内でインターフェース定義
+    {
+      code: `export interface ComponentAPI { render: () => void }`,
+      filename: (() => {
+        createFixture('barrel-purity-interface', {
+          'components': {
+            'index.ts': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-interface/components/index.ts`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 20. 【検証用】バレルファイル内でexport default function（禁止）
+    {
+      code: `export default function Page() { return null }`,
+      filename: (() => {
+        createFixture('barrel-purity-export-default-function', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-default-function/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 21. 【検証用】バレルファイル内でexport default class（禁止）
+    {
+      code: `export default class MyComponent {}`,
+      filename: (() => {
+        createFixture('barrel-purity-export-default-class', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-export-default-class/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
         },
       ],
     },

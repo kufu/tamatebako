@@ -67,6 +67,180 @@ import { buttonUtils } from '../utils'   // OK
 import { Button } from '@/components/Button'  // OK
 ```
 
+## バレルファイルの純粋性チェック
+
+バレルファイル（index.ts、client.ts等）は**設置されたディレクトリ外へのexportが責務**です。それ以外の実装（import文、変数定義、関数定義など）は禁止されます。
+
+### なぜ純粋性が必要なのか
+
+バレルファイルの責務はディレクトリ外部へのexport（公開API定義）のみです。ロジックや定義を含むと、以下の問題が発生します：
+
+1. **責務の混在**: エクスポート定義とロジック実装が混在し、ファイルの役割が不明確になる
+2. **メンテナンス性の低下**: バレルファイルが肥大化し、何をexportしているか把握しづらくなる
+3. **テスト困難**: ロジックはテスト対象であるべきだが、バレル内に書くとテストしづらい
+4. **分割の妨げ**: 実装はそれぞれ専用ファイルに分離すべき
+
+### ❌ 禁止されるパターン
+
+```typescript
+// ❌ import文の使用
+import { Button } from './Button'
+
+// ❌ 変数定義
+const DEFAULT_SIZE = 'medium'
+export const sizes = ['small', 'medium', 'large']
+
+// ❌ 関数定義
+function helper() {
+  return 'value'
+}
+
+// ❌ export function
+export function createConfig() {
+  return { theme: 'light' }
+}
+
+// ❌ クラス定義
+class Util {}
+export class Helper {}
+
+// ❌ 型定義
+export type Size = 'small' | 'medium' | 'large'
+export interface ComponentAPI {
+  render: () => void
+}
+```
+
+### ✅ 許可されるパターン
+
+```typescript
+// ✅ re-export（named export）
+export { Button } from './Button'
+export { Input, TextArea } from './Input'
+
+// ✅ TypeScript型のre-export
+export type { ButtonProps } from './Button'
+export type { Size, ComponentAPI } from './types'
+
+// ✅ default exportのre-export
+export { default } from './Component'           // default → default
+export { default as Button } from './Button'    // default → named
+export { Button as default } from './Button'    // named → default
+```
+
+#### 💡 Tips: default exportのre-export
+
+バレルファイルで default export を扱う場合、以下の3つのパターンがあります：
+
+```typescript
+// パターン1: default → default
+// Component.tsx が export default Component している場合
+export { default } from './Component'
+// → このバレルからも default として再エクスポート
+
+// パターン2: default → named
+// Component.tsx が export default Component している場合
+export { default as Component } from './Component'
+// → default を Component という名前で再エクスポート
+
+// パターン3: named → default
+// Button.tsx が export const Button = ... している場合
+export { Button as default } from './Button'
+// → named export の Button を default として再エクスポート
+```
+
+**重要:** バレルファイル内で `export default` を直接記述することはできません。常に `from` 句を使った re-export である必要があります。
+
+```typescript
+// ❌ 禁止: バレルファイル内で直接 export default
+const Component = () => { ... }
+export default Component
+
+// ✅ 許可: 別ファイルから re-export
+export { Component as default } from './Component'
+```
+
+### 正しい実装方法
+
+ロジックや定義が必要な場合は、専用ファイルを作成してそこからre-exportします：
+
+```typescript
+// ❌ 悪い例: index.ts内で定義
+// components/Button/index.ts
+export const DEFAULT_SIZE = 'medium'
+export type Size = 'small' | 'medium' | 'large'
+export { Button } from './Button'
+
+// ✅ 良い例: 専用ファイルを作成
+// components/Button/constants.ts
+export const DEFAULT_SIZE = 'medium'
+
+// components/Button/types.ts
+export type Size = 'small' | 'medium' | 'large'
+
+// components/Button/index.ts
+export { Button } from './Button'
+export { DEFAULT_SIZE } from './constants'
+export type { Size } from './types'
+```
+
+### よくあるパターンと修正方法
+
+#### 複数ファイルからimportしてマージする設定ファイル
+
+以下のようなパターンもバレルファイルの純粋性チェックに引っかかります：
+
+```typescript
+// ❌ エラーになる: index.ts内で複数ファイルをマージ
+// config/index.ts
+import a from './a'
+import b from './b'
+import c from './c'
+
+export const config = {
+  ...a,
+  ...b,
+  ...c,
+}
+```
+
+**なぜ禁止？**
+- このパターンは依存解決時にマージ処理が発生するため、副作用を持つロジックと言える
+- バレルファイルは単なる「export の窓口」であるべきで、ロジックを持つべきではない
+
+**修正方法1: 個別にexport（推奨）**
+
+```typescript
+// ✅ 基本: 個別にre-export
+// config/index.ts
+export { default as a } from './a'
+export { default as b } from './b'
+export { default as c } from './c'
+```
+
+利用側で必要なものだけimportできるため、この方法が最も推奨されます。
+
+**修正方法2: どうしてもマージしたい場合**
+
+オブジェクト形式でまとめてexportする必要がある場合は、eslint-disableコメントで対応：
+
+```typescript
+// config/index.ts
+/* eslint-disable smarthr/require-barrel-import -- 設定ファイルのマージのため */
+import a from './a'
+import b from './b'
+import c from './c'
+
+export const config = {
+  ...a,
+  ...b,
+  ...c,
+}
+/* eslint-enable smarthr/require-barrel-import */
+```
+
+ただし、この場合はindex.tsが「バレルファイル」ではなく「設定ファイル」としての責務を持つことになるため、ディレクトリ名やファイル名の見直しも検討してください。
+
 ## config
 
 ### 必須設定

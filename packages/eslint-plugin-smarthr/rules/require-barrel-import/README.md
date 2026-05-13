@@ -191,7 +191,7 @@ export type { Size } from './types'
 以下のようなパターンもバレルファイルの純粋性チェックに引っかかります：
 
 ```typescript
-// ❌ 悪い例: index.ts内で複数ファイルをマージ
+// ❌ エラーになる: index.ts内で複数ファイルをマージ
 // config/index.ts
 import a from './a'
 import b from './b'
@@ -208,11 +208,25 @@ export const config = {
 - このパターンは依存解決時にマージ処理が発生するため、副作用を持つロジックと言える
 - バレルファイルは単なる「export の窓口」であるべきで、ロジックを持つべきではない
 
-**修正方法:**
+**修正方法1: 個別にexport（推奨）**
 
 ```typescript
-// ✅ 良い例: 専用ファイルを作成
-// config/merged.ts
+// ✅ 基本: 個別にre-export
+// config/index.ts
+export { default as a } from './a'
+export { default as b } from './b'
+export { default as c } from './c'
+```
+
+利用側で必要なものだけimportできるため、この方法が最も推奨されます。
+
+**修正方法2: どうしてもマージしたい場合**
+
+オブジェクト形式でまとめてexportする必要がある場合は、eslint-disableコメントで対応：
+
+```typescript
+// config/index.ts
+/* eslint-disable smarthr/require-barrel-import -- 設定ファイルのマージのため */
 import a from './a'
 import b from './b'
 import c from './c'
@@ -222,18 +236,10 @@ export const config = {
   ...b,
   ...c,
 }
-
-// config/index.ts（バレルファイル）
-export { config } from './merged'
-export { default as a } from './a'
-export { default as b } from './b'
-export { default as c } from './c'
+/* eslint-enable smarthr/require-barrel-import */
 ```
 
-このように分離することで：
-- バレルファイル（index.ts）は純粋な re-export のみを担当
-- ロジック（マージ処理）は専用ファイル（merged.ts）に分離
-- それぞれのファイルが単一責任を持つ
+ただし、この場合はindex.tsが「バレルファイル」ではなく「設定ファイル」としての責務を持つことになるため、ディレクトリ名やファイル名の見直しも検討してください。
 
 ## config
 

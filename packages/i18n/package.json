@@ -35,7 +35,7 @@
     "@types/react": "^19.2.14",
     "jest-environment-jsdom": "^30.3.0",
     "next-intl": "^4.4.0",
-    "react": "^19.2.5",
+    "react": "^19.2.6",
     "use-intl": "^4.9.2"
   }
 }

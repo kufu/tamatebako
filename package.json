@@ -6,27 +6,25 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm build --watch",
-    "build": "lerna run prebuild --stream && pnpm tsc",
+    "build": "pnpm -r --stream run prebuild && pnpm tsc",
     "pretest": "pnpm build",
-    "test": "jest && lerna run test",
+    "test": "jest && pnpm -r run test",
     "tsc": "tsc --build packages --force",
     "lint": "eslint '**/*.{ts,tsx}'",
-    "versionup": "HUSKY_SKIP=true lerna version --conventional-commits",
     "prerelease": "pnpm build && pnpm lint && pnpm test",
-    "release": "lerna publish from-package",
+    "release": "pnpm -r publish",
     "prepare": "husky"
   },
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
+    "@commitlint/cli": "^20.5.2",
     "@commitlint/config-conventional": "^20.5.0",
     "@types/jest": "^30.0.0",
     "eslint": "9.39.4",
     "eslint-config-smarthr": "14.0.1",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
-    "lerna": "^9.0.7",
     "prettier": "^3.8.3",
     "prettier-config-smarthr": "^1.0.1",
     "react": "^19.2.5",
@@ -34,5 +32,5 @@
     "ts-jest": "^29.4.9",
     "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.3"
 }

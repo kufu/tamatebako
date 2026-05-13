@@ -51,7 +51,7 @@ $ pnpm release
 ## 新しいパッケージの追加方法
 
 1. `packages` ディレクトリに新しいパッケージ用のディレクトリを作成し、必要なファイルを追加します。
-2. Lerna がリリースしてしまわないように、`package.json` に `private: true` を追記します。
+2. pnpm がリリースしてしまわないように、`package.json` に `private: true` を追記します。
 3. tsc のビルド対象に含める場合は、`packages/tsconfig.json` の `references` に追加します。
 4. 通常通り conventional commits でコミットを行い、プルリクエストを作成します。
 5. プルリクエストをマージしても、リリース用のプルリクエストが作成されないことを確認します。

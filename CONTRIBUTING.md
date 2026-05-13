@@ -6,7 +6,7 @@ Thank you for your contribution!
 
 ### Setup
 
-This repository is a monorepo using Lerna and Yarn Workspaces.
+This repository is a monorepo using pnpm workspace.
 
 ```sh
 % cd tamatebako

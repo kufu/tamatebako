@@ -184,6 +184,57 @@ export { DEFAULT_SIZE } from './constants'
 export type { Size } from './types'
 ```
 
+### よくあるパターンと修正方法
+
+#### 複数ファイルからimportしてマージする設定ファイル
+
+以下のようなパターンもバレルファイルの純粋性チェックに引っかかります：
+
+```typescript
+// ❌ 悪い例: index.ts内で複数ファイルをマージ
+// config/index.ts
+import a from './a'
+import b from './b'
+import c from './c'
+
+export const config = {
+  ...a,
+  ...b,
+  ...c,
+}
+```
+
+**なぜ禁止？**
+- このパターンは依存解決時にマージ処理が発生するため、副作用を持つロジックと言える
+- バレルファイルは単なる「export の窓口」であるべきで、ロジックを持つべきではない
+
+**修正方法:**
+
+```typescript
+// ✅ 良い例: 専用ファイルを作成
+// config/merged.ts
+import a from './a'
+import b from './b'
+import c from './c'
+
+export const config = {
+  ...a,
+  ...b,
+  ...c,
+}
+
+// config/index.ts（バレルファイル）
+export { config } from './merged'
+export { default as a } from './a'
+export { default as b } from './b'
+export { default as c } from './c'
+```
+
+このように分離することで：
+- バレルファイル（index.ts）は純粋な re-export のみを担当
+- ロジック（マージ処理）は専用ファイル（merged.ts）に分離
+- それぞれのファイルが単一責任を持つ
+
 ## config
 
 ### 必須設定

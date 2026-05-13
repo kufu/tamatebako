@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.14.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.13.0...eslint-plugin-smarthr-v6.14.0) (2026-05-13)
+
+
+### Features
+
+* **require-barrel-import:** バレルファイルの純粋性チェックを追加 ([#1271](https://github.com/kufu/tamatebako/issues/1271)) ([99c16ab](https://github.com/kufu/tamatebako/commit/99c16abc2c7aacedceafdc89df7ab6d8eda9eeb4))
+
 ## [6.13.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.12.1...eslint-plugin-smarthr-v6.13.0) (2026-04-20)
 
 

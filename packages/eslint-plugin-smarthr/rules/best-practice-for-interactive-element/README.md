@@ -34,7 +34,7 @@
 
 #### smarthr-uiの対象要素
 
-- AccordionPanel
+- Accordion
 - Anchor
 - Checkbox
 - Date

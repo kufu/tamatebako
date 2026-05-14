@@ -177,8 +177,12 @@ ruleTester.run('component-name', rule, {
     { code: 'const SegmentedControlHoge = styled(FugaSegmentedControl)``', errors: [ { message: messageInheritance({ extended: 'SegmentedControlHoge', matcher: '/SegmentedControl$/' }) } ]  },
     { code: `import { FormDialog as HogeDialog } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeDialog', matcher: /FormDialog$/, base: 'FormDialog' }) } ] },
     { code: 'const PaginationFuga = styled(FugaPagination)``', errors: [ { message: messageInheritance({ extended: 'PaginationFuga', matcher: /Pagination$/ }) } ]  },
+    { code: 'const PanelAny = styled(FugaPanel)``', errors: [ { message: messageInheritance({ extended: 'PanelAny', matcher: /Panel$/ }) } ]  },
     { code: `import { HogeSideNav as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Nav$/, base: 'HogeSideNav' }) }, { message: messageImportAs({ extended: 'Hoge', matcher: /SideNav$/, base: 'HogeSideNav' }) } ] },
-    { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [ { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /AccordionPanel$/ }) } ]  },
+    { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [
+      { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /AccordionPanel$/ }) },
+      { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /Panel$/ }) }
+    ]  },
     { code: `import { HogeFilterDropdown as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /FilterDropdown$/, base: 'HogeFilterDropdown' }) } ] },
     { code: `const Hoge = styled.fieldset`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Fieldset$/ }) } ] },
     { code: `const Hoge = styled(Fieldsets)`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Fieldsets$/ }) } ] },
@@ -220,6 +224,7 @@ ruleTester.run('component-name', rule, {
     { code: 'const HogeIcon = styled(Hoge)``', errors: [ { message: messageProperName({ extended: 'HogeIcon', matcher: /(Icon|^(img|svg))$/, suffix: 'Icon', base: 'Hoge' }) } ] },
     { code: `import { ComboBox as ComboBoxHoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'ComboBoxHoge', matcher: /Combobox$/, base: 'ComboBox' }) } ] },
     { code: 'const RadioButton = styled(FugaRadioButtonPanel)``', errors: [
+      { message: messageInheritance({ extended: 'RadioButton', matcher: /Panel$/ }) },
       { message: messageInheritance({ extended: 'RadioButton', matcher: /RadioButtonPanel$/ }) },
       { message: messageProperName({ extended: 'RadioButton', matcher: /(B|^b)utton$/, sampleMatcher: /(Button)$/, suffix: 'Button', base: 'FugaRadioButtonPanel' }) },
       { message: messageProperName({ extended: 'RadioButton', matcher: /RadioButton$/, sampleMatcher: /(RadioButton)$/, suffix: 'RadioButton', base: 'FugaRadioButtonPanel' }) }] },

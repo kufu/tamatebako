@@ -4,7 +4,7 @@
 
 `DefinitionList` コンポーネントが同じ親要素の直下に連続して配置されている場合、多くのケースで誤った使い方をしている可能性があります。
 
-以前は異なるカラム数（1カラム・2カラムなど）を表現するために複数の `DefinitionList` を使う必要がありましたが、現在は `DefinitionListItem` の `maxColumns` prop を使用することで、1つの `DefinitionList` 内で異なるカラム数を混在させることができます。
+`DefinitionListItem` の `maxColumns` prop を使用することで、1つの `DefinitionList` 内で異なるカラム数を混在させることができます。
 
 ## rules
 

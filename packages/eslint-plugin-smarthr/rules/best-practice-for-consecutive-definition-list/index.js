@@ -38,21 +38,19 @@ module.exports = {
         const prev = getPreviousSibling(node)
 
         if (
-          !prev ||
-          prev.type !== 'JSXElement' ||
-          prev.openingElement.name.type !== 'JSXIdentifier' ||
-          !DEFINITION_LIST_PATTERN.test(prev.openingElement.name.name)
+          prev &&
+          prev.type === 'JSXElement' &&
+          prev.openingElement.name.type === 'JSXIdentifier' &&
+          DEFINITION_LIST_PATTERN.test(prev.openingElement.name.name)
         ) {
-          return
-        }
-
-        context.report({
-          node: node.openingElement.name,
-          message: `DefinitionList が連続しています
+          context.report({
+            node: node.openingElement.name,
+            message: `DefinitionList が連続しています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-consecutive-definition-list
  - DefinitionListItem の maxColumns prop を使用して1つにまとめることを検討してください
  - 例外: 意味的に異なるグループの場合は複数のDefinitionListを使用しても問題ありません`,
-        })
+          })
+        }
       },
     }
   },

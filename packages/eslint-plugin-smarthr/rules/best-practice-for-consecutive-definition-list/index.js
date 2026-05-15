@@ -14,7 +14,6 @@ const getPreviousSibling = (node) => {
   for (let i = currentIndex - 1; i >= 0; i--) {
     const child = children[i]
 
-    // 空白のJSXText or falsy値のJSXExpressionContainer スキップ
     if (child.type === 'JSXText' && child.value.trim() === '') continue
     if (
       child.type === 'JSXExpressionContainer' &&
@@ -37,13 +36,13 @@ module.exports = {
   },
   create(context) {
     return {
-      'JSXElement[openingElement.name.name="DefinitionList"]'(node) {
+      'JSXElement[openingElement.name.name=/DefinitionList$/]'(node) {
         const prev = getPreviousSibling(node)
 
         if (
           prev?.type === 'JSXElement' &&
           prev.openingElement.name.type === 'JSXIdentifier' &&
-          prev.openingElement.name.name === 'DefinitionList'
+          /DefinitionList$/.test(prev.openingElement.name.name)
         ) {
           context.report({
             node: node.openingElement.name,

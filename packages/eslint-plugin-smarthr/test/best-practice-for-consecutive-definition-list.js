@@ -223,5 +223,24 @@ ruleTester.run('best-practice-for-consecutive-definition-list', rule, {
         },
       ],
     },
+    // 間にコメントがある場合（スキップされるので連続扱い）
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {/* コメント */}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+      errors: [
+        {
+          message: /DefinitionList が連続しています/,
+        },
+      ],
+    },
   ],
 })

@@ -14,8 +14,16 @@ const getPreviousSibling = (node) => {
   for (let i = currentIndex - 1; i >= 0; i--) {
     const child = children[i]
 
-    // 空白JSXText のみスキップ
+    // 空白JSXText スキップ
     if (child.type === 'JSXText' && child.value.trim() === '') continue
+
+    // JSXコメント {/* ... */} スキップ
+    if (
+      child.type === 'JSXExpressionContainer' &&
+      child.expression.type === 'JSXEmptyExpression'
+    ) {
+      continue
+    }
 
     return child
   }

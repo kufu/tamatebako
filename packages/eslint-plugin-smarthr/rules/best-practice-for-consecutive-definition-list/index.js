@@ -37,12 +37,7 @@ module.exports = {
       [`JSXElement[openingElement.name.name=${DEFINITION_LIST_PATTERN}]`](node) {
         const prev = getPreviousSibling(node)
 
-        if (
-          prev &&
-          prev.type === 'JSXElement' &&
-          prev.openingElement.name.type === 'JSXIdentifier' &&
-          DEFINITION_LIST_PATTERN.test(prev.openingElement.name.name)
-        ) {
+        if (prev?.type === 'JSXElement' && DEFINITION_LIST_PATTERN.test(prev.openingElement.name.name)) {
           context.report({
             node: node.openingElement.name,
             message: `DefinitionList が連続しています

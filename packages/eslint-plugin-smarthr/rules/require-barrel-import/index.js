@@ -534,11 +534,12 @@ import先バレル: ${node.source.value} (${importedBarrelName}.ts)
    → どちらか一方のbarrelファイルからのみre-exportしてください
    例: client componentなら client.ts から、server componentなら index.ts から
 
-2. 本当に両方から同じものをexportする必要がある場合のみ
-   → 同じファイルを両方のbarrelファイルからre-exportする
-   （このケースは稀です。ほとんどの場合は1で解決できます）
+2. barrelファイルの分割が不要な場合は、統合を検討する
+   → 最初は分離が必要だと思ったが、実際には不要だった場合など
 
-3. barrelファイルの分割が不要な場合は、統合を検討する
+3. 本当に両方から同じものをexportする必要がある場合のみ
+   → 同じファイルを両方のbarrelファイルからre-exportする
+   （このケースは稀です。ほとんどの場合は1または2で解決できます）
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
               })

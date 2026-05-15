@@ -137,7 +137,19 @@ export { ButtonIcon } from './ButtonIcon'  // client component
 - public API → `index.ts` からexport
 - internal API → 別のbarrelまたは直接import
 
-#### 方法2: 同じファイルを両方のbarrelからre-exportする
+#### 方法2: バレルファイルの統合を検討
+
+分割が不要な場合は、統合することも検討してください：
+
+```typescript
+// components/Button/index.ts のみ使用
+export { Button } from './Button'
+export { ButtonIcon } from './ButtonIcon'
+```
+
+最初は分離が必要だと思ったが、実際には不要だったというケースは比較的よくあります。
+
+#### 方法3: 同じファイルを両方のbarrelからre-exportする
 
 本当に両方のbarrelから同じコンポーネントをexportする必要がある場合のみ：
 
@@ -154,17 +166,7 @@ export { Button } from './ButtonBase'
 
 同じ実装ファイル（`ButtonBase.tsx`）を両方のbarrelファイルからre-exportします。
 
-ただし、この方法は稀なケースです。ほとんどの場合は方法1で解決できます。
-
-#### 方法3: バレルファイルの統合を検討
-
-分割が不要な場合は、統合することも検討してください：
-
-```typescript
-// components/Button/index.ts のみ使用
-export { Button } from './Button'
-export { ButtonIcon } from './ButtonIcon'
-```
+ただし、この方法は稀なケースです。ほとんどの場合は方法1または方法2で解決できます。
 
 ## バレルファイルの純粋性チェック
 

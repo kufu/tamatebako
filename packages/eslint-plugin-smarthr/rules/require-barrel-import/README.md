@@ -137,20 +137,22 @@ export { ButtonIcon } from './ButtonIcon'  // client component
 - public API → `index.ts` からexport
 - internal API → 別のbarrelまたは直接import
 
-#### 方法2: 共通の実装を別ファイルに切り出す
+#### 方法2: 同じファイルを両方のbarrelからre-exportする
 
-本当に両方のbarrelから同じコンポーネントをexportする必要がある場合のみ、共通ファイルに切り出します：
+本当に両方のbarrelから同じコンポーネントをexportする必要がある場合のみ：
 
 ```typescript
 // components/Button/ButtonBase.tsx
 export const Button = ({ children }) => { ... }
 
-// components/Button/index.ts (server component用)
+// components/Button/index.ts
 export { Button } from './ButtonBase'
 
-// components/Button/client.ts (client component用)
+// components/Button/client.ts
 export { Button } from './ButtonBase'
 ```
+
+同じ実装ファイル（`ButtonBase.tsx`）を両方のbarrelファイルからre-exportします。
 
 ただし、この方法は稀なケースです。ほとんどの場合は方法1で解決できます。
 

@@ -531,11 +531,12 @@ import先バレル: ${node.source.value} (${importedBarrelName}.ts)
 解決方法:
 1. 適切なバレルファイルを選択する（推奨）
    → 同じコンポーネントを両方のbarrelからexportする必要はありません
-   → どちらか一方のbarrelファイルからのみexportしてください
+   → どちらか一方のbarrelファイルからのみre-exportしてください
    例: client componentなら client.ts から、server componentなら index.ts から
 
-2. 本当に両方から同じものをexportする必要がある場合
-   → 共通の実装を別ファイルに切り出し、両方のbarrelファイルからre-exportする
+2. 本当に両方から同じものをexportする必要がある場合のみ
+   → 同じファイルを両方のbarrelファイルからre-exportする
+   （このケースは稀です。ほとんどの場合は1で解決できます）
 
 3. barrelファイルの分割が不要な場合は、統合を検討する
 

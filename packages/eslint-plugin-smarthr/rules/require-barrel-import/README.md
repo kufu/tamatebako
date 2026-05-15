@@ -101,7 +101,45 @@ export { api } from './server'     // NG: server.tsからのimport
 
 ### ✅ 正しい解決方法
 
-#### 方法1: 共通の実装を別ファイルに切り出す（推奨）
+#### 方法1: 適切なバレルファイルを選択する（推奨）
+
+同じコンポーネントを複数のバレルファイルからexportする必要はありません。**どちらか一方のbarrelファイルからのみexportしてください。**
+
+このエラーが発生する場合、多くは以下のような経緯です：
+1. 最初は `index.ts` に全てのコンポーネントが混在していた
+2. server/client componentの分離が必要になり、`client.ts` を作成
+3. client componentを `client.ts` に移動したが、`index.ts` からのexportを削除し忘れた
+
+```typescript
+// ❌ 修正前: 両方からexportしている
+// components/Button/index.ts
+export { Button } from './Button'        // server component
+export { ButtonIcon } from './ButtonIcon'  // client component ← これが問題
+export { Header } from './Header'        // server component
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client component
+
+// ✅ 修正後: client componentはclient.tsからのみexport
+// components/Button/index.ts
+export { Button } from './Button'        // server component
+export { Header } from './Header'        // server component
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client component
+```
+
+**どちらから export すべきか判断する基準:**
+- client component → `client.ts` からexport
+- server component → `index.ts` からexport
+- browser専用 → `client.ts` からexport
+- Node.js専用 → `server.ts` からexport
+- public API → `index.ts` からexport
+- internal API → 別のbarrelまたは直接import
+
+#### 方法2: 共通の実装を別ファイルに切り出す
+
+本当に両方のbarrelから同じコンポーネントをexportする必要がある場合のみ、共通ファイルに切り出します：
 
 ```typescript
 // components/Button/ButtonBase.tsx
@@ -114,9 +152,9 @@ export { Button } from './ButtonBase'
 export { Button } from './ButtonBase'
 ```
 
-両方のbarrelファイルから同じファイルをre-exportします。
+ただし、この方法は稀なケースです。ほとんどの場合は方法1で解決できます。
 
-#### 方法2: バレルファイルの統合を検討
+#### 方法3: バレルファイルの統合を検討
 
 分割が不要な場合は、統合することも検討してください：
 

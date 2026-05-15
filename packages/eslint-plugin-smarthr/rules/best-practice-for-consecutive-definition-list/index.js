@@ -40,7 +40,7 @@ module.exports = {
   },
   create(context) {
     return {
-      'JSXElement[openingElement.name.name=/DefinitionList$/]'(node) {
+      [`JSXElement[openingElement.name.name=${DEFINITION_LIST_PATTERN}]`](node) {
         const prev = getPreviousSibling(node)
 
         if (

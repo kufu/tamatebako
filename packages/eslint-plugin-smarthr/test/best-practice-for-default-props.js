@@ -50,8 +50,7 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<Stack>content</Stack>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'inline', defaultValue: 'false' },
+          message: /prop "inline" はデフォルト値と同じため不要です/,
         },
       ],
     },
@@ -61,8 +60,7 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<Stack>content</Stack>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'gap', defaultValue: '1' },
+          message: /prop "gap" はデフォルト値と同じため不要です/,
         },
       ],
     },
@@ -72,23 +70,20 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<Stack gap={2}>content</Stack>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'inline', defaultValue: 'false' },
+          message: /prop "inline" はデフォルト値と同じため不要です/,
         },
       ],
     },
-    // Stack: 複数のデフォルト値（1回のfixで1つ削除される）
+    // Stack: 複数のデフォルト値
     {
       code: '<Stack inline={false} gap={1}>content</Stack>',
       output: '<Stack gap={1}>content</Stack>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'inline', defaultValue: 'false' },
+          message: /prop "inline" はデフォルト値と同じため不要です/,
         },
         {
-          messageId: 'redundantProp',
-          data: { propName: 'gap', defaultValue: '1' },
+          message: /prop "gap" はデフォルト値と同じため不要です/,
         },
       ],
     },
@@ -98,8 +93,7 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<Cluster>content</Cluster>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'inline', defaultValue: 'false' },
+          message: /prop "inline" はデフォルト値と同じため不要です/,
         },
       ],
     },
@@ -109,12 +103,11 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<Cluster>content</Cluster>',
       errors: [
         {
-          messageId: 'redundantProp',
-          data: { propName: 'gap', defaultValue: '0.5' },
+          message: /prop "gap" はデフォルト値と同じため不要です/,
         },
       ],
     },
-    // 改行ありのフォーマット（複数のデフォルト値、1回のfixで1つ削除）
+    // 改行ありのフォーマット（複数のデフォルト値）
     {
       code: `<Stack
   inline={false}
@@ -129,10 +122,10 @@ ruleTester.run('best-practice-for-default-props', rule, {
 </Stack>`,
       errors: [
         {
-          messageId: 'redundantProp',
+          message: /prop "inline" はデフォルト値と同じため不要です/,
         },
         {
-          messageId: 'redundantProp',
+          message: /prop "gap" はデフォルト値と同じため不要です/,
         },
       ],
     },

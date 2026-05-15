@@ -94,9 +94,6 @@ module.exports = {
     type: 'suggestion',
     fixable: 'code',
     schema: SCHEMA,
-    messages: {
-      redundantProp: 'prop "{{propName}}" はデフォルト値({{defaultValue}})と同じため不要です',
-    },
   },
   create(context) {
     const options = context.options[0] || {}
@@ -148,13 +145,15 @@ module.exports = {
 
           // デフォルト値と実際の値が一致する場合、エラー報告
           if (actualValue !== undefined && isEqual(actualValue, defaultValue)) {
+            const formattedDefaultValue = JSON.stringify(defaultValue)
+
             context.report({
               node: attribute,
-              messageId: 'redundantProp',
-              data: {
-                propName,
-                defaultValue: JSON.stringify(defaultValue),
-              },
+              message: `prop "${propName}" はデフォルト値と同じため不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-default-props
+ - デフォルト値: ${formattedDefaultValue}
+ - コンポーネント: ${componentName}
+ - このpropは省略できます（デフォルト値が自動的に適用されます）`,
               fix(fixer) {
                 // 属性を削除
                 const sourceCode = context.sourceCode || context.getSourceCode()

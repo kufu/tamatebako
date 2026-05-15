@@ -2,6 +2,8 @@
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
 
+const DEFINITION_LIST_PATTERN = /DefinitionList$/
+
 const getPreviousSibling = (node) => {
   const parent = node.parent
   if (!parent || (parent.type !== 'JSXElement' && parent.type !== 'JSXFragment')) {
@@ -44,7 +46,7 @@ module.exports = {
         if (
           prev?.type === 'JSXElement' &&
           prev.openingElement.name.type === 'JSXIdentifier' &&
-          /DefinitionList$/.test(prev.openingElement.name.name)
+          DEFINITION_LIST_PATTERN.test(prev.openingElement.name.name)
         ) {
           context.report({
             node: node.openingElement.name,

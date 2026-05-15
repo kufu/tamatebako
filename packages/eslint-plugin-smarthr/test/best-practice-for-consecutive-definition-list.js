@@ -71,6 +71,76 @@ ruleTester.run('best-practice-for-consecutive-definition-list', rule, {
         </>
       `,
     },
+    // 間に条件式がある場合
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {condition && <p>条件付き要素</p>}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+    },
+    // 間に配列mapがある場合
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {items.map(item => <div key={item.id}>{item.name}</div>)}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+    },
+    // 間にfalse式がある場合（レンダリングされないが式なので連続扱いしない）
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {false}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+    },
+    // 間にnull式がある場合（レンダリングされないが式なので連続扱いしない）
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {null}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+    },
+    // 間にundefined式がある場合（レンダリングされないが式なので連続扱いしない）
+    {
+      code: `
+        <div>
+          <DefinitionList>
+            <DefinitionListItem term="項目1">内容1</DefinitionListItem>
+          </DefinitionList>
+          {undefined}
+          <DefinitionList>
+            <DefinitionListItem term="項目2">内容2</DefinitionListItem>
+          </DefinitionList>
+        </div>
+      `,
+    },
   ],
 
   invalid: [

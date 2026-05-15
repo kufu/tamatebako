@@ -12,6 +12,26 @@ const DEFAULT_PROPS = {
     inline: false,
     gap: 0.5,
   },
+  Reel: {
+    gap: 0.5,
+    padding: 0,
+  },
+  Sidebar: {
+    align: 'stretch',
+    contentsMinWidth: '50%',
+    gap: 1,
+    right: false,
+  },
+  Heading: {
+    type: 'sectionTitle',
+  },
+  Button: {
+    type: 'button',
+    size: 'M',
+    wide: false,
+    variant: 'secondary',
+    loading: false,
+  },
 }
 
 const SCHEMA = [

@@ -1128,10 +1128,114 @@ ruleTester.run('require-barrel-import', rule, {
     },
 
     // ========================================
+    // 同階層の他のバレルファイルからのimportチェック
+    // ========================================
+
+    // 9. index.tsからclient.tsへのimport
+    {
+      code: `export { Button } from './client'`,
+      filename: (() => {
+        createFixture('cross-barrel-index-to-client', {
+          'Button': {
+            'index.ts': '',
+            'client.ts': 'export { Button } from "./Button"',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/cross-barrel-index-to-client/Button/index.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /同階層の他のバレルファイルからのimportは禁止されています/,
+        },
+      ],
+    },
+
+    // 10. client.tsからindex.tsへのimport（from '.'）
+    {
+      code: `export { Button } from '.'`,
+      filename: (() => {
+        createFixture('cross-barrel-client-to-index-dot', {
+          'Button': {
+            'index.ts': 'export { Button } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/cross-barrel-client-to-index-dot/Button/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /同階層の他のバレルファイルからのimportは禁止されています/,
+        },
+      ],
+    },
+
+    // 11. client.tsからindex.tsへのimport（from './index'）
+    {
+      code: `export { Button } from './index'`,
+      filename: (() => {
+        createFixture('cross-barrel-client-to-index-explicit', {
+          'Button': {
+            'index.ts': 'export { Button } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/cross-barrel-client-to-index-explicit/Button/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /同階層の他のバレルファイルからのimportは禁止されています/,
+        },
+      ],
+    },
+
+    // 12. client.tsからserver.tsへのimport
+    {
+      code: `export { api } from './server'`,
+      filename: (() => {
+        createFixture('cross-barrel-client-to-server', {
+          'services': {
+            'client.ts': '',
+            'server.ts': 'export { api } from "./api"',
+            'api.ts': '',
+          },
+        })
+        return `${fixturesRoot}/cross-barrel-client-to-server/services/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /同階層の他のバレルファイルからのimportは禁止されています/,
+        },
+      ],
+    },
+
+    // ========================================
     // バレルファイルの純粋性チェック
     // ========================================
 
-    // 9. バレルファイル内でimport文を使用
+    // 13. バレルファイル内でimport文を使用
     {
       code: `import { Button } from './Button'`,
       filename: (() => {

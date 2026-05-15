@@ -351,10 +351,17 @@ module.exports = {
     // バレルファイルの純粋性チェックのビジターを作成
     const purityVisitor = createBarrelPurityVisitor(context, barrelFileNames)
 
-    const importVisitor = {
-      ImportDeclaration: (node) => {
-        // allowedImportsチェック
-        const { shouldSkip, deniedModules } = checkAllowedImports(
+    const checkImportOrExport = (node) => {
+      // ExportNamedDeclarationでsourceがない場合（通常のexport）はスキップ
+      if (node.type === 'ExportNamedDeclaration' && !node.source) {
+        return
+      }
+
+      // ImportDeclarationまたはExportNamedDeclaration（re-export）を処理
+      // allowedImportsチェック（ImportDeclarationのみ）
+      let deniedModules = []
+      if (node.type === 'ImportDeclaration') {
+        const { shouldSkip, deniedModules: denied } = checkAllowedImports(
           node,
           importerDir,
           targetAllowedImports,
@@ -363,46 +370,55 @@ module.exports = {
         if (shouldSkip) {
           return
         }
+        deniedModules = denied
+      }
 
-        // import先のパスを絶対パスに変換
-        let importedPath = node.source.value
+      // import先のパスを絶対パスに変換
+      let importedPath = node.source.value
 
-        // 相対パスの場合、絶対パスに変換
-        if (importedPath[0] === '.') {
-          importedPath = path.resolve(`${importerDir}/${importedPath}`)
-        }
+      // 相対パスの場合、絶対パスに変換
+      if (importedPath[0] === '.') {
+        importedPath = path.resolve(`${importerDir}/${importedPath}`)
+      }
 
-        // Path alias（@/, ~/など）を絶対パスに変換
-        importedPath = resolvePathAlias(importedPath)
+      // Path alias（@/, ~/など）を絶対パスに変換
+      importedPath = resolvePathAlias(importedPath)
 
-        // 絶対パスでない場合（node_modulesなど）はスキップ
-        if (importedPath[0] !== '/') {
-          return
-        }
+      // 絶対パスでない場合（node_modulesなど）はスキップ
+      if (importedPath[0] !== '/') {
+        return
+      }
 
-        // バレルファイル名のリストを作成（index + 追加指定されたファイル名）
-        const additionalBarrelFileNames = option.additionalBarrelFileNames || []
-        const barrelFileNames = [...additionalBarrelFileNames, 'index']
+      // バレルファイル名のリストを作成（index + 追加指定されたファイル名）
+      const additionalBarrelFileNames = option.additionalBarrelFileNames || []
+      const barrelFileNames = [...additionalBarrelFileNames, 'index']
 
-        // ========================================
-        // 同階層・子階層からのバレルimportチェック
-        // ========================================
-        // import文が直接バレルファイル（index.ts、client.ts等）を指している場合、
-        // import元の位置関係をチェックする
-        const directBarrelPath = detectDirectBarrelImport(importedPath, barrelFileNames)
+      // ========================================
+      // 同階層・子階層からのバレルimportチェック
+      // ========================================
+      // import文が直接バレルファイル（index.ts、client.ts等）を指している場合、
+      // import元の位置関係をチェックする
+      const directBarrelPath = detectDirectBarrelImport(importedPath, barrelFileNames)
+      let useDirectBarrelAsBarrelPath = false
 
-        if (directBarrelPath) {
+      if (directBarrelPath) {
           const barrelDir = path.dirname(directBarrelPath)
 
           // import元がバレルと同階層、またはバレルディレクトリ以下にある場合はNG
           const isSameLevelOrChild = importerDir === barrelDir || importerDir.startsWith(barrelDir + '/')
 
           if (isSameLevelOrChild) {
-            const barrelWithAlias = convertToPathAlias(directBarrelPath)
+            // import元がbarrelファイルの場合は、より詳細なチェック（cross-barrel import check）に任せる
+            const importerFileName = path.basename(context.filename, path.extname(context.filename))
+            const isImporterBarrel = barrelFileNames.includes(importerFileName)
 
-            context.report({
-              node,
-              message: `バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています。
+            if (!isImporterBarrel) {
+              // import元が通常ファイルの場合のみここでエラー
+              const barrelWithAlias = convertToPathAlias(directBarrelPath)
+
+              context.report({
+                node,
+                message: `バレルファイルからのimportは、そのディレクトリ外部からのみ許可されています。
 
 検出されたバレル: ${barrelWithAlias}
 現在のimport:     import from '${node.source.value}'
@@ -411,25 +427,40 @@ module.exports = {
 同じディレクトリまたは子ディレクトリ内では、直接相対パスでimportしてください。
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-            })
-            return
+              })
+              return
+            }
+            // import元がbarrelファイルの場合は、次のチェック（cross-barrel import check）に進む
+            // 同階層のbarrelファイルの場合、directBarrelPathをbarrelPathとして使用
+            if (importerDir === barrelDir) {
+              useDirectBarrelAsBarrelPath = true
+            }
           }
         }
 
-        // ========================================
-        // バレルファイルを探索
-        // ========================================
-        // import先のパスから親方向にバレルファイルを探索
-        const { barrelPath, missingBarrel } = findBarrelFile(importedPath, importerDir, additionalBarrelFileNames)
+      // ========================================
+      // バレルファイルを探索
+      // ========================================
+      // import先のパスから親方向にバレルファイルを探索
+      // 同階層のbarrelファイルへのimportの場合は、directBarrelPathを使用
+      let barrelPath, missingBarrel
+      if (useDirectBarrelAsBarrelPath) {
+        barrelPath = directBarrelPath
+        missingBarrel = null
+      } else {
+        const result = findBarrelFile(importedPath, importerDir, additionalBarrelFileNames)
+        barrelPath = result.barrelPath
+        missingBarrel = result.missingBarrel
+      }
 
-        // barrel が見つからない、またはroot pathのindex.tsの場合はスキップ
-        if (!barrelPath || REGEX_ROOT_PATH.test(barrelPath)) {
+      // barrel が見つからない、またはroot pathのindex.tsの場合はスキップ
+      if (!barrelPath || REGEX_ROOT_PATH.test(barrelPath)) {
           return
         }
 
-        // 親階層でclient.ts/server.tsが見つからず、index.tsのみ見つかった場合
-        // barrelファイル自体からのimportでも一貫性チェックは実行
-        if (missingBarrel) {
+      // 親階層でclient.ts/server.tsが見つからず、index.tsのみ見つかった場合
+      // barrelファイル自体からのimportでも一貫性チェックは実行
+      if (missingBarrel) {
           const missingBarrelWithAlias = convertToPathAlias(`${missingBarrel.parentDir}/${missingBarrel.fileName}`)
           const existingBarrelWithAlias = convertToPathAlias(barrelPath).replace(REGEX_BARREL_FILE_EXT, '')
 
@@ -448,41 +479,108 @@ export * from '${existingBarrelWithAlias}'
           return
         }
 
-        // barrelファイル自体、または同じディレクトリの他のbarrelファイルからimportしている場合はスキップ
-        // 同じディレクトリに index.ts と client.ts がある場合、どちらからのimportも許容する
-        const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
-        const allBarrelsInSameDir = generateBarrelFilePaths(barrelDir, barrelFileNames)
+      // ========================================
+      // 同階層の他のバレルファイルからのimportチェック
+      // ========================================
+      // barrelファイル自体からのimportの場合はスキップ
+      // ただし、同じディレクトリの「他の」barrelファイルへのimportは禁止
+      const barrelDir = barrelPath.substring(0, barrelPath.lastIndexOf('/'))
+      const allBarrelsInSameDir = generateBarrelFilePaths(barrelDir, barrelFileNames)
           .filter(filePath => fs.existsSync(filePath))
 
-        const importedPathWithExts = TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
-        const isImportingFromBarrel = importedPathWithExts.some(p => allBarrelsInSameDir.includes(p))
-        if (isImportingFromBarrel) {
+      // directBarrelPathがある場合はそれを使用、ない場合は拡張子を追加して探す
+      const importedPathCandidates = directBarrelPath
+        ? [directBarrelPath]
+        : TARGET_EXTS.map(ext => `${importedPath}.${ext}`)
+      const isImportingFromBarrel = importedPathCandidates.some(p => allBarrelsInSameDir.includes(p))
+
+      if (isImportingFromBarrel) {
+          // import元がbarrelファイルかチェック
+          const importerFileName = path.basename(context.filename, path.extname(context.filename))
+          const isImporterBarrel = barrelFileNames.includes(importerFileName)
+
+          if (isImporterBarrel) {
+            // import元がbarrelファイルで、import先も同階層のbarrelファイルの場合
+            // import先が自分自身でない場合はエラー
+            const importerPath = context.filename
+            const isImportingSelf = importedPathCandidates.includes(importerPath)
+
+            if (!isImportingSelf) {
+              // 同階層の他のbarrelファイルへのimportを検出
+              const importedBarrelName = importedPathCandidates
+                .map(p => path.basename(p, path.extname(p)))
+                .find(name => barrelFileNames.includes(name))
+
+              const importerBarrelWithAlias = convertToPathAlias(importerPath)
+
+              context.report({
+                node,
+                message: `同階層の他のバレルファイルからのimportは禁止されています
+
+検出されたパターン:
+  ${importerBarrelWithAlias} が同階層の ${importedBarrelName}.ts からimportしています
+  → export { ... } from '${node.source.value}'
+
+理由:
+バレルファイルを分けている場合（例: index.ts と client.ts）、それぞれに明確な役割があるはずです。
+- server component と client component の分離
+- public API と internal API の分離
+など
+
+同階層のバレルファイル間でimportすると、この意図的な分離が破られ、
+両方のbarrelから同じものがexportされることになります。
+
+よくあるケース:
+最初は index.ts に全てが混在していたが、分離が必要になり client.ts を作成。
+client componentを client.ts に移動したが、index.ts からのexportを削除し忘れた。
+
+解決方法:
+1. 適切なバレルファイルを選択する（推奨）
+   → 同じコンポーネントを両方のbarrelからexportする必要はありません
+   → どちらか一方のbarrelファイルからのみre-exportしてください
+   例: client componentなら ${importedBarrelName}.ts から、server componentなら index.ts から
+
+2. barrelファイルの分割が不要な場合は、統合を検討する
+   → 最初は分離が必要だと思ったが、実際には不要だった場合など
+
+3. 本当に両方から同じものをexportする必要がある場合のみ
+   → 同じ実装ファイルを両方のbarrelファイルからre-exportする
+   （このケースは稀です。ほとんどの場合は1または2で解決できます）
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
+              })
+              return
+            }
+          }
+
+          // barrelファイル自体からのimport（自分自身へのimport）はスキップ
           return
         }
 
-        // barrel パスをPath aliasに変換
-        const barrelWithAlias = convertToPathAlias(barrelPath)
-        // barrelファイルの拡張子を除去（index.ts → ディレクトリパス、client.ts → client）
-        const barrelDirWithAlias = REGEX_INDEX_FILE.test(barrelWithAlias)
+      // barrel パスをPath aliasに変換
+      const barrelWithAlias = convertToPathAlias(barrelPath)
+      // barrelファイルの拡張子を除去（index.ts → ディレクトリパス、client.ts → client）
+      const barrelDirWithAlias = REGEX_INDEX_FILE.test(barrelWithAlias)
           ? barrelWithAlias.replace(REGEX_INDEX_FILE, '')
           : barrelWithAlias.replace(REGEX_BARREL_FILE_EXT, '')
-        const uniqueDeniedModules = [...new Set(deniedModules.flat())]
+      const uniqueDeniedModules = [...new Set(deniedModules.flat())]
 
-        // ========================================
-        // エラーメッセージ生成の準備
-        // ========================================
-        // importしているモジュール名を取得
-        const importedModules = node.specifiers.reduce((acc, s) => {
-          const name = s.imported?.name || s.local?.name
+      // ========================================
+      // エラーメッセージ生成の準備
+      // ========================================
+      // importしているモジュール名を取得
+      const importedModules = node.specifiers.reduce((acc, s) => {
+          // ImportDeclaration: s.imported, ExportNamedDeclaration: s.exported
+          const name = s.imported?.name || s.exported?.name || s.local?.name
           return name ? (acc ? `${acc}, ${name}` : name) : acc
         }, '')
 
-        // additionalBarrelFileNamesが設定されている場合は、
-        // 存在しないファイルも含めて全ての選択肢を表示する
-        const hasAdditionalBarrels = option?.additionalBarrelFileNames?.length > 0
+      // additionalBarrelFileNamesが設定されている場合は、
+      // 存在しないファイルも含めて全ての選択肢を表示する
+      const hasAdditionalBarrels = option?.additionalBarrelFileNames?.length > 0
 
-        // エラーメッセージに表示するbarrelファイルのリストを作成
-        const barrelFilesToShow = hasAdditionalBarrels
+      // エラーメッセージに表示するbarrelファイルのリストを作成
+      const barrelFilesToShow = hasAdditionalBarrels
           ? barrelFileNames.map(name => {
               // 各barrelファイル名について、存在する拡張子を優先、なければ.tsを使用
               const candidates = TARGET_EXTS.map(ext => `${barrelDir}/${name}.${ext}`)
@@ -490,9 +588,9 @@ export * from '${existingBarrelWithAlias}'
             })
           : allBarrelsInSameDir
 
-        // barrelファイルをエラーメッセージ用に変換
-        // （path alias変換、import path生成、存在チェック）
-        const barrelSuggestions = barrelFilesToShow.map(filePath => {
+      // barrelファイルをエラーメッセージ用に変換
+      // （path alias変換、import path生成、存在チェック）
+      const barrelSuggestions = barrelFilesToShow.map(filePath => {
           const pathWithAlias = convertToPathAlias(filePath)
           const dirWithAlias = REGEX_INDEX_FILE.test(pathWithAlias)
             ? pathWithAlias.replace(REGEX_INDEX_FILE, '')
@@ -514,24 +612,24 @@ export * from '${existingBarrelWithAlias}'
           }
         })
 
-        // 推奨されるimportパスを生成（元の記法に合わせる）
+      // 推奨されるimportパスを生成（元の記法に合わせる）
         let suggestedImportPath = barrelDirWithAlias
-        if (node.source.value[0] === '.') {
+      if (node.source.value[0] === '.') {
           // 相対パスの場合、barrelDirへの相対パスを計算
           const barrelDirAbsolute = resolvePathAlias(barrelDirWithAlias)
           const relativePath = path.relative(importerDir, barrelDirAbsolute)
           suggestedImportPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`
         }
 
-        // ========================================
-        // エラーメッセージを生成
-        // ========================================
-        // barrelファイルが複数ある、またはadditionalBarrelFileNamesが設定されている場合は
-        // 複数選択肢形式で表示（存在しないファイルも含む）
-        const shouldShowAllSuggestions = barrelSuggestions.length > 1 || hasAdditionalBarrels
+      // ========================================
+      // エラーメッセージを生成
+      // ========================================
+      // barrelファイルが複数ある、またはadditionalBarrelFileNamesが設定されている場合は
+      // 複数選択肢形式で表示（存在しないファイルも含む）
+      const shouldShowAllSuggestions = barrelSuggestions.length > 1 || hasAdditionalBarrels
 
         let suggestionsMessage = ''
-        if (shouldShowAllSuggestions) {
+      if (shouldShowAllSuggestions) {
           // index.ts を優先的に表示するためにソート
           const sortedSuggestions = [...barrelSuggestions].sort((a, b) => {
             const isAIndex = a.fileName.startsWith('index.')
@@ -555,15 +653,15 @@ export * from '${existingBarrelWithAlias}'
           suggestionsMessage = `\n推奨されるimport:  import { ${importedModules} } from '${suggestedImportPath}'`
         }
 
-        // 「検出されたバレル」には実際に存在するファイルのみを表示
-        const existingBarrels = barrelSuggestions.filter(({ exists }) => exists)
-        const barrelFilesInfo = existingBarrels.length > 1
+      // 「検出されたバレル」には実際に存在するファイルのみを表示
+      const existingBarrels = barrelSuggestions.filter(({ exists }) => exists)
+      const barrelFilesInfo = existingBarrels.length > 1
           ? existingBarrels.map(({ barrelFile }) => barrelFile).join(', ')
           : barrelWithAlias
 
-        // ========================================
-        // エラーを報告
-        // ========================================
+      // ========================================
+      // エラーを報告
+      // ========================================
         context.report({
           node,
           message: uniqueDeniedModules.length
@@ -578,11 +676,9 @@ export * from '${existingBarrelWithAlias}'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
         })
-      },
     }
 
-    // purityVisitorとimportVisitorをマージ
-    // ImportDeclarationは両方にあるので、両方を実行する必要がある
+    // purityVisitorとimport/exportチェックをマージ
     return {
       ...purityVisitor,
       ImportDeclaration: (node) => {
@@ -590,8 +686,16 @@ export * from '${existingBarrelWithAlias}'
         if (purityVisitor.ImportDeclaration) {
           purityVisitor.ImportDeclaration(node)
         }
-        // 既存のimportチェックを実行
-        importVisitor.ImportDeclaration(node)
+        // import/exportチェックを実行
+        checkImportOrExport(node)
+      },
+      ExportNamedDeclaration: (node) => {
+        // purity checkerのExportNamedDeclarationを先に実行（存在する場合）
+        if (purityVisitor.ExportNamedDeclaration) {
+          purityVisitor.ExportNamedDeclaration(node)
+        }
+        // import/exportチェックを実行（re-exportの場合のみ）
+        checkImportOrExport(node)
       },
     }
   },

@@ -67,6 +67,140 @@ import { buttonUtils } from '../utils'   // OK
 import { Button } from '@/components/Button'  // OK
 ```
 
+## 同階層のバレルファイル間のimport禁止
+
+同じディレクトリに複数のバレルファイル（例: `index.ts` と `client.ts`）がある場合、それらのバレルファイル間でのimport/exportを禁止します。
+
+### なぜ禁止する必要があるのか
+
+バレルファイルを分けている場合（例: `index.ts` と `client.ts`）、それぞれに明確な役割の違いがあるはずです：
+
+- **server componentとclient componentの分離** (Next.js App Routerなど)
+- **public APIとinternal APIの分離**
+- **実行環境による分離** (browser専用 vs Node.js専用)
+
+同階層のバレルファイル間でimportすると、この意図的な分離が破られ、以下の問題が発生します：
+
+1. **分離の意味がなくなる**: server component用の `index.ts` から client component用の `client.ts` をimportすると、server componentがclient componentに依存してしまう
+2. **循環参照のリスク**: 相互にimportし合う可能性が高まる
+3. **責務の不明確化**: どちらのbarrelファイルが何を公開しているのか分かりづらくなる
+
+### ❌ 検出されるエラーケース
+
+このルールは、同階層のbarrelファイル間での `export { ... } from` を検出します：
+
+```typescript
+// ケース1: index.ts が client.ts からimport
+// components/Button/index.ts
+export { Button } from './Button'     // OK
+export { ButtonIcon } from './client' // NG: 同階層の client.ts からimport
+export { Header } from './Header'     // OK
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'
+
+// ケース2: client.ts が index.ts からimport
+// components/Button/client.ts
+export { Button } from '.'            // NG: 同階層の index.ts からimport
+export { Button } from './index'      // NG: 同階層の index.ts からimport
+
+// ケース3: client.ts が server.ts からimport
+// services/client.ts
+export { api } from './server'        // NG: 同階層の server.ts からimport
+```
+
+### ✅ 正しい解決方法
+
+#### 方法1: 適切なバレルファイルを選択する（推奨）
+
+同じコンポーネントを複数のバレルファイルからexportする必要はありません。**どちらか一方のbarrelファイルからのみexportしてください。**
+
+このエラーが発生する場合、多くは以下のような経緯です：
+1. 最初は `index.ts` に全てのコンポーネントが混在していた
+2. server/client componentの分離が必要になり、`client.ts` を作成
+3. client componentを `client.ts` に移動したが、`index.ts` からのexportを削除し忘れた
+
+**パターンA: barrelから別のbarrelをimportしている（このルールが直接検出）**
+
+```typescript
+// ❌ 修正前: index.ts が client.ts からimportしている
+// components/Button/index.ts
+export { Button } from './Button'        // server component
+export { ButtonIcon } from './client'    // ← client.ts からimport（NG）
+export { Header } from './Header'        // server component
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client component
+
+// ✅ 修正後: client componentはclient.tsからのみexport
+// components/Button/index.ts
+export { Button } from './Button'        // server component
+export { Header } from './Header'        // server component
+// ButtonIcon のexportを削除（client.tsに任せる）
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client component
+```
+
+**パターンB: 両方のbarrelから同じファイルをexportしている（間接的な問題）**
+
+このパターンはこのルールでは検出されませんが、本質的に同じ問題です：
+
+```typescript
+// ❌ 両方から同じファイルをexportしている
+// components/Button/index.ts
+export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+
+// ✅ 修正後: どちらか一方からのみexport
+// components/Button/index.ts
+// ButtonIcon のexportを削除
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client componentはclient.tsから
+```
+
+**どちらから export すべきか判断する基準:**
+- client component → `client.ts` からexport
+- server component → `index.ts` からexport
+- browser専用 → `client.ts` からexport
+- Node.js専用 → `server.ts` からexport
+- public API → `index.ts` からexport
+- internal API → 別のbarrelまたは直接import
+
+#### 方法2: バレルファイルの統合を検討
+
+分割が不要な場合は、統合することも検討してください：
+
+```typescript
+// components/Button/index.ts のみ使用
+export { Button } from './Button'
+export { ButtonIcon } from './ButtonIcon'
+```
+
+最初は分離が必要だと思ったが、実際には不要だったというケースは比較的よくあります。
+
+#### 方法3: 同じファイルを両方のbarrelからre-exportする
+
+本当に両方のbarrelから同じコンポーネントをexportする必要がある場合のみ：
+
+```typescript
+// components/Button/ButtonBase.tsx
+export const Button = ({ children }) => { ... }
+
+// components/Button/index.ts
+export { Button } from './ButtonBase'
+
+// components/Button/client.ts
+export { Button } from './ButtonBase'
+```
+
+同じ実装ファイル（`ButtonBase.tsx`）を両方のbarrelファイルからre-exportします。
+
+ただし、この方法は稀なケースです。ほとんどの場合は方法1または方法2で解決できます。
+
 ## バレルファイルの純粋性チェック
 
 バレルファイル（index.ts、client.ts等）は**設置されたディレクトリ外へのexportが責務**です。それ以外の実装（import文、変数定義、関数定義など）は禁止されます。

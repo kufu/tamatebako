@@ -517,8 +517,9 @@ export * from '${existingBarrelWithAlias}'
                 node,
                 message: `同階層の他のバレルファイルからのimportは禁止されています
 
-import元バレル: ${importerBarrelWithAlias}
-import先バレル: ${node.source.value} (${importedBarrelName}.ts)
+検出されたパターン:
+  ${importerBarrelWithAlias} が同階層の ${importedBarrelName}.ts からimportしています
+  → export { ... } from '${node.source.value}'
 
 理由:
 バレルファイルを分けている場合（例: index.ts と client.ts）、それぞれに明確な役割があるはずです。
@@ -526,19 +527,24 @@ import先バレル: ${node.source.value} (${importedBarrelName}.ts)
 - public API と internal API の分離
 など
 
-同階層のバレルファイル間でimportすると、この分離が破られ、意図しない依存関係が生まれる可能性があります。
+同階層のバレルファイル間でimportすると、この意図的な分離が破られ、
+両方のbarrelから同じものがexportされることになります。
+
+よくあるケース:
+最初は index.ts に全てが混在していたが、分離が必要になり client.ts を作成。
+client componentを client.ts に移動したが、index.ts からのexportを削除し忘れた。
 
 解決方法:
 1. 適切なバレルファイルを選択する（推奨）
    → 同じコンポーネントを両方のbarrelからexportする必要はありません
    → どちらか一方のbarrelファイルからのみre-exportしてください
-   例: client componentなら client.ts から、server componentなら index.ts から
+   例: client componentなら ${importedBarrelName}.ts から、server componentなら index.ts から
 
 2. barrelファイルの分割が不要な場合は、統合を検討する
    → 最初は分離が必要だと思ったが、実際には不要だった場合など
 
 3. 本当に両方から同じものをexportする必要がある場合のみ
-   → 同じファイルを両方のbarrelファイルからre-exportする
+   → 同じ実装ファイルを両方のbarrelファイルからre-exportする
    （このケースは稀です。ほとんどの場合は1または2で解決できます）
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,

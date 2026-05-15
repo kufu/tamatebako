@@ -87,16 +87,26 @@ import { Button } from '@/components/Button'  // OK
 
 ### ❌ 検出されるエラーケース
 
+このルールは、同階層のbarrelファイル間での `export { ... } from` を検出します：
+
 ```typescript
-// components/Button/index.ts (server component用)
-export { Button } from './client'  // NG: client.tsからのimport
+// ケース1: index.ts が client.ts からimport
+// components/Button/index.ts
+export { Button } from './Button'     // OK
+export { ButtonIcon } from './client' // NG: 同階層の client.ts からimport
+export { Header } from './Header'     // OK
 
-// components/Button/client.ts (client component用)
-export { Button } from '.'         // NG: index.tsからのimport
-export { Button } from './index'   // NG: index.tsからのimport
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'
 
+// ケース2: client.ts が index.ts からimport
+// components/Button/client.ts
+export { Button } from '.'            // NG: 同階層の index.ts からimport
+export { Button } from './index'      // NG: 同階層の index.ts からimport
+
+// ケース3: client.ts が server.ts からimport
 // services/client.ts
-export { api } from './server'     // NG: server.tsからのimport
+export { api } from './server'        // NG: 同階層の server.ts からimport
 ```
 
 ### ✅ 正しい解決方法
@@ -110,11 +120,13 @@ export { api } from './server'     // NG: server.tsからのimport
 2. server/client componentの分離が必要になり、`client.ts` を作成
 3. client componentを `client.ts` に移動したが、`index.ts` からのexportを削除し忘れた
 
+**パターンA: barrelから別のbarrelをimportしている（このルールが直接検出）**
+
 ```typescript
-// ❌ 修正前: 両方からexportしている
+// ❌ 修正前: index.ts が client.ts からimportしている
 // components/Button/index.ts
 export { Button } from './Button'        // server component
-export { ButtonIcon } from './ButtonIcon'  // client component ← これが問題
+export { ButtonIcon } from './client'    // ← client.ts からimport（NG）
 export { Header } from './Header'        // server component
 
 // components/Button/client.ts
@@ -124,9 +136,30 @@ export { ButtonIcon } from './ButtonIcon'  // client component
 // components/Button/index.ts
 export { Button } from './Button'        // server component
 export { Header } from './Header'        // server component
+// ButtonIcon のexportを削除（client.tsに任せる）
 
 // components/Button/client.ts
 export { ButtonIcon } from './ButtonIcon'  // client component
+```
+
+**パターンB: 両方のbarrelから同じファイルをexportしている（間接的な問題）**
+
+このパターンはこのルールでは検出されませんが、本質的に同じ問題です：
+
+```typescript
+// ❌ 両方から同じファイルをexportしている
+// components/Button/index.ts
+export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+
+// ✅ 修正後: どちらか一方からのみexport
+// components/Button/index.ts
+// ButtonIcon のexportを削除
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // client componentはclient.tsから
 ```
 
 **どちらから export すべきか判断する基準:**

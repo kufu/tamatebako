@@ -3,6 +3,7 @@ const RuleTester = require('eslint').RuleTester
 const v90ToV91Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v90-to-v91/test')
 const v91ToV92Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/test')
 const v92ToV93Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v92-to-v93/test')
+const v93ToV94Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v93-to-v94/test')
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -19,6 +20,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     ...v90ToV91Tests.valid,
     ...v91ToV92Tests.valid,
     ...v92ToV93Tests.valid,
+    ...v93ToV94Tests.valid,
   ],
 
   invalid: [
@@ -31,7 +33,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
-      options: [{ from: '93', to: '94' }],
+      options: [{ from: '94', to: '95' }],
       errors: [{ messageId: 'unsupportedVersion' }],
     },
 
@@ -39,10 +41,10 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     // 複数バージョンスキップ
     // ============================================================
     {
-      code: `import { DropZone } from 'smarthr-ui'`,
-      options: [{ from: '92', to: '94' }],
+      code: `import { ThCheckbox } from 'smarthr-ui'`,
+      options: [{ from: '93', to: '95' }],
       errors: [
-        { messageId: 'skippedVersion', data: { version: 'v94' } },
+        { messageId: 'skippedVersion', data: { version: 'v95' } },
       ],
     },
     {
@@ -66,5 +68,6 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     ...v90ToV91Tests.invalid,
     ...v91ToV92Tests.invalid,
     ...v92ToV93Tests.invalid,
+    ...v93ToV94Tests.invalid,
   ],
 })

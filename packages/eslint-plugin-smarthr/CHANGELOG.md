@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.15.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.14.0...eslint-plugin-smarthr-v6.15.0) (2026-05-17)
+
+
+### Features
+
+* add v93-to-v94 migrator for smarthr-ui ([#1315](https://github.com/kufu/tamatebako/issues/1315)) ([06dce27](https://github.com/kufu/tamatebako/commit/06dce272572991f49f3de635790a06d2c6360f4f))
+* best-practice-for-consecutive-definition-listルールを追加 ([#1313](https://github.com/kufu/tamatebako/issues/1313)) ([4e5778f](https://github.com/kufu/tamatebako/commit/4e5778f95d598b233ca3a2e66e023247ed2fdb2f))
+* best-practice-for-default-propsルールを追加 ([#1312](https://github.com/kufu/tamatebako/issues/1312)) ([b0b0bb2](https://github.com/kufu/tamatebako/commit/b0b0bb2e8dd1a4533a9dbfe6583f45da8a6b8d81))
+* 同階層のバレルファイル間のimportを禁止 ([#1310](https://github.com/kufu/tamatebako/issues/1310)) ([4420109](https://github.com/kufu/tamatebako/commit/4420109a6c9f7fc23175928f7c605b69332ddbb7))
+
 ## [6.14.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.13.0...eslint-plugin-smarthr-v6.14.0) (2026-05-13)
 
 

@@ -3039,11 +3039,17 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-button-element": [
       2,
     ],
+    "smarthr/best-practice-for-consecutive-definition-list": [
+      1,
+    ],
     "smarthr/best-practice-for-data-test-attribute": [
       0,
     ],
     "smarthr/best-practice-for-date": [
       2,
+    ],
+    "smarthr/best-practice-for-default-props": [
+      1,
     ],
     "smarthr/best-practice-for-interactive-element": [
       2,

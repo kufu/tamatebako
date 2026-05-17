@@ -6,16 +6,16 @@
 
 ### 1. ThCheckbox: decorators属性の削除
 
-v94では、`ThCheckbox`コンポーネントから`decorators`属性が削除されました。テーブルのチェックボックスラベルは、IntlProviderの翻訳のみを使用するようになりました。
+v94では、`ThCheckbox`コンポーネントから`decorators`属性が削除されました。チェックボックスラベルの翻訳はsmarthr-ui内で自動的に行われます。
 
 #### 変更内容
 
 **削除された属性:**
 - `decorators?: DecoratorsType<'selectAll'>`
 
-**IntlProviderでの翻訳:**
-- `selectAll`: チェックボックスの全選択ラベル
-- デフォルト値: 「すべて選択」
+**翻訳について:**
+- デフォルトラベル: 「すべて選択」
+- カスタム翻訳が必要な場合は、IntlProviderで `selectAll` キーを設定
 
 #### 移行方法
 

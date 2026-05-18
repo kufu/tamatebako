@@ -5,6 +5,15 @@
 const DEFINITION_LIST = 'JSXElement[openingElement.name.name=/DefinitionList$/]'
 const WHITESPACE_TEXT = 'JSXText[value=/^\\s*$/]'
 const EMPTY_EXPRESSION = 'JSXExpressionContainer[expression.type="JSXEmptyExpression"]'
+
+// セレクターを事前定義（パフォーマンス最適化）
+const SELECTOR_1 = `${DEFINITION_LIST} + ${DEFINITION_LIST}`
+const SELECTOR_2 = `${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`
+const SELECTOR_3 = `${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`
+const SELECTOR_4 = `${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`
+const SELECTOR_5 = `${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`
+const SELECTOR_6 = `${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`
+
 const ERROR_MESSAGE = `DefinitionList が連続しています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-consecutive-definition-list
  - DefinitionListItem の maxColumns prop を使用して1つにまとめることを検討してください
@@ -25,17 +34,17 @@ module.exports = {
 
     return {
       // 1. 直接隣接
-      [`${DEFINITION_LIST} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_1]: reporter,
       // 2. 空白・改行のみのJSXText経由
-      [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_2]: reporter,
       // 3. JSXコメント（{/* */}、{}）経由
-      [`${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_3]: reporter,
       // 4. 空白・改行 + JSXコメント
-      [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_4]: reporter,
       // 5. JSXコメント + 空白・改行
-      [`${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_5]: reporter,
       // 6. 空白・改行 + JSXコメント + 空白・改行
-      [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
+      [SELECTOR_6]: reporter,
     }
   },
 }

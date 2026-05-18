@@ -18,7 +18,7 @@ module.exports = {
   meta: {
     type: 'suggestion',
     messages: {
-      inWhiteBg: 'InformationPanelを白背景に配置しないでください。Stack/Clusterなどレイアウトコンポーネントで包むか、BaseColumnを使用、またはDialog使用時はcontentBgColorを"COLUMN"や"OVER_BACKGROUND"に設定してください。詳細: https://smarthr.design/products/components/information-panel/',
+      inWhiteBg: 'InformationPanelを白背景に配置しないでください。BaseColumnを使用で包むか、またはDialog使用時はcontentBgColorを"COLUMN"や"OVER_BACKGROUND"に設定してください。詳細: https://smarthr.design/products/components/information-panel/',
     },
     schema: [],
   },

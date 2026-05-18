@@ -39,7 +39,7 @@ module.exports = {
       },
 
       // BulkActionRow内で独自実装のButtonコンポーネントを使用している場合
-      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/Button/]:not([openingElement.name.name="Button"])'(
+      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/.+Button$/]'(
         node,
       ) {
         context.report({

@@ -61,6 +61,17 @@ ruleTester.run('design-system-guideline-bulk-action-row-button', rule, {
         </Table>
       `,
     },
+    // ButtonClusterなど、Buttonで終わらないコンポーネントは誤検知しない
+    {
+      code: `
+        <BulkActionRow>
+          <ButtonCluster>
+            <Button>削除</Button>
+            <Button>編集</Button>
+          </ButtonCluster>
+        </BulkActionRow>
+      `,
+    },
   ],
   invalid: [
     // BulkActionRow内でaタグを使用

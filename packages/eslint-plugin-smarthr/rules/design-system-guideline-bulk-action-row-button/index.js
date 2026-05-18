@@ -3,7 +3,8 @@ const SCHEMA = []
 // aタグやLinkコンポーネントを使用している場合
 const DO_NOT_USE_LINK = `BulkActionRow内では「Button」コンポーネントを使用してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-bulk-action-row-button
- - aタグやLinkコンポーネントは使用しないでください。
+ - BulkActionRowは一括操作用の領域であり、内部のクリッカブルな要素は画面遷移以外の動作を担います。
+ - a要素、AnchorButton、Linkは画面遷移を示すセマンティックなマークアップのため、BulkActionRow内では不適切です。
  - もし「すべてのオブジェクトを選択」ボタンの実装であれば、Button[variant="tertiary"]を使用してください。
  - 参考:
   - https://smarthr.design/products/design-patterns/table-bulk-action/#h4-2

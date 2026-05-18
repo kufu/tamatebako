@@ -9,10 +9,10 @@ const DO_NOT_USE_LINK = `BulkActionRow内では「Button」コンポーネント
   - https://smarthr.design/products/design-patterns/table-bulk-action/#h4-2
   - https://smarthr.design/products/components/table/#h3-2`
 
-// 独自実装のButtonコンポーネント（StyledButtonなど）を使用している場合
-const DO_NOT_USE_CUSTOM_BUTTON = `BulkActionRow内では「Button」コンポーネントを使用してください。
+// XxxxButtonパターンのコンポーネントを使用している場合
+const DO_NOT_USE_PREFIXED_BUTTON = `BulkActionRow内では「Button」コンポーネントのみを使用してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-bulk-action-row-button
- - 独自実装されたButtonコンポーネントは使用しないでください。
+ - XxxxButtonのようにprefixが付いたButtonコンポーネント（AnchorButton、StyledButtonなど）は使用しないでください。
  - もし「すべてのオブジェクトを選択」ボタンの実装であれば、Button[variant="tertiary"]を使用してください。
  - 参考:
   - https://smarthr.design/products/design-patterns/table-bulk-action/#h4-2
@@ -38,13 +38,13 @@ module.exports = {
         })
       },
 
-      // BulkActionRow内で独自実装のButtonコンポーネントを使用している場合
+      // BulkActionRow内でprefixが付いたButtonコンポーネントを使用している場合
       'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/.+Button$/]'(
         node,
       ) {
         context.report({
           node: node.openingElement,
-          message: DO_NOT_USE_CUSTOM_BUTTON,
+          message: DO_NOT_USE_PREFIXED_BUTTON,
         })
       },
     }

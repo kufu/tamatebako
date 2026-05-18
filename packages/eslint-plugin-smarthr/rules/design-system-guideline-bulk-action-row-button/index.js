@@ -29,7 +29,7 @@ module.exports = {
   create(context) {
     return {
       // BulkActionRow内でaタグやLinkコンポーネントを使用している場合
-      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/^a$|Link$/]'(
+      'JSXElement[openingElement.name.name=/BulkActionRow$/] JSXElement[openingElement.name.name=/^a$|Link$/]'(
         node,
       ) {
         context.report({
@@ -39,7 +39,7 @@ module.exports = {
       },
 
       // BulkActionRow内でprefixが付いたButtonコンポーネントを使用している場合
-      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/.+Button$/]'(
+      'JSXElement[openingElement.name.name=/BulkActionRow$/] JSXElement[openingElement.name.name=/.+Button$/]'(
         node,
       ) {
         context.report({

@@ -127,5 +127,26 @@ ruleTester.run('design-system-guideline-bulk-action-row-button', rule, {
       `,
       errors: [{ message: messageDoNotUsePrefixedButton }],
     },
+    // StyledBulkActionRowのようなラッパーコンポーネント内でもチェック
+    {
+      code: `
+        <StyledBulkActionRow>
+          <TextLink href={undefined} onClick={toggleAll}>
+            一覧の100件すべてを選択
+          </TextLink>
+        </StyledBulkActionRow>
+      `,
+      errors: [{ message: messageDoNotUseLink }],
+    },
+    {
+      code: `
+        <CustomBulkActionRow>
+          <AnchorButton href={undefined} onClick={toggleAllChecked}>
+            一覧のすべてを選択
+          </AnchorButton>
+        </CustomBulkActionRow>
+      `,
+      errors: [{ message: messageDoNotUsePrefixedButton }],
+    },
   ],
 })

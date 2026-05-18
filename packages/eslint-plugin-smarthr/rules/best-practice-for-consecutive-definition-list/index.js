@@ -26,15 +26,15 @@ module.exports = {
     return {
       // 1. 直接隣接
       [`${DEFINITION_LIST} + ${DEFINITION_LIST}`]: reporter,
-      // 2. 空白のみJSXText経由
+      // 2. 空白・改行のみのJSXText経由
       [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
-      // 3. 空式/コメント経由
+      // 3. JSXコメント（{/* */}、{}）経由
       [`${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`]: reporter,
-      // 4. 空白 + 空式/コメント
+      // 4. 空白・改行 + JSXコメント
       [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${DEFINITION_LIST}`]: reporter,
-      // 5. 空式/コメント + 空白
+      // 5. JSXコメント + 空白・改行
       [`${DEFINITION_LIST} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
-      // 6. 空白 + 空式/コメント + 空白
+      // 6. 空白・改行 + JSXコメント + 空白・改行
       [`${DEFINITION_LIST} + ${WHITESPACE_TEXT} + ${EMPTY_EXPRESSION} + ${WHITESPACE_TEXT} + ${DEFINITION_LIST}`]: reporter,
     }
   },

@@ -29,7 +29,7 @@ module.exports = {
   create(context) {
     return {
       // BulkActionRow内でaタグやLinkコンポーネントを使用している場合
-      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement:matches([openingElement.name.name="a"], [openingElement.name.name=/Link$/])'(
+      'JSXElement[openingElement.name.name="BulkActionRow"] JSXElement[openingElement.name.name=/^a$|Link$/]'(
         node,
       ) {
         context.report({

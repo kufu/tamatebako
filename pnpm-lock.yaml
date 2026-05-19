@@ -97,8 +97,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(eslint@9.39.4(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.15.0
-        version: 6.15.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.16.0
+        version: 6.16.0(eslint@9.39.4(jiti@2.4.2))
       globals:
         specifier: ^17.6.0
         version: 17.6.0
@@ -3474,13 +3474,13 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.14.0:
-    resolution: {integrity: sha512-s5UPhg6XT1GRhbKG9xFaPTt1c+JkyFAC3SfNxO5BnrPKUVnXZBQ7qWNXbth5qb3qEAYJm4M+ZExc60MC+uQJzQ==}
+  eslint-plugin-smarthr@6.15.0:
+    resolution: {integrity: sha512-4AgqU7lDd6lOa2DOt4v5P+K96CSLVGyPTMpWNznJ2oiZHhrSoZ6O65vrIxoQGB/OW+81czrKplMTcwR9GoYXGg==}
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.15.0:
-    resolution: {integrity: sha512-4AgqU7lDd6lOa2DOt4v5P+K96CSLVGyPTMpWNznJ2oiZHhrSoZ6O65vrIxoQGB/OW+81czrKplMTcwR9GoYXGg==}
+  eslint-plugin-smarthr@6.16.0:
+    resolution: {integrity: sha512-yU+cmtEnogu2ef0AVwu80v8+RQIPDfXNKMGfSWGbuY6qzdVvfxnXLRT5azmpEgwv+nNpz61FBpRq7OvxZo010A==}
     peerDependencies:
       eslint: ^9
 
@@ -9748,12 +9748,12 @@ snapshots:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.14.0(eslint@9.39.4(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.15.0(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.15.0(eslint@9.39.4(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.16.0(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

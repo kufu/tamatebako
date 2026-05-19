@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.16.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.15.0...eslint-plugin-smarthr-v6.16.0) (2026-05-19)
+
+
+### Features
+
+* design-system-guideline-bulk-action-row-button のlinterルールを追加 ([#1309](https://github.com/kufu/tamatebako/issues/1309)) ([d5934ae](https://github.com/kufu/tamatebako/commit/d5934ae3cc95ef9cb5696c00f22840351b5567ea))
+* InformationPanelを白背景に配置することを禁止するルールを追加 ([#1319](https://github.com/kufu/tamatebako/issues/1319)) ([6b3a9b6](https://github.com/kufu/tamatebako/commit/6b3a9b621956e196eb9fb5984e3acba458893eca))
+
 ## [6.15.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.14.0...eslint-plugin-smarthr-v6.15.0) (2026-05-17)
 
 

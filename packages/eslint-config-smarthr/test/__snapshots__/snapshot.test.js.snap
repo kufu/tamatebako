@@ -3094,11 +3094,17 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/component-name": [
       2,
     ],
+    "smarthr/design-system-guideline-bulk-action-row-button": [
+      1,
+    ],
     "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
       1,
     ],
     "smarthr/design-system-guideline-prohibit-double-icons": [
       0,
+    ],
+    "smarthr/design-system-guideline-prohibit-information-panel-in-white-bg": [
+      1,
     ],
     "smarthr/format-import-path": [
       0,

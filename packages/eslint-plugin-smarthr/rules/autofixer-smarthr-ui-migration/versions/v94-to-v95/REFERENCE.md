@@ -61,9 +61,12 @@ v95では AppLauncher コンポーネントの `decorators.triggerLabel` が `tr
 
 **自動修正可能:**
 - 既に`triggerLabel`属性がある場合 → `decorators`を削除
+- 固定値（リテラル）の場合 → `decorators`を削除（IntlProviderに任せる）
+- 動的な値（変数、関数呼び出しなど）の場合 → `triggerLabel`属性に移行
 
 **自動修正不可（エラーのみ表示）:**
-- `decorators.triggerLabel`の値抽出 → `() => value`から`value`を取り出す処理が複雑
+- 引数ありの関数: `(lang) => ...`
+- BlockStatement形式: `() => { return "Apps" }`
 
 #### 実装パターン
 
@@ -91,7 +94,25 @@ v95では AppLauncher コンポーネントの `decorators.triggerLabel` が `tr
           return fixer.remove(node)
         }
 
-        // 値の抽出は複雑なため、エラーのみ表示（手動対応）
+        // decorators={{ triggerLabel: () => "Apps" }}から値を抽出
+        const extractedValue = extractDecoratorValue(node, 'triggerLabel')
+        if (extractedValue) {
+          // 固定値（リテラル）の場合 → decoratorsを削除するだけ
+          // 動的な値（変数など）の場合 → triggerLabel属性に移行
+          if (extractedValue.startsWith('"') || extractedValue.startsWith("'")) {
+            // 固定値: decoratorsを削除
+            const tokenBefore = sourceCode.getTokenBefore(node)
+            if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+              return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+            }
+            return fixer.remove(node)
+          } else {
+            // 動的な値: triggerLabel属性に移行
+            return fixer.replaceText(node, `triggerLabel=${extractedValue}`)
+          }
+        }
+
+        // 複雑なため、エラーのみ表示（手動対応）
         return null
       },
     })
@@ -100,10 +121,11 @@ v95では AppLauncher コンポーネントの `decorators.triggerLabel` が `tr
 ```
 
 **ポイント:**
-- `sourceCode.getText(node.value).includes('triggerLabel')`で簡易チェック
-- `triggerLabel`属性が既にある場合は`decorators`を削除
-- 値の抽出（`() => featureName`から`featureName`を取り出す）は複雑なため手動対応
-- 固定値の場合も手動対応（`() => 'Apps'` → decorators削除）
+- `extractDecoratorValue(node, 'triggerLabel')`で値を抽出
+- 抽出した値がリテラル（`"`または`'`で始まる）の場合 → `decorators`を削除
+- 抽出した値がJSX式（`{...}`形式）の場合 → `triggerLabel={...}`に置換
+- 固定値の場合はIntlProviderに任せるため、属性自体を削除
+- 動的な値の場合のみ`triggerLabel`属性を追加
 
 ### 2. FormDialog/ActionDialog のボタン属性統合
 
@@ -138,10 +160,11 @@ closeButton={{ text: "閉じる", disabled: true }}
 - `actionText` + `actionTheme` + `actionDisabled` → Object形式へ自動変換
 - 既に`actionButton`/`closeButton`がある場合 → 古い属性を削除
 - `decorators.closeButtonLabel`（引数なしの関数） → 値を抽出して`closeButton`に変換
+- `decorators.triggerLabel`（引数なしの関数） → 固定値は削除、動的な値は`triggerLabel`に変換
 
 **自動修正不可（エラーのみ表示）:**
 - `closeDisabled` → Object形式への変換が複雑
-- `decorators.closeButtonLabel`（引数あり、またはBlockStatement）
+- `decorators`（引数あり、またはBlockStatement）
 
 #### 2-3. 実装パターン（段階的な対応）
 

@@ -315,7 +315,25 @@ module.exports = {
                 return fixer.remove(node)
               }
 
-              // 値の抽出は複雑なため、エラーのみ表示（手動対応）
+              // decorators={{ triggerLabel: () => "Apps" }}から値を抽出
+              const extractedValue = extractDecoratorValue(node, 'triggerLabel')
+              if (extractedValue) {
+                // 固定値（リテラル）の場合 → decoratorsを削除するだけ
+                // 動的な値（変数など）の場合 → triggerLabel属性に移行
+                if (extractedValue.startsWith('"') || extractedValue.startsWith("'")) {
+                  // 固定値: decoratorsを削除
+                  const tokenBefore = sourceCode.getTokenBefore(node)
+                  if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+                    return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+                  }
+                  return fixer.remove(node)
+                } else {
+                  // 動的な値: triggerLabel属性に移行
+                  return fixer.replaceText(node, `triggerLabel=${extractedValue}`)
+                }
+              }
+
+              // 複雑なため、エラーのみ表示（手動対応）
               return null
             },
           })

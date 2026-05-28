@@ -51,9 +51,74 @@ const invalid = [
     ],
   },
 
-  // AppLauncher（decorators.triggerLabelあり、エラーのみ）
+  // AppLauncher（固定値の場合、decoratorsを削除）
   {
     code: '<AppLauncher decorators={{ triggerLabel: () => "Apps" }} />',
+    output: '<AppLauncher />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（シングルクォートの固定値、decoratorsを削除）
+  {
+    code: "<AppLauncher decorators={{ triggerLabel: () => 'Apps' }} />",
+    output: '<AppLauncher />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（動的な値、triggerLabel属性に移行）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: () => featureName }} />',
+    output: '<AppLauncher triggerLabel={featureName} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（関数呼び出し、triggerLabel属性に移行）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: () => getLabel() }} />',
+    output: '<AppLauncher triggerLabel={getLabel()} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（オブジェクトプロパティ、triggerLabel属性に移行）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: () => labels.app }} />',
+    output: '<AppLauncher triggerLabel={labels.app} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（引数あり、自動修正不可）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: (lang) => lang === "ja" ? "アプリ" : "Apps" }} />',
     output: null,
     options: v94ToV95Options,
     errors: [
@@ -64,9 +129,9 @@ const invalid = [
     ],
   },
 
-  // AppLauncher（動的な値、エラーのみ）
+  // AppLauncher（BlockStatement、自動修正不可）
   {
-    code: '<AppLauncher decorators={{ triggerLabel: () => featureName }} />',
+    code: '<AppLauncher decorators={{ triggerLabel: () => { return "Apps" } }} />',
     output: null,
     options: v94ToV95Options,
     errors: [

@@ -19,6 +19,7 @@ const v90ToV91 = require('./versions/v90-to-v91/index')
 const v91ToV92 = require('./versions/v91-to-v92/index')
 const v92ToV93 = require('./versions/v92-to-v93/index')
 const v93ToV94 = require('./versions/v93-to-v94/index')
+const v94ToV95 = require('./versions/v94-to-v95/index')
 
 // サポートしているバージョン間の移行モジュール
 const VERSION_MODULES = {
@@ -26,6 +27,7 @@ const VERSION_MODULES = {
   'v91-v92': v91ToV92,
   'v92-v93': v92ToV93,
   'v93-v94': v93ToV94,
+  'v94-v95': v94ToV95,
 }
 
 module.exports = {
@@ -60,6 +62,8 @@ module.exports = {
       ...v90ToV91.messages,
       ...v91ToV92.messages,
       ...v92ToV93.messages,
+      ...v93ToV94.messages,
+      ...v94ToV95.messages,
     },
   },
   create(context) {

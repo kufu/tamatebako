@@ -4,37 +4,26 @@
 
 ## 対応する破壊的変更
 
-### 1. LanguageSwitcher, AppLauncher: decorators属性の削除
+### 1. LanguageSwitcher: decorators属性の削除
 
-v95では、`LanguageSwitcher`と`AppLauncher`コンポーネントから`decorators`属性が削除されました。翻訳はsmarthr-ui内で自動的に行われます。
+v95では、`LanguageSwitcher`コンポーネントから`decorators`属性が削除されました。翻訳はsmarthr-ui内で自動的に行われます。
 
 #### 変更内容
 
-**LanguageSwitcher:**
 - `decorators` 属性削除
 - トリガーラベルは常に`'Language'`で固定
 - チェックアイコンのaltはsmarthr-uiの翻訳が自動適用（全9言語対応済み）
-
-**AppLauncher:**
-- `decorators` 属性削除
-- トリガーラベルはsmarthr-uiの翻訳が自動適用（全9言語対応済み）
-- 動的な値（例: featureName）を渡す必要がある場合のみ、`triggerLabel`属性を使用
 
 #### 移行方法
 
 **Before (v94):**
 ```tsx
 <LanguageSwitcher decorators={{ triggerLabel: () => 'Language' }} />
-<AppLauncher decorators={{ triggerLabel: () => 'Apps' }} />
 ```
 
 **After (v95):**
 ```tsx
 <LanguageSwitcher />
-<AppLauncher />
-
-// 動的な値が必要な場合のみ
-<AppLauncher triggerLabel={featureName} />
 ```
 
 #### 自動修正可能なパターン
@@ -45,9 +34,50 @@ v95では、`LanguageSwitcher`と`AppLauncher`コンポーネントから`decora
 // decorators属性を削除
 <LanguageSwitcher decorators={{ triggerLabel: () => '言語' }} />
 → <LanguageSwitcher />
+```
 
+### 1-2. AppLauncher: decorators.triggerLabelをtriggerLabel属性に移行
+
+v95では、`AppLauncher`コンポーネントから`decorators`属性が削除され、`triggerLabel`属性が追加されました。
+
+#### 変更内容
+
+- `decorators.triggerLabel` → `triggerLabel` 属性に移行
+- `triggerLabel`が指定されていない場合はsmarthr-uiの翻訳が自動適用（全9言語対応済み）
+- 動的な値（例: featureName）を渡す必要がある場合のみ、`triggerLabel`属性を使用
+
+#### 移行方法
+
+**Before (v94):**
+```tsx
+// 固定値の場合
+<AppLauncher decorators={{ triggerLabel: () => 'Apps' }} />
+
+// 動的な値の場合
+<AppLauncher decorators={{ triggerLabel: () => featureName }} />
+```
+
+**After (v95):**
+```tsx
+// 固定値の場合 → decoratorsを削除してIntlProviderに任せる
+<AppLauncher />
+
+// 動的な値の場合 → triggerLabel属性に移行
+<AppLauncher triggerLabel={featureName} />
+```
+
+#### 自動修正可能なパターン
+
+**注意:** AppLauncherの`decorators.triggerLabel`の値抽出は複雑なため、エラーのみ表示されます。手動で移行してください。
+
+```tsx
+// エラーのみ表示（手動対応が必要）
+<AppLauncher decorators={{ triggerLabel: () => featureName }} />
+→ 手動で <AppLauncher triggerLabel={featureName} /> に変更してください
+
+// 固定値の場合は decorators を削除
 <AppLauncher decorators={{ triggerLabel: () => 'アプリ' }} />
-→ <AppLauncher />
+→ 手動で <AppLauncher /> に変更してください
 ```
 
 ### 2. InputFile: decorators属性の削除

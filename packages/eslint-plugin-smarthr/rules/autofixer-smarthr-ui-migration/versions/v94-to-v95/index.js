@@ -22,8 +22,8 @@ const { setupSmarthrUiAliasOptions } = require('../../helpers')
 // v95を示す定数（メッセージで使用）
 const TARGET_VERSION = 'v95'
 
-// decoratorsを削除するコンポーネント
-const COMPONENTS_REMOVE_DECORATORS = ['LanguageSwitcher', 'AppLauncher', 'InputFile']
+// decoratorsを削除するコンポーネント（単純削除のみ）
+const COMPONENTS_REMOVE_DECORATORS = ['LanguageSwitcher', 'InputFile']
 
 // ボタン属性を統合するコンポーネント（FormDialog, ActionDialog）
 const DIALOG_COMPONENTS_WITH_BUTTONS = ['FormDialog', 'ActionDialog']
@@ -35,6 +35,7 @@ const DIALOG_COMPONENTS_WITH_BUTTONS = ['FormDialog', 'ActionDialog']
 module.exports = {
   messages: {
     removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。翻訳はsmarthr-ui内で自動的に行われます',
+    migrateAppLauncherDecorators: 'smarthr-ui {{to}} では AppLauncher の decorators.triggerLabel は triggerLabel 属性に移行されました。動的な値を渡す場合のみ triggerLabel 属性を使用してください',
     migrateActionText: 'smarthr-ui {{to}} では {{component}} の actionText 属性は actionButton に統合されました',
     migrateActionTheme: 'smarthr-ui {{to}} では {{component}} の actionTheme 属性は actionButton に統合されました',
     migrateActionDisabled: 'smarthr-ui {{to}} では {{component}} の actionDisabled 属性は actionButton に統合されました',
@@ -230,6 +231,40 @@ module.exports = {
               },
             })
           }
+        }
+      },
+
+      // ============================================================
+      // AppLauncher の decorators.triggerLabel を triggerLabel に移行
+      // ============================================================
+
+      'JSXOpeningElement[name.name="AppLauncher"] > JSXAttribute[name.name="decorators"]'(node) {
+        // decorators属性の値を解析してtriggerLabelがあるかチェック
+        const decoratorsValue = sourceCode.getText(node.value)
+        if (decoratorsValue.includes('triggerLabel')) {
+          // triggerLabel属性が既にあるかチェック
+          const triggerLabelAttr = node.parent.attributes.find(
+            (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'triggerLabel'
+          )
+
+          context.report({
+            node,
+            messageId: 'migrateAppLauncherDecorators',
+            data: { to: TARGET_VERSION },
+            fix(fixer) {
+              // triggerLabel属性が既にある場合は削除のみ
+              if (triggerLabelAttr) {
+                const tokenBefore = sourceCode.getTokenBefore(node)
+                if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+                  return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+                }
+                return fixer.remove(node)
+              }
+
+              // 値の抽出は複雑なため、エラーのみ表示（手動対応）
+              return null
+            },
+          })
         }
       },
 

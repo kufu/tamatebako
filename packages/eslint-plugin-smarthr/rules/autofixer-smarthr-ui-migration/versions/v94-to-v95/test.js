@@ -14,6 +14,10 @@ const valid = [
   { code: '<AppLauncher />', options: v94ToV95Options },
   { code: '<InputFile />', options: v94ToV95Options },
 
+  // AppLauncher with triggerLabel
+  { code: '<AppLauncher triggerLabel={featureName} />', options: v94ToV95Options },
+  { code: '<AppLauncher triggerLabel="Custom Label" />', options: v94ToV95Options },
+
   // 既に新しい属性を使用
   { code: '<FormDialog actionButton="保存" />', options: v94ToV95Options },
   { code: '<FormDialog actionButton={{ text: "削除", theme: "danger" }} />', options: v94ToV95Options },
@@ -47,15 +51,41 @@ const invalid = [
     ],
   },
 
-  // AppLauncher
+  // AppLauncher（decorators.triggerLabelあり、エラーのみ）
   {
     code: '<AppLauncher decorators={{ triggerLabel: () => "Apps" }} />',
-    output: '<AppLauncher />',
+    output: null,
     options: v94ToV95Options,
     errors: [
       {
-        messageId: 'removeDecorators',
-        data: { component: 'AppLauncher', to: 'v95' },
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（動的な値、エラーのみ）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: () => featureName }} />',
+    output: null,
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // AppLauncher（triggerLabel属性が既にある場合、decoratorsを削除）
+  {
+    code: '<AppLauncher decorators={{ triggerLabel: () => "Apps" }} triggerLabel={featureName} />',
+    output: '<AppLauncher triggerLabel={featureName} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateAppLauncherDecorators',
+        data: { to: 'v95' },
       },
     ],
   },

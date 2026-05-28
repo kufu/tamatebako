@@ -4,9 +4,9 @@
 
 ## v94→v95 特有の実装パターン
 
-### 1. LanguageSwitcher, AppLauncher, InputFile の decorators 属性削除
+### 1. LanguageSwitcher, InputFile の decorators 属性削除
 
-v95では LanguageSwitcher, AppLauncher, InputFile コンポーネントから `decorators` 属性が削除されました。v93-to-v94のThCheckboxと同じく、**新しい属性への移行はなく、完全に削除する**だけのシンプルなパターンです。
+v95では LanguageSwitcher, InputFile コンポーネントから `decorators` 属性が削除されました。v93-to-v94のThCheckboxと同じく、**新しい属性への移行はなく、完全に削除する**だけのシンプルなパターンです。
 
 #### 1-1. decorators属性のチェッカー（シンプルな削除）
 
@@ -14,7 +14,7 @@ v95では LanguageSwitcher, AppLauncher, InputFile コンポーネントから `
 'JSXAttribute[name.name="decorators"]'(node) {
   const componentName = node.parent.name.name
 
-  // 対象コンポーネントのみ
+  // 対象コンポーネントのみ（LanguageSwitcher, InputFile）
   if (!COMPONENTS_REMOVE_DECORATORS.includes(componentName)) return
 
   context.report({
@@ -38,6 +38,72 @@ v95では LanguageSwitcher, AppLauncher, InputFile コンポーネントから `
 - **値の解析不要**: decoratorsの内容に関わらず削除するため、複雑な解析関数は不要
 - **条件分岐なし**: 常に削除するだけ
 - **自動修正: 常に可能**: 手動対応が必要なケースなし
+
+### 1-2. AppLauncher の decorators.triggerLabel を triggerLabel 属性に移行
+
+v95では AppLauncher コンポーネントの `decorators.triggerLabel` が `triggerLabel` 属性に移行されました。これは**値の抽出が必要な複雑なパターン**です。
+
+#### 変更内容
+
+**削除される属性:**
+- `decorators.triggerLabel` → `triggerLabel` 属性（動的な値の場合のみ）
+
+**移行後の形式:**
+```tsx
+// 固定値の場合 → decoratorsを削除してIntlProviderに任せる
+<AppLauncher />
+
+// 動的な値の場合 → triggerLabel属性に移行
+<AppLauncher triggerLabel={featureName} />
+```
+
+#### 実装の制約と自動修正可能なパターン
+
+**自動修正可能:**
+- 既に`triggerLabel`属性がある場合 → `decorators`を削除
+
+**自動修正不可（エラーのみ表示）:**
+- `decorators.triggerLabel`の値抽出 → `() => value`から`value`を取り出す処理が複雑
+
+#### 実装パターン
+
+```javascript
+'JSXOpeningElement[name.name="AppLauncher"] > JSXAttribute[name.name="decorators"]'(node) {
+  // decorators属性の値を解析してtriggerLabelがあるかチェック
+  const decoratorsValue = sourceCode.getText(node.value)
+  if (decoratorsValue.includes('triggerLabel')) {
+    // triggerLabel属性が既にあるかチェック
+    const triggerLabelAttr = node.parent.attributes.find(
+      (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'triggerLabel'
+    )
+
+    context.report({
+      node,
+      messageId: 'migrateAppLauncherDecorators',
+      data: { to: TARGET_VERSION },
+      fix(fixer) {
+        // triggerLabel属性が既にある場合は削除のみ
+        if (triggerLabelAttr) {
+          const tokenBefore = sourceCode.getTokenBefore(node)
+          if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
+            return fixer.removeRange([tokenBefore.range[1], node.range[1]])
+          }
+          return fixer.remove(node)
+        }
+
+        // 値の抽出は複雑なため、エラーのみ表示（手動対応）
+        return null
+      },
+    })
+  }
+}
+```
+
+**ポイント:**
+- `sourceCode.getText(node.value).includes('triggerLabel')`で簡易チェック
+- `triggerLabel`属性が既にある場合は`decorators`を削除
+- 値の抽出（`() => featureName`から`featureName`を取り出す）は複雑なため手動対応
+- 固定値の場合も手動対応（`() => 'Apps'` → decorators削除）
 
 ### 2. FormDialog/ActionDialog のボタン属性統合
 
@@ -266,6 +332,10 @@ if (actionTextAttr) {
 '<AppLauncher />',
 '<InputFile />',
 
+// AppLauncher with triggerLabel
+'<AppLauncher triggerLabel={featureName} />',
+'<AppLauncher triggerLabel="Custom Label" />',
+
 // 既に新しい属性を使用
 '<FormDialog actionButton="保存" />',
 '<FormDialog actionButton={{ text: "削除", theme: "danger" }} />',
@@ -280,6 +350,20 @@ if (actionTextAttr) {
   code: '<LanguageSwitcher decorators={{ triggerLabel: () => "Language" }} />',
   output: '<LanguageSwitcher />',
   errors: [{ messageId: 'removeDecorators' }]
+},
+
+// AppLauncher decorators.triggerLabel（エラーのみ、自動修正なし）
+{
+  code: '<AppLauncher decorators={{ triggerLabel: () => featureName }} />',
+  output: null, // 自動修正なし
+  errors: [{ messageId: 'migrateAppLauncherDecorators' }]
+},
+
+// AppLauncher（triggerLabel属性が既にある場合、decorators削除）
+{
+  code: '<AppLauncher decorators={{ triggerLabel: () => "Apps" }} triggerLabel={featureName} />',
+  output: '<AppLauncher triggerLabel={featureName} />',
+  errors: [{ messageId: 'migrateAppLauncherDecorators' }]
 },
 
 // actionText リネーム（自動修正可能）

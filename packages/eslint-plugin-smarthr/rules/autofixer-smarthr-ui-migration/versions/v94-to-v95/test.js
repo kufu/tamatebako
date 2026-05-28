@@ -139,10 +139,10 @@ const invalid = [
     ],
   },
 
-  // actionText + actionTheme（エラーのみ、自動修正なし）
+  // actionText + actionTheme（自動修正可能）
   {
     code: '<FormDialog actionText="削除" actionTheme="danger" />',
-    output: null,
+    output: '<FormDialog actionButton={{ text: "削除", theme: "danger" }} />',
     options: v94ToV95Options,
     errors: [
       {
@@ -156,14 +156,35 @@ const invalid = [
     ],
   },
 
-  // actionText + actionDisabled（エラーのみ、自動修正なし）
+  // actionText + actionDisabled（自動修正可能）
   {
     code: '<FormDialog actionText="保存" actionDisabled={true} />',
-    output: null,
+    output: '<FormDialog actionButton={{ text: "保存", disabled: true }} />',
     options: v94ToV95Options,
     errors: [
       {
         messageId: 'migrateActionText',
+        data: { component: 'FormDialog', to: 'v95' },
+      },
+      {
+        messageId: 'migrateActionDisabled',
+        data: { component: 'FormDialog', to: 'v95' },
+      },
+    ],
+  },
+
+  // actionText + actionTheme + actionDisabled（自動修正可能）
+  {
+    code: '<FormDialog actionText="削除" actionTheme="danger" actionDisabled={false} />',
+    output: '<FormDialog actionButton={{ text: "削除", theme: "danger", disabled: false }} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateActionText',
+        data: { component: 'FormDialog', to: 'v95' },
+      },
+      {
+        messageId: 'migrateActionTheme',
         data: { component: 'FormDialog', to: 'v95' },
       },
       {
@@ -190,10 +211,10 @@ const invalid = [
     ],
   },
 
-  // decorators.closeButtonLabel（エラーのみ、自動修正なし）
+  // decorators.closeButtonLabel（自動修正可能）
   {
     code: '<FormDialog decorators={{ closeButtonLabel: () => "キャンセル" }} />',
-    output: null,
+    output: '<FormDialog closeButton="キャンセル" />',
     options: v94ToV95Options,
     errors: [
       {
@@ -246,10 +267,10 @@ const invalid = [
     ],
   },
 
-  // actionText + actionTheme（エラーのみ、自動修正なし）
+  // actionText + actionTheme（自動修正可能）
   {
     code: '<ActionDialog actionText="削除" actionTheme="danger" />',
-    output: null,
+    output: '<ActionDialog actionButton={{ text: "削除", theme: "danger" }} />',
     options: v94ToV95Options,
     errors: [
       {
@@ -267,10 +288,10 @@ const invalid = [
   // MessageDialog の decorators 削除
   // ============================================================
 
-  // decorators.closeButtonLabel（エラーのみ、自動修正なし）
+  // decorators.closeButtonLabel（自動修正可能）
   {
     code: '<MessageDialog decorators={{ closeButtonLabel: () => "OK" }} />',
-    output: null,
+    output: '<MessageDialog closeButton="OK" />',
     options: v94ToV95Options,
     errors: [
       {
@@ -284,6 +305,84 @@ const invalid = [
   {
     code: '<MessageDialog decorators={{ closeButtonLabel: () => "OK" }} closeButton="閉じる" />',
     output: '<MessageDialog closeButton="閉じる" />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（シングルクォート、自動修正可能）
+  {
+    code: "<MessageDialog decorators={{ closeButtonLabel: () => 'OK' }} />",
+    output: '<MessageDialog closeButton="OK" />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（変数、自動修正可能）
+  {
+    code: '<MessageDialog decorators={{ closeButtonLabel: () => buttonLabel }} />',
+    output: '<MessageDialog closeButton={buttonLabel} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（BlockStatement、自動修正不可）
+  {
+    code: '<MessageDialog decorators={{ closeButtonLabel: () => { return "OK" } }} />',
+    output: null,
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（関数呼び出し、自動修正可能）
+  {
+    code: '<MessageDialog decorators={{ closeButtonLabel: () => getLabel() }} />',
+    output: '<MessageDialog closeButton={getLabel()} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（オブジェクトプロパティ、自動修正可能）
+  {
+    code: '<MessageDialog decorators={{ closeButtonLabel: () => labels.close }} />',
+    output: '<MessageDialog closeButton={labels.close} />',
+    options: v94ToV95Options,
+    errors: [
+      {
+        messageId: 'migrateMessageDialogDecorators',
+        data: { to: 'v95' },
+      },
+    ],
+  },
+
+  // decorators.closeButtonLabel（引数あり、自動修正不可）
+  {
+    code: '<MessageDialog decorators={{ closeButtonLabel: (lang) => lang === "ja" ? "OK" : "Close" }} />',
+    output: null,
     options: v94ToV95Options,
     errors: [
       {

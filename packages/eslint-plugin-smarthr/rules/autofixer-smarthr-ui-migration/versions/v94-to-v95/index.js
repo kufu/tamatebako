@@ -128,15 +128,50 @@ module.exports = {
               }
 
               // actionButton属性がない場合、actionTextをactionButtonにリネーム
-              // 他の属性（actionTheme, actionDisabled）がある場合はObject形式に変換する必要があるが、
-              // 段階的に処理するため、まずは単純なリネームのみ
+              // 他の属性（actionTheme, actionDisabled）がある場合はObject形式に変換
               if (!actionThemeAttr && !actionDisabledAttr) {
+                // actionTextのみの場合は単純にリネーム
                 return fixer.replaceText(actionTextAttr.name, 'actionButton')
               }
 
-              // actionTheme または actionDisabled がある場合、Object形式に変換
-              // これは複雑なため、エラーのみ表示（手動対応）
-              return null
+              // 複数の属性がある場合、Object形式に変換
+              const fixes = []
+
+              // actionButtonの値を構築
+              const textValue = getAttributeValue(actionTextAttr)
+              const themeValue = actionThemeAttr ? getAttributeValue(actionThemeAttr) : null
+              const disabledValue = actionDisabledAttr ? getAttributeValue(actionDisabledAttr) : null
+
+              const objectParts = [`text: ${textValue}`]
+              if (themeValue) objectParts.push(`theme: ${themeValue}`)
+              if (disabledValue !== null) objectParts.push(`disabled: ${disabledValue}`)
+
+              const newValue = `actionButton={{ ${objectParts.join(', ')} }}`
+
+              // actionText属性をactionButton={{ ... }}に置換
+              fixes.push(fixer.replaceText(actionTextAttr, newValue))
+
+              // actionTheme属性を削除
+              if (actionThemeAttr) {
+                const tokenBefore = sourceCode.getTokenBefore(actionThemeAttr)
+                if (tokenBefore && tokenBefore.range[1] < actionThemeAttr.range[0]) {
+                  fixes.push(fixer.removeRange([tokenBefore.range[1], actionThemeAttr.range[1]]))
+                } else {
+                  fixes.push(fixer.remove(actionThemeAttr))
+                }
+              }
+
+              // actionDisabled属性を削除
+              if (actionDisabledAttr) {
+                const tokenBefore = sourceCode.getTokenBefore(actionDisabledAttr)
+                if (tokenBefore && tokenBefore.range[1] < actionDisabledAttr.range[0]) {
+                  fixes.push(fixer.removeRange([tokenBefore.range[1], actionDisabledAttr.range[1]]))
+                } else {
+                  fixes.push(fixer.remove(actionDisabledAttr))
+                }
+              }
+
+              return fixes
             },
           })
         }
@@ -157,7 +192,12 @@ module.exports = {
                 return fixer.remove(actionThemeAttr)
               }
 
-              // 複雑なため、エラーのみ表示（手動対応）
+              // actionTextが存在する場合、actionTextのfixでまとめて処理されるためnull
+              if (actionTextAttr) {
+                return null
+              }
+
+              // actionTextがなくactionThemeのみの場合はエラーのみ（想定外のパターン）
               return null
             },
           })
@@ -179,7 +219,12 @@ module.exports = {
                 return fixer.remove(actionDisabledAttr)
               }
 
-              // 複雑なため、エラーのみ表示（手動対応）
+              // actionTextが存在する場合、actionTextのfixでまとめて処理されるためnull
+              if (actionTextAttr) {
+                return null
+              }
+
+              // actionTextがなくactionDisabledのみの場合はエラーのみ（想定外のパターン）
               return null
             },
           })
@@ -224,6 +269,15 @@ module.exports = {
                     return fixer.removeRange([tokenBefore.range[1], decoratorsAttr.range[1]])
                   }
                   return fixer.remove(decoratorsAttr)
+                }
+
+                // decorators={{ closeButtonLabel: () => "OK" }}から値を抽出
+                const extractedValue = extractDecoratorValue(decoratorsAttr, 'closeButtonLabel')
+                if (extractedValue) {
+                  // 自動修正可能: decoratorsを削除してcloseButtonを追加
+                  return [
+                    fixer.replaceText(decoratorsAttr, `closeButton=${extractedValue}`),
+                  ]
                 }
 
                 // 複雑なため、エラーのみ表示（手動対応）
@@ -295,12 +349,104 @@ module.exports = {
                 return fixer.remove(node)
               }
 
+              // decorators={{ closeButtonLabel: () => "OK" }}から値を抽出
+              const extractedValue = extractDecoratorValue(node, 'closeButtonLabel')
+              if (extractedValue) {
+                // 自動修正可能: decoratorsを削除してcloseButtonを追加
+                return fixer.replaceText(node, `closeButton=${extractedValue}`)
+              }
+
               // 複雑なため、エラーのみ表示（手動対応）
               return null
             },
           })
         }
       },
+    }
+
+    // ============================================================
+    // ヘルパー関数
+    // ============================================================
+
+    /**
+     * JSX属性の値を取得
+     *
+     * @param {Object} attr - 属性のASTノード
+     * @returns {string} 属性値の文字列表現
+     */
+    function getAttributeValue(attr) {
+      if (!attr || !attr.value) return '""'
+
+      // 文字列リテラル: actionText="保存"
+      if (attr.value.type === 'Literal') {
+        return JSON.stringify(attr.value.value)
+      }
+
+      // JSX式: actionTheme={"danger"} または actionDisabled={false}
+      if (attr.value.type === 'JSXExpressionContainer') {
+        const expr = attr.value.expression
+        if (expr.type === 'Literal') {
+          return JSON.stringify(expr.value)
+        }
+        // 変数や式の場合はソースコードをそのまま取得
+        return sourceCode.getText(expr)
+      }
+
+      return '""'
+    }
+
+    /**
+     * decorators属性から指定されたプロパティの値を抽出
+     *
+     * decorators={{ closeButtonLabel: () => "OK" }} から "OK" を抽出
+     * decorators={{ closeButtonLabel: () => variable }} から {variable} を抽出
+     *
+     * @param {Object} decoratorsAttr - decorators属性のASTノード
+     * @param {string} propertyName - 抽出するプロパティ名（例: 'closeButtonLabel'）
+     * @returns {string|null} 抽出された値の文字列表現、または抽出不可の場合null
+     */
+    function extractDecoratorValue(decoratorsAttr, propertyName) {
+      if (!decoratorsAttr || !decoratorsAttr.value) return null
+
+      // decorators={...}のJSXExpressionContainerを取得
+      if (decoratorsAttr.value.type !== 'JSXExpressionContainer') return null
+
+      const expr = decoratorsAttr.value.expression
+      // ObjectExpression: { closeButtonLabel: ... }
+      if (expr.type !== 'ObjectExpression') return null
+
+      // closeButtonLabelプロパティを探す
+      const property = expr.properties.find((prop) => {
+        return (
+          prop.type === 'Property' &&
+          prop.key &&
+          ((prop.key.type === 'Identifier' && prop.key.name === propertyName) ||
+            (prop.key.type === 'Literal' && prop.key.value === propertyName))
+        )
+      })
+
+      if (!property || !property.value) return null
+
+      // ArrowFunctionExpression: () => "OK"
+      if (property.value.type !== 'ArrowFunctionExpression') return null
+
+      // 引数なしの場合のみ処理
+      if (property.value.params.length !== 0) return null
+
+      const body = property.value.body
+
+      // BlockStatement（ブロック形式）は対応しない: () => { return "OK" }
+      if (body.type === 'BlockStatement') return null
+
+      // Literal: () => "OK" → "OK"
+      if (body.type === 'Literal') {
+        return JSON.stringify(body.value)
+      }
+
+      // その他のExpression: () => variable → {variable}
+      //                    () => a() → {a()}
+      //                    () => obj.prop → {obj.prop}
+      return `{${sourceCode.getText(body)}}`
     }
 
     return checkers

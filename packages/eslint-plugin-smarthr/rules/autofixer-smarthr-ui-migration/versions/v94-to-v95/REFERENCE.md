@@ -133,12 +133,15 @@ closeButton={{ text: "閉じる", disabled: true }}
 
 **自動修正可能:**
 - `actionText`のみの場合 → `actionButton`にリネーム
+- `actionText` + `actionTheme` → Object形式へ自動変換
+- `actionText` + `actionDisabled` → Object形式へ自動変換
+- `actionText` + `actionTheme` + `actionDisabled` → Object形式へ自動変換
 - 既に`actionButton`/`closeButton`がある場合 → 古い属性を削除
+- `decorators.closeButtonLabel`（引数なしの関数） → 値を抽出して`closeButton`に変換
 
 **自動修正不可（エラーのみ表示）:**
-- `actionText` + `actionTheme` → Object形式への変換が必要
-- `actionText` + `actionDisabled` → Object形式への変換が必要
-- `decorators.closeButtonLabel`の値抽出 → 複雑な解析が必要
+- `closeDisabled` → Object形式への変換が複雑
+- `decorators.closeButtonLabel`（引数あり、またはBlockStatement）
 
 #### 2-3. 実装パターン（段階的な対応）
 
@@ -207,9 +210,87 @@ closeButton={{ text: "閉じる", disabled: true }}
 - **段階的な修正**:
   1. 新属性が既にある → 古い属性を削除
   2. 単一属性のみ → 単純なリネーム
-  3. 複数属性 → エラーのみ（手動対応）
+  3. 複数属性 → Object形式へ自動変換（v94-to-v95で追加）
 
-#### 2-4. decorators.closeButtonLabel の処理
+**Object形式への自動変換（actionText + actionTheme/actionDisabled）:**
+
+```javascript
+if (actionTextAttr) {
+  context.report({
+    node: actionTextAttr,
+    messageId: 'migrateActionText',
+    fix(fixer) {
+      if (hasActionButton) {
+        // actionButton属性が既にある場合は削除のみ
+        return removeAttribute(fixer, actionTextAttr)
+      }
+
+      // actionButton属性がない場合
+      if (!actionThemeAttr && !actionDisabledAttr) {
+        // actionTextのみ → 単純にリネーム
+        return fixer.replaceText(actionTextAttr.name, 'actionButton')
+      }
+
+      // 複数の属性がある場合、Object形式に変換
+      const fixes = []
+      const textValue = getAttributeValue(actionTextAttr)
+      const themeValue = actionThemeAttr ? getAttributeValue(actionThemeAttr) : null
+      const disabledValue = actionDisabledAttr ? getAttributeValue(actionDisabledAttr) : null
+
+      const objectParts = [`text: ${textValue}`]
+      if (themeValue) objectParts.push(`theme: ${themeValue}`)
+      if (disabledValue !== null) objectParts.push(`disabled: ${disabledValue}`)
+
+      const newValue = `actionButton={{ ${objectParts.join(', ')} }}`
+
+      // actionText属性をactionButton={{ ... }}に置換
+      fixes.push(fixer.replaceText(actionTextAttr, newValue))
+
+      // actionTheme/actionDisabled属性を削除
+      if (actionThemeAttr) {
+        fixes.push(removeAttribute(fixer, actionThemeAttr))
+      }
+      if (actionDisabledAttr) {
+        fixes.push(removeAttribute(fixer, actionDisabledAttr))
+      }
+
+      return fixes
+    },
+  })
+}
+
+// actionTheme/actionDisabledのfix関数では、actionTextが存在する場合はnullを返す
+// （actionTextのfixでまとめて処理されるため）
+```
+
+**getAttributeValue ヘルパー関数:**
+
+```javascript
+function getAttributeValue(attr) {
+  if (!attr || !attr.value) return '""'
+
+  // 文字列リテラル: actionText="保存"
+  if (attr.value.type === 'Literal') {
+    return JSON.stringify(attr.value.value)
+  }
+
+  // JSX式: actionTheme={"danger"} または actionDisabled={false}
+  if (attr.value.type === 'JSXExpressionContainer') {
+    const expr = attr.value.expression
+    if (expr.type === 'Literal') {
+      return JSON.stringify(expr.value)
+    }
+    // 変数や式の場合はソースコードをそのまま取得
+    return sourceCode.getText(expr)
+  }
+
+  return '""'
+}
+```
+
+#### 2-4. decorators.closeButtonLabel の処理（値の自動抽出）
+
+v94→v95では、引数なしの関数（`() => "OK"`形式）から値を抽出する実装を追加しました。
 
 ```javascript
 if (decoratorsAttr) {
@@ -229,7 +310,14 @@ if (decoratorsAttr) {
           return fixer.remove(decoratorsAttr)
         }
 
-        // 値の抽出は複雑なため、エラーのみ（手動対応）
+        // decorators={{ closeButtonLabel: () => "OK" }}から値を抽出
+        const extractedValue = extractDecoratorValue(decoratorsAttr, 'closeButtonLabel')
+        if (extractedValue) {
+          // 自動修正可能: decoratorsを削除してcloseButtonを追加
+          return fixer.replaceText(decoratorsAttr, `closeButton=${extractedValue}`)
+        }
+
+        // 複雑なため、エラーのみ（手動対応）
         return null
       },
     })
@@ -237,14 +325,74 @@ if (decoratorsAttr) {
 }
 ```
 
+**extractDecoratorValue 関数:**
+
+```javascript
+/**
+ * decorators属性から指定されたプロパティの値を抽出
+ *
+ * decorators={{ closeButtonLabel: () => "OK" }} から "OK" を抽出
+ * decorators={{ closeButtonLabel: () => variable }} から {variable} を抽出
+ *
+ * @param {Object} decoratorsAttr - decorators属性のASTノード
+ * @param {string} propertyName - 抽出するプロパティ名
+ * @returns {string|null} 抽出された値、または抽出不可の場合null
+ */
+function extractDecoratorValue(decoratorsAttr, propertyName) {
+  if (!decoratorsAttr || !decoratorsAttr.value) return null
+  if (decoratorsAttr.value.type !== 'JSXExpressionContainer') return null
+
+  const expr = decoratorsAttr.value.expression
+  if (expr.type !== 'ObjectExpression') return null
+
+  // プロパティを探す
+  const property = expr.properties.find((prop) => {
+    return (
+      prop.type === 'Property' &&
+      prop.key &&
+      ((prop.key.type === 'Identifier' && prop.key.name === propertyName) ||
+        (prop.key.type === 'Literal' && prop.key.value === propertyName))
+    )
+  })
+
+  if (!property || !property.value) return null
+
+  // ArrowFunctionExpression: () => "OK"
+  if (property.value.type !== 'ArrowFunctionExpression') return null
+
+  // 引数なしの場合のみ処理
+  if (property.value.params.length !== 0) return null
+
+  const body = property.value.body
+
+  // BlockStatement（ブロック形式）は対応しない: () => { return "OK" }
+  if (body.type === 'BlockStatement') return null
+
+  // Literal: () => "OK" → "OK"
+  if (body.type === 'Literal') {
+    return JSON.stringify(body.value)
+  }
+
+  // その他のExpression: () => variable → {variable}
+  //                    () => a() → {a()}
+  //                    () => obj.prop → {obj.prop}
+  return `{${sourceCode.getText(body)}}`
+}
+```
+
 **ポイント:**
-- `sourceCode.getText(decoratorsAttr.value)`で値の文字列を取得
-- `includes('closeButtonLabel')`で簡易的にチェック
-- 値の抽出（`() => 'キャンセル'`から`'キャンセル'`を取り出す）は複雑なため、手動対応
+- `ArrowFunctionExpression`の`params.length === 0`（引数なし）の場合のみ処理
+- `BlockStatement`（`() => { return "OK" }`）は対応しない
+- `body.type === 'Literal'` → 文字列として返す（`"OK"`）
+- その他のExpression → JSX式として返す
+  - `() => variable` → `{variable}`
+  - `() => a()` → `{a()}`
+  - `() => obj.prop` → `{obj.prop}`
+  - `sourceCode.getText(body)`でbody部分のソースコードをそのまま抽出
 
 ### 3. MessageDialog の decorators 削除
 
-MessageDialogは FormDialog/ActionDialog と似ていますが、`closeButtonLabel`のみの対応です。
+MessageDialogは FormDialog/ActionDialog と似ていますが、`closeButtonLabel`のみの対応です。FormDialogと同じく`extractDecoratorValue`を使って値を自動抽出します。
 
 ```javascript
 'JSXOpeningElement[name.name="MessageDialog"] > JSXAttribute[name.name="decorators"]'(node) {
@@ -267,7 +415,14 @@ MessageDialogは FormDialog/ActionDialog と似ていますが、`closeButtonLab
           return fixer.remove(node)
         }
 
-        // 値の抽出は複雑なため、エラーのみ（手動対応）
+        // decorators={{ closeButtonLabel: () => "OK" }}から値を抽出
+        const extractedValue = extractDecoratorValue(node, 'closeButtonLabel')
+        if (extractedValue) {
+          // 自動修正可能
+          return fixer.replaceText(node, `closeButton=${extractedValue}`)
+        }
+
+        // 複雑なため、エラーのみ（手動対応）
         return null
       },
     })

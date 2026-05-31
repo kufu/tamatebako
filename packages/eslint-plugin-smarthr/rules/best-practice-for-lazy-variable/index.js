@@ -261,6 +261,28 @@ module.exports = {
         // 単一の条件分岐内のみで使用される
         const targetConditional = refInfo[0].conditional
 
+        // switchの場合、複数のcaseで使われているかチェック
+        if (targetConditional.type === 'SwitchStatement') {
+          const usedCases = new Set()
+          refInfo.forEach(info => {
+            // 条件部分(discriminant)で使われている場合はスキップ
+            if (info.isInTest) return
+
+            // どのcaseで使われているか探す
+            let current = info.identifier
+            while (current && current !== targetConditional) {
+              if (current.type === 'SwitchCase') {
+                usedCases.add(current)
+                break
+              }
+              current = current.parent
+            }
+          })
+
+          // 複数のcaseで使われている場合は移動しない
+          if (usedCases.size > 1) return
+        }
+
         // 宣言と条件分岐の間に他のコードがあるか確認
         const variableDeclaration = node.parent
         const declarationParent = variableDeclaration.parent

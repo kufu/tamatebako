@@ -163,6 +163,21 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // switch文の複数のcaseで使用される
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log(x)
+            break
+          case 'b':
+            console.log(x)
+            break
+        }
+      `,
+    },
     // 異なる条件分岐タイプの組み合わせ（三項演算子 + if）
     {
       code: `
@@ -373,16 +388,13 @@ if (x) {
         },
       ],
     },
-    // switchStatement内で使用、間に他のコードがある
+    // switchStatement単一caseで使用
     {
       code: `
         const x = getValue()
         someCode()
         switch (condition) {
           case 'a':
-            console.log(x)
-            break
-          case 'b':
             console.log(x)
             break
         }
@@ -394,9 +406,6 @@ if (x) {
           case 'a':
             const x = getValue()
 console.log(x)
-            break
-          case 'b':
-            console.log(x)
             break
         }
       `,

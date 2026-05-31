@@ -178,11 +178,12 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストした条件分岐（if > switch）
+    // ネストした条件分岐（if > switch、複数箇所で使用）
     {
       code: `
         const x = getValue()
         if (condition1) {
+          console.log(x)
           switch (condition2) {
             case 'a':
               console.log(x)
@@ -191,7 +192,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストした条件分岐（switch > if）
+    // ネストした条件分岐（switch > if、複数caseで使用）
     {
       code: `
         const x = getValue()
@@ -201,10 +202,13 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
               console.log(x)
             }
             break
+          case 'b':
+            console.log(x)
+            break
         }
       `,
     },
-    // ネストした条件分岐（switch > switch）
+    // ネストした条件分岐（switch > switch、外側の複数caseで使用）
     {
       code: `
         const x = getValue()
@@ -215,6 +219,9 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
                 console.log(x)
                 break
             }
+            break
+          case 'c':
+            console.log(x)
             break
         }
       `,

@@ -178,6 +178,47 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // ネストした条件分岐（if > switch）
+    {
+      code: `
+        const x = getValue()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+    },
+    // ネストした条件分岐（switch > if）
+    {
+      code: `
+        const x = getValue()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+    },
+    // ネストした条件分岐（switch > switch）
+    {
+      code: `
+        const x = getValue()
+        switch (condition1) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                console.log(x)
+                break
+            }
+            break
+        }
+      `,
+    },
     // 異なる条件分岐タイプの組み合わせ（三項演算子 + if）
     {
       code: `

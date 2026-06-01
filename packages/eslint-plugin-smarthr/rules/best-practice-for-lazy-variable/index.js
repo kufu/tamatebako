@@ -268,7 +268,63 @@ function isUsedInMultipleSwitchCases(targetConditional, refInfo) {
 }
 
 /**
- * 変数宣言を移動するfixer関数を生成
+ * 条件部分で変数が出現する位置を取得
+ * 条件部分のASTを走査して、変数のIdentifierの位置（range[0]）を返す
+ */
+function getVariablePositionInConditionalTest(conditional, varName) {
+  let testNode
+
+  switch (conditional.type) {
+    case 'SwitchStatement':
+      testNode = conditional.discriminant
+      break
+    case 'IfStatement':
+    case 'ConditionalExpression':
+      testNode = conditional.test
+      break
+    case 'LogicalExpression':
+    case 'ChainExpression':
+      // これらは式全体が条件なので、式自体を探索
+      testNode = conditional
+      break
+    default:
+      testNode = null
+  }
+
+  if (!testNode) {
+    return -1
+  }
+
+  let position = -1
+
+  function traverse(node) {
+    if (!node || typeof node !== 'object') return false
+
+    // 変数名が一致するIdentifierを発見
+    if (node.type === 'Identifier' && node.name === varName && node.range) {
+      position = node.range[0]
+      return true
+    }
+
+    for (const key in node) {
+      if (key === 'parent') continue
+      const child = node[key]
+      if (Array.isArray(child)) {
+        if (child.some(c => traverse(c))) return true
+      } else if (child && typeof child === 'object') {
+        if (traverse(child)) return true
+      }
+    }
+
+    return false
+  }
+
+  traverse(testNode)
+  return position
+}
+
+/**
+ * 変数宣言を移動するfixer関数を生成（複数の変数をまとめて処理）
  */
 function createMoveFixer(sourceCode, variableDeclaration, targetConditional, statements, conditionalStatementIndex, refInfo) {
   return function(fixer) {
@@ -298,6 +354,92 @@ function createMoveFixer(sourceCode, variableDeclaration, targetConditional, sta
 }
 
 /**
+ * 変数が移動対象かどうかを判定し、移動情報を返す
+ */
+function analyzeVariable(sourceCode, node) {
+  // const/let のみ対象（varは除外）
+  if (node.parent.kind === 'var') return null
+  if (node.id.type !== 'Identifier') return null
+
+  const varName = node.id.name
+  const references = getVariableReferences(sourceCode, varName, node)
+
+  // 参照がない場合はスキップ
+  if (references.length === 0) return null
+
+  // 各参照の祖先にある条件分岐を取得
+  const refConditionals = references.map(ref => ({
+    identifier: ref.identifier,
+    conditionals: getAncestorConditionals(ref.identifier),
+  }))
+
+  // 条件分岐と関係ない参照がある場合は対象外
+  if (refConditionals.some(info => info.conditionals.length === 0)) return null
+
+  // 全ての参照に共通する条件分岐を見つける
+  const firstConditionals = refConditionals[0].conditionals
+  const commonConditionals = firstConditionals.filter(conditional =>
+    refConditionals.every(info => info.conditionals.includes(conditional))
+  )
+
+  // 共通する条件分岐がない場合は対象外
+  if (commonConditionals.length === 0) return null
+
+  // 最も内側の共通条件分岐を対象とする
+  const targetConditional = commonConditionals[0]
+
+  // 各参照が条件部分で使われているかチェック
+  const refInfo = references.map(ref => ({
+    identifier: ref.identifier,
+    conditional: targetConditional,
+    isInTest: isUsedInConditionalTest(ref.identifier),
+  }))
+
+  // switch文で複数のcaseで使われている場合は移動しない
+  if (isUsedInMultipleSwitchCases(targetConditional, refInfo)) return null
+
+  // 宣言と条件分岐の間にコードがあるかチェック
+  const variableDeclaration = node.parent
+  const declarationParent = variableDeclaration.parent
+
+  if (!declarationParent || !declarationParent.body) return null
+
+  const statements = declarationParent.body
+  const declarationIndex = statements.indexOf(variableDeclaration)
+
+  // 条件分岐を含む文のインデックスを探す
+  let conditionalStatementIndex = -1
+  for (let i = declarationIndex + 1; i < statements.length; i++) {
+    if (containsNode(statements[i], targetConditional)) {
+      conditionalStatementIndex = i
+      break
+    }
+  }
+
+  if (conditionalStatementIndex === -1) return null
+
+  // 宣言と条件分岐の間にコードがある場合のみ移動対象
+  const hasCodeBetween = conditionalStatementIndex > declarationIndex + 1
+
+  if (!hasCodeBetween) return null
+
+  const usedInTest = refInfo.some(info => info.isInTest)
+
+  return {
+    node,
+    varName,
+    variableDeclaration,
+    targetConditional,
+    statements,
+    conditionalStatementIndex,
+    refInfo,
+    usedInTest,
+    // 条件部分での出現位置（ソート用）
+    position: usedInTest ? getVariablePositionInConditionalTest(targetConditional, varName) : -1,
+  }
+}
+
+/**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
 module.exports = {
@@ -311,90 +453,137 @@ module.exports = {
   },
   create(context) {
     const sourceCode = context.sourceCode || context.getSourceCode()
+    const variablesToMove = new Map() // スコープごとに移動対象の変数を収集
 
     return {
       'VariableDeclarator': (node) => {
-        // const/let のみ対象（varは除外）
-        if (node.parent.kind === 'var') return
-        if (node.id.type !== 'Identifier') return
+        const analysis = analyzeVariable(sourceCode, node)
+        if (!analysis) return
 
-        const varName = node.id.name
-        const references = getVariableReferences(sourceCode, varName, node)
-
-        // 参照がない場合はスキップ
-        if (references.length === 0) return
-
-        // 各参照の祖先にある条件分岐を取得
-        const refConditionals = references.map(ref => ({
-          identifier: ref.identifier,
-          conditionals: getAncestorConditionals(ref.identifier),
-        }))
-
-        // 条件分岐と関係ない参照がある場合は対象外
-        if (refConditionals.some(info => info.conditionals.length === 0)) return
-
-        // 全ての参照に共通する条件分岐を見つける
-        const firstConditionals = refConditionals[0].conditionals
-        const commonConditionals = firstConditionals.filter(conditional =>
-          refConditionals.every(info => info.conditionals.includes(conditional))
-        )
-
-        // 共通する条件分岐がない場合は対象外
-        if (commonConditionals.length === 0) return
-
-        // 最も内側の共通条件分岐を対象とする
-        const targetConditional = commonConditionals[0]
-
-        // 各参照が条件部分で使われているかチェック
-        const refInfo = references.map(ref => ({
-          identifier: ref.identifier,
-          conditional: targetConditional,
-          isInTest: isUsedInConditionalTest(ref.identifier),
-        }))
-
-        // switch文で複数のcaseで使われている場合は移動しない
-        if (isUsedInMultipleSwitchCases(targetConditional, refInfo)) return
-
-        // 宣言と条件分岐の間にコードがあるかチェック
-        const variableDeclaration = node.parent
-        const declarationParent = variableDeclaration.parent
-
-        if (!declarationParent || !declarationParent.body) return
-
-        const statements = declarationParent.body
-        const declarationIndex = statements.indexOf(variableDeclaration)
-
-        // 条件分岐を含む文のインデックスを探す
-        let conditionalStatementIndex = -1
-        for (let i = declarationIndex + 1; i < statements.length; i++) {
-          if (containsNode(statements[i], targetConditional)) {
-            conditionalStatementIndex = i
-            break
-          }
+        // スコープ（親の文のリスト）をキーにして収集
+        const scopeKey = analysis.statements
+        if (!variablesToMove.has(scopeKey)) {
+          variablesToMove.set(scopeKey, [])
         }
+        variablesToMove.get(scopeKey).push(analysis)
+      },
 
-        if (conditionalStatementIndex === -1) return
-
-        // 宣言と条件分岐の間にコードがある場合のみエラーを報告
-        const hasCodeBetween = conditionalStatementIndex > declarationIndex + 1
-
-        if (hasCodeBetween) {
-          context.report({
-            node,
-            messageId: 'moveToLazy',
-            data: { name: varName },
-            fix: createMoveFixer(
-              sourceCode,
-              variableDeclaration,
-              targetConditional,
-              statements,
-              conditionalStatementIndex,
-              refInfo
-            ),
-          })
-        }
+      'Program:exit': () => {
+        // 収集した変数をまとめて処理
+        variablesToMove.forEach((variables) => {
+          processVariableGroup(context, sourceCode, variables)
+        })
       },
     }
   },
+}
+
+/**
+ * 複数の変数宣言をまとめて移動するfixer関数を生成
+ */
+function createGroupMoveFixer(sourceCode, variables, targetConditional, conditionalStatement) {
+  return function(fixer) {
+    const fixes = []
+    const usedInTest = variables[0].usedInTest
+
+    // 条件部分で使われている場合は、条件での出現順にソート
+    const sortedVariables = usedInTest
+      ? [...variables].sort((a, b) => a.position - b.position)
+      : variables
+
+    // 各変数の宣言を削除
+    sortedVariables.forEach(variable => {
+      fixes.push(fixer.remove(variable.variableDeclaration))
+    })
+
+    // 移動先のテキストを生成（ソート済みの順序で）
+    const declarationsText = sortedVariables
+      .map(v => sourceCode.getText(v.variableDeclaration))
+      .join('\n') + '\n'
+
+    if (usedInTest) {
+      // 条件部分で使用 → 条件文の直前に移動
+      fixes.push(fixer.insertTextBefore(conditionalStatement, declarationsText))
+    } else {
+      // body内で使用 → body内の先頭に移動
+      const body = getConditionalBody(targetConditional)
+
+      if (body && body.length > 0) {
+        fixes.push(fixer.insertTextBefore(body[0], declarationsText))
+      } else {
+        // bodyが空の場合は条件文の直前に移動
+        fixes.push(fixer.insertTextBefore(conditionalStatement, declarationsText))
+      }
+    }
+
+    return fixes
+  }
+}
+
+/**
+ * 同じスコープ内の移動対象変数をグループ化して処理
+ */
+function processVariableGroup(context, sourceCode, variables) {
+  // 条件分岐×移動先でグループ化
+  const groups = new Map()
+
+  variables.forEach(variable => {
+    const key = `${variable.targetConditional.range[0]}_${variable.usedInTest}`
+    if (!groups.has(key)) {
+      groups.set(key, [])
+    }
+    groups.get(key).push(variable)
+  })
+
+  // グループごとに処理
+  groups.forEach(group => {
+    const firstVar = group[0]
+    const conditionalStatement = firstVar.statements[firstVar.conditionalStatementIndex]
+
+    // グループが1つの変数のみの場合
+    if (group.length === 1) {
+      const variable = group[0]
+      context.report({
+        node: variable.node,
+        messageId: 'moveToLazy',
+        data: { name: variable.varName },
+        fix: createMoveFixer(
+          sourceCode,
+          variable.variableDeclaration,
+          variable.targetConditional,
+          variable.statements,
+          variable.conditionalStatementIndex,
+          variable.refInfo
+        ),
+      })
+      return
+    }
+
+    // 複数の変数がある場合は、まとめて処理
+    // 最初の変数だけにfixを設定し、残りはfixなしでreport
+    group.forEach((variable, index) => {
+      if (index === 0) {
+        // 最初の変数にグループ全体のfixを設定
+        context.report({
+          node: variable.node,
+          messageId: 'moveToLazy',
+          data: { name: variable.varName },
+          fix: createGroupMoveFixer(
+            sourceCode,
+            group,
+            variable.targetConditional,
+            conditionalStatement
+          ),
+        })
+      } else {
+        // 残りの変数はfixなしでreport（最初のfixで一緒に処理される）
+        context.report({
+          node: variable.node,
+          messageId: 'moveToLazy',
+          data: { name: variable.varName },
+        })
+      }
+    })
+  })
 }
 module.exports.schema = SCHEMA

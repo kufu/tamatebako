@@ -742,9 +742,10 @@ console.log(x)
       `,
       output: `
         
-        const y = getValue2()
+        
         someCode()
         const x = getValue1()
+const y = getValue2()
 if (x && y) {
           console.log("ok")
         }
@@ -772,9 +773,10 @@ if (x && y) {
       `,
       output: `
         
-        const x = getValue1()
+        
         someCode()
-        const y = getValue2()
+        const x = getValue1()
+const y = getValue2()
 if (x && y) {
           console.log("ok")
         }

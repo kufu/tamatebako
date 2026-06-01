@@ -141,6 +141,23 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         setItem(addableCrewCount)
       `,
     },
+    // 条件分岐の条件部分と外の両方で使用される（resale_alertパターン）
+    {
+      code: `
+        const before = (() => {
+          let temp = getValue()
+          return temp
+        })()
+
+        const addableCrewCount = Global.gon.addable_crew_count
+
+        if (before > addableCrewCount) {
+          doSomething()
+        }
+
+        setItem(addableCrewCount)
+      `,
+    },
     // 複数の三項演算子で使用される
     {
       code: `

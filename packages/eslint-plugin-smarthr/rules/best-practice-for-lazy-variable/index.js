@@ -553,34 +553,23 @@ function analyzeVariable(sourceCode, node) {
 
   if (!hasCodeBetween) return null
 
-  // 移動先が変数宣言で、その初期化式に条件分岐が含まれていない場合は移動対象外
-  // （変数の順序を保つため）
-  if (targetStatement.type === 'VariableDeclaration' && targetConditional) {
-    // 移動先の変数宣言が条件分岐を含んでいるかチェック
-    const targetContainsConditional = containsNode(targetStatement, targetConditional)
-    if (!targetContainsConditional) {
-      return null
-    }
-  }
-
-  // 間にある変数宣言が条件分岐で使用されていて、かつ条件分岐の外でも使用されている場合は移動対象外
-  // （変数の順序を保つため）
-  if (targetConditional) {
-    for (let i = declarationIndex + 1; i < targetStatementIndex; i++) {
-      const stmt = statements[i]
-      if (stmt.type === 'VariableDeclaration') {
-        // この変数宣言が条件分岐内で使用されているかチェック
-        for (const declarator of stmt.declarations) {
-          if (declarator.id.type === 'Identifier') {
-            const betweenVarName = declarator.id.name
-            // 条件分岐内でこの変数が使用されているかチェック
-            if (containsIdentifier(targetConditional, betweenVarName)) {
-              // この変数が条件分岐の外でも使用されているかチェック
-              const betweenVarUsages = getVariableUsages(sourceCode, betweenVarName, declarator)
-              const usedOutsideConditional = betweenVarUsages.some(usage =>
-                !containsNode(targetConditional, usage.identifier)
+  // 間にある変数宣言が移動先の文で使われており、かつ移動しない場合は移動対象外（変数の順序を保つため）
+  for (let i = declarationIndex + 1; i < targetStatementIndex; i++) {
+    if (statements[i].type === 'VariableDeclaration') {
+      for (const declarator of statements[i].declarations) {
+        if (declarator.id.type === 'Identifier') {
+          const betweenVarName = declarator.id.name
+          // targetStatementで使われているかチェック
+          if (containsIdentifier(targetStatement, betweenVarName)) {
+            // この変数が移動するかどうかをチェック
+            const betweenVarUsages = getVariableUsages(sourceCode, betweenVarName, declarator)
+            // 条件分岐がある場合、全ての使用箇所が条件分岐内かチェック
+            if (targetConditional) {
+              const allUsagesInConditional = betweenVarUsages.every(usage =>
+                containsNode(targetConditional, usage.identifier)
               )
-              if (usedOutsideConditional) {
+              // 条件分岐の外でも使われる = 移動しない → ブロック
+              if (!allUsagesInConditional) {
                 return null
               }
             }

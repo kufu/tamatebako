@@ -178,7 +178,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストした条件分岐（if > switch、複数箇所で使用）
+    // ネストした条件分岐（if > switch、条件とbodyで使用）- valid（複数箇所で使用）
     {
       code: `
         const x = getValue()
@@ -192,7 +192,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストした条件分岐（switch > if、複数caseで使用）
+    // ネストした条件分岐（switch > if、複数caseで使用）- valid
     {
       code: `
         const x = getValue()
@@ -208,7 +208,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストした条件分岐（switch > switch、外側の複数caseで使用）
+    // ネストした条件分岐（switch > switch、外側の複数caseで使用）- valid
     {
       code: `
         const x = getValue()
@@ -576,6 +576,106 @@ if (x > 0) {
 switch (x) {
           case 'a':
             console.log("a")
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストした条件分岐（if > switch、条件とbodyで使用）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (x > 0) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+      output: `
+        
+        someCode()
+        const x = getValue()
+if (x > 0) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストした条件分岐（switch > if、条件とbodyで使用）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (x) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      output: `
+        
+        someCode()
+        const x = getValue()
+switch (x) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストした条件分岐（switch > switch、条件とbodyで使用）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (x) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                console.log(x)
+                break
+            }
+            break
+        }
+      `,
+      output: `
+        
+        someCode()
+        const x = getValue()
+switch (x) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                console.log(x)
+                break
+            }
             break
         }
       `,

@@ -147,6 +147,40 @@ function containsNode(parent, target) {
 }
 
 /**
+ * ノードの祖先にある全ての条件分岐を取得
+ */
+function getAncestorConditionals(node) {
+  const conditionals = []
+  let current = node.parent
+
+  while (current) {
+    if (CONDITIONAL_TYPES.has(current.type)) {
+      conditionals.push(current)
+    }
+
+    // 関数の境界を超えない
+    if (current.type === 'FunctionDeclaration' ||
+        current.type === 'FunctionExpression' ||
+        current.type === 'ArrowFunctionExpression') {
+      break
+    }
+
+    // ループの境界を超えない
+    if (current.type === 'ForStatement' ||
+        current.type === 'ForInStatement' ||
+        current.type === 'ForOfStatement' ||
+        current.type === 'WhileStatement' ||
+        current.type === 'DoWhileStatement') {
+      break
+    }
+
+    current = current.parent
+  }
+
+  return conditionals
+}
+
+/**
  * 変数の全ての参照（Identifier）を取得
  */
 function getVariableReferences(sourceCode, varName, declarationNode) {
@@ -244,22 +278,33 @@ module.exports = {
         // 参照がない場合はスキップ
         if (references.length === 0) return
 
-        // 各参照について、条件分岐との関係を調べる
-        const refInfo = references.map(ref => ({
+        // 各参照について、祖先にある全ての条件分岐を取得
+        const refConditionals = references.map(ref => ({
           identifier: ref.identifier,
-          conditional: getNearestConditional(ref.identifier),
-          isInTest: isUsedInConditionalTest(ref.identifier),
+          conditionals: getAncestorConditionals(ref.identifier),
         }))
 
         // 条件分岐と関係ない参照がある場合は対象外
-        if (refInfo.some(info => info.conditional === null)) return
+        if (refConditionals.some(info => info.conditionals.length === 0)) return
 
-        // 複数の異なる条件分岐で使用される場合は対象外
-        const uniqueConditionals = new Set(refInfo.map(info => info.conditional))
-        if (uniqueConditionals.size > 1) return
+        // 全ての参照に共通する条件分岐を見つける
+        const firstConditionals = refConditionals[0].conditionals
+        const commonConditionals = firstConditionals.filter(conditional =>
+          refConditionals.every(info => info.conditionals.includes(conditional))
+        )
 
-        // 単一の条件分岐内のみで使用される
-        const targetConditional = refInfo[0].conditional
+        // 共通する条件分岐がない場合は対象外（異なる条件分岐で使用）
+        if (commonConditionals.length === 0) return
+
+        // 最も内側（最初）の共通条件分岐を対象とする
+        const targetConditional = commonConditionals[0]
+
+        // 各参照について、条件部分で使われているかを調べる
+        const refInfo = references.map(ref => ({
+          identifier: ref.identifier,
+          conditional: targetConditional,
+          isInTest: isUsedInConditionalTest(ref.identifier),
+        }))
 
         // switchの場合、複数のcaseで使われているかチェック
         if (targetConditional.type === 'SwitchStatement') {

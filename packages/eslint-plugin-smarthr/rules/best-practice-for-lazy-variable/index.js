@@ -197,16 +197,12 @@ function getVariableReferences(sourceCode, varName, declarationNode) {
       references.push({ identifier: node, parent })
     }
 
-    // 関数スコープを超えない
-    if (FUNCTION_SCOPE_TYPES.has(node.type)) {
+    // 探索を停止する条件: 関数スコープまたは同名変数の再宣言
+    if (
+      FUNCTION_SCOPE_TYPES.has(node.type) ||
+      (node.type === 'VariableDeclarator' && node !== declarationNode && node.id.type === 'Identifier' && node.id.name === varName)
+    ) {
       return
-    }
-
-    // 同名変数の再宣言がある場合はその先を探索しない
-    if (node.type === 'VariableDeclarator' && node !== declarationNode) {
-      if (node.id.type === 'Identifier' && node.id.name === varName) {
-        return
-      }
     }
 
     // 子ノードを再帰的に探索

@@ -244,7 +244,9 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         const z = obj2?.method(x)
       `,
     },
-    // 再代入がある場合（代入演算子）
+  ],
+  invalid: [
+    // 再代入がある場合（if内で代入）
     {
       code: `
         let x = 0
@@ -254,6 +256,21 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(x)
         }
       `,
+      output: `
+        
+        someCode()
+        let x = 0
+if (condition) {
+          x = 10
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
     },
     // 再代入がある場合（UpdateExpression: ++）
     {
@@ -265,8 +282,23 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(count)
         }
       `,
+      output: `
+        
+        someCode()
+        let count = 0
+if (condition) {
+          count++
+          console.log(count)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'count' },
+        },
+      ],
     },
-    // 再代入がある場合（ループフラグパターン）
+    // 再代入がある場合（forEach内で再代入、if文で参照）
     {
       code: `
         let update = false
@@ -278,8 +310,25 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           doSomething()
         }
       `,
+      output: `
+        
+        someCode()
+        let update = false
+array.forEach(() => {
+          update = true
+        })
+        if (update) {
+          doSomething()
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'update' },
+        },
+      ],
     },
-    // 再代入がある場合（ループカウンター）
+    // 再代入がある場合（forEach内で再代入、if文で参照）
     {
       code: `
         let total = 0
@@ -291,9 +340,24 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           doSomething()
         }
       `,
+      output: `
+        
+        someCode()
+        let total = 0
+array.forEach((item) => {
+          total += item.value
+        })
+        if (total > 100) {
+          doSomething()
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'total' },
+        },
+      ],
     },
-  ],
-  invalid: [
     // 基本パターン: body内で使用、間に他のコードがある
     {
       code: `const x = getValue()

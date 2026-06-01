@@ -180,30 +180,74 @@ function getAncestorConditionals(node) {
 }
 
 /**
- * 変数に再代入があるかチェック
- * 宣言より後のスコープ全体を探索（関数スコープ内も含む）
+ * ノードから最も近い関数スコープを取得
  */
-function hasVariableReassignment(varName, declarationNode) {
-  let hasReassignment = false
+function getNearestFunctionScope(node) {
+  let current = node.parent
+  while (current) {
+    if (FUNCTION_SCOPE_TYPES.has(current.type)) {
+      return current
+    }
+    current = current.parent
+  }
+  return null
+}
 
-  function traverse(node) {
+/**
+ * 変数の全ての使用箇所（参照と再代入）を取得
+ * 宣言より後で、同一スコープ内の使用箇所を収集
+ * 関数スコープ内も含めて探索し、再代入も含める
+ */
+function getVariableUsages(sourceCode, varName, declarationNode) {
+  const usages = []
+  const reassignmentsInFunctionScope = new Map() // 関数スコープ内の再代入を記録
+
+  /**
+   * ASTを再帰的に探索して使用箇所を収集
+   */
+  function traverse(node, parent, insideFunctionScope = false, currentFunctionScope = null) {
     if (!node || typeof node !== 'object') return
-    if (hasReassignment) return // 見つかったら早期終了
+
+    // 関数スコープに入る
+    let nowInsideFunctionScope = insideFunctionScope
+    let nowFunctionScope = currentFunctionScope
+    if (FUNCTION_SCOPE_TYPES.has(node.type)) {
+      nowInsideFunctionScope = true
+      nowFunctionScope = node
+    }
 
     // 再代入のチェック（AssignmentExpression）
     if (node.type === 'AssignmentExpression' &&
         node.left.type === 'Identifier' &&
         node.left.name === varName) {
-      hasReassignment = true
-      return
+      if (nowInsideFunctionScope && nowFunctionScope) {
+        // 関数スコープ内の再代入: 関数スコープを記録
+        reassignmentsInFunctionScope.set(nowFunctionScope, true)
+      }
+      usages.push({ identifier: node.left, parent, isReassignment: true })
     }
 
     // 再代入のチェック（UpdateExpression: ++, --）
     if (node.type === 'UpdateExpression' &&
         node.argument.type === 'Identifier' &&
         node.argument.name === varName) {
-      hasReassignment = true
-      return
+      if (nowInsideFunctionScope && nowFunctionScope) {
+        // 関数スコープ内の再代入: 関数スコープを記録
+        reassignmentsInFunctionScope.set(nowFunctionScope, true)
+      }
+      usages.push({ identifier: node.argument, parent, isReassignment: true })
+    }
+
+    // 変数名が一致するIdentifierを収集（宣言自体と再代入は除外）
+    if (node.type === 'Identifier' &&
+        node.name === varName &&
+        node !== declarationNode.id &&
+        node.parent?.type !== 'AssignmentExpression' &&
+        node.parent?.type !== 'UpdateExpression') {
+      // 関数スコープ内の参照は収集しない（同一スコープのみ）
+      if (!nowInsideFunctionScope) {
+        usages.push({ identifier: node, parent, isReassignment: false })
+      }
     }
 
     // 同名変数の再宣言がある場合はその先を探索しない
@@ -214,75 +258,14 @@ function hasVariableReassignment(varName, declarationNode) {
       return
     }
 
-    // 子ノードを再帰的に探索（関数スコープも含む）
-    for (const key in node) {
-      if (key === 'parent') continue
-      const child = node[key]
-      if (Array.isArray(child)) {
-        child.forEach(c => traverse(c))
-      } else if (child && typeof child === 'object' && child.type) {
-        traverse(child)
-      }
-    }
-  }
-
-  // 宣言が含まれるスコープを取得
-  const variableDeclaration = declarationNode.parent
-  let scopeNode = variableDeclaration.parent
-
-  // BlockStatementまたはProgramまで遡る
-  while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
-    scopeNode = scopeNode.parent
-  }
-
-  if (scopeNode) {
-    // 宣言以降のノードのみを探索
-    const statements = scopeNode.body || scopeNode.statements || []
-    const declarationIndex = statements.indexOf(variableDeclaration)
-
-    for (let i = declarationIndex + 1; i < statements.length; i++) {
-      traverse(statements[i])
-      if (hasReassignment) break
-    }
-  }
-
-  return hasReassignment
-}
-
-/**
- * 変数の全ての参照（Identifier）を取得
- * 宣言より後で、同一スコープ内の参照のみを対象とする
- */
-function getVariableReferences(sourceCode, varName, declarationNode) {
-  const references = []
-
-  /**
-   * ASTを再帰的に探索して参照を収集
-   */
-  function traverse(node, parent) {
-    if (!node || typeof node !== 'object') return
-
-    // 変数名が一致するIdentifierを収集（宣言自体は除外）
-    if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
-      references.push({ identifier: node, parent })
-    }
-
-    // 探索を停止する条件: 関数スコープまたは同名変数の再宣言
-    if (
-      FUNCTION_SCOPE_TYPES.has(node.type) ||
-      (node.type === 'VariableDeclarator' && node !== declarationNode && node.id.type === 'Identifier' && node.id.name === varName)
-    ) {
-      return
-    }
-
     // 子ノードを再帰的に探索
     for (const key in node) {
       if (key === 'parent') continue
       const child = node[key]
       if (Array.isArray(child)) {
-        child.forEach(c => traverse(c, node))
+        child.forEach(c => traverse(c, node, nowInsideFunctionScope, nowFunctionScope))
       } else if (child && typeof child === 'object' && child.type) {
-        traverse(child, node)
+        traverse(child, node, nowInsideFunctionScope, nowFunctionScope)
       }
     }
   }
@@ -302,24 +285,45 @@ function getVariableReferences(sourceCode, varName, declarationNode) {
     const declarationIndex = statements.indexOf(variableDeclaration)
 
     for (let i = declarationIndex + 1; i < statements.length; i++) {
-      traverse(statements[i], scopeNode)
+      traverse(statements[i], scopeNode, false, null)
     }
   }
 
-  return references
+  // 関数スコープ内に再代入がある場合、その関数スコープの呼び出し元を使用箇所として追加
+  reassignmentsInFunctionScope.forEach((_value, functionScope) => {
+    // 関数スコープの親（CallExpressionやArrowFunctionが渡されているノード）を見つける
+    let current = functionScope
+    let callNode = null
+    while (current && current.parent) {
+      // CallExpressionやメソッド呼び出しを見つける
+      if (current.parent.type === 'CallExpression' && current.parent.callee.type === 'MemberExpression') {
+        callNode = current.parent.callee.object
+        break
+      }
+      current = current.parent
+    }
+    if (callNode) {
+      // 既に登録されていない場合のみ追加
+      if (!usages.some(u => u.identifier === callNode)) {
+        usages.push({ identifier: callNode, parent: callNode.parent, isReassignment: false, isFunctionCall: true })
+      }
+    }
+  })
+
+  return usages
 }
 
 /**
  * switch文で変数が複数のcaseで使われているかチェック
  * 複数のcaseで使われている場合は移動すべきでない
  */
-function isUsedInMultipleSwitchCases(targetConditional, refInfo) {
+function isUsedInMultipleSwitchCases(targetConditional, usageInfo) {
   if (targetConditional.type !== 'SwitchStatement') {
     return false
   }
 
   const usedCases = new Set()
-  refInfo.forEach(info => {
+  usageInfo.forEach(info => {
     // 条件部分(discriminant)で使われている場合はスキップ
     if (info.isInTest) return
 
@@ -394,29 +398,31 @@ function getVariablePositionInConditionalTest(conditional, varName) {
 }
 
 /**
- * 変数宣言を移動するfixer関数を生成（複数の変数をまとめて処理）
+ * 変数宣言を移動するfixer関数を生成
  */
-function createMoveFixer(sourceCode, variableDeclaration, targetConditional, statements, conditionalStatementIndex, refInfo) {
+function createMoveFixer(sourceCode, variableDeclaration, targetConditional, targetStatement, statements, targetStatementIndex, usageInfo) {
   return function(fixer) {
-    const usedInTest = refInfo.some(info => info.isInTest)
     const declarationText = sourceCode.getText(variableDeclaration)
     const fixes = [fixer.remove(variableDeclaration)]
 
-    if (usedInTest) {
-      // 条件部分で使用 → 条件文の直前に移動
-      const conditionalStatement = statements[conditionalStatementIndex]
-      fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
-    } else {
-      // body内で使用 → body内の先頭に移動
-      const body = getConditionalBody(targetConditional)
+    // 最初の使用箇所が再代入の場合、または条件部分で使用される場合 → 条件文の直前に移動
+    const firstUsageIsReassignment = usageInfo.some(info => info.isReassignment)
+    const usedInTest = usageInfo.some(info => info.isInTest)
 
+    if (targetConditional && !firstUsageIsReassignment && !usedInTest) {
+      // 条件分岐があり、再代入がなく、条件部分で使用されていない → body内の先頭に移動
+      const body = getConditionalBody(targetConditional)
       if (body && body.length > 0) {
         fixes.push(fixer.insertTextBefore(body[0], declarationText + '\n'))
       } else {
         // bodyが空の場合は条件文の直前に移動
-        const conditionalStatement = statements[conditionalStatementIndex]
-        fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
+        const statement = statements[targetStatementIndex]
+        fixes.push(fixer.insertTextBefore(statement, declarationText + '\n'))
       }
+    } else {
+      // それ以外 → 最初の使用箇所を含む文の直前に移動
+      const statement = statements[targetStatementIndex]
+      fixes.push(fixer.insertTextBefore(statement, declarationText + '\n'))
     }
 
     return fixes
@@ -433,80 +439,78 @@ function analyzeVariable(sourceCode, node) {
 
   const varName = node.id.name
 
-  // 再代入がある場合は移動対象外
-  if (hasVariableReassignment(varName, node)) return null
+  const usages = getVariableUsages(sourceCode, varName, node)
 
-  const references = getVariableReferences(sourceCode, varName, node)
+  // 使用箇所がない場合はスキップ
+  if (usages.length === 0) return null
 
-  // 参照がない場合はスキップ
-  if (references.length === 0) return null
+  // 使用箇所を位置順（range[0]）にソート
+  const sortedUsages = usages.slice().sort((a, b) => {
+    const posA = a.identifier.range ? a.identifier.range[0] : 0
+    const posB = b.identifier.range ? b.identifier.range[0] : 0
+    return posA - posB
+  })
 
-  // 各参照の祖先にある条件分岐を取得
-  const refConditionals = references.map(ref => ({
-    identifier: ref.identifier,
-    conditionals: getAncestorConditionals(ref.identifier),
-  }))
+  // 最初の使用箇所を取得
+  const firstUsage = sortedUsages[0]
 
-  // 条件分岐と関係ない参照がある場合は対象外
-  if (refConditionals.some(info => info.conditionals.length === 0)) return null
+  // 最初の使用箇所の祖先にある条件分岐を取得
+  const conditionals = getAncestorConditionals(firstUsage.identifier)
 
-  // 全ての参照に共通する条件分岐を見つける
-  const firstConditionals = refConditionals[0].conditionals
-  const commonConditionals = firstConditionals.filter(conditional =>
-    refConditionals.every(info => info.conditionals.includes(conditional))
-  )
-
-  // 共通する条件分岐がない場合は対象外
-  if (commonConditionals.length === 0) return null
-
-  // 最も内側の共通条件分岐を対象とする
-  const targetConditional = commonConditionals[0]
-
-  // 各参照が条件部分で使われているかチェック
-  const refInfo = references.map(ref => ({
-    identifier: ref.identifier,
-    conditional: targetConditional,
-    isInTest: isUsedInConditionalTest(ref.identifier),
-  }))
-
-  // switch文で複数のcaseで使われている場合は移動しない
-  if (isUsedInMultipleSwitchCases(targetConditional, refInfo)) return null
-
-  // 宣言と条件分岐の間にコードがあるかチェック
+  // 宣言と移動先の間にコードがあるかチェック
   const variableDeclaration = node.parent
   const declarationParent = variableDeclaration.parent
 
-  if (!declarationParent || !declarationParent.body) return null
+  if (!declarationParent || !declarationParent.body || !Array.isArray(declarationParent.body)) return null
 
   const statements = declarationParent.body
   const declarationIndex = statements.indexOf(variableDeclaration)
 
-  // 条件分岐を含む文のインデックスを探す
-  let conditionalStatementIndex = -1
+  // 条件分岐がある場合は、最も内側の条件分岐を対象とする
+  const targetConditional = conditionals.length > 0 ? conditionals[0] : null
+
+  // 各使用箇所が条件部分で使われているかチェック
+  const usageInfo = usages.map(usage => ({
+    identifier: usage.identifier,
+    conditional: targetConditional,
+    isInTest: targetConditional ? isUsedInConditionalTest(usage.identifier) : false,
+    isReassignment: usage.isReassignment,
+  }))
+
+  // switch文で複数のcaseで使われている場合は移動しない
+  if (targetConditional && isUsedInMultipleSwitchCases(targetConditional, usageInfo)) return null
+
+  // 移動先の文を宣言と同じスコープ内で探す
+  let targetStatementIndex = -1
+  let targetStatement = null
+  const targetNode = targetConditional || firstUsage.identifier
+
   for (let i = declarationIndex + 1; i < statements.length; i++) {
-    if (containsNode(statements[i], targetConditional)) {
-      conditionalStatementIndex = i
+    if (containsNode(statements[i], targetNode)) {
+      targetStatementIndex = i
+      targetStatement = statements[i]
       break
     }
   }
 
-  if (conditionalStatementIndex === -1) return null
+  if (targetStatementIndex === -1) return null
 
-  // 宣言と条件分岐の間にコードがある場合のみ移動対象
-  const hasCodeBetween = conditionalStatementIndex > declarationIndex + 1
+  // 宣言と移動先の間にコードがある場合のみ移動対象
+  const hasCodeBetween = targetStatementIndex > declarationIndex + 1
 
   if (!hasCodeBetween) return null
 
-  const usedInTest = refInfo.some(info => info.isInTest)
+  const usedInTest = targetConditional && usageInfo.some(info => info.isInTest)
 
   return {
     node,
     varName,
     variableDeclaration,
     targetConditional,
+    targetStatement,
     statements,
-    conditionalStatementIndex,
-    refInfo,
+    targetStatementIndex,
+    usageInfo,
     usedInTest,
     // 条件部分での出現位置（ソート用）
     position: usedInTest ? getVariablePositionInConditionalTest(targetConditional, varName) : -1,
@@ -555,10 +559,11 @@ module.exports = {
 /**
  * 複数の変数宣言をまとめて移動するfixer関数を生成
  */
-function createGroupMoveFixer(sourceCode, variables, targetConditional, conditionalStatement) {
+function createGroupMoveFixer(sourceCode, variables, targetConditional, targetStatement) {
   return function(fixer) {
     const fixes = []
     const usedInTest = variables[0].usedInTest
+    const hasReassignment = variables.some(v => v.usageInfo.some(info => info.isReassignment))
 
     // 条件部分で使われている場合は、条件での出現順にソート
     const sortedVariables = usedInTest
@@ -575,19 +580,19 @@ function createGroupMoveFixer(sourceCode, variables, targetConditional, conditio
       .map(v => sourceCode.getText(v.variableDeclaration))
       .join('\n') + '\n'
 
-    if (usedInTest) {
-      // 条件部分で使用 → 条件文の直前に移動
-      fixes.push(fixer.insertTextBefore(conditionalStatement, declarationsText))
-    } else {
-      // body内で使用 → body内の先頭に移動
+    // 最初の使用箇所が再代入の場合、または条件部分で使用される場合 → 条件文の直前に移動
+    if (targetConditional && !hasReassignment && !usedInTest) {
+      // 条件分岐があり、再代入がなく、条件部分で使用されていない → body内の先頭に移動
       const body = getConditionalBody(targetConditional)
-
       if (body && body.length > 0) {
         fixes.push(fixer.insertTextBefore(body[0], declarationsText))
       } else {
         // bodyが空の場合は条件文の直前に移動
-        fixes.push(fixer.insertTextBefore(conditionalStatement, declarationsText))
+        fixes.push(fixer.insertTextBefore(targetStatement, declarationsText))
       }
+    } else {
+      // それ以外 → 最初の使用箇所を含む文の直前に移動
+      fixes.push(fixer.insertTextBefore(targetStatement, declarationsText))
     }
 
     return fixes
@@ -598,11 +603,13 @@ function createGroupMoveFixer(sourceCode, variables, targetConditional, conditio
  * 同じスコープ内の移動対象変数をグループ化して処理
  */
 function processVariableGroup(context, sourceCode, variables) {
-  // 条件分岐×移動先でグループ化
+  // 移動先でグループ化
   const groups = new Map()
 
   variables.forEach(variable => {
-    const key = `${variable.targetConditional.range[0]}_${variable.usedInTest}`
+    // targetStatementでグループ化（nullの場合は"null"文字列を使用）
+    const targetRange = variable.targetStatement ? variable.targetStatement.range[0] : 'null'
+    const key = `${targetRange}_${variable.usedInTest}`
     if (!groups.has(key)) {
       groups.set(key, [])
     }
@@ -612,7 +619,7 @@ function processVariableGroup(context, sourceCode, variables) {
   // グループごとに処理
   groups.forEach(group => {
     const firstVar = group[0]
-    const conditionalStatement = firstVar.statements[firstVar.conditionalStatementIndex]
+    const targetStatement = firstVar.statements[firstVar.targetStatementIndex]
 
     // グループが1つの変数のみの場合
     if (group.length === 1) {
@@ -625,9 +632,10 @@ function processVariableGroup(context, sourceCode, variables) {
           sourceCode,
           variable.variableDeclaration,
           variable.targetConditional,
+          variable.targetStatement,
           variable.statements,
-          variable.conditionalStatementIndex,
-          variable.refInfo
+          variable.targetStatementIndex,
+          variable.usageInfo
         ),
       })
       return
@@ -646,7 +654,7 @@ function processVariableGroup(context, sourceCode, variables) {
             sourceCode,
             group,
             variable.targetConditional,
-            conditionalStatement
+            targetStatement
           ),
         })
       } else {

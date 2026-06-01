@@ -312,28 +312,11 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
     }
   }
 
-  // 関数スコープ内に再代入がある場合、その関数スコープの呼び出し元を使用箇所として追加
-  reassignmentsInFunctionScope.forEach((_value, functionScope) => {
-    // 関数スコープの親（CallExpressionやArrowFunctionが渡されているノード）を見つける
-    let current = functionScope
-    let callNode = null
-    while (current && current.parent) {
-      // CallExpressionやメソッド呼び出しを見つける
-      if (current.parent.type === 'CallExpression' && current.parent.callee.type === 'MemberExpression') {
-        callNode = current.parent.callee.object
-        break
-      }
-      current = current.parent
-    }
-    if (callNode) {
-      // 既に登録されていない場合のみ追加
-      if (!usages.some(u => u.identifier === callNode)) {
-        usages.push({ identifier: callNode, parent: callNode.parent, isReassignment: false, isFunctionCall: true })
-      }
-    }
-  })
+  // 注: 以前のロジックで関数呼び出し元を追加していましたが、これは誤りでした
+  // array.forEach(() => { update = true })の場合、arrayがupdateの使用箇所として
+  // 誤って追加されてしまうため、このロジックを削除しました
 
-  return usages
+  return { usages, reassignmentsInFunctionScope }
 }
 
 /**
@@ -482,7 +465,7 @@ function analyzeVariable(sourceCode, node) {
 
   const varName = node.id.name
 
-  const usages = getVariableUsages(sourceCode, varName, node)
+  const { usages, reassignmentsInFunctionScope } = getVariableUsages(sourceCode, varName, node)
 
   // 使用箇所がない場合はスキップ
   if (usages.length === 0) return null
@@ -497,8 +480,15 @@ function analyzeVariable(sourceCode, node) {
   // 最初の使用箇所を取得
   const firstUsage = sortedUsages[0]
 
-  // 最初の使用箇所の祖先にある条件分岐を取得
-  const conditionals = getAncestorConditionals(firstUsage.identifier)
+  // 全ての使用箇所の祖先にある条件分岐を収集
+  // （再代入が関数スコープ内にあっても、他の使用箇所で条件分岐を検出するため）
+  const allConditionals = sortedUsages.flatMap(usage =>
+    getAncestorConditionals(usage.identifier)
+  )
+
+  // 重複を除去し、最も内側の条件分岐を取得
+  const uniqueConditionals = Array.from(new Set(allConditionals))
+  const conditionals = uniqueConditionals.length > 0 ? [uniqueConditionals[0]] : []
 
   // 宣言と移動先の間にコードがあるかチェック
   const variableDeclaration = node.parent
@@ -512,9 +502,21 @@ function analyzeVariable(sourceCode, node) {
   // 条件分岐がある場合は、最も内側の条件分岐を対象とする
   const targetConditional = conditionals.length > 0 ? conditionals[0] : null
 
-  // 条件分岐がある場合、全ての使用箇所がその条件分岐内にあるかチェック
+  // 条件分岐がない場合は移動対象外（このルールは条件分岐内でのみ使用される変数が対象）
+  if (!targetConditional) return null
+
+  // 全ての使用箇所（関数スコープ内の再代入を除く）がその条件分岐内にあるかチェック
   if (targetConditional) {
-    const allUsagesInConditional = usages.every(usage =>
+    const usagesExcludingReassignmentsInFunctionScope = usages.filter(usage => {
+      // 再代入でない場合は含める
+      if (!usage.isReassignment) return true
+
+      // 再代入の場合、関数スコープ内かチェック
+      const isInFunctionScope = reassignmentsInFunctionScope.size > 0
+      return !isInFunctionScope
+    })
+
+    const allUsagesInConditional = usagesExcludingReassignmentsInFunctionScope.every(usage =>
       containsNode(targetConditional, usage.identifier)
     )
 
@@ -562,7 +564,7 @@ function analyzeVariable(sourceCode, node) {
           // targetStatementで使われているかチェック
           if (containsIdentifier(targetStatement, betweenVarName)) {
             // この変数が移動するかどうかをチェック
-            const betweenVarUsages = getVariableUsages(sourceCode, betweenVarName, declarator)
+            const { usages: betweenVarUsages } = getVariableUsages(sourceCode, betweenVarName, declarator)
             // 条件分岐がある場合、全ての使用箇所が条件分岐内かチェック
             if (targetConditional) {
               const allUsagesInConditional = betweenVarUsages.every(usage =>

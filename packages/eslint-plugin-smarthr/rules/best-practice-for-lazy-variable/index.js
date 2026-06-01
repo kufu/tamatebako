@@ -391,7 +391,7 @@ function getVariablePositionInConditionalTest(conditional, varName) {
  */
 function createMoveFixer(sourceCode, variableDeclaration, targetConditional, targetStatement, statements, targetStatementIndex, usageInfo) {
   return function(fixer) {
-    const declarationText = sourceCode.getText(variableDeclaration)
+    const declarationText = getDeclarationTextWithComment(sourceCode, variableDeclaration)
     const text = sourceCode.text
 
     // 変数宣言の行全体を削除（インデント含む）
@@ -404,12 +404,34 @@ function createMoveFixer(sourceCode, variableDeclaration, targetConditional, tar
       lineStart--
     }
 
-    // 改行文字も削除範囲に含める
+    // 行末コメントも含めた終了位置を探す
     let removeEnd = endPos
-    if (text[endPos] === '\n') {
-      removeEnd = endPos + 1
-    } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
-      removeEnd = endPos + 2
+    let i = endPos
+
+    // セミコロンをスキップ
+    while (i < text.length && text[i] === ';') {
+      i++
+    }
+
+    // 空白をスキップ
+    while (i < text.length && (text[i] === ' ' || text[i] === '\t')) {
+      i++
+    }
+
+    // コメント開始を探す
+    if (i < text.length - 1 && text[i] === '/' && text[i + 1] === '/') {
+      // 行末まで
+      while (i < text.length && text[i] !== '\n' && text[i] !== '\r') {
+        i++
+      }
+      removeEnd = i
+    }
+
+    // 改行文字も削除範囲に含める
+    if (text[removeEnd] === '\n') {
+      removeEnd = removeEnd + 1
+    } else if (text[removeEnd] === '\r' && text[removeEnd + 1] === '\n') {
+      removeEnd = removeEnd + 2
     }
 
     const fixes = [fixer.removeRange([lineStart, removeEnd])]
@@ -695,6 +717,40 @@ module.exports = {
 }
 
 /**
+ * 変数宣言のテキストを行末コメント込みで取得
+ */
+function getDeclarationTextWithComment(sourceCode, variableDeclaration) {
+  const text = sourceCode.text
+  const startPos = variableDeclaration.range[0]
+  const endPos = variableDeclaration.range[1]
+
+  // 行末のコメントを探す
+  let commentEnd = endPos
+  let i = endPos
+
+  // セミコロンをスキップ
+  while (i < text.length && text[i] === ';') {
+    i++
+  }
+
+  // 空白をスキップ
+  while (i < text.length && (text[i] === ' ' || text[i] === '\t')) {
+    i++
+  }
+
+  // コメント開始を探す
+  if (i < text.length - 1 && text[i] === '/' && text[i + 1] === '/') {
+    // 行末まで取得
+    while (i < text.length && text[i] !== '\n' && text[i] !== '\r') {
+      i++
+    }
+    commentEnd = i
+  }
+
+  return text.substring(startPos, commentEnd)
+}
+
+/**
  * 複数の変数宣言をまとめて移動するfixer関数を生成
  */
 function createGroupMoveFixer(sourceCode, variables, targetConditional, targetStatement) {
@@ -704,10 +760,10 @@ function createGroupMoveFixer(sourceCode, variables, targetConditional, targetSt
     const usedInTest = variables[0].usedInTest
     const hasReassignment = variables.some(v => v.usageInfo.some(info => info.isReassignment))
 
-    // 条件部分で使われている場合は、条件での出現順にソート
-    const sortedVariables = usedInTest
-      ? [...variables].sort((a, b) => a.position - b.position)
-      : variables
+    // 元の宣言位置でソート（上から下への順序を保持）
+    const sortedVariables = [...variables].sort((a, b) => {
+      return a.variableDeclaration.range[0] - b.variableDeclaration.range[0]
+    })
 
     // 各変数の宣言の行全体を削除（インデント含む）
     sortedVariables.forEach(variable => {
@@ -720,20 +776,42 @@ function createGroupMoveFixer(sourceCode, variables, targetConditional, targetSt
         lineStart--
       }
 
-      // 改行文字も削除範囲に含める
+      // 行末コメントも含めた終了位置を探す
       let removeEnd = endPos
-      if (text[endPos] === '\n') {
-        removeEnd = endPos + 1
-      } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
-        removeEnd = endPos + 2
+      let i = endPos
+
+      // セミコロンをスキップ
+      while (i < text.length && text[i] === ';') {
+        i++
+      }
+
+      // 空白をスキップ
+      while (i < text.length && (text[i] === ' ' || text[i] === '\t')) {
+        i++
+      }
+
+      // コメント開始を探す
+      if (i < text.length - 1 && text[i] === '/' && text[i + 1] === '/') {
+        // 行末まで
+        while (i < text.length && text[i] !== '\n' && text[i] !== '\r') {
+          i++
+        }
+        removeEnd = i
+      }
+
+      // 改行文字も削除範囲に含める
+      if (text[removeEnd] === '\n') {
+        removeEnd = removeEnd + 1
+      } else if (text[removeEnd] === '\r' && text[removeEnd + 1] === '\n') {
+        removeEnd = removeEnd + 2
       }
 
       fixes.push(fixer.removeRange([lineStart, removeEnd]))
     })
 
-    // 移動先のテキストを生成（ソート済みの順序で）
+    // 移動先のテキストを生成（元の順序で、行末コメント込み）
     const declarationsText = sortedVariables
-      .map(v => sourceCode.getText(v.variableDeclaration))
+      .map(v => getDeclarationTextWithComment(sourceCode, v.variableDeclaration))
       .join('\n') + '\n'
 
     // 最初の使用箇所が再代入の場合、または条件部分で使用される場合 → 条件文の直前に移動

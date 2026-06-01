@@ -831,7 +831,7 @@ if (x && y) {
         },
       ],
     },
-    // 複数の変数が条件部分で使用される（y, x の順で宣言）
+    // 複数の変数が条件部分で使用される（y, x の順で宣言、元の順序を保持）
     {
       code: `
         const y = getValue2()
@@ -843,8 +843,8 @@ if (x && y) {
       `,
       output: `
         someCode()
-        const x = getValue1()
-const y = getValue2()
+        const y = getValue2()
+const x = getValue1()
 if (x && y) {
           console.log("ok")
         }

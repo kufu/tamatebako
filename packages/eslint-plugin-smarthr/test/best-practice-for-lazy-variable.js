@@ -130,6 +130,17 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         setItem(addableCrewCount)
       `,
     },
+    // 条件分岐の条件部分と外の両方で使用される（間にコードなし）
+    {
+      code: `
+        const before = getValue1()
+        const addableCrewCount = getValue2()
+        if (before > addableCrewCount) {
+          doSomething()
+        }
+        setItem(addableCrewCount)
+      `,
+    },
     // 複数の三項演算子で使用される
     {
       code: `

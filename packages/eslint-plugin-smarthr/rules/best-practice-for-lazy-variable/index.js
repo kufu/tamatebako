@@ -159,6 +159,29 @@ function containsNode(parent, target) {
 }
 
 /**
+ * ノード内に指定された名前のIdentifierが存在するかチェック
+ */
+function containsIdentifier(node, identifierName) {
+  if (!node || typeof node !== 'object') return false
+
+  if (node.type === 'Identifier' && node.name === identifierName) {
+    return true
+  }
+
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      if (child.some(c => containsIdentifier(c, identifierName))) return true
+    } else if (child && typeof child === 'object') {
+      if (containsIdentifier(child, identifierName)) return true
+    }
+  }
+
+  return false
+}
+
+/**
  * ノードの祖先にある全ての条件分岐を取得（内側から外側の順）
  * スコープ境界（関数やループ）を超えたら終了
  */
@@ -529,6 +552,43 @@ function analyzeVariable(sourceCode, node) {
   const hasCodeBetween = targetStatementIndex > declarationIndex + 1
 
   if (!hasCodeBetween) return null
+
+  // 移動先が変数宣言で、その初期化式に条件分岐が含まれていない場合は移動対象外
+  // （変数の順序を保つため）
+  if (targetStatement.type === 'VariableDeclaration' && targetConditional) {
+    // 移動先の変数宣言が条件分岐を含んでいるかチェック
+    const targetContainsConditional = containsNode(targetStatement, targetConditional)
+    if (!targetContainsConditional) {
+      return null
+    }
+  }
+
+  // 間にある変数宣言が条件分岐で使用されていて、かつ条件分岐の外でも使用されている場合は移動対象外
+  // （変数の順序を保つため）
+  if (targetConditional) {
+    for (let i = declarationIndex + 1; i < targetStatementIndex; i++) {
+      const stmt = statements[i]
+      if (stmt.type === 'VariableDeclaration') {
+        // この変数宣言が条件分岐内で使用されているかチェック
+        for (const declarator of stmt.declarations) {
+          if (declarator.id.type === 'Identifier') {
+            const betweenVarName = declarator.id.name
+            // 条件分岐内でこの変数が使用されているかチェック
+            if (containsIdentifier(targetConditional, betweenVarName)) {
+              // この変数が条件分岐の外でも使用されているかチェック
+              const betweenVarUsages = getVariableUsages(sourceCode, betweenVarName, declarator)
+              const usedOutsideConditional = betweenVarUsages.some(usage =>
+                !containsNode(targetConditional, usage.identifier)
+              )
+              if (usedOutsideConditional) {
+                return null
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   const usedInTest = targetConditional && usageInfo.some(info => info.isInTest)
 

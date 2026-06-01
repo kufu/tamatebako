@@ -448,8 +448,8 @@ function analyzeVariable(sourceCode, node) {
 
   const varName = node.id.name
 
-  // テストコードのspy変数は移動対象外
-  if (/spy/i.test(varName)) return null
+  // テストコードのspy変数は移動対象外（先頭または末尾がspy/Spyの場合）
+  if (/^spy|spy$/i.test(varName)) return null
 
   const { usages, reassignmentsInFunctionScope } = getVariableUsages(sourceCode, varName, node)
 
@@ -520,6 +520,17 @@ function analyzeVariable(sourceCode, node) {
 
   // switch文で複数のcaseで使われている場合は移動しない
   if (targetConditional && isUsedInMultipleSwitchCases(targetConditional, usageInfo)) return null
+
+  // if文のconsequentとalternateの両方で使われている場合は移動しない
+  if (targetConditional && targetConditional.type === 'IfStatement') {
+    const usedInConsequent = usageInfo.some(info =>
+      !info.isInTest && targetConditional.consequent && containsNode(targetConditional.consequent, info.identifier)
+    )
+    const usedInAlternate = usageInfo.some(info =>
+      !info.isInTest && targetConditional.alternate && containsNode(targetConditional.alternate, info.identifier)
+    )
+    if (usedInConsequent && usedInAlternate) return null
+  }
 
   // 移動先の文を宣言と同じスコープ内で探す
   let targetStatementIndex = -1

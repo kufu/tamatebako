@@ -730,5 +730,66 @@ console.log(x)
         },
       ],
     },
+    // 複数の変数が条件部分で使用される（x, y の順）
+    {
+      code: `
+        const x = getValue1()
+        const y = getValue2()
+        someCode()
+        if (x && y) {
+          console.log("ok")
+        }
+      `,
+      output: `
+        
+        const y = getValue2()
+        someCode()
+        const x = getValue1()
+if (x && y) {
+          console.log("ok")
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'y' },
+        },
+      ],
+    },
+    // 複数の変数が条件部分で使用される（y, x の順で宣言）
+    {
+      code: `
+        const y = getValue2()
+        const x = getValue1()
+        someCode()
+        if (x && y) {
+          console.log("ok")
+        }
+      `,
+      output: `
+        
+        const x = getValue1()
+        someCode()
+        const y = getValue2()
+if (x && y) {
+          console.log("ok")
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'y' },
+        },
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
   ],
 })
+

@@ -12,9 +12,36 @@ const CONDITIONAL_TYPES = new Set([
 ])
 
 /**
+ * 関数スコープのノードタイプ
+ */
+const FUNCTION_TYPES = new Set([
+  'FunctionDeclaration',
+  'FunctionExpression',
+  'ArrowFunctionExpression',
+])
+
+/**
+ * ループのノードタイプ
+ */
+const LOOP_TYPES = new Set([
+  'ForStatement',
+  'ForInStatement',
+  'ForOfStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+])
+
+/**
+ * スコープの境界となるノードか判定
+ * 関数やループはスコープの境界とする
+ */
+function isScopeBoundary(node) {
+  return FUNCTION_TYPES.has(node.type) || LOOP_TYPES.has(node.type)
+}
+
+/**
  * ノードから最も近い条件分岐ノードを取得
- * 条件部分（test）で使用される場合は、その条件分岐自体を返す
- * body内で使用される場合も、その条件分岐を返す
+ * スコープ境界（関数やループ）を超えたらnullを返す
  */
 function getNearestConditional(node) {
   let current = node.parent
@@ -22,18 +49,7 @@ function getNearestConditional(node) {
     if (CONDITIONAL_TYPES.has(current.type)) {
       return current
     }
-    // 関数スコープを超えたら終了
-    if (current.type === 'FunctionDeclaration' ||
-        current.type === 'FunctionExpression' ||
-        current.type === 'ArrowFunctionExpression') {
-      return null
-    }
-    // ループは条件分岐として扱わない（事前計算を許可）
-    if (current.type === 'ForStatement' ||
-        current.type === 'ForInStatement' ||
-        current.type === 'ForOfStatement' ||
-        current.type === 'WhileStatement' ||
-        current.type === 'DoWhileStatement') {
+    if (isScopeBoundary(current)) {
       return null
     }
     current = current.parent
@@ -42,8 +58,8 @@ function getNearestConditional(node) {
 }
 
 /**
- * ノードが条件部分で使用されているか（test, left, rightなど）
- * body内ではなく、条件分岐の判定部分で使われているか
+ * ノードが条件部分（test, discriminant等）で使用されているか判定
+ * body内ではなく、条件分岐の判定部分で使われているかをチェック
  */
 function isUsedInConditionalTest(identifier) {
   let current = identifier
@@ -51,25 +67,20 @@ function isUsedInConditionalTest(identifier) {
     const parent = current.parent
     if (!parent) return false
 
-    // IfStatement, ConditionalExpression, LogicalExpression, SwitchStatement
-    if (parent.type === 'IfStatement') {
-      // testの中にいるか
-      return containsNode(parent.test, identifier)
-    }
-    if (parent.type === 'ConditionalExpression') {
-      // test, consequent, alternateのいずれか → testの場合のみtrue
-      return containsNode(parent.test, identifier)
-    }
-    if (parent.type === 'LogicalExpression') {
-      // left, rightのいずれか → これは条件部分として扱う
-      return true
-    }
-    if (parent.type === 'SwitchStatement') {
-      // discriminantの中にいるか
-      return containsNode(parent.discriminant, identifier)
+    // 各条件分岐タイプで条件部分かチェック
+    switch (parent.type) {
+      case 'IfStatement':
+        return containsNode(parent.test, identifier)
+      case 'ConditionalExpression':
+        return containsNode(parent.test, identifier)
+      case 'LogicalExpression':
+        // && や || の左辺・右辺は条件部分として扱う
+        return true
+      case 'SwitchStatement':
+        return containsNode(parent.discriminant, identifier)
     }
 
-    // 条件分岐ノードに到達したら終了
+    // 条件分岐ノードに到達したがbody内にいる場合
     if (CONDITIONAL_TYPES.has(parent.type)) {
       return false
     }
@@ -77,13 +88,6 @@ function isUsedInConditionalTest(identifier) {
     current = parent
   }
   return false
-}
-
-/**
- * ノードが条件分岐の内部にあるかチェック
- */
-function isInsideConditional(node) {
-  return getNearestConditional(node) !== null
 }
 
 /**
@@ -147,7 +151,8 @@ function containsNode(parent, target) {
 }
 
 /**
- * ノードの祖先にある全ての条件分岐を取得
+ * ノードの祖先にある全ての条件分岐を取得（内側から外側の順）
+ * スコープ境界（関数やループ）を超えたら終了
  */
 function getAncestorConditionals(node) {
   const conditionals = []
@@ -157,23 +162,9 @@ function getAncestorConditionals(node) {
     if (CONDITIONAL_TYPES.has(current.type)) {
       conditionals.push(current)
     }
-
-    // 関数の境界を超えない
-    if (current.type === 'FunctionDeclaration' ||
-        current.type === 'FunctionExpression' ||
-        current.type === 'ArrowFunctionExpression') {
+    if (isScopeBoundary(current)) {
       break
     }
-
-    // ループの境界を超えない
-    if (current.type === 'ForStatement' ||
-        current.type === 'ForInStatement' ||
-        current.type === 'ForOfStatement' ||
-        current.type === 'WhileStatement' ||
-        current.type === 'DoWhileStatement') {
-      break
-    }
-
     current = current.parent
   }
 
@@ -182,31 +173,28 @@ function getAncestorConditionals(node) {
 
 /**
  * 変数の全ての参照（Identifier）を取得
+ * 宣言より後で、同一スコープ内の参照のみを対象とする
  */
 function getVariableReferences(sourceCode, varName, declarationNode) {
   const references = []
-  const ast = sourceCode.ast
 
+  /**
+   * ASTを再帰的に探索して参照を収集
+   */
   function traverse(node, parent) {
     if (!node || typeof node !== 'object') return
 
-    // Identifierで変数名が一致するもの
-    if (node.type === 'Identifier' && node.name === varName) {
-      // 宣言自体は除外
-      if (node !== declarationNode.id) {
-        references.push({ identifier: node, parent })
-      }
+    // 変数名が一致するIdentifierを収集（宣言自体は除外）
+    if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
+      references.push({ identifier: node, parent })
     }
 
-    // 関数スコープを超えない（ネストした関数内は探索しない）
-    if (node.type === 'FunctionDeclaration' ||
-        node.type === 'FunctionExpression' ||
-        node.type === 'ArrowFunctionExpression') {
-      // 関数のbodyは探索しない
+    // 関数スコープを超えない
+    if (FUNCTION_TYPES.has(node.type)) {
       return
     }
 
-    // ブロックスコープで再宣言されている場合はスキップ
+    // 同名変数の再宣言がある場合はその先を探索しない
     if (node.type === 'VariableDeclarator' && node !== declarationNode) {
       if (node.id.type === 'Identifier' && node.id.name === varName) {
         return
@@ -215,7 +203,7 @@ function getVariableReferences(sourceCode, varName, declarationNode) {
 
     // 子ノードを再帰的に探索
     for (const key in node) {
-      if (key === 'parent') continue // 親ノードへの参照は無視
+      if (key === 'parent') continue
       const child = node[key]
       if (Array.isArray(child)) {
         child.forEach(c => traverse(c, node))
@@ -225,27 +213,84 @@ function getVariableReferences(sourceCode, varName, declarationNode) {
     }
   }
 
-  // 宣言ノードの親（VariableDeclaration）から探索開始
-  // 宣言より前の参照は対象外
+  // 宣言が含まれるスコープを取得
   const variableDeclaration = declarationNode.parent
-  let current = variableDeclaration.parent
+  let scopeNode = variableDeclaration.parent
 
-  // BlockStatement, Program などのスコープを探す
-  while (current && current.type !== 'Program' && current.type !== 'BlockStatement') {
-    current = current.parent
+  // BlockStatementまたはProgramまで遡る
+  while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
+    scopeNode = scopeNode.parent
   }
 
-  if (current) {
+  if (scopeNode) {
     // 宣言以降のノードのみを探索
-    const statements = current.body || current.statements || []
+    const statements = scopeNode.body || scopeNode.statements || []
     const declarationIndex = statements.indexOf(variableDeclaration)
 
     for (let i = declarationIndex + 1; i < statements.length; i++) {
-      traverse(statements[i], current)
+      traverse(statements[i], scopeNode)
     }
   }
 
   return references
+}
+
+/**
+ * switch文で変数が複数のcaseで使われているかチェック
+ * 複数のcaseで使われている場合は移動すべきでない
+ */
+function isUsedInMultipleSwitchCases(targetConditional, refInfo) {
+  if (targetConditional.type !== 'SwitchStatement') {
+    return false
+  }
+
+  const usedCases = new Set()
+  refInfo.forEach(info => {
+    // 条件部分(discriminant)で使われている場合はスキップ
+    if (info.isInTest) return
+
+    // どのcaseで使われているか探す
+    let current = info.identifier
+    while (current && current !== targetConditional) {
+      if (current.type === 'SwitchCase') {
+        usedCases.add(current)
+        break
+      }
+      current = current.parent
+    }
+  })
+
+  return usedCases.size > 1
+}
+
+/**
+ * 変数宣言を移動するfixer関数を生成
+ */
+function createMoveFixer(sourceCode, variableDeclaration, targetConditional, statements, conditionalStatementIndex, refInfo) {
+  return function(fixer) {
+    const usedInTest = refInfo.some(info => info.isInTest)
+    const declarationText = sourceCode.getText(variableDeclaration)
+    const fixes = [fixer.remove(variableDeclaration)]
+
+    if (usedInTest) {
+      // 条件部分で使用 → 条件文の直前に移動
+      const conditionalStatement = statements[conditionalStatementIndex]
+      fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
+    } else {
+      // body内で使用 → body内の先頭に移動
+      const body = getConditionalBody(targetConditional)
+
+      if (body && body.length > 0) {
+        fixes.push(fixer.insertTextBefore(body[0], declarationText + '\n'))
+      } else {
+        // bodyが空の場合は条件文の直前に移動
+        const conditionalStatement = statements[conditionalStatementIndex]
+        fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
+      }
+    }
+
+    return fixes
+  }
 }
 
 /**
@@ -267,18 +312,15 @@ module.exports = {
       'VariableDeclarator': (node) => {
         // const/let のみ対象（varは除外）
         if (node.parent.kind === 'var') return
-
-        // 変数名を取得
         if (node.id.type !== 'Identifier') return
-        const varName = node.id.name
 
-        // 変数の全参照を取得
+        const varName = node.id.name
         const references = getVariableReferences(sourceCode, varName, node)
 
         // 参照がない場合はスキップ
         if (references.length === 0) return
 
-        // 各参照について、祖先にある全ての条件分岐を取得
+        // 各参照の祖先にある条件分岐を取得
         const refConditionals = references.map(ref => ({
           identifier: ref.identifier,
           conditionals: getAncestorConditionals(ref.identifier),
@@ -293,42 +335,23 @@ module.exports = {
           refConditionals.every(info => info.conditionals.includes(conditional))
         )
 
-        // 共通する条件分岐がない場合は対象外（異なる条件分岐で使用）
+        // 共通する条件分岐がない場合は対象外
         if (commonConditionals.length === 0) return
 
-        // 最も内側（最初）の共通条件分岐を対象とする
+        // 最も内側の共通条件分岐を対象とする
         const targetConditional = commonConditionals[0]
 
-        // 各参照について、条件部分で使われているかを調べる
+        // 各参照が条件部分で使われているかチェック
         const refInfo = references.map(ref => ({
           identifier: ref.identifier,
           conditional: targetConditional,
           isInTest: isUsedInConditionalTest(ref.identifier),
         }))
 
-        // switchの場合、複数のcaseで使われているかチェック
-        if (targetConditional.type === 'SwitchStatement') {
-          const usedCases = new Set()
-          refInfo.forEach(info => {
-            // 条件部分(discriminant)で使われている場合はスキップ
-            if (info.isInTest) return
+        // switch文で複数のcaseで使われている場合は移動しない
+        if (isUsedInMultipleSwitchCases(targetConditional, refInfo)) return
 
-            // どのcaseで使われているか探す
-            let current = info.identifier
-            while (current && current !== targetConditional) {
-              if (current.type === 'SwitchCase') {
-                usedCases.add(current)
-                break
-              }
-              current = current.parent
-            }
-          })
-
-          // 複数のcaseで使われている場合は移動しない
-          if (usedCases.size > 1) return
-        }
-
-        // 宣言と条件分岐の間に他のコードがあるか確認
+        // 宣言と条件分岐の間にコードがあるかチェック
         const variableDeclaration = node.parent
         const declarationParent = variableDeclaration.parent
 
@@ -337,7 +360,7 @@ module.exports = {
         const statements = declarationParent.body
         const declarationIndex = statements.indexOf(variableDeclaration)
 
-        // 条件分岐を含む文を探す
+        // 条件分岐を含む文のインデックスを探す
         let conditionalStatementIndex = -1
         for (let i = declarationIndex + 1; i < statements.length; i++) {
           if (containsNode(statements[i], targetConditional)) {
@@ -348,7 +371,7 @@ module.exports = {
 
         if (conditionalStatementIndex === -1) return
 
-        // 間に他のコードがあるかチェック
+        // 宣言と条件分岐の間にコードがある場合のみエラーを報告
         const hasCodeBetween = conditionalStatementIndex > declarationIndex + 1
 
         if (hasCodeBetween) {
@@ -356,36 +379,14 @@ module.exports = {
             node,
             messageId: 'moveToLazy',
             data: { name: varName },
-            fix(fixer) {
-              // 条件部分で使用されているか確認
-              const usedInTest = refInfo.some(info => info.isInTest)
-
-              // 元の宣言文を取得
-              const declarationText = sourceCode.getText(variableDeclaration)
-
-              // 元の宣言を削除
-              const fixes = [fixer.remove(variableDeclaration)]
-
-              if (usedInTest) {
-                // 条件部分で使用 → 条件文の直前に移動
-                const conditionalStatement = statements[conditionalStatementIndex]
-                fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
-              } else {
-                // body内で使用 → body内の最初の使用直前に移動
-                const body = getConditionalBody(targetConditional)
-
-                if (body && body.length > 0) {
-                  // bodyの最初の文の前に挿入
-                  fixes.push(fixer.insertTextBefore(body[0], declarationText + '\n'))
-                } else {
-                  // bodyが空の場合は条件文の直前に移動
-                  const conditionalStatement = statements[conditionalStatementIndex]
-                  fixes.push(fixer.insertTextBefore(conditionalStatement, declarationText + '\n'))
-                }
-              }
-
-              return fixes
-            }
+            fix: createMoveFixer(
+              sourceCode,
+              variableDeclaration,
+              targetConditional,
+              statements,
+              conditionalStatementIndex,
+              refInfo
+            ),
           })
         }
       },

@@ -244,6 +244,54 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         const z = obj2?.method(x)
       `,
     },
+    // 再代入がある場合（代入演算子）
+    {
+      code: `
+        let x = 0
+        someCode()
+        if (condition) {
+          x = 10
+          console.log(x)
+        }
+      `,
+    },
+    // 再代入がある場合（UpdateExpression: ++）
+    {
+      code: `
+        let count = 0
+        someCode()
+        if (condition) {
+          count++
+          console.log(count)
+        }
+      `,
+    },
+    // 再代入がある場合（ループフラグパターン）
+    {
+      code: `
+        let update = false
+        someCode()
+        array.forEach(() => {
+          update = true
+        })
+        if (update) {
+          doSomething()
+        }
+      `,
+    },
+    // 再代入がある場合（ループカウンター）
+    {
+      code: `
+        let total = 0
+        someCode()
+        array.forEach((item) => {
+          total += item.value
+        })
+        if (total > 100) {
+          doSomething()
+        }
+      `,
+    },
   ],
   invalid: [
     // 基本パターン: body内で使用、間に他のコードがある

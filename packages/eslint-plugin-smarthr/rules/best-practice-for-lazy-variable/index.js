@@ -180,6 +180,76 @@ function getAncestorConditionals(node) {
 }
 
 /**
+ * 変数に再代入があるかチェック
+ * 宣言より後のスコープ全体を探索（関数スコープ内も含む）
+ */
+function hasVariableReassignment(varName, declarationNode) {
+  let hasReassignment = false
+
+  function traverse(node) {
+    if (!node || typeof node !== 'object') return
+    if (hasReassignment) return // 見つかったら早期終了
+
+    // 再代入のチェック（AssignmentExpression）
+    if (node.type === 'AssignmentExpression' &&
+        node.left.type === 'Identifier' &&
+        node.left.name === varName) {
+      hasReassignment = true
+      return
+    }
+
+    // 再代入のチェック（UpdateExpression: ++, --）
+    if (node.type === 'UpdateExpression' &&
+        node.argument.type === 'Identifier' &&
+        node.argument.name === varName) {
+      hasReassignment = true
+      return
+    }
+
+    // 同名変数の再宣言がある場合はその先を探索しない
+    if (node.type === 'VariableDeclarator' &&
+        node !== declarationNode &&
+        node.id.type === 'Identifier' &&
+        node.id.name === varName) {
+      return
+    }
+
+    // 子ノードを再帰的に探索（関数スコープも含む）
+    for (const key in node) {
+      if (key === 'parent') continue
+      const child = node[key]
+      if (Array.isArray(child)) {
+        child.forEach(c => traverse(c))
+      } else if (child && typeof child === 'object' && child.type) {
+        traverse(child)
+      }
+    }
+  }
+
+  // 宣言が含まれるスコープを取得
+  const variableDeclaration = declarationNode.parent
+  let scopeNode = variableDeclaration.parent
+
+  // BlockStatementまたはProgramまで遡る
+  while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
+    scopeNode = scopeNode.parent
+  }
+
+  if (scopeNode) {
+    // 宣言以降のノードのみを探索
+    const statements = scopeNode.body || scopeNode.statements || []
+    const declarationIndex = statements.indexOf(variableDeclaration)
+
+    for (let i = declarationIndex + 1; i < statements.length; i++) {
+      traverse(statements[i])
+      if (hasReassignment) break
+    }
+  }
+
+  return hasReassignment
+}
+
+/**
  * 変数の全ての参照（Identifier）を取得
  * 宣言より後で、同一スコープ内の参照のみを対象とする
  */
@@ -362,6 +432,10 @@ function analyzeVariable(sourceCode, node) {
   if (node.id.type !== 'Identifier') return null
 
   const varName = node.id.name
+
+  // 再代入がある場合は移動対象外
+  if (hasVariableReassignment(varName, node)) return null
+
   const references = getVariableReferences(sourceCode, varName, node)
 
   // 参照がない場合はスキップ

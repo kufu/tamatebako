@@ -538,13 +538,31 @@ function analyzeVariable(sourceCode, node) {
   // 移動先の文を宣言と同じスコープ内で探す
   let targetStatementIndex = -1
   let targetStatement = null
-  const targetNode = targetConditional || firstUsage.identifier
 
-  for (let i = declarationIndex + 1; i < statements.length; i++) {
-    if (containsNode(statements[i], targetNode)) {
-      targetStatementIndex = i
-      targetStatement = statements[i]
-      break
+  // 関数スコープ内で再代入がある場合、その関数スコープを含む文を探す
+  let targetNode = targetConditional || firstUsage.identifier
+
+  if (reassignmentsInFunctionScope.size > 0) {
+    // 関数スコープのいずれかを含む最初の文を探す
+    for (let i = declarationIndex + 1; i < statements.length; i++) {
+      for (const [functionScope] of reassignmentsInFunctionScope) {
+        if (containsNode(statements[i], functionScope)) {
+          targetStatementIndex = i
+          targetStatement = statements[i]
+          targetNode = functionScope
+          break
+        }
+      }
+      if (targetStatementIndex !== -1) break
+    }
+  } else {
+    // 通常の処理
+    for (let i = declarationIndex + 1; i < statements.length; i++) {
+      if (containsNode(statements[i], targetNode)) {
+        targetStatementIndex = i
+        targetStatement = statements[i]
+        break
+      }
     }
   }
 

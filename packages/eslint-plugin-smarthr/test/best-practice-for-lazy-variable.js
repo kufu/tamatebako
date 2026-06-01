@@ -268,7 +268,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
       output: `
-        
         someCode()
         let x = 0
 if (condition) {
@@ -294,7 +293,6 @@ if (condition) {
         }
       `,
       output: `
-        
         someCode()
         let count = 0
 if (condition) {
@@ -322,7 +320,6 @@ if (condition) {
         }
       `,
       output: `
-        
         someCode()
         let update = false
 array.forEach(() => {
@@ -352,7 +349,6 @@ array.forEach(() => {
         }
       `,
       output: `
-        
         someCode()
         let total = 0
 array.forEach((item) => {
@@ -377,8 +373,7 @@ if (condition) {
   console.log(x)
   console.log(x)
 }`,
-      output: `
-someCode()
+      output: `someCode()
 if (condition) {
   const x = getValue()
 console.log(x)
@@ -403,7 +398,6 @@ console.log(x)
         }
       `,
       output: `
-        
         someCode1()
         someCode2()
         someCode3()
@@ -430,7 +424,6 @@ console.log(x)
         }
       `,
       output: `
-        
         const y = getOther()
         const z = getAnother()
         if (condition) {
@@ -457,7 +450,6 @@ console.log(x)
         }
       `,
       output: `
-        
         for (let i = 0; i < 10; i++) {
           doSomething(i)
         }
@@ -485,7 +477,6 @@ console.log(x)
         }
       `,
       output: `
-        
         if (otherCondition) {
           doSomething()
         }
@@ -516,7 +507,6 @@ console.log(x)
         }
       `,
       output: `
-        
         const y = getY()
         someCode()
         while (check()) {
@@ -545,7 +535,6 @@ console.log(x)
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 if (x) {
@@ -571,7 +560,6 @@ if (x) {
         }
       `,
       output: `
-        
         someCode()
         switch (condition) {
           case 'a':
@@ -595,7 +583,6 @@ console.log(x)
         const y = condition ? x : 0
       `,
       output: `
-        
         someCode()
         const x = getValue()
 const y = condition ? x : 0
@@ -615,7 +602,6 @@ const y = condition ? x : 0
         const y = condition && x
       `,
       output: `
-        
         someCode()
         const x = getValue()
 const y = condition && x
@@ -640,7 +626,6 @@ const y = condition && x
         }
       `,
       output: `
-        
         someCode()
         if (condition1) {
           if (condition2) {
@@ -667,7 +652,6 @@ console.log(x)
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 if (x > 0) {
@@ -693,7 +677,6 @@ if (x > 0) {
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 switch (x) {
@@ -723,7 +706,6 @@ switch (x) {
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 if (x > 0) {
@@ -755,7 +737,6 @@ if (x > 0) {
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 switch (x) {
@@ -789,7 +770,6 @@ switch (x) {
         }
       `,
       output: `
-        
         someCode()
         const x = getValue()
 switch (x) {
@@ -817,7 +797,6 @@ switch (x) {
         const y = obj?.prop(x)
       `,
       output: `
-        
         someCode()
         const x = getValue()
 const y = obj?.prop(x)
@@ -839,7 +818,6 @@ const y = obj?.prop(x)
         }
       `,
       output: `
-        
         someCode()
         if (condition) {
           const x = getValue()
@@ -864,8 +842,6 @@ console.log(x)
         }
       `,
       output: `
-        
-        
         someCode()
         const x = getValue1()
 const y = getValue2()
@@ -895,8 +871,6 @@ if (x && y) {
         }
       `,
       output: `
-        
-        
         someCode()
         const x = getValue1()
 const y = getValue2()

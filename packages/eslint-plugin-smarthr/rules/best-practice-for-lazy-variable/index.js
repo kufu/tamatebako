@@ -403,7 +403,27 @@ function getVariablePositionInConditionalTest(conditional, varName) {
 function createMoveFixer(sourceCode, variableDeclaration, targetConditional, targetStatement, statements, targetStatementIndex, usageInfo) {
   return function(fixer) {
     const declarationText = sourceCode.getText(variableDeclaration)
-    const fixes = [fixer.remove(variableDeclaration)]
+    const text = sourceCode.text
+
+    // 変数宣言の行全体を削除（インデント含む）
+    const startPos = variableDeclaration.range[0]
+    const endPos = variableDeclaration.range[1]
+
+    // 行の先頭を探す
+    let lineStart = startPos
+    while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
+      lineStart--
+    }
+
+    // 改行文字も削除範囲に含める
+    let removeEnd = endPos
+    if (text[endPos] === '\n') {
+      removeEnd = endPos + 1
+    } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
+      removeEnd = endPos + 2
+    }
+
+    const fixes = [fixer.removeRange([lineStart, removeEnd])]
 
     // 最初の使用箇所が再代入の場合、または条件部分で使用される場合 → 条件文の直前に移動
     const firstUsageIsReassignment = usageInfo.some(info => info.isReassignment)
@@ -572,6 +592,7 @@ module.exports = {
 function createGroupMoveFixer(sourceCode, variables, targetConditional, targetStatement) {
   return function(fixer) {
     const fixes = []
+    const text = sourceCode.text
     const usedInTest = variables[0].usedInTest
     const hasReassignment = variables.some(v => v.usageInfo.some(info => info.isReassignment))
 
@@ -580,9 +601,26 @@ function createGroupMoveFixer(sourceCode, variables, targetConditional, targetSt
       ? [...variables].sort((a, b) => a.position - b.position)
       : variables
 
-    // 各変数の宣言を削除
+    // 各変数の宣言の行全体を削除（インデント含む）
     sortedVariables.forEach(variable => {
-      fixes.push(fixer.remove(variable.variableDeclaration))
+      const startPos = variable.variableDeclaration.range[0]
+      const endPos = variable.variableDeclaration.range[1]
+
+      // 行の先頭を探す
+      let lineStart = startPos
+      while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
+        lineStart--
+      }
+
+      // 改行文字も削除範囲に含める
+      let removeEnd = endPos
+      if (text[endPos] === '\n') {
+        removeEnd = endPos + 1
+      } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
+        removeEnd = endPos + 2
+      }
+
+      fixes.push(fixer.removeRange([lineStart, removeEnd]))
     })
 
     // 移動先のテキストを生成（ソート済みの順序で）

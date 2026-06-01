@@ -469,6 +469,16 @@ function analyzeVariable(sourceCode, node) {
   // 条件分岐がある場合は、最も内側の条件分岐を対象とする
   const targetConditional = conditionals.length > 0 ? conditionals[0] : null
 
+  // 条件分岐がある場合、全ての使用箇所がその条件分岐内にあるかチェック
+  if (targetConditional) {
+    const allUsagesInConditional = usages.every(usage =>
+      containsNode(targetConditional, usage.identifier)
+    )
+
+    // 条件分岐の外でも使用される場合は移動対象外
+    if (!allUsagesInConditional) return null
+  }
+
   // 各使用箇所が条件部分で使われているかチェック
   const usageInfo = usages.map(usage => ({
     identifier: usage.identifier,

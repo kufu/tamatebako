@@ -14,7 +14,7 @@ const CONDITIONAL_TYPES = new Set([
 /**
  * 関数スコープのノードタイプ
  */
-const FUNCTION_TYPES = new Set([
+const FUNCTION_SCOPE_TYPES = new Set([
   'FunctionDeclaration',
   'FunctionExpression',
   'ArrowFunctionExpression',
@@ -32,11 +32,19 @@ const LOOP_TYPES = new Set([
 ])
 
 /**
+ * スコープの境界となるノードタイプ
+ * 関数スコープとループの和集合
+ */
+const SCOPE_BOUNDARY_TYPES = new Set([
+  ...FUNCTION_SCOPE_TYPES,
+  ...LOOP_TYPES,
+])
+
+/**
  * スコープの境界となるノードか判定
- * 関数やループはスコープの境界とする
  */
 function isScopeBoundary(node) {
-  return FUNCTION_TYPES.has(node.type) || LOOP_TYPES.has(node.type)
+  return SCOPE_BOUNDARY_TYPES.has(node.type)
 }
 
 /**
@@ -190,7 +198,7 @@ function getVariableReferences(sourceCode, varName, declarationNode) {
     }
 
     // 関数スコープを超えない
-    if (FUNCTION_TYPES.has(node.type)) {
+    if (FUNCTION_SCOPE_TYPES.has(node.type)) {
       return
     }
 

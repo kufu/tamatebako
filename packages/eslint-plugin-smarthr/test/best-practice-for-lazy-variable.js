@@ -603,44 +603,6 @@ console.log(x)
         },
       ],
     },
-    // 単一の三項演算子で使用
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        const y = condition ? x : 0
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-const y = condition ? x : 0
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 単一の論理演算子で使用
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        const y = condition && x
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-const y = condition && x
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
     // ネストした条件分岐内（単一のブロック）
     {
       code: `
@@ -809,25 +771,6 @@ switch (x) {
             }
             break
         }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // オプショナルチェーン（単一）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        const y = obj?.prop(x)
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-const y = obj?.prop(x)
       `,
       errors: [
         {

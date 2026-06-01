@@ -2,13 +2,13 @@ const SCHEMA = []
 
 /**
  * 条件分岐のノードタイプ
+ * 注: 三項演算子や論理演算子などの式レベルの条件は除外
+ * これらはreturn文や代入文の中で使われることが多く、変数を移動すると構文エラーになる
+ * このルールは文レベルの条件分岐（if, switch）のみを対象とする
  */
 const CONDITIONAL_TYPES = new Set([
   'IfStatement',
-  'ConditionalExpression', // 三項演算子
   'SwitchStatement',
-  'LogicalExpression', // && ||
-  'ChainExpression', // ?.
 ])
 
 /**
@@ -79,11 +79,6 @@ function isUsedInConditionalTest(identifier) {
     switch (parent.type) {
       case 'IfStatement':
         return containsNode(parent.test, identifier)
-      case 'ConditionalExpression':
-        return containsNode(parent.test, identifier)
-      case 'LogicalExpression':
-        // && や || の左辺・右辺は条件部分として扱う
-        return true
       case 'SwitchStatement':
         return containsNode(parent.discriminant, identifier)
     }
@@ -120,12 +115,6 @@ function getConditionalBody(conditional) {
         allStatements.push(...caseNode.consequent)
       })
       return allStatements
-
-    case 'ConditionalExpression':
-    case 'LogicalExpression':
-    case 'ChainExpression':
-      // これらは式なので、bodyを持たない
-      return null
 
     default:
       return null
@@ -355,17 +344,11 @@ function getVariablePositionInConditionalTest(conditional, varName) {
   let testNode
 
   switch (conditional.type) {
-    case 'SwitchStatement':
-      testNode = conditional.discriminant
-      break
     case 'IfStatement':
-    case 'ConditionalExpression':
       testNode = conditional.test
       break
-    case 'LogicalExpression':
-    case 'ChainExpression':
-      // これらは式全体が条件なので、式自体を探索
-      testNode = conditional
+    case 'SwitchStatement':
+      testNode = conditional.discriminant
       break
     default:
       testNode = null
@@ -465,6 +448,9 @@ function analyzeVariable(sourceCode, node) {
 
   const varName = node.id.name
 
+  // テストコードのspy変数は移動対象外
+  if (/spy/i.test(varName)) return null
+
   const { usages, reassignmentsInFunctionScope } = getVariableUsages(sourceCode, varName, node)
 
   // 使用箇所がない場合はスキップ
@@ -543,6 +529,48 @@ function analyzeVariable(sourceCode, node) {
   let targetNode = targetConditional || firstUsage.identifier
 
   if (reassignmentsInFunctionScope.size > 0) {
+    // テストフック内で再代入される場合は移動対象外
+    const testHooks = ['beforeEach', 'afterEach', 'beforeAll', 'afterAll', 'it', 'test', 'describe']
+    for (const [functionScope] of reassignmentsInFunctionScope) {
+      let current = functionScope
+      while (current && current.parent) {
+        if (current.parent.type === 'CallExpression' &&
+            current.parent.callee.type === 'Identifier' &&
+            testHooks.includes(current.parent.callee.name)) {
+          // テストフック内で再代入される → 移動対象外
+          return null
+        }
+        current = current.parent
+      }
+    }
+
+    // 関数スコープ内で再代入されるが、関数スコープの外でも使用される場合
+    // その外での使用が条件分岐でない場合は移動対象外
+    // （例: forEach内でrouterに値を設定し、その後にrouter.execute()を呼ぶ）
+    if (usages.length > 0) {
+      // 関数スコープの外での使用を取得
+      const usagesOutsideFunctionScope = usages.filter(usage => {
+        for (const [functionScope] of reassignmentsInFunctionScope) {
+          if (containsNode(functionScope, usage.identifier)) {
+            return false  // この使用箇所は関数スコープ内
+          }
+        }
+        return true  // この使用箇所は関数スコープ外
+      })
+
+      // 外での使用があり、かつその全てが条件分岐内でない場合は移動対象外
+      if (usagesOutsideFunctionScope.length > 0) {
+        const allUsagesInConditional = usagesOutsideFunctionScope.every(usage => {
+          const conditionals = getAncestorConditionals(usage.identifier)
+          return conditionals.length > 0
+        })
+
+        if (!allUsagesInConditional) {
+          return null
+        }
+      }
+    }
+
     // 関数スコープのいずれかを含む最初の文を探す
     for (let i = declarationIndex + 1; i < statements.length; i++) {
       for (const [functionScope] of reassignmentsInFunctionScope) {

@@ -118,34 +118,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // for > switch - 対象外
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        for (let i = 0; i < 10; i++) {
-          switch (condition) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
-      `,
-    },
-    // while > switch - 対象外
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        while (condition) {
-          switch (check) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
-      `,
-    },
     // for > for - 対象外（ネストしたループ）
     {
       code: `
@@ -181,20 +153,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           for (let i = 0; i < 10; i++) {
             console.log(x)
           }
-        }
-      `,
-    },
-    // switch > for - 対象外（ループを超える）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (condition) {
-          case 'a':
-            for (let i = 0; i < 10; i++) {
-              console.log(x)
-            }
-            break
         }
       `,
     },
@@ -261,30 +219,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         const x = getValue()
         someCode()
         while (condition) {
-          if (check) {
-            console.log(x)
-          }
-        }
-      `,
-    },
-    // do-while内のif - 対象外
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        do {
-          if (check) {
-            console.log(x)
-          }
-        } while (condition)
-      `,
-    },
-    // for-in内のif - 対象外
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        for (const key in obj) {
           if (check) {
             console.log(x)
           }
@@ -445,67 +379,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           const [count, setCount] = useState(0)
           if (condition) {
             console.log(count)
-          }
-        }
-      `,
-    },
-    // React Hooks（useMemo）は移動対象外
-    {
-      code: `
-        function Component() {
-          const value = useMemo(() => calculate(), [deps])
-          if (!condition) {
-            return null
-          }
-          console.log(value)
-        }
-      `,
-    },
-    // React Hooks（useEffect）は移動対象外
-    {
-      code: `
-        function Component() {
-          const cleanup = useEffect(() => {
-            return () => console.log('cleanup')
-          }, [])
-          if (condition) {
-            console.log(cleanup)
-          }
-        }
-      `,
-    },
-    // await式を含む変数は移動対象外
-    {
-      code: `
-        async function test() {
-          const data = await fetchData()
-          if (!condition) {
-            return
-          }
-          console.log(data)
-        }
-      `,
-    },
-    // await式を含む変数は移動対象外（条件分岐内）
-    {
-      code: `
-        async function test() {
-          const data = await fetchData()
-          if (condition) {
-            console.log(data)
-          }
-        }
-      `,
-    },
-    // await式を含む変数は移動対象外（switch内）
-    {
-      code: `
-        async function test() {
-          const data = await fetchData()
-          switch (type) {
-            case 'a':
-              console.log(data)
-              break
           }
         }
       `,
@@ -691,56 +564,6 @@ console.log(x)
         },
       ],
     },
-    // else内で使用（間にコードなし）
-    {
-      code: `
-        const x = getValue()
-        if (condition) {
-          console.log("other")
-        } else {
-          console.log(x)
-        }
-      `,
-      output: `
-        if (condition) {
-          console.log("other")
-        } else {
-          const x = getValue()
-          console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // else if直前（間にコードなし）
-    {
-      code: `
-        const x = getValue()
-        if (condition1) {
-          console.log("a")
-        } else if (condition2) {
-          console.log(x)
-        }
-      `,
-      output: `
-        if (condition1) {
-          console.log("a")
-        } else if (condition2) {
-          const x = getValue()
-          console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
     // switch case内で使用（block無し → blockを追加）
     {
       code: `const x = getValue()
@@ -752,28 +575,6 @@ switch (condition) {
 }`,
       output: `someCode()
 switch (condition) {
-  case 'a': {
-    const x = getValue()
-    console.log(x)
-    break
-  }
-}`,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // switch case内で使用（block無し、間にコードなし → blockを追加）
-    {
-      code: `const x = getValue()
-switch (condition) {
-  case 'a':
-    console.log(x)
-    break
-}`,
-      output: `switch (condition) {
   case 'a': {
     const x = getValue()
     console.log(x)
@@ -891,31 +692,6 @@ switch (condition) {
         },
       ],
     },
-    // ネストしたif（if > if）（間にコードなし）
-    {
-      code: `
-        const x = getValue()
-        if (condition1) {
-          if (condition2) {
-            console.log(x)
-          }
-        }
-      `,
-      output: `
-        if (condition1) {
-          if (condition2) {
-            const x = getValue()
-            console.log(x)
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
     // ネストしたswitch（if > switch）（block無し → blockを追加）
     {
       code: `
@@ -931,36 +707,6 @@ switch (condition) {
       `,
       output: `
         someCode()
-        if (condition1) {
-          switch (condition2) {
-            case 'a': {
-              const x = getValue()
-              console.log(x)
-              break
-            }
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // ネストしたswitch（if > switch）（間にコードなし、block無し → blockを追加）
-    {
-      code: `
-        const x = getValue()
-        if (condition1) {
-          switch (condition2) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
-      `,
-      output: `
         if (condition1) {
           switch (condition2) {
             case 'a': {

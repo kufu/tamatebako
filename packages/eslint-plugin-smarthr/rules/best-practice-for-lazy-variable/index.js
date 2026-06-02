@@ -10,6 +10,13 @@ function isFunctionScope(node) {
 }
 
 /**
+ * スコープのstatements配列を取得
+ */
+function getStatements(scope) {
+  return scope.body || scope.statements || []
+}
+
+/**
  * 変数の全ての使用箇所を取得（宣言と同じスコープ内、関数スコープ内やループ内も含む）
  */
 function getVariableUsages(sourceCode, varName, declarationNode) {
@@ -58,7 +65,7 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
   }
 
   // 宣言以降のノードのみを探索
-  const statements = scopeNode.body || scopeNode.statements || []
+  const statements = getStatements(scopeNode)
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   for (let i = declarationIndex + 1; i < statements.length; i++) {
@@ -80,6 +87,51 @@ function isLoopStatement(node) {
 }
 
 /**
+ * If文のbodyを探す
+ */
+function findIfBodyForUsage(ifStatement, usageNode, crossedBarrier) {
+  // consequent (then節) に含まれているか
+  if (containsNode(ifStatement.consequent, usageNode)) {
+    return { type: 'if-body', body: ifStatement.consequent, conditional: ifStatement, crossedBarrier }
+  }
+
+  // alternate (else節) に含まれているか
+  if (ifStatement.alternate && ifStatement.alternate.type !== 'IfStatement') {
+    if (containsNode(ifStatement.alternate, usageNode)) {
+      return { type: 'if-body', body: ifStatement.alternate, conditional: ifStatement, crossedBarrier }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Switch文のbodyを探す
+ */
+function findSwitchBodyForUsage(switchStatement, usageNode, crossedBarrier) {
+  for (const caseNode of switchStatement.cases) {
+    // block付きcaseの場合
+    if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
+      const blockStatement = caseNode.consequent[0]
+      if (containsNode(blockStatement, usageNode)) {
+        if (isDirectChild(blockStatement, usageNode)) {
+          return { type: 'case-body', body: blockStatement, conditional: switchStatement, crossedBarrier }
+        }
+      }
+    } else {
+      // block無しのcase
+      for (const statement of caseNode.consequent) {
+        if (containsNode(statement, usageNode)) {
+          return { type: 'case-body', body: caseNode.consequent, conditional: switchStatement, crossedBarrier }
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+/**
  * 使用箇所から到達できる条件分岐bodyを探す
  * バリア（ループや関数スコープ）を超えて、その外側のbodyを探す
  * @returns {Object|null} { type: 'if-body'|'case-body', body: Node, conditional: Node, crossedBarrier: boolean }
@@ -98,45 +150,14 @@ function findConditionalBodyForUsage(usageNode) {
 
     // if文のbody内にいるか確認
     if (current.type === 'IfStatement') {
-      // consequent (then節) に含まれているか
-      if (containsNode(current.consequent, usageNode)) {
-        return { type: 'if-body', body: current.consequent, conditional: current, crossedBarrier }
-      }
-
-      // alternate (else節) に含まれているか
-      if (current.alternate) {
-        if (current.alternate.type === 'IfStatement') {
-          // else if の場合は次のループで処理される
-        } else {
-          // else の場合
-          if (containsNode(current.alternate, usageNode)) {
-            return { type: 'if-body', body: current.alternate, conditional: current, crossedBarrier }
-          }
-        }
-      }
+      const result = findIfBodyForUsage(current, usageNode, crossedBarrier)
+      if (result) return result
     }
 
     // switch文のcase内にいるか確認
     if (current.type === 'SwitchStatement') {
-      for (const caseNode of current.cases) {
-        // block付きcaseの場合、最初の要素がBlockStatementになる
-        if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
-          const blockStatement = caseNode.consequent[0]
-          if (containsNode(blockStatement, usageNode)) {
-            // 直下かチェック
-            if (isDirectChild(blockStatement, usageNode)) {
-              return { type: 'case-body', body: blockStatement, conditional: current, crossedBarrier }
-            }
-          }
-        } else {
-          // block無しのcaseもチェック（autofixでblockを追加する）
-          for (const statement of caseNode.consequent) {
-            if (containsNode(statement, usageNode)) {
-              return { type: 'case-body', body: caseNode.consequent, conditional: current, crossedBarrier }
-            }
-          }
-        }
-      }
+      const result = findSwitchBodyForUsage(current, usageNode, crossedBarrier)
+      if (result) return result
     }
 
     current = current.parent
@@ -203,71 +224,82 @@ function findCommonAncestorBody(bodyInfos) {
 }
 
 /**
- * 使用箇所が条件文のどこにあるかを判定
+ * If文内での使用位置を判定
  */
-function getUsageLocation(conditional, usageNode) {
-  if (conditional.type === 'IfStatement') {
-    // test（条件部分）に含まれているか
-    if (containsNode(conditional.test, usageNode)) {
-      return { type: 'test', body: null }
-    }
+function getUsageLocationInIf(conditional, usageNode) {
+  // test（条件部分）に含まれているか
+  if (containsNode(conditional.test, usageNode)) {
+    return { type: 'test', body: null }
+  }
 
-    // consequent（then節）に含まれているか
-    if (containsNode(conditional.consequent, usageNode)) {
-      // consequent直下かチェック（別関数スコープを経由していないか）
-      if (isDirectChild(conditional.consequent, usageNode)) {
-        return { type: 'consequent', body: conditional.consequent }
+  // consequent（then節）に含まれているか
+  if (containsNode(conditional.consequent, usageNode)) {
+    if (isDirectChild(conditional.consequent, usageNode)) {
+      return { type: 'consequent', body: conditional.consequent }
+    }
+  }
+
+  // alternate（else節）に含まれているか
+  if (conditional.alternate) {
+    // else if の場合は再帰的に処理
+    if (conditional.alternate.type === 'IfStatement') {
+      return getUsageLocationInIf(conditional.alternate, usageNode)
+    }
+    // else の場合
+    if (containsNode(conditional.alternate, usageNode)) {
+      if (isDirectChild(conditional.alternate, usageNode)) {
+        return { type: 'alternate', body: conditional.alternate }
       }
     }
+  }
 
-    // alternate（else節）に含まれているか
-    if (conditional.alternate) {
-      // else if の場合
-      if (conditional.alternate.type === 'IfStatement') {
-        const elseIfResult = getUsageLocation(conditional.alternate, usageNode)
-        if (elseIfResult) {
-          return elseIfResult
-        }
-      } else {
-        // else の場合
-        if (containsNode(conditional.alternate, usageNode)) {
-          if (isDirectChild(conditional.alternate, usageNode)) {
-            return { type: 'alternate', body: conditional.alternate }
-          }
+  return null
+}
+
+/**
+ * Switch文内での使用位置を判定
+ */
+function getUsageLocationInSwitch(conditional, usageNode) {
+  // discriminant（条件部分）に含まれているか
+  if (containsNode(conditional.discriminant, usageNode)) {
+    return { type: 'discriminant', body: null }
+  }
+
+  // どのcase/defaultに含まれているか探す
+  for (const caseNode of conditional.cases) {
+    // block付きcaseの場合
+    if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
+      const blockStatement = caseNode.consequent[0]
+      if (containsNode(blockStatement, usageNode)) {
+        if (isDirectChild(blockStatement, usageNode)) {
+          return { type: 'case', body: blockStatement }
         }
       }
-    }
-  } else if (conditional.type === 'SwitchStatement') {
-    // discriminant（条件部分）に含まれているか
-    if (containsNode(conditional.discriminant, usageNode)) {
-      return { type: 'discriminant', body: null }
-    }
-
-    // どのcase/defaultに含まれているか探す
-    for (const caseNode of conditional.cases) {
-      // block付きcaseの場合、最初の要素がBlockStatementになる
-      if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
-        const blockStatement = caseNode.consequent[0]
-        if (containsNode(blockStatement, usageNode)) {
-          // 直下かチェック
-          if (isDirectChild(blockStatement, usageNode)) {
-            return { type: 'case', body: blockStatement }
-          }
-        }
-      } else {
-        // block無しのcaseもチェック（autofixでblockを追加する）
-        for (const statement of caseNode.consequent) {
-          if (containsNode(statement, usageNode)) {
-            // 直下かチェック
-            if (isDirectChildInArray(caseNode.consequent, usageNode)) {
-              return { type: 'case', body: caseNode.consequent }
-            }
+    } else {
+      // block無しのcase
+      for (const statement of caseNode.consequent) {
+        if (containsNode(statement, usageNode)) {
+          if (isDirectChildInArray(caseNode.consequent, usageNode)) {
+            return { type: 'case', body: caseNode.consequent }
           }
         }
       }
     }
   }
 
+  return null
+}
+
+/**
+ * 使用箇所が条件文のどこにあるかを判定
+ */
+function getUsageLocation(conditional, usageNode) {
+  if (conditional.type === 'IfStatement') {
+    return getUsageLocationInIf(conditional, usageNode)
+  }
+  if (conditional.type === 'SwitchStatement') {
+    return getUsageLocationInSwitch(conditional, usageNode)
+  }
   return null
 }
 
@@ -543,7 +575,7 @@ function containsAwait(node) {
  * 宣言スコープ内の早期終了（return/throw、またはtry-catch）を検出
  */
 function findEarlyExits(declarationScope, variableDeclaration) {
-  const statements = declarationScope.body || declarationScope.statements || []
+  const statements = getStatements(declarationScope)
   const declarationIndex = statements.indexOf(variableDeclaration)
   const earlyExits = []
 
@@ -609,7 +641,7 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
  */
 function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationScope) {
   const variableDeclaration = declarationNode.parent
-  const statements = declarationScope.body || declarationScope.statements || []
+  const statements = getStatements(declarationScope)
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   // 早期終了のインデックスを取得
@@ -715,7 +747,7 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
   const earlyExits = findEarlyExits(declarationScope, variableDeclaration)
   if (earlyExits.length === 0) return null
 
-  const statements = declarationScope.body || declarationScope.statements || []
+  const statements = getStatements(declarationScope)
 
   for (const earlyExit of earlyExits) {
     if (isUsedBeforeEarlyExit(varName, node, earlyExit, declarationScope)) {
@@ -747,31 +779,40 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
 }
 
 /**
- * 変数が移動対象かどうかを判定
+ * 変数がスキップ対象かどうかを判定
  */
-function analyzeVariable(sourceCode, node) {
+function shouldSkipVariable(node) {
   // const/let のみ対象（varは除外）
-  if (node.parent.kind === 'var') return null
-  if (node.id.type !== 'Identifier') return null
+  if (node.parent.kind === 'var') return true
+  if (node.id.type !== 'Identifier') return true
 
   // ループ変数は対象外（for-in, for-of, for文のinit部分）
   const varDecl = node.parent
   if (varDecl.parent && isLoopStatement(varDecl.parent)) {
-    return null
+    return true
   }
 
   // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
   if (node.init && node.init.type === 'CallExpression') {
     const callee = node.init.callee
     if (callee.type === 'Identifier' && callee.name.startsWith('use')) {
-      return null
+      return true
     }
   }
 
   // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
   if (node.init && containsAwait(node.init)) {
-    return null
+    return true
   }
+
+  return false
+}
+
+/**
+ * 変数が移動対象かどうかを判定
+ */
+function analyzeVariable(sourceCode, node) {
+  if (shouldSkipVariable(node)) return null
 
   const varName = node.id.name
   const usages = getVariableUsages(sourceCode, varName, node)
@@ -839,7 +880,7 @@ function analyzeVariable(sourceCode, node) {
   }
 
   // 宣言と条件文の間の位置関係をチェック
-  const statements = declarationScope.body || declarationScope.statements || []
+  const statements = getStatements(declarationScope)
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   // 条件文が宣言スコープ直下にある場合

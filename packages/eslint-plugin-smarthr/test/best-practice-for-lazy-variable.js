@@ -1659,5 +1659,32 @@ console.log(x)
         },
       ],
     },
+    // スコープ内で最初の使用箇所の前に別のstatementがある場合
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log('first')
+          console.log(x)
+          doSomething()
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          console.log('first')
+          const x = getValue()
+          console.log(x)
+          doSomething()
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
   ],
 })

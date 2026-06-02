@@ -359,7 +359,7 @@ function getIndent(sourceCode, node) {
 /**
  * 変数宣言を移動するfixer関数を生成
  */
-function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBeforeStatement) {
+function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBeforeStatement, firstUsageStatement) {
   return function(fixer) {
     const text = sourceCode.text
     const declarationText = sourceCode.getText(variableDeclaration)
@@ -447,13 +447,14 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
         ]
       }
     } else if (targetBody.type === 'BlockStatement') {
-      // ブロックがある場合はbodyの先頭に挿入
+      // ブロックがある場合は最初の使用箇所の直前に挿入
       if (targetBody.body.length > 0) {
-        // 移動先のインデントを取得
-        const targetIndent = getIndent(sourceCode, targetBody.body[0])
+        // 最初の使用箇所を挿入位置とする（指定されている場合）
+        const insertTarget = firstUsageStatement || targetBody.body[0]
+        const targetIndent = getIndent(sourceCode, insertTarget)
         return [
           fixer.removeRange([lineStart, removeEnd]),
-          fixer.insertTextBefore(targetBody.body[0], declarationText + '\n' + targetIndent)
+          fixer.insertTextBefore(insertTarget, declarationText + '\n' + targetIndent)
         ]
       } else {
         // 空のブロックの場合は、開き括弧の後に挿入
@@ -719,6 +720,35 @@ function containsVariableUsage(node, varName, declarationNode) {
 }
 
 /**
+ * targetBody内で最初に変数が使用されるstatementを見つける
+ */
+function findFirstUsageStatement(targetBody, usages) {
+  // targetBodyがBlockStatementの場合
+  if (targetBody.type === 'BlockStatement') {
+    const statements = targetBody.body
+    for (const statement of statements) {
+      for (const usage of usages) {
+        if (containsNode(statement, usage)) {
+          return statement
+        }
+      }
+    }
+  }
+  // targetBodyが配列の場合（switch caseのconsequent）
+  else if (Array.isArray(targetBody)) {
+    for (const statement of targetBody) {
+      for (const usage of usages) {
+        if (containsNode(statement, usage)) {
+          return statement
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+/**
  * 早期終了後への移動をチェック
  */
 function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclaration, declarationScope) {
@@ -895,11 +925,15 @@ function analyzeVariable(sourceCode, node) {
     if (conditionalIndex === -1 || conditionalIndex <= declarationIndex) return null
   }
 
+  // targetBody内で最初に使用されるstatementを見つける
+  const firstUsageStatement = findFirstUsageStatement(targetBody, usages)
+
   return {
     node,
     varName,
     variableDeclaration,
     targetBody,
+    firstUsageStatement, // 最初の使用箇所（スコープ変更の場合に使用）
   }
 }
 
@@ -931,7 +965,8 @@ module.exports = {
             sourceCode,
             analysis.variableDeclaration,
             analysis.targetBody,
-            analysis.insertBeforeStatement
+            analysis.insertBeforeStatement,
+            analysis.firstUsageStatement
           ),
         })
       },

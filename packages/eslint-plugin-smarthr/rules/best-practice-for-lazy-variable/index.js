@@ -54,19 +54,23 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
   function traverse(node) {
     if (!node || typeof node !== 'object') return
 
-    // 変数名が一致するIdentifierを収集（宣言自体は除外）
-    if (node.type === 'Identifier' &&
-        node.name === varName &&
-        node !== declarationNode.id) {
-      usages.push(node)
-    }
-
-    // 同名変数の再宣言がある場合はその先を探索しない
-    if (node.type === 'VariableDeclarator' &&
-        node !== declarationNode &&
-        node.id.type === 'Identifier' &&
-        node.id.name === varName) {
-      return
+    switch (node.type) {
+      case 'Identifier': {
+        // 変数名が一致するIdentifierを収集（宣言自体は除外）
+        if (node.name === varName && node !== declarationNode.id) {
+          usages.push(node)
+        }
+        break
+      }
+      case 'VariableDeclarator': {
+        // 同名変数の再宣言がある場合はその先を探索しない
+        if (node !== declarationNode &&
+            node.id.type === 'Identifier' &&
+            node.id.name === varName) {
+          return
+        }
+        break
+      }
     }
 
     // 子ノードを再帰的に探索

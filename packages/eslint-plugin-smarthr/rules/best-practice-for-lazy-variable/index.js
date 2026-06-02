@@ -183,7 +183,12 @@ function findCommonAncestorBody(bodyInfos) {
       // switch文の各caseをチェック
       for (const caseNode of current.cases) {
         if (caseNode.consequent.length > 0) {
-          firstAncestors.push({ type: 'case-body', body: caseNode.consequent, conditional: current })
+          // consequentの最初の要素がBlockStatementの場合はそれを、そうでない場合はconsequent配列を追加
+          if (caseNode.consequent[0].type === 'BlockStatement') {
+            firstAncestors.push({ type: 'case-body', body: caseNode.consequent[0], conditional: current })
+          } else {
+            firstAncestors.push({ type: 'case-body', body: caseNode.consequent, conditional: current })
+          }
         }
       }
     }

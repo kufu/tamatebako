@@ -821,6 +821,49 @@ switch (condition) {
         },
       ],
     },
+    // switch文の複数case（fallthrough）で既にblockがある場合
+    {
+      code: `
+        const response = getResponse()
+        const serverError = response.data
+        clearErrors()
+        switch (response.status) {
+          case 400:
+          case 404: {
+            if (serverError.code === 'ERROR') {
+              console.log(serverError.message)
+            }
+            if (serverError.detail) {
+              console.log(serverError.detail)
+            }
+            break
+          }
+        }
+      `,
+      output: `
+        const response = getResponse()
+        clearErrors()
+        switch (response.status) {
+          case 400:
+          case 404: {
+            const serverError = response.data
+            if (serverError.code === 'ERROR') {
+              console.log(serverError.message)
+            }
+            if (serverError.detail) {
+              console.log(serverError.detail)
+            }
+            break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'serverError' },
+        },
+      ],
+    },
     // ネストしたif（if > if）
     {
       code: `

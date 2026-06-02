@@ -335,7 +335,7 @@ function getIndent(sourceCode, node) {
 /**
  * 変数宣言を移動するfixer関数を生成
  */
-function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
+function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBeforeStatement) {
   return function(fixer) {
     const text = sourceCode.text
     const declarationText = sourceCode.getText(variableDeclaration)
@@ -356,6 +356,15 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
       removeEnd = endPos + 1
     } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
       removeEnd = endPos + 2
+    }
+
+    // 早期終了後への移動の場合
+    if (insertBeforeStatement) {
+      const targetIndent = getIndent(sourceCode, insertBeforeStatement)
+      return [
+        fixer.removeRange([lineStart, removeEnd]),
+        fixer.insertTextBefore(insertBeforeStatement, declarationText + '\n' + targetIndent)
+      ]
     }
 
     // 移動先に挿入
@@ -413,6 +422,302 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
 }
 
 /**
+ * ノードがreturn/throw文かどうか判定
+ */
+function isEarlyExitStatement(node) {
+  return node.type === 'ReturnStatement' || node.type === 'ThrowStatement'
+}
+
+/**
+ * try-catchブロックを検出（throw文を含む場合）
+ */
+function findTryCatchWithThrow(node) {
+  let current = node.parent
+
+  while (current) {
+    if (current.type === 'TryStatement') {
+      // try内にthrowがあるかチェック
+      const hasThrowInTry = containsThrow(current.block)
+      const hasThrowInCatch = current.handler && containsThrow(current.handler.body)
+
+      if (hasThrowInTry || hasThrowInCatch) {
+        return current
+      }
+    }
+
+    if (isFunctionScope(current)) {
+      return null
+    }
+
+    current = current.parent
+  }
+
+  return null
+}
+
+/**
+ * ノード内にthrow文が含まれているかチェック
+ */
+function containsThrow(node) {
+  if (!node || typeof node !== 'object') return false
+  if (node.type === 'ThrowStatement') return true
+
+  // 関数スコープを超えない
+  if (isFunctionScope(node)) return false
+
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      if (child.some(c => containsThrow(c))) return true
+    } else if (child && typeof child === 'object') {
+      if (containsThrow(child)) return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * 宣言スコープ内の早期終了（return/throw、またはtry-catch）を検出
+ */
+function findEarlyExits(declarationScope, variableDeclaration) {
+  const statements = declarationScope.body || declarationScope.statements || []
+  const declarationIndex = statements.indexOf(variableDeclaration)
+  const earlyExits = []
+
+  // 宣言より後のstatementを探索
+  for (let i = declarationIndex + 1; i < statements.length; i++) {
+    const statement = statements[i]
+
+    // try-catchブロック（throw含む）を検出
+    if (statement.type === 'TryStatement') {
+      const hasThrowInTry = containsThrow(statement.block)
+      const hasThrowInCatch = statement.handler && containsThrow(statement.handler.body)
+
+      if (hasThrowInTry || hasThrowInCatch) {
+        earlyExits.push({
+          type: 'try-catch',
+          node: statement,
+          index: i,
+        })
+        continue
+      }
+    }
+
+    // 早期終了文を再帰的に検出
+    collectEarlyExitsFromNode(statement, earlyExits, i)
+  }
+
+  return earlyExits
+}
+
+/**
+ * ノードから早期終了文を収集
+ */
+function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
+  if (!node || typeof node !== 'object') return
+
+  // 関数スコープを超えない
+  if (isFunctionScope(node)) return
+
+  // return/throw文を検出
+  if (isEarlyExitStatement(node)) {
+    earlyExits.push({
+      type: node.type === 'ReturnStatement' ? 'return' : 'throw',
+      node,
+      statementIndex,
+    })
+    return
+  }
+
+  // 子ノードを再帰的に探索
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
+    } else if (child && typeof child === 'object') {
+      collectEarlyExitsFromNode(child, earlyExits, statementIndex)
+    }
+  }
+}
+
+/**
+ * 変数が早期終了前で使用されているかチェック
+ */
+function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationScope) {
+  const variableDeclaration = declarationNode.parent
+  const statements = declarationScope.body || declarationScope.statements || []
+  const declarationIndex = statements.indexOf(variableDeclaration)
+
+  // 早期終了のインデックスを取得
+  let earlyExitIndex
+  if (earlyExit.type === 'try-catch') {
+    earlyExitIndex = earlyExit.index
+  } else {
+    earlyExitIndex = earlyExit.statementIndex
+  }
+
+  // 宣言から早期終了までのstatementをチェック
+  for (let i = declarationIndex + 1; i <= earlyExitIndex; i++) {
+    const statement = statements[i]
+
+    if (earlyExit.type === 'try-catch' && statement === earlyExit.node) {
+      // try-catchブロック内での使用をチェック
+      if (containsVariableUsage(earlyExit.node.block, varName, declarationNode)) {
+        return true
+      }
+      if (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) {
+        return true
+      }
+      if (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode)) {
+        return true
+      }
+    } else if (earlyExit.type !== 'try-catch') {
+      // 早期終了文を含むstatement内での使用をチェック
+      if (containsVariableUsageBeforeEarlyExit(statement, varName, declarationNode, earlyExit.node)) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+/**
+ * 早期終了文より前で変数が使用されているかチェック
+ */
+function containsVariableUsageBeforeEarlyExit(node, varName, declarationNode, earlyExitNode) {
+  if (!node || typeof node !== 'object') return false
+  if (node === earlyExitNode) return false // 早期終了文自体は除外
+
+  // 変数の使用を検出
+  if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
+    return true
+  }
+
+  // 関数スコープを超えない
+  if (isFunctionScope(node)) return false
+
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      if (child.some(c => containsVariableUsageBeforeEarlyExit(c, varName, declarationNode, earlyExitNode))) {
+        return true
+      }
+    } else if (child && typeof child === 'object') {
+      if (containsVariableUsageBeforeEarlyExit(child, varName, declarationNode, earlyExitNode)) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+/**
+ * ノード内で変数が使用されているかチェック
+ */
+function containsVariableUsage(node, varName, declarationNode) {
+  if (!node || typeof node !== 'object') return false
+
+  if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
+    return true
+  }
+
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      if (child.some(c => containsVariableUsage(c, varName, declarationNode))) return true
+    } else if (child && typeof child === 'object') {
+      if (containsVariableUsage(child, varName, declarationNode)) return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * 早期終了後への移動をチェック
+ */
+function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclaration, declarationScope) {
+  const earlyExits = findEarlyExits(declarationScope, variableDeclaration)
+  if (earlyExits.length === 0) return null
+
+  const statements = declarationScope.body || declarationScope.statements || []
+  const declarationIndex = statements.indexOf(variableDeclaration)
+
+  // 各早期終了について、変数が早期終了前で使用されているかチェック
+  for (const earlyExit of earlyExits) {
+    // 早期終了前で変数が使用されている場合はスキップ
+    if (isUsedBeforeEarlyExit(varName, node, earlyExit, declarationScope)) {
+      continue
+    }
+
+    // 早期終了の位置を取得
+    let earlyExitIndex
+    if (earlyExit.type === 'try-catch') {
+      earlyExitIndex = earlyExit.index
+    } else {
+      earlyExitIndex = earlyExit.statementIndex
+    }
+
+    // 早期終了と使用箇所が同じstatement内にある場合は対象外
+    // （ネストした制御フローでreturnしないパスがある可能性）
+    if (earlyExit.type !== 'try-catch') {
+      const earlyExitStatement = statements[earlyExitIndex]
+      const hasUsageInSameStatement = usages.some(usage => {
+        return containsNode(earlyExitStatement, usage)
+      })
+      if (hasUsageInSameStatement) {
+        continue
+      }
+    }
+
+    // すべての使用箇所が早期終了の後にあるかチェック
+    const allUsagesAfterEarlyExit = usages.every(usage => {
+      // 使用箇所が含まれるstatementのインデックスを探す
+      for (let i = 0; i < statements.length; i++) {
+        if (containsNode(statements[i], usage)) {
+          return i > earlyExitIndex
+        }
+      }
+      return false
+    })
+
+    if (allUsagesAfterEarlyExit && usages.length > 0) {
+      // 最初の使用箇所を見つける
+      let firstUsageIndex = statements.length
+      for (const usage of usages) {
+        for (let i = 0; i < statements.length; i++) {
+          if (containsNode(statements[i], usage)) {
+            firstUsageIndex = Math.min(firstUsageIndex, i)
+            break
+          }
+        }
+      }
+
+      // 早期終了の直後、最初の使用箇所の前に移動
+      if (firstUsageIndex > earlyExitIndex) {
+        return {
+          node,
+          varName,
+          variableDeclaration,
+          targetBody: null, // 早期終了後への移動の場合、targetBodyではなく挿入位置を使う
+          insertBeforeStatement: statements[firstUsageIndex],
+          moveType: 'after-early-exit',
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+/**
  * 変数が移動対象かどうかを判定
  */
 function analyzeVariable(sourceCode, node) {
@@ -437,6 +742,11 @@ function analyzeVariable(sourceCode, node) {
 
   if (!declarationScope) return null
 
+  // 優先度1: 早期終了後への移動をチェック
+  const earlyExitResult = checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclaration, declarationScope)
+  if (earlyExitResult) return earlyExitResult
+
+  // 優先度2: 最小スコープの先頭への移動（既存ロジック）
   // 各使用箇所について、到達できる条件分岐bodyを探す
   const bodyInfos = []
   for (const usageNode of usages) {
@@ -535,7 +845,8 @@ module.exports = {
           fix: createMoveFixer(
             sourceCode,
             analysis.variableDeclaration,
-            analysis.targetBody
+            analysis.targetBody,
+            analysis.insertBeforeStatement
           ),
         })
       },

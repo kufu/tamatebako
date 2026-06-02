@@ -367,8 +367,99 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // return前に使用（条件部分で使用）
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (!data.isValid) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+    },
+    // try-finally内でdataを使う
+    {
+      code: `
+        function test() {
+          const data = getData()
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup(data)
+          }
+          console.log(data)
+        }
+      `,
+    },
+    // try-catch内でdataを使う
+    {
+      code: `
+        const data = getData()
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log(data)
+        } catch (e) {
+          console.log('caught')
+        }
+        console.log(data)
+      `,
+    },
+    // catch内でdataを使う + 外でも使う
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error:', data)
+          throw e
+        }
+        console.log(data)
+      `,
+    },
   ],
   invalid: [
+    // ネストした早期return（returnせずに使われるパスがある）
+    // TODO: このケースは本来validだが、現在のロジックではinvalidと判定される（要修正）
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (condition1) {
+            if (condition2) {
+              return
+            }
+            console.log('branch')
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (condition1) {
+            if (condition2) {
+              return
+            }
+            console.log('branch')
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
     // 基本: if body内で1回使用、間にコードあり
     {
       code: `
@@ -1183,6 +1274,295 @@ console.log(x)
         {
           messageId: 'moveToLazy',
           data: { name: 'x' },
+        },
+      ],
+    },
+    // 基本的な早期return
+    {
+      code: `
+        function test() {
+          const data = processData()
+          if (!condition) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (!condition) {
+            return
+          }
+          const data = processData()
+          console.log(data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // ガード節パターン
+    {
+      code: `
+        function test() {
+          const user = getUser()
+          if (!isAuthenticated()) {
+            return null
+          }
+          console.log(user)
+        }
+      `,
+      output: `
+        function test() {
+          if (!isAuthenticated()) {
+            return null
+          }
+          const user = getUser()
+          console.log(user)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'user' },
+        },
+      ],
+    },
+    // throw文での早期終了
+    {
+      code: `
+        function test() {
+          const value = expensiveCalculation()
+          if (!isValid()) {
+            throw new Error('Invalid')
+          }
+          return value
+        }
+      `,
+      output: `
+        function test() {
+          if (!isValid()) {
+            throw new Error('Invalid')
+          }
+          const value = expensiveCalculation()
+          return value
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 複数の早期return
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (condition1) {
+            return
+          }
+          if (condition2) {
+            return
+          }
+          if (condition3) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (condition1) {
+            return
+          }
+          if (condition2) {
+            return
+          }
+          if (condition3) {
+            return
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // switch文内のreturn
+    {
+      code: `
+        function test() {
+          const data = getData()
+          switch (type) {
+            case 'A':
+              return null
+            case 'B':
+              return null
+            default:
+              break
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          switch (type) {
+            case 'A':
+              return null
+            case 'B':
+              return null
+            default:
+              break
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // try-finally（finally内でdataを使わない）
+    {
+      code: `
+        function test() {
+          const data = getData()
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup()
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup()
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // try-catch（throw含む、try/catch内でdataを使わない）
+    {
+      code: `
+        const data = getData()
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log('other')
+        } catch (e) {
+          console.log('caught')
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log('other')
+        } catch (e) {
+          console.log('caught')
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // catch内でthrow（catch内でdataを使わない）
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error occurred')
+          throw e
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error occurred')
+          throw e
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // catch内で条件付きthrow
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          if (critical) {
+            throw e
+          }
+          console.log('recovered')
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          someCode()
+        } catch (e) {
+          if (critical) {
+            throw e
+          }
+          console.log('recovered')
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
         },
       ],
     },

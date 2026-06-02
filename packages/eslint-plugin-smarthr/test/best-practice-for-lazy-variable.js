@@ -515,6 +515,56 @@ console.log(x)
         },
       ],
     },
+    // else内で使用（間にコードなし）
+    {
+      code: `
+        const x = getValue()
+        if (condition) {
+          console.log("other")
+        } else {
+          console.log(x)
+        }
+      `,
+      output: `
+        if (condition) {
+          console.log("other")
+        } else {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if直前（間にコードなし）
+    {
+      code: `
+        const x = getValue()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          console.log(x)
+        }
+      `,
+      output: `
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
     // switch case内で使用
     {
       code: `const x = getValue()
@@ -526,6 +576,27 @@ switch (condition) {
 }`,
       output: `someCode()
 switch (condition) {
+  case 'a':
+    const x = getValue()
+    console.log(x)
+    break
+}`,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch case内で使用（間にコードなし）
+    {
+      code: `const x = getValue()
+switch (condition) {
+  case 'a':
+    console.log(x)
+    break
+}`,
+      output: `switch (condition) {
   case 'a':
     const x = getValue()
     console.log(x)
@@ -598,6 +669,31 @@ switch (condition) {
         },
       ],
     },
+    // ネストしたif（if > if）（間にコードなし）
+    {
+      code: `
+        const x = getValue()
+        if (condition1) {
+          if (condition2) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        if (condition1) {
+          if (condition2) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
     // ネストしたswitch（if > switch）
     {
       code: `
@@ -613,6 +709,35 @@ switch (condition) {
       `,
       output: `
         someCode()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              const x = getValue()
+              console.log(x)
+              break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたswitch（if > switch）（間にコードなし）
+    {
+      code: `
+        const x = getValue()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+      output: `
         if (condition1) {
           switch (condition2) {
             case 'a':

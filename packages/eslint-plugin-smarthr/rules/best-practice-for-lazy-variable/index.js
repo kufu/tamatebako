@@ -676,13 +676,12 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
       if (containsVariableUsageBeforeEarlyExit(statement, varName, declarationNode, earlyExit.node)) {
         return true
       }
-    } else if (statement === earlyExit.node) {
+    } else if (statement === earlyExit.node &&
+               (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
+                (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
+                (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode)))) {
       // try-catchブロック内での使用をチェック
-      if (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
-          (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
-          (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode))) {
-        return true
-      }
+      return true
     }
   }
 

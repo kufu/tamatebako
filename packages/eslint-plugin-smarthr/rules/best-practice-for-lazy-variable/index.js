@@ -56,10 +56,12 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
     for (const key in node) {
       if (key === 'parent') continue
       const child = node[key]
-      if (Array.isArray(child)) {
-        child.forEach(c => traverse(c))
-      } else if (child && typeof child === 'object' && child.type) {
-        traverse(child)
+      if (child) {
+        if (Array.isArray(child)) {
+          child.forEach(c => traverse(c))
+        } else if (typeof child === 'object' && child.type) {
+          traverse(child)
+        }
       }
     }
   }
@@ -316,10 +318,12 @@ function containsNode(parent, target) {
     for (const key in node) {
       if (key === 'parent') continue
       const child = node[key]
-      if (Array.isArray(child)) {
-        if (child.some(c => traverse(c))) return true
-      } else if (child && typeof child === 'object') {
-        if (traverse(child)) return true
+      if (child) {
+        if (Array.isArray(child)) {
+          if (child.some(c => traverse(c))) return true
+        } else if (typeof child === 'object') {
+          if (traverse(child)) return true
+        }
       }
     }
     return false
@@ -553,10 +557,12 @@ function containsNodeType(node, nodeType) {
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (Array.isArray(child)) {
-      if (child.some(c => containsNodeType(c, nodeType))) return true
-    } else if (child && typeof child === 'object') {
-      if (containsNodeType(child, nodeType)) return true
+    if (child) {
+      if (Array.isArray(child)) {
+        if (child.some(c => containsNodeType(c, nodeType))) return true
+      } else if (typeof child === 'object') {
+        if (containsNodeType(child, nodeType)) return true
+      }
     }
   }
 
@@ -628,10 +634,12 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (Array.isArray(child)) {
-      child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
-    } else if (child && typeof child === 'object') {
-      collectEarlyExitsFromNode(child, earlyExits, statementIndex)
+    if (child) {
+      if (Array.isArray(child)) {
+        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
+      } else if (typeof child === 'object') {
+        collectEarlyExitsFromNode(child, earlyExits, statementIndex)
+      }
     }
   }
 }
@@ -694,13 +702,15 @@ function containsVariableUsage(node, varName, declarationNode, excludeNode = nul
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (Array.isArray(child)) {
-      if (child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) {
-        return true
-      }
-    } else if (child && typeof child === 'object') {
-      if (containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)) {
-        return true
+    if (child) {
+      if (Array.isArray(child)) {
+        if (child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) {
+          return true
+        }
+      } else if (typeof child === 'object') {
+        if (containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)) {
+          return true
+        }
       }
     }
   }

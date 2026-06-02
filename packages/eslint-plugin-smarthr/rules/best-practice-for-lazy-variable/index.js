@@ -675,13 +675,9 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
 
     if (earlyExit.type === 'try-catch' && statement === earlyExit.node) {
       // try-catchブロック内での使用をチェック
-      if (containsVariableUsage(earlyExit.node.block, varName, declarationNode)) {
-        return true
-      }
-      if (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) {
-        return true
-      }
-      if (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode)) {
+      if (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
+          (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
+          (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode))) {
         return true
       }
     } else if (earlyExit.type !== 'try-catch') {
@@ -794,8 +790,9 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
  */
 function shouldSkipVariable(node) {
   // const/let のみ対象（varは除外）
-  if (node.parent.kind === 'var') return true
-  if (node.id.type !== 'Identifier') return true
+  if (node.parent.kind === 'var' || node.id.type !== 'Identifier') {
+    return true
+  }
 
   // ループ変数は対象外（for-in, for-of, for文のinit部分）
   const varDecl = node.parent
@@ -879,12 +876,8 @@ function analyzeVariable(sourceCode, node) {
   // 変数宣言からtargetBodyまでの間にバリア（関数スコープやループ）がないかチェック
   let current = commonAncestorBody.conditional
   while (current && current !== declarationScope) {
-    // 関数スコープがあったら対象外
-    if (isFunctionScope(current)) {
-      return null
-    }
-    // ループがあったら対象外
-    if (isLoopStatement(current)) {
+    // 関数スコープやループがあったら対象外
+    if (isFunctionScope(current) || isLoopStatement(current)) {
       return null
     }
     current = current.parent

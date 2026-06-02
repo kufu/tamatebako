@@ -56,13 +56,25 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ネストしたif（if > if）- 対象外
+    // ループ内のif - 対象外
     {
       code: `
         const x = getValue()
         someCode()
-        if (condition1) {
-          if (condition2) {
+        for (let i = 0; i < 10; i++) {
+          if (condition) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // if内のループ - 対象外（ループを超える）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          for (let i = 0; i < 10; i++) {
             console.log(x)
           }
         }
@@ -319,6 +331,95 @@ switch (condition) {
           default:
             const x = getValue()
             console.log(x)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたif（if > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたswitch（if > switch）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              const x = getValue()
+              console.log(x)
+              break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたswitch（switch > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              const x = getValue()
+              console.log(x)
+            }
             break
         }
       `,

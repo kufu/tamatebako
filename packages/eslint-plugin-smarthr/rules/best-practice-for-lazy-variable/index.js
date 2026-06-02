@@ -77,8 +77,19 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
 }
 
 /**
+ * ループ構文かどうか判定
+ */
+function isLoopStatement(node) {
+  return node.type === 'ForStatement' ||
+         node.type === 'ForInStatement' ||
+         node.type === 'ForOfStatement' ||
+         node.type === 'WhileStatement' ||
+         node.type === 'DoWhileStatement'
+}
+
+/**
  * ノードの親を辿って、if/else if/elseまたはswitchを探す
- * 途中で関数スコープを超えたらnullを返す
+ * 途中で関数スコープやループを超えたらnullを返す
  */
 function findParentConditional(node, declarationScope) {
   let current = node.parent
@@ -89,20 +100,14 @@ function findParentConditional(node, declarationScope) {
       return null
     }
 
+    // ループ構文を超えたら探索終了
+    if (isLoopStatement(current)) {
+      return null
+    }
+
     // if文またはswitch文を見つけた
     if (current.type === 'IfStatement' || current.type === 'SwitchStatement') {
-      // 条件文が宣言と同じ階層にあるかチェック
-      let conditionalParent = current.parent
-      while (conditionalParent && conditionalParent.type !== 'Program' && conditionalParent.type !== 'BlockStatement') {
-        conditionalParent = conditionalParent.parent
-      }
-
-      if (conditionalParent === declarationScope) {
-        return current
-      }
-
-      // 同じ階層にない（ネストしている）場合は探索終了
-      return null
+      return current
     }
 
     current = current.parent
@@ -370,20 +375,41 @@ function analyzeVariable(sourceCode, node) {
   // 移動先のbodyを取得
   const targetBody = usageLocation.body
 
+  // 条件文から宣言位置まで遡って、ループや関数スコープがないかチェック
+  let current = conditional.parent
+  while (current && current !== declarationScope) {
+    // 関数スコープがあったら対象外
+    if (isFunctionScope(current)) {
+      return null
+    }
+    // ループがあったら対象外
+    if (isLoopStatement(current)) {
+      return null
+    }
+    current = current.parent
+  }
+
   // 宣言と使用箇所の間にコードがあるかチェック
+  // 条件文が宣言スコープの直下にあるか、ネストしているかを判定
   const statements = declarationScope.body || declarationScope.statements || []
   const declarationIndex = statements.indexOf(variableDeclaration)
 
-  // 条件文のインデックスを探す
-  let conditionalIndex = -1
-  for (let i = 0; i < statements.length; i++) {
-    if (containsNode(statements[i], conditional)) {
-      conditionalIndex = i
-      break
+  // 条件文が宣言スコープ直下にある場合
+  if (statements.includes(conditional)) {
+    const conditionalIndex = statements.indexOf(conditional)
+    if (conditionalIndex <= declarationIndex) return null
+  } else {
+    // 条件文がネストしている場合、宣言より後にある必要がある
+    // 条件文を含むstatementを探す
+    let conditionalIndex = -1
+    for (let i = 0; i < statements.length; i++) {
+      if (containsNode(statements[i], conditional)) {
+        conditionalIndex = i
+        break
+      }
     }
+    if (conditionalIndex === -1 || conditionalIndex <= declarationIndex) return null
   }
-
-  if (conditionalIndex === -1 || conditionalIndex <= declarationIndex) return null
 
   return {
     node,

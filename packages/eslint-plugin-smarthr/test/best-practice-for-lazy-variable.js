@@ -12,197 +12,82 @@ const ruleTester = new RuleTester({
 
 ruleTester.run('best-practice-for-lazy-variable', rule, {
   valid: [
-    // 条件分岐がない場合
+    // 使用箇所がない
     {
-      code: `
-        const x = 1
-        console.log(x)
-        console.log(x)
-      `,
+      code: 'const x = getValue()',
     },
-    // 条件分岐の外でも使われる
-    {
-      code: `
-        const x = 1
-        console.log(x)
-        if (condition) {
-          console.log(x)
-        }
-      `,
-    },
-    // すでに最適な位置（条件直前、間に何もない）
+    // if文がない
     {
       code: `
         const x = getValue()
-        if (x) {
+        console.log(x)
+      `,
+    },
+    // 条件部分で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (x > 10) {
           console.log("ok")
         }
       `,
     },
-    // すでに最適な位置（body内使用、if直前、間に何もない）
-    {
-      code: `
-        if (condition) {
-          const x = getValue()
-          console.log(x)
-        }
-      `,
-    },
-    // 関数スコープから参照される（異なるスコープ）
-    {
-      code: `
-        const x = 1
-        function foo() {
-          if (condition) {
-            console.log(x)
-          }
-        }
-      `,
-    },
-    // クロージャで参照される
-    {
-      code: `
-        const x = 1
-        const fn = () => {
-          if (condition) {
-            return x
-          }
-        }
-      `,
-    },
-    // ネストした関数内で条件分岐内のみで使用
-    {
-      code: `
-        function outer() {
-          const x = 1
-          function inner() {
-            if (condition) {
-              console.log(x)
-              console.log(x)
-            }
-          }
-        }
-      `,
-    },
-    // ループ前の事前計算（有用な変数）
-    {
-      code: `
-        const arr = getArray()
-        const len = arr.length
-        for (let i = 0; i < len; i++) {
-          if (condition) {
-            console.log(arr[i])
-          }
-        }
-      `,
-    },
-    // ループ内で条件分岐があっても、ループ自体は条件分岐ではない
+    // 2回以上使用
     {
       code: `
         const x = getValue()
-        for (let i = 0; i < 10; i++) {
-          if (condition) {
-            console.log(x)
-          }
-        }
-      `,
-    },
-    // 複数の独立した条件分岐で使用される（移動先が一意でない）
-    {
-      code: `
-        const x = getValue()
-        if (condition1) {
-          console.log(x)
-        }
-        if (condition2) {
-          console.log(x)
-        }
-      `,
-    },
-    // 条件分岐の条件部分と外の両方で使用される
-    {
-      code: `
-        const addableCrewCount = getValue()
         someCode()
-        if (condition > addableCrewCount) {
-          doSomething()
+        if (condition) {
+          console.log(x)
         }
-        setItem(addableCrewCount)
+        console.log(x)
       `,
     },
-    // 条件分岐の条件部分と外の両方で使用される（間にコードなし）
-    {
-      code: `
-        const before = getValue1()
-        const addableCrewCount = getValue2()
-        if (before > addableCrewCount) {
-          doSomething()
-        }
-        setItem(addableCrewCount)
-      `,
-    },
-    // 条件分岐の条件部分と外の両方で使用される（resale_alertパターン）
-    {
-      code: `
-        const before = (() => {
-          let temp = getValue()
-          return temp
-        })()
-
-        const addableCrewCount = Global.gon.addable_crew_count
-
-        if (before > addableCrewCount) {
-          doSomething()
-        }
-
-        setItem(addableCrewCount)
-      `,
-    },
-    // 複数の三項演算子で使用される
+    // 関数スコープ内で使用（forEach）
     {
       code: `
         const x = getValue()
-        const y = condition ? x : 0
-        const z = otherCondition ? x : 1
+        someCode()
+        if (condition) {
+          array.forEach(() => {
+            console.log(x)
+          })
+        }
       `,
     },
-    // 複数の論理演算子で使用される
+    // 関数スコープ内で使用（アロー関数）
     {
       code: `
         const x = getValue()
-        const y = condition && x
-        const z = otherCondition || x
+        someCode()
+        if (condition) {
+          const fn = () => console.log(x)
+        }
       `,
     },
-    // ネストした条件分岐（複数の独立したブランチ）
+    // ネストしたif（if > if）- 対象外
     {
       code: `
         const x = getValue()
+        someCode()
         if (condition1) {
           if (condition2) {
             console.log(x)
           }
         }
-        if (condition3) {
-          console.log(x)
-        }
       `,
     },
-    // 異なる条件分岐タイプの組み合わせ（if + switch）
+    // すでに最適（if直前、間にコードなし）
     {
       code: `
         const x = getValue()
-        if (condition1) {
+        if (condition) {
           console.log(x)
-        }
-        switch (condition2) {
-          case 'a':
-            console.log(x)
-            break
         }
       `,
     },
-    // switch文の複数のcaseで使用される
+    // switch文 - 対象外
     {
       code: `
         const x = getValue()
@@ -211,227 +96,41 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           case 'a':
             console.log(x)
             break
-          case 'b':
-            console.log(x)
-            break
         }
       `,
     },
-    // ネストした条件分岐（if > switch、条件とbodyで使用）- valid（複数箇所で使用）
+    // 三項演算子 - 対象外
     {
       code: `
         const x = getValue()
-        if (condition1) {
-          console.log(x)
-          switch (condition2) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
+        someCode()
+        const y = condition ? x : 0
       `,
     },
-    // ネストした条件分岐（switch > if、複数caseで使用）- valid
+    // 論理演算子 - 対象外
     {
       code: `
         const x = getValue()
-        switch (condition1) {
-          case 'a':
-            if (condition2) {
-              console.log(x)
-            }
-            break
-          case 'b':
-            console.log(x)
-            break
-        }
-      `,
-    },
-    // ネストした条件分岐（switch > switch、外側の複数caseで使用）- valid
-    {
-      code: `
-        const x = getValue()
-        switch (condition1) {
-          case 'a':
-            switch (condition2) {
-              case 'b':
-                console.log(x)
-                break
-            }
-            break
-          case 'c':
-            console.log(x)
-            break
-        }
-      `,
-    },
-    // 異なる条件分岐タイプの組み合わせ（三項演算子 + if）
-    {
-      code: `
-        const x = getValue()
-        const y = condition1 ? x : 0
-        if (condition2) {
-          console.log(x)
-        }
-      `,
-    },
-    // オプショナルチェーン複数
-    {
-      code: `
-        const x = getValue()
-        const y = obj1?.prop(x)
-        const z = obj2?.method(x)
+        someCode()
+        const y = condition && x
       `,
     },
   ],
   invalid: [
-    // 再代入がある場合（if内で代入）
-    {
-      code: `
-        let x = 0
-        someCode()
-        if (condition) {
-          x = 10
-          console.log(x)
-        }
-      `,
-      output: `
-        someCode()
-        let x = 0
-if (condition) {
-          x = 10
-          console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 再代入がある場合（UpdateExpression: ++）
-    {
-      code: `
-        let count = 0
-        someCode()
-        if (condition) {
-          count++
-          console.log(count)
-        }
-      `,
-      output: `
-        someCode()
-        let count = 0
-if (condition) {
-          count++
-          console.log(count)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'count' },
-        },
-      ],
-    },
-    // 再代入がある場合（forEach内で再代入、if文で参照）
-    {
-      code: `
-        let update = false
-        someCode()
-        array.forEach(() => {
-          update = true
-        })
-        if (update) {
-          doSomething()
-        }
-      `,
-      output: `
-        someCode()
-        let update = false
-array.forEach(() => {
-          update = true
-        })
-        if (update) {
-          doSomething()
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'update' },
-        },
-      ],
-    },
-    // 再代入がある場合（forEach内で再代入、if文で参照）
-    {
-      code: `
-        let total = 0
-        someCode()
-        array.forEach((item) => {
-          total += item.value
-        })
-        if (total > 100) {
-          doSomething()
-        }
-      `,
-      output: `
-        someCode()
-        let total = 0
-array.forEach((item) => {
-          total += item.value
-        })
-        if (total > 100) {
-          doSomething()
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'total' },
-        },
-      ],
-    },
-    // 基本パターン: body内で使用、間に他のコードがある
-    {
-      code: `const x = getValue()
-someCode()
-if (condition) {
-  console.log(x)
-  console.log(x)
-}`,
-      output: `someCode()
-if (condition) {
-  const x = getValue()
-console.log(x)
-  console.log(x)
-}`,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 間に複数の関数呼び出し
+    // 基本: if body内で1回使用、間にコードあり
     {
       code: `
         const x = getValue()
-        someCode1()
-        someCode2()
-        someCode3()
+        someCode()
         if (condition) {
           console.log(x)
         }
       `,
       output: `
-        someCode1()
-        someCode2()
-        someCode3()
+        someCode()
         if (condition) {
           const x = getValue()
-console.log(x)
+          console.log(x)
         }
       `,
       errors: [
@@ -441,51 +140,26 @@ console.log(x)
         },
       ],
     },
-    // 間に変数宣言がある
+    // else内で使用
     {
       code: `
         const x = getValue()
-        const y = getOther()
-        const z = getAnother()
+        someCode()
         if (condition) {
+          console.log("other")
+        } else {
           console.log(x)
         }
       `,
       output: `
-        const y = getOther()
-        const z = getAnother()
+        someCode()
         if (condition) {
+          console.log("other")
+        } else {
           const x = getValue()
-console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 間にループがある
-    {
-      code: `
-        const x = getValue()
-        for (let i = 0; i < 10; i++) {
-          doSomething(i)
-        }
-        if (condition) {
           console.log(x)
         }
       `,
-      output: `
-        for (let i = 0; i < 10; i++) {
-          doSomething(i)
-        }
-        if (condition) {
-          const x = getValue()
-console.log(x)
-        }
-      `,
       errors: [
         {
           messageId: 'moveToLazy',
@@ -493,137 +167,46 @@ console.log(x)
         },
       ],
     },
-    // 間に無関係の条件分岐がある
-    {
-      code: `
-        const x = getValue()
-        if (otherCondition) {
-          doSomething()
-        }
-        if (condition) {
-          console.log(x)
-        }
-      `,
-      output: `
-        if (otherCondition) {
-          doSomething()
-        }
-        if (condition) {
-          const x = getValue()
-console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 間に複数の異なるタイプの文がある
-    {
-      code: `
-        const x = getValue()
-        const y = getY()
-        someCode()
-        while (check()) {
-          process()
-        }
-        const z = getZ()
-        if (condition) {
-          console.log(x)
-        }
-      `,
-      output: `
-        const y = getY()
-        someCode()
-        while (check()) {
-          process()
-        }
-        const z = getZ()
-        if (condition) {
-          const x = getValue()
-console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 条件部分で使用、間に他のコードがある
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        if (x) {
-          console.log("ok")
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-if (x) {
-          console.log("ok")
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // switchStatement単一caseで使用
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (condition) {
-          case 'a':
-            console.log(x)
-            break
-        }
-      `,
-      output: `
-        someCode()
-        switch (condition) {
-          case 'a':
-            const x = getValue()
-console.log(x)
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // ネストした条件分岐内（単一のブロック）
+    // else if内で使用
     {
       code: `
         const x = getValue()
         someCode()
         if (condition1) {
-          if (condition2) {
-            console.log(x)
-            console.log(x)
-          }
+          console.log("a")
+        } else if (condition2) {
+          console.log(x)
         }
       `,
       output: `
         someCode()
         if (condition1) {
-          if (condition2) {
-            const x = getValue()
+          console.log("a")
+        } else if (condition2) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ブロックなしif（ブロック追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) console.log(x)
+      `,
+      output: `
+        someCode()
+        if (condition) {
+const x = getValue()
 console.log(x)
-            console.log(x)
-          }
-        }
+}
       `,
       errors: [
         {
@@ -632,228 +215,27 @@ console.log(x)
         },
       ],
     },
-    // 条件部分とbody内の両方で使用（条件優先）
+    // 間に複数のコード
     {
       code: `
         const x = getValue()
-        someCode()
-        if (x > 0) {
-          console.log(x)
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-if (x > 0) {
-          console.log(x)
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // switchのdiscriminant（条件部分）で使用
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (x) {
-          case 'a':
-            console.log("a")
-            break
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-switch (x) {
-          case 'a':
-            console.log("a")
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // ネストした条件分岐（if > switch、条件とbodyで使用）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        if (x > 0) {
-          switch (condition2) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-if (x > 0) {
-          switch (condition2) {
-            case 'a':
-              console.log(x)
-              break
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // ネストした条件分岐（switch > if、条件とbodyで使用）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (x) {
-          case 'a':
-            if (condition2) {
-              console.log(x)
-            }
-            break
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-switch (x) {
-          case 'a':
-            if (condition2) {
-              console.log(x)
-            }
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // ネストした条件分岐（switch > switch、条件とbodyで使用）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (x) {
-          case 'a':
-            switch (condition2) {
-              case 'b':
-                console.log(x)
-                break
-            }
-            break
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue()
-switch (x) {
-          case 'a':
-            switch (condition2) {
-              case 'b':
-                console.log(x)
-                break
-            }
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 1回だけ使用される
-    {
-      code: `
-        const x = getValue()
-        someCode()
+        code1()
+        code2()
+        code3()
         if (condition) {
           console.log(x)
         }
       `,
       output: `
-        someCode()
+        code1()
+        code2()
+        code3()
         if (condition) {
           const x = getValue()
-console.log(x)
+          console.log(x)
         }
       `,
       errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-      ],
-    },
-    // 複数の変数が条件部分で使用される（x, y の順）
-    {
-      code: `
-        const x = getValue1()
-        const y = getValue2()
-        someCode()
-        if (x && y) {
-          console.log("ok")
-        }
-      `,
-      output: `
-        someCode()
-        const x = getValue1()
-const y = getValue2()
-if (x && y) {
-          console.log("ok")
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'x' },
-        },
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'y' },
-        },
-      ],
-    },
-    // 複数の変数が条件部分で使用される（y, x の順で宣言、元の順序を保持）
-    {
-      code: `
-        const y = getValue2()
-        const x = getValue1()
-        someCode()
-        if (x && y) {
-          console.log("ok")
-        }
-      `,
-      output: `
-        someCode()
-        const y = getValue2()
-const x = getValue1()
-if (x && y) {
-          console.log("ok")
-        }
-      `,
-      errors: [
-        {
-          messageId: 'moveToLazy',
-          data: { name: 'y' },
-        },
         {
           messageId: 'moveToLazy',
           data: { name: 'x' },
@@ -862,4 +244,3 @@ if (x && y) {
     },
   ],
 })
-

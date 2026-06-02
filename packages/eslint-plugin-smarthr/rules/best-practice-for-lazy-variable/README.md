@@ -165,6 +165,19 @@ if (condition) {
 }
 ```
 
+```js
+// React Hooks（useXxxで始まる関数）で初期化される変数
+function Component() {
+  const handleClick = useCallback(() => {
+    console.log('clicked')
+  }, [])
+  if (!condition) {
+    return null
+  }
+  console.log(handleClick)
+}
+```
+
 ## autofix
 
 このルールは自動修正に対応しています。

@@ -330,9 +330,6 @@ function analyzeVariable(sourceCode, node) {
 
   if (ifStatementIndex === -1 || ifStatementIndex <= declarationIndex) return null
 
-  // 間にコードがない場合は移動対象外
-  if (ifStatementIndex === declarationIndex + 1) return null
-
   return {
     node,
     varName,

@@ -78,15 +78,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // すでに最適（if直前、間にコードなし）
-    {
-      code: `
-        const x = getValue()
-        if (condition) {
-          console.log(x)
-        }
-      `,
-    },
     // switch文 - 対象外
     {
       code: `
@@ -230,6 +221,27 @@ console.log(x)
         code1()
         code2()
         code3()
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if直前（間にコードなし）- body内で使用なので移動
+    {
+      code: `
+        const x = getValue()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
         if (condition) {
           const x = getValue()
           console.log(x)

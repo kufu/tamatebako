@@ -56,7 +56,57 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ループ内のif - 対象外
+    // forループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          console.log(x)
+        }
+      `,
+    },
+    // whileループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        while (condition) {
+          console.log(x)
+        }
+      `,
+    },
+    // do-whileループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        do {
+          console.log(x)
+        } while (condition)
+      `,
+    },
+    // for-inループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const key in obj) {
+          console.log(x)
+        }
+      `,
+    },
+    // for-ofループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const item of array) {
+          console.log(x)
+        }
+      `,
+    },
+    // for > if - 対象外
     {
       code: `
         const x = getValue()
@@ -68,7 +118,61 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // if内のループ - 対象外（ループを超える）
+    // for > switch - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          switch (condition) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+    },
+    // while > switch - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        while (condition) {
+          switch (check) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+    },
+    // for > for - 対象外（ネストしたループ）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // for > for > if - 対象外（ループの中のループの中のif）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // if > for - 対象外（ループを超える）
     {
       code: `
         const x = getValue()
@@ -77,6 +181,20 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           for (let i = 0; i < 10; i++) {
             console.log(x)
           }
+        }
+      `,
+    },
+    // switch > for - 対象外（ループを超える）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            for (let i = 0; i < 10; i++) {
+              console.log(x)
+            }
+            break
         }
       `,
     },

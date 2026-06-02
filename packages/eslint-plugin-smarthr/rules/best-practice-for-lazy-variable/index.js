@@ -519,9 +519,12 @@ function findTryCatchWithThrow(node) {
 /**
  * ノード内にthrow文が含まれているかチェック
  */
-function containsThrow(node) {
+/**
+ * 指定した型のノードが含まれているかチェック（関数スコープを超えない）
+ */
+function containsNodeType(node, nodeType) {
   if (!node || typeof node !== 'object') return false
-  if (node.type === 'ThrowStatement') return true
+  if (node.type === nodeType) return true
 
   // 関数スコープを超えない
   if (isFunctionScope(node)) return false
@@ -530,36 +533,21 @@ function containsThrow(node) {
     if (key === 'parent') continue
     const child = node[key]
     if (Array.isArray(child)) {
-      if (child.some(c => containsThrow(c))) return true
+      if (child.some(c => containsNodeType(c, nodeType))) return true
     } else if (child && typeof child === 'object') {
-      if (containsThrow(child)) return true
+      if (containsNodeType(child, nodeType)) return true
     }
   }
 
   return false
 }
 
-/**
- * ノード内にawait式が含まれているかチェック
- */
+function containsThrow(node) {
+  return containsNodeType(node, 'ThrowStatement')
+}
+
 function containsAwait(node) {
-  if (!node || typeof node !== 'object') return false
-  if (node.type === 'AwaitExpression') return true
-
-  // 関数スコープを超えない（内部の関数のawaitは無視）
-  if (isFunctionScope(node)) return false
-
-  for (const key in node) {
-    if (key === 'parent') continue
-    const child = node[key]
-    if (Array.isArray(child)) {
-      if (child.some(c => containsAwait(c))) return true
-    } else if (child && typeof child === 'object') {
-      if (containsAwait(child)) return true
-    }
-  }
-
-  return false
+  return containsNodeType(node, 'AwaitExpression')
 }
 
 /**

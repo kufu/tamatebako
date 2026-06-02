@@ -789,27 +789,19 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
  * 変数がスキップ対象かどうかを判定
  */
 function shouldSkipVariable(node) {
-  // const/let のみ対象（varは除外）
-  if (node.parent.kind === 'var' || node.id.type !== 'Identifier') {
-    return true
-  }
-
-  // ループ変数は対象外（for-in, for-of, for文のinit部分）
   const varDecl = node.parent
-  if (varDecl.parent && isLoopStatement(varDecl.parent)) {
-    return true
-  }
 
-  // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
-  if (node.init && node.init.type === 'CallExpression') {
-    const callee = node.init.callee
-    if (callee.type === 'Identifier' && callee.name.startsWith('use')) {
-      return true
-    }
-  }
-
-  // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
-  if (node.init && containsAwait(node.init)) {
+  if (
+    // const/let のみ対象（varは除外）
+    node.parent.kind === 'var' ||
+    node.id.type !== 'Identifier' ||
+    // ループ変数は対象外（for-in, for-of, for文のinit部分）
+    (varDecl.parent && isLoopStatement(varDecl.parent)) ||
+    // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
+    (node.init && node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
+    // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
+    (node.init && containsAwait(node.init))
+  ) {
     return true
   }
 

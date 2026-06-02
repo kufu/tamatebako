@@ -187,14 +187,6 @@ function foo() {
 }
 ```
 
-```js
-// すでに最適な位置（条件直前、間に何もない）
-const x = getValue()
-if (condition) {
-  console.log(x)
-}
-```
-
 ### 除外されるパターン
 
 ```js
@@ -222,11 +214,10 @@ async function fetchData() {
 ```
 
 ```js
-// ループ変数
+// ループ変数（for-of/for-in/forのイテレータ変数）
 for (const item of items) {
-  const value = item.value
   if (condition) {
-    console.log(value)
+    console.log(item)
   }
 }
 ```

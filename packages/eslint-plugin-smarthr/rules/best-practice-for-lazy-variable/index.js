@@ -146,62 +146,54 @@ function findConditionalBodyForUsage(usageNode) {
 }
 
 /**
+ * 条件分岐の祖先チェーンを構築
+ */
+function buildAncestorChain(conditional) {
+  const ancestors = []
+  let current = conditional
+
+  while (current && !isFunctionScope(current) && !isLoopStatement(current)) {
+    if (current.type === 'IfStatement') {
+      if (current.consequent.type === 'BlockStatement') {
+        ancestors.push({ type: 'if-body', body: current.consequent, conditional: current })
+      }
+      if (current.alternate && current.alternate.type !== 'IfStatement' && current.alternate.type === 'BlockStatement') {
+        ancestors.push({ type: 'if-body', body: current.alternate, conditional: current })
+      }
+    } else if (current.type === 'SwitchStatement') {
+      for (const caseNode of current.cases) {
+        if (caseNode.consequent.length > 0) {
+          const body = caseNode.consequent[0].type === 'BlockStatement'
+            ? caseNode.consequent[0]
+            : caseNode.consequent
+          ancestors.push({ type: 'case-body', body, conditional: current })
+        }
+      }
+    }
+    current = current.parent
+  }
+
+  return ancestors
+}
+
+/**
  * 複数の条件分岐bodyの最小共通祖先bodyを見つける
- * @param {Array} bodyInfos - findConditionalBodyForUsageの結果の配列
- * @returns {Object|null} { body: Node, type: 'if-body'|'case-body' }
  */
 function findCommonAncestorBody(bodyInfos) {
   if (bodyInfos.length === 0) return null
   if (bodyInfos.length === 1) return bodyInfos[0]
 
-  // すべてのbodyが同じかチェック
   const firstBody = bodyInfos[0].body
-  const allSame = bodyInfos.every(info => info.body === firstBody)
-  if (allSame) {
+  if (bodyInfos.every(info => info.body === firstBody)) {
     return bodyInfos[0]
   }
 
-  // bodyの親を辿って最小共通祖先を探す
-  // まず、最初のbodyの祖先チェーンを取得
-  const firstAncestors = []
-  let current = bodyInfos[0].conditional
-  while (current) {
-    if (isFunctionScope(current) || isLoopStatement(current)) {
-      break
-    }
+  const ancestors = buildAncestorChain(bodyInfos[0].conditional)
 
-    // currentが条件分岐なら、そのbodyを候補に追加
-    if (current.type === 'IfStatement') {
-      // consequent, alternateをチェック
-      if (current.consequent.type === 'BlockStatement') {
-        firstAncestors.push({ type: 'if-body', body: current.consequent, conditional: current })
-      }
-      if (current.alternate && current.alternate.type !== 'IfStatement' && current.alternate.type === 'BlockStatement') {
-        firstAncestors.push({ type: 'if-body', body: current.alternate, conditional: current })
-      }
-    } else if (current.type === 'SwitchStatement') {
-      // switch文の各caseをチェック
-      for (const caseNode of current.cases) {
-        if (caseNode.consequent.length > 0) {
-          // consequentの最初の要素がBlockStatementの場合はそれを、そうでない場合はconsequent配列を追加
-          if (caseNode.consequent[0].type === 'BlockStatement') {
-            firstAncestors.push({ type: 'case-body', body: caseNode.consequent[0], conditional: current })
-          } else {
-            firstAncestors.push({ type: 'case-body', body: caseNode.consequent, conditional: current })
-          }
-        }
-      }
-    }
-
-    current = current.parent
-  }
-
-  // 他のすべてのbodyについて、firstAncestorsの中で共通のものを探す
-  for (const ancestorInfo of firstAncestors) {
-    const allContained = bodyInfos.every(info => {
-      // ancestorInfoのbodyがinfoのbodyまたはinfoのconditionalを含んでいるか
-      return containsNode(ancestorInfo.body, info.body) || containsNode(ancestorInfo.body, info.conditional)
-    })
+  for (const ancestorInfo of ancestors) {
+    const allContained = bodyInfos.every(info =>
+      containsNode(ancestorInfo.body, info.body) || containsNode(ancestorInfo.body, info.conditional)
+    )
     if (allContained) {
       return ancestorInfo
     }
@@ -280,29 +272,6 @@ function getUsageLocation(conditional, usageNode) {
 }
 
 /**
- * 使用箇所が配列型のbody直下にあるか（別関数スコープを経由していないか）
- */
-function isDirectChildInArray(bodyArray, usageNode) {
-  let current = usageNode.parent
-
-  while (current) {
-    // 関数スコープを経由したら直下ではない
-    if (isFunctionScope(current)) {
-      return false
-    }
-
-    // bodyArray内のstatementに到達したら直下
-    if (bodyArray.includes(current)) {
-      return true
-    }
-
-    current = current.parent
-  }
-
-  return false
-}
-
-/**
  * あるノードが別のノードを含んでいるか確認
  */
 function containsNode(parent, target) {
@@ -330,18 +299,25 @@ function containsNode(parent, target) {
 /**
  * 使用箇所がbody直下にあるか（別関数スコープを経由していないか）
  */
-function isDirectChild(bodyNode, usageNode) {
+function isDirectChild(body, usageNode) {
+  const isArray = Array.isArray(body)
   let current = usageNode.parent
 
-  while (current && current !== bodyNode) {
-    // 関数スコープを経由したら直下ではない
+  while (current) {
     if (isFunctionScope(current)) {
       return false
+    }
+    if (isArray ? body.includes(current) : current === body) {
+      return true
     }
     current = current.parent
   }
 
-  return current === bodyNode
+  return false
+}
+
+function isDirectChildInArray(bodyArray, usageNode) {
+  return isDirectChild(bodyArray, usageNode)
 }
 
 /**
@@ -362,123 +338,136 @@ function getIndent(sourceCode, node) {
 }
 
 /**
+ * 変数宣言の削除範囲を計算
+ */
+function getRemovalRange(sourceCode, variableDeclaration) {
+  const text = sourceCode.text
+  const startPos = variableDeclaration.range[0]
+  const endPos = variableDeclaration.range[1]
+
+  let lineStart = startPos
+  while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
+    lineStart--
+  }
+
+  let removeEnd = endPos
+  if (text[endPos] === '\n') {
+    removeEnd = endPos + 1
+  } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
+    removeEnd = endPos + 2
+  }
+
+  return { lineStart, removeEnd }
+}
+
+/**
+ * case文のコロン位置とインデントを取得
+ */
+function getCaseInfo(sourceCode, firstStatement) {
+  const text = sourceCode.text
+  let pos = firstStatement.range[0] - 1
+
+  // 空白・改行をスキップしてコロンを探す
+  while (pos > 0 && (text[pos] === ' ' || text[pos] === '\t' || text[pos] === '\n' || text[pos] === '\r')) {
+    pos--
+  }
+  while (pos > 0 && text[pos] !== ':') {
+    pos--
+  }
+  const colonPos = pos
+
+  // caseラベルのインデントを取得
+  let caseLineStart = colonPos
+  while (caseLineStart > 0 && text[caseLineStart - 1] !== '\n' && text[caseLineStart - 1] !== '\r') {
+    caseLineStart--
+  }
+  let caseKeywordStart = caseLineStart
+  while (caseKeywordStart < colonPos && (text[caseKeywordStart] === ' ' || text[caseKeywordStart] === '\t')) {
+    caseKeywordStart++
+  }
+
+  return {
+    colonPos,
+    caseIndent: text.substring(caseLineStart, caseKeywordStart)
+  }
+}
+
+/**
+ * switch caseにblockを追加して変数を移動
+ */
+function fixSwitchCase(fixer, sourceCode, declarationText, targetBody, removalRange) {
+  const text = sourceCode.text
+  const firstStatement = targetBody[0]
+  const lastStatement = targetBody[targetBody.length - 1]
+  const statementIndent = getIndent(sourceCode, firstStatement)
+  const { colonPos, caseIndent } = getCaseInfo(sourceCode, firstStatement)
+
+  let firstLineStart = firstStatement.range[0]
+  while (firstLineStart > 0 && text[firstLineStart - 1] !== '\n' && text[firstLineStart - 1] !== '\r') {
+    firstLineStart--
+  }
+
+  const bodyText = text.substring(firstLineStart, lastStatement.range[1])
+  const newBody = ` {\n${statementIndent}${declarationText}\n${bodyText}\n${caseIndent}}`
+  const middleText = text.substring(removalRange.removeEnd, colonPos + 1)
+  const fullReplacement = middleText + newBody
+
+  return [fixer.replaceTextRange([removalRange.lineStart, lastStatement.range[1]], fullReplacement)]
+}
+
+/**
+ * BlockStatementに変数を移動
+ */
+function fixBlockStatement(fixer, sourceCode, declarationText, targetBody, removalRange, firstUsageStatement) {
+  if (targetBody.body.length > 0) {
+    const insertTarget = firstUsageStatement || targetBody.body[0]
+    const targetIndent = getIndent(sourceCode, insertTarget)
+    return [
+      fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
+      fixer.insertTextBefore(insertTarget, declarationText + '\n' + targetIndent)
+    ]
+  } else {
+    const openBrace = sourceCode.getFirstToken(targetBody)
+    return [
+      fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
+      fixer.insertTextAfter(openBrace, '\n' + declarationText)
+    ]
+  }
+}
+
+/**
  * 変数宣言を移動するfixer関数を生成
  */
 function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBeforeStatement, firstUsageStatement) {
   return function(fixer) {
-    const text = sourceCode.text
     const declarationText = sourceCode.getText(variableDeclaration)
+    const removalRange = getRemovalRange(sourceCode, variableDeclaration)
 
-    // 変数宣言の削除範囲を計算
-    const startPos = variableDeclaration.range[0]
-    const endPos = variableDeclaration.range[1]
-
-    // 行の先頭を探す
-    let lineStart = startPos
-    while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
-      lineStart--
-    }
-
-    // 改行文字も削除範囲に含める
-    let removeEnd = endPos
-    if (text[endPos] === '\n') {
-      removeEnd = endPos + 1
-    } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
-      removeEnd = endPos + 2
-    }
-
-    // 早期終了後への移動の場合
+    // 早期終了後への移動
     if (insertBeforeStatement) {
       const targetIndent = getIndent(sourceCode, insertBeforeStatement)
       return [
-        fixer.removeRange([lineStart, removeEnd]),
+        fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
         fixer.insertTextBefore(insertBeforeStatement, declarationText + '\n' + targetIndent)
       ]
     }
 
-    // 移動先に挿入
-    if (Array.isArray(targetBody)) {
-      // Switch caseのconsequent（配列）の場合 - block無しなのでblockを追加
-      if (targetBody.length > 0) {
-        const firstStatement = targetBody[0]
-        const lastStatement = targetBody[targetBody.length - 1]
-        const statementIndent = getIndent(sourceCode, firstStatement)
-
-        // case文のラベル（`case 'a':`）の終了位置を探す
-        // firstStatementの前の行を見て、コロン（:）を探す
-        let pos = firstStatement.range[0] - 1
-        // 空白・改行をスキップ
-        while (pos > 0 && (text[pos] === ' ' || text[pos] === '\t' || text[pos] === '\n' || text[pos] === '\r')) {
-          pos--
-        }
-        // コロンの位置を見つける
-        while (pos > 0 && text[pos] !== ':') {
-          pos--
-        }
-        const colonPos = pos
-
-        // caseラベルのインデント（行の先頭から最初の非空白文字まで）を取得
-        let caseLineStart = colonPos
-        while (caseLineStart > 0 && text[caseLineStart - 1] !== '\n' && text[caseLineStart - 1] !== '\r') {
-          caseLineStart--
-        }
-        // 行の先頭から最初の非空白文字（'case'または'default'）までを取得
-        let caseKeywordStart = caseLineStart
-        while (caseKeywordStart < colonPos && (text[caseKeywordStart] === ' ' || text[caseKeywordStart] === '\t')) {
-          caseKeywordStart++
-        }
-        const caseIndent = text.substring(caseLineStart, caseKeywordStart)
-
-        // bodyのテキストを取得（インデントも含めて行の先頭から）
-        // firstStatementの行の先頭位置を探す
-        let firstLineStart = firstStatement.range[0]
-        while (firstLineStart > 0 && text[firstLineStart - 1] !== '\n' && text[firstLineStart - 1] !== '\r') {
-          firstLineStart--
-        }
-
-        const bodyText = text.substring(firstLineStart, lastStatement.range[1])
-
-        // blockで囲んで変数宣言を追加
-        // ` {\n    const x = getValue()\n    console.log(x)\n    break\n  }`
-        const newBody = ` {\n${statementIndent}${declarationText}\n${bodyText}\n${caseIndent}}`
-
-        // 変数宣言の削除とcaseのbody置換を1つの操作で行う
-        // 変数宣言の開始からcaseのbodyの終わりまでを置換
-        const middleText = text.substring(removeEnd, colonPos + 1)
-        const fullReplacement = middleText + newBody
-
-        return [
-          fixer.replaceTextRange([lineStart, lastStatement.range[1]], fullReplacement)
-        ]
-      }
-    } else if (targetBody.type === 'BlockStatement') {
-      // ブロックがある場合は最初の使用箇所の直前に挿入
-      if (targetBody.body.length > 0) {
-        // 最初の使用箇所を挿入位置とする（指定されている場合）
-        const insertTarget = firstUsageStatement || targetBody.body[0]
-        const targetIndent = getIndent(sourceCode, insertTarget)
-        return [
-          fixer.removeRange([lineStart, removeEnd]),
-          fixer.insertTextBefore(insertTarget, declarationText + '\n' + targetIndent)
-        ]
-      } else {
-        // 空のブロックの場合は、開き括弧の後に挿入
-        const openBrace = sourceCode.getFirstToken(targetBody)
-        return [
-          fixer.removeRange([lineStart, removeEnd]),
-          fixer.insertTextAfter(openBrace, '\n' + declarationText)
-        ]
-      }
-    } else {
-      // ブロックがない場合（単一文）はブロック化する
-      const statementText = sourceCode.getText(targetBody)
-      return [
-        fixer.removeRange([lineStart, removeEnd]),
-        fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`)
-      ]
+    // switch caseの配列（blockなし）
+    if (Array.isArray(targetBody) && targetBody.length > 0) {
+      return fixSwitchCase(fixer, sourceCode, declarationText, targetBody, removalRange)
     }
 
-    return []
+    // BlockStatement
+    if (targetBody.type === 'BlockStatement') {
+      return fixBlockStatement(fixer, sourceCode, declarationText, targetBody, removalRange, firstUsageStatement)
+    }
+
+    // 単一文をブロック化
+    const statementText = sourceCode.getText(targetBody)
+    return [
+      fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
+      fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`)
+    ]
   }
 }
 
@@ -658,29 +647,27 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
 }
 
 /**
- * 早期終了文より前で変数が使用されているかチェック
+ * ノード内で変数が使用されているかチェック
  */
-function containsVariableUsageBeforeEarlyExit(node, varName, declarationNode, earlyExitNode) {
+function containsVariableUsage(node, varName, declarationNode, excludeNode = null, stopAtFunctionScope = false) {
   if (!node || typeof node !== 'object') return false
-  if (node === earlyExitNode) return false // 早期終了文自体は除外
+  if (node === excludeNode) return false
 
-  // 変数の使用を検出
   if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
     return true
   }
 
-  // 関数スコープを超えない
-  if (isFunctionScope(node)) return false
+  if (stopAtFunctionScope && isFunctionScope(node)) return false
 
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
     if (Array.isArray(child)) {
-      if (child.some(c => containsVariableUsageBeforeEarlyExit(c, varName, declarationNode, earlyExitNode))) {
+      if (child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) {
         return true
       }
     } else if (child && typeof child === 'object') {
-      if (containsVariableUsageBeforeEarlyExit(child, varName, declarationNode, earlyExitNode)) {
+      if (containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)) {
         return true
       }
     }
@@ -689,56 +676,36 @@ function containsVariableUsageBeforeEarlyExit(node, varName, declarationNode, ea
   return false
 }
 
-/**
- * ノード内で変数が使用されているかチェック
- */
-function containsVariableUsage(node, varName, declarationNode) {
-  if (!node || typeof node !== 'object') return false
-
-  if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
-    return true
-  }
-
-  for (const key in node) {
-    if (key === 'parent') continue
-    const child = node[key]
-    if (Array.isArray(child)) {
-      if (child.some(c => containsVariableUsage(c, varName, declarationNode))) return true
-    } else if (child && typeof child === 'object') {
-      if (containsVariableUsage(child, varName, declarationNode)) return true
-    }
-  }
-
-  return false
+function containsVariableUsageBeforeEarlyExit(node, varName, declarationNode, earlyExitNode) {
+  return containsVariableUsage(node, varName, declarationNode, earlyExitNode, true)
 }
 
 /**
  * targetBody内で最初に変数が使用されるstatementを見つける
  */
 function findFirstUsageStatement(targetBody, usages) {
-  // targetBodyがBlockStatementの場合
-  if (targetBody.type === 'BlockStatement') {
-    const statements = targetBody.body
-    for (const statement of statements) {
-      for (const usage of usages) {
-        if (containsNode(statement, usage)) {
-          return statement
-        }
-      }
-    }
-  }
-  // targetBodyが配列の場合（switch caseのconsequent）
-  else if (Array.isArray(targetBody)) {
-    for (const statement of targetBody) {
-      for (const usage of usages) {
-        if (containsNode(statement, usage)) {
-          return statement
-        }
-      }
+  const statements = targetBody.type === 'BlockStatement' ? targetBody.body : targetBody
+  if (!Array.isArray(statements)) return null
+
+  for (const statement of statements) {
+    if (usages.some(usage => containsNode(statement, usage))) {
+      return statement
     }
   }
 
   return null
+}
+
+/**
+ * statementのインデックスを取得
+ */
+function getStatementIndex(statements, node) {
+  for (let i = 0; i < statements.length; i++) {
+    if (containsNode(statements[i], node)) {
+      return i
+    }
+  }
+  return -1
 }
 
 /**
@@ -749,53 +716,26 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
   if (earlyExits.length === 0) return null
 
   const statements = declarationScope.body || declarationScope.statements || []
-  const declarationIndex = statements.indexOf(variableDeclaration)
 
-  // 各早期終了について、変数が早期終了前で使用されているかチェック
   for (const earlyExit of earlyExits) {
-    // 早期終了前で変数が使用されている場合はスキップ
     if (isUsedBeforeEarlyExit(varName, node, earlyExit, declarationScope)) {
       continue
     }
 
-    // 早期終了の位置を取得
-    let earlyExitIndex
-    if (earlyExit.type === 'try-catch') {
-      earlyExitIndex = earlyExit.index
-    } else {
-      earlyExitIndex = earlyExit.statementIndex
-    }
+    const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
     // すべての使用箇所が早期終了の後にあるかチェック
-    const allUsagesAfterEarlyExit = usages.every(usage => {
-      // 使用箇所が含まれるstatementのインデックスを探す
-      for (let i = 0; i < statements.length; i++) {
-        if (containsNode(statements[i], usage)) {
-          return i > earlyExitIndex
-        }
-      }
-      return false
-    })
+    const allUsagesAfter = usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)
 
-    if (allUsagesAfterEarlyExit && usages.length > 0) {
-      // 最初の使用箇所を見つける
-      let firstUsageIndex = statements.length
-      for (const usage of usages) {
-        for (let i = 0; i < statements.length; i++) {
-          if (containsNode(statements[i], usage)) {
-            firstUsageIndex = Math.min(firstUsageIndex, i)
-            break
-          }
-        }
-      }
+    if (allUsagesAfter && usages.length > 0) {
+      const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
 
-      // 早期終了の直後、最初の使用箇所の前に移動
       if (firstUsageIndex > earlyExitIndex) {
         return {
           node,
           varName,
           variableDeclaration,
-          targetBody: null, // 早期終了後への移動の場合、targetBodyではなく挿入位置を使う
+          targetBody: null,
           insertBeforeStatement: statements[firstUsageIndex],
           moveType: 'after-early-exit',
         }

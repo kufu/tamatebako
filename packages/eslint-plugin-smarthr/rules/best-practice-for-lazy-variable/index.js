@@ -129,19 +129,19 @@ function findIfBodyForUsage(ifStatement, usageNode, crossedBarrier) {
  */
 function findSwitchBodyForUsage(switchStatement, usageNode, crossedBarrier) {
   for (const caseNode of switchStatement.cases) {
-    // block付きcaseの場合
-    if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
-      const blockStatement = caseNode.consequent[0]
-      if (containsNode(blockStatement, usageNode) && isDirectChild(blockStatement, usageNode)) {
-        return { type: 'case-body', body: blockStatement, conditional: switchStatement, crossedBarrier }
-      }
-    } else {
-      // block無しのcase
+    // block無しのcase
+    if (caseNode.consequent.length === 0 || caseNode.consequent[0].type !== 'BlockStatement') {
       for (const statement of caseNode.consequent) {
         if (containsNode(statement, usageNode)) {
           return { type: 'case-body', body: caseNode.consequent, conditional: switchStatement, crossedBarrier }
         }
       }
+      continue
+    }
+
+    // block付きのcase
+    if (containsNode(caseNode.consequent[0], usageNode) && isDirectChild(caseNode.consequent[0], usageNode)) {
+      return { type: 'case-body', body: caseNode.consequent[0], conditional: switchStatement, crossedBarrier }
     }
   }
 
@@ -288,19 +288,19 @@ function getUsageLocationInSwitch(conditional, usageNode) {
 
   // どのcase/defaultに含まれているか探す
   for (const caseNode of conditional.cases) {
-    // block付きcaseの場合
-    if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
-      const blockStatement = caseNode.consequent[0]
-      if (containsNode(blockStatement, usageNode) && isDirectChild(blockStatement, usageNode)) {
-        return { type: 'case', body: blockStatement }
-      }
-    } else {
-      // block無しのcase
+    // block無しのcase
+    if (caseNode.consequent.length === 0 || caseNode.consequent[0].type !== 'BlockStatement') {
       for (const statement of caseNode.consequent) {
         if (containsNode(statement, usageNode) && isDirectChildInArray(caseNode.consequent, usageNode)) {
           return { type: 'case', body: caseNode.consequent }
         }
       }
+      continue
+    }
+
+    // block付きのcase
+    if (containsNode(caseNode.consequent[0], usageNode) && isDirectChild(caseNode.consequent[0], usageNode)) {
+      return { type: 'case', body: caseNode.consequent[0] }
     }
   }
 

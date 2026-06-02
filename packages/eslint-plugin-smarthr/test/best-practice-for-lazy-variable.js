@@ -95,6 +95,20 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // switch文のcase内で関数スコープ使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            array.forEach(() => {
+              console.log(x)
+            })
+            break
+        }
+      `,
+    },
     // 三項演算子 - 対象外
     {
       code: `
@@ -250,6 +264,62 @@ console.log(x)
         if (condition) {
           const x = getValue()
           console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch case内で使用
+    {
+      code: `const x = getValue()
+someCode()
+switch (condition) {
+  case 'a':
+    console.log(x)
+    break
+}`,
+      output: `someCode()
+switch (condition) {
+  case 'a':
+    const x = getValue()
+    console.log(x)
+    break
+}`,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch default内で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default:
+            console.log(x)
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default:
+            const x = getValue()
+            console.log(x)
+            break
         }
       `,
       errors: [

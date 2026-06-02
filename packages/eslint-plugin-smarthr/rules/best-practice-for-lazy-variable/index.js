@@ -115,10 +115,10 @@ function findIfBodyForUsage(ifStatement, usageNode, crossedBarrier) {
   }
 
   // alternate (else節) に含まれているか
-  if (ifStatement.alternate && ifStatement.alternate.type !== 'IfStatement') {
-    if (containsNode(ifStatement.alternate, usageNode)) {
-      return { type: 'if-body', body: ifStatement.alternate, conditional: ifStatement, crossedBarrier }
-    }
+  if (ifStatement.alternate &&
+      ifStatement.alternate.type !== 'IfStatement' &&
+      containsNode(ifStatement.alternate, usageNode)) {
+    return { type: 'if-body', body: ifStatement.alternate, conditional: ifStatement, crossedBarrier }
   }
 
   return null
@@ -132,10 +132,8 @@ function findSwitchBodyForUsage(switchStatement, usageNode, crossedBarrier) {
     // block付きcaseの場合
     if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
       const blockStatement = caseNode.consequent[0]
-      if (containsNode(blockStatement, usageNode)) {
-        if (isDirectChild(blockStatement, usageNode)) {
-          return { type: 'case-body', body: blockStatement, conditional: switchStatement, crossedBarrier }
-        }
+      if (containsNode(blockStatement, usageNode) && isDirectChild(blockStatement, usageNode)) {
+        return { type: 'case-body', body: blockStatement, conditional: switchStatement, crossedBarrier }
       }
     } else {
       // block無しのcase
@@ -260,10 +258,8 @@ function getUsageLocationInIf(conditional, usageNode) {
   }
 
   // consequent（then節）に含まれているか
-  if (containsNode(conditional.consequent, usageNode)) {
-    if (isDirectChild(conditional.consequent, usageNode)) {
-      return { type: 'consequent', body: conditional.consequent }
-    }
+  if (containsNode(conditional.consequent, usageNode) && isDirectChild(conditional.consequent, usageNode)) {
+    return { type: 'consequent', body: conditional.consequent }
   }
 
   // alternate（else節）に含まれているか
@@ -273,10 +269,8 @@ function getUsageLocationInIf(conditional, usageNode) {
       return getUsageLocationInIf(conditional.alternate, usageNode)
     }
     // else の場合
-    if (containsNode(conditional.alternate, usageNode)) {
-      if (isDirectChild(conditional.alternate, usageNode)) {
-        return { type: 'alternate', body: conditional.alternate }
-      }
+    if (containsNode(conditional.alternate, usageNode) && isDirectChild(conditional.alternate, usageNode)) {
+      return { type: 'alternate', body: conditional.alternate }
     }
   }
 
@@ -297,18 +291,14 @@ function getUsageLocationInSwitch(conditional, usageNode) {
     // block付きcaseの場合
     if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
       const blockStatement = caseNode.consequent[0]
-      if (containsNode(blockStatement, usageNode)) {
-        if (isDirectChild(blockStatement, usageNode)) {
-          return { type: 'case', body: blockStatement }
-        }
+      if (containsNode(blockStatement, usageNode) && isDirectChild(blockStatement, usageNode)) {
+        return { type: 'case', body: blockStatement }
       }
     } else {
       // block無しのcase
       for (const statement of caseNode.consequent) {
-        if (containsNode(statement, usageNode)) {
-          if (isDirectChildInArray(caseNode.consequent, usageNode)) {
-            return { type: 'case', body: caseNode.consequent }
-          }
+        if (containsNode(statement, usageNode) && isDirectChildInArray(caseNode.consequent, usageNode)) {
+          return { type: 'case', body: caseNode.consequent }
         }
       }
     }

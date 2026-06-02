@@ -10,7 +10,7 @@ function isFunctionScope(node) {
 }
 
 /**
- * 変数の全ての使用箇所を取得（宣言と同じスコープ内のみ）
+ * 変数の全ての使用箇所を取得（宣言と同じスコープ内、関数スコープ内やループ内も含む）
  */
 function getVariableUsages(sourceCode, varName, declarationNode) {
   const usages = []
@@ -25,24 +25,16 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
   if (!scopeNode) return usages
 
   /**
-   * ASTを再帰的に探索（関数スコープを超えない）
+   * ASTを再帰的に探索（関数スコープ内やループ内も含めてすべて収集）
    */
-  function traverse(node, insideFunctionScope = false) {
+  function traverse(node) {
     if (!node || typeof node !== 'object') return
-
-    // 関数スコープに入ったらフラグを立てる
-    if (isFunctionScope(node)) {
-      insideFunctionScope = true
-    }
 
     // 変数名が一致するIdentifierを収集（宣言自体は除外）
     if (node.type === 'Identifier' &&
         node.name === varName &&
         node !== declarationNode.id) {
-      // 関数スコープ内の参照は収集しない
-      if (!insideFunctionScope) {
-        usages.push(node)
-      }
+      usages.push(node)
     }
 
     // 同名変数の再宣言がある場合はその先を探索しない
@@ -58,9 +50,9 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
       if (key === 'parent') continue
       const child = node[key]
       if (Array.isArray(child)) {
-        child.forEach(c => traverse(c, insideFunctionScope))
+        child.forEach(c => traverse(c))
       } else if (child && typeof child === 'object' && child.type) {
-        traverse(child, insideFunctionScope)
+        traverse(child)
       }
     }
   }
@@ -70,7 +62,7 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   for (let i = declarationIndex + 1; i < statements.length; i++) {
-    traverse(statements[i], false)
+    traverse(statements[i])
   }
 
   return usages
@@ -88,29 +80,114 @@ function isLoopStatement(node) {
 }
 
 /**
- * ノードの親を辿って、if/else if/elseまたはswitchを探す
- * 途中で関数スコープやループを超えたらnullを返す
+ * 使用箇所から到達できる条件分岐bodyを探す
+ * バリア（ループや関数スコープ）を超えて、その外側のbodyを探す
+ * @returns {Object|null} { type: 'if-body'|'case-body', body: Node, conditional: Node, crossedBarrier: boolean }
  */
-function findParentConditional(node, declarationScope) {
-  let current = node.parent
+function findConditionalBodyForUsage(usageNode) {
+  let current = usageNode.parent
+  let crossedBarrier = false
 
   while (current) {
-    // 関数スコープを超えたら探索終了
-    if (isFunctionScope(current)) {
-      return null
+    // バリアを検出（ただし、探索は続行）
+    if (isFunctionScope(current) || isLoopStatement(current)) {
+      crossedBarrier = true
+      current = current.parent
+      continue
     }
 
-    // ループ構文を超えたら探索終了
-    if (isLoopStatement(current)) {
-      return null
+    // if文のbody内にいるか確認
+    if (current.type === 'IfStatement') {
+      // consequent (then節) に含まれているか
+      if (containsNode(current.consequent, usageNode)) {
+        return { type: 'if-body', body: current.consequent, conditional: current, crossedBarrier }
+      }
+
+      // alternate (else節) に含まれているか
+      if (current.alternate) {
+        if (current.alternate.type === 'IfStatement') {
+          // else if の場合は次のループで処理される
+        } else {
+          // else の場合
+          if (containsNode(current.alternate, usageNode)) {
+            return { type: 'if-body', body: current.alternate, conditional: current, crossedBarrier }
+          }
+        }
+      }
     }
 
-    // if文またはswitch文を見つけた
-    if (current.type === 'IfStatement' || current.type === 'SwitchStatement') {
-      return current
+    // switch文のcase内にいるか確認
+    if (current.type === 'SwitchStatement') {
+      for (const caseNode of current.cases) {
+        for (const statement of caseNode.consequent) {
+          if (containsNode(statement, usageNode)) {
+            return { type: 'case-body', body: caseNode.consequent, conditional: current, crossedBarrier }
+          }
+        }
+      }
     }
 
     current = current.parent
+  }
+
+  return null
+}
+
+/**
+ * 複数の条件分岐bodyの最小共通祖先bodyを見つける
+ * @param {Array} bodyInfos - findConditionalBodyForUsageの結果の配列
+ * @returns {Object|null} { body: Node, type: 'if-body'|'case-body' }
+ */
+function findCommonAncestorBody(bodyInfos) {
+  if (bodyInfos.length === 0) return null
+  if (bodyInfos.length === 1) return bodyInfos[0]
+
+  // すべてのbodyが同じかチェック
+  const firstBody = bodyInfos[0].body
+  const allSame = bodyInfos.every(info => info.body === firstBody)
+  if (allSame) {
+    return bodyInfos[0]
+  }
+
+  // bodyの親を辿って最小共通祖先を探す
+  // まず、最初のbodyの祖先チェーンを取得
+  const firstAncestors = []
+  let current = bodyInfos[0].conditional
+  while (current) {
+    if (isFunctionScope(current) || isLoopStatement(current)) {
+      break
+    }
+
+    // currentが条件分岐なら、そのbodyを候補に追加
+    if (current.type === 'IfStatement') {
+      // consequent, alternateをチェック
+      if (current.consequent.type === 'BlockStatement') {
+        firstAncestors.push({ type: 'if-body', body: current.consequent, conditional: current })
+      }
+      if (current.alternate && current.alternate.type !== 'IfStatement' && current.alternate.type === 'BlockStatement') {
+        firstAncestors.push({ type: 'if-body', body: current.alternate, conditional: current })
+      }
+    } else if (current.type === 'SwitchStatement') {
+      // switch文の各caseをチェック
+      for (const caseNode of current.cases) {
+        if (caseNode.consequent.length > 0) {
+          firstAncestors.push({ type: 'case-body', body: caseNode.consequent, conditional: current })
+        }
+      }
+    }
+
+    current = current.parent
+  }
+
+  // 他のすべてのbodyについて、firstAncestorsの中で共通のものを探す
+  for (const ancestorInfo of firstAncestors) {
+    const allContained = bodyInfos.every(info => {
+      // ancestorInfoのbodyがinfoのbodyまたはinfoのconditionalを含んでいるか
+      return containsNode(ancestorInfo.body, info.body) || containsNode(ancestorInfo.body, info.conditional)
+    })
+    if (allContained) {
+      return ancestorInfo
+    }
   }
 
   return null
@@ -346,10 +423,8 @@ function analyzeVariable(sourceCode, node) {
   const varName = node.id.name
   const usages = getVariableUsages(sourceCode, varName, node)
 
-  // 使用箇所が1回でない場合はスキップ
-  if (usages.length !== 1) return null
-
-  const usageNode = usages[0]
+  // 使用箇所がない場合はスキップ
+  if (usages.length === 0) return null
 
   // 宣言のスコープを取得
   const variableDeclaration = node.parent
@@ -362,21 +437,37 @@ function analyzeVariable(sourceCode, node) {
 
   if (!declarationScope) return null
 
-  // 使用箇所を含む条件文を探す
-  const conditional = findParentConditional(usageNode, declarationScope)
-  if (!conditional) return null
+  // 各使用箇所について、到達できる条件分岐bodyを探す
+  const bodyInfos = []
+  for (const usageNode of usages) {
+    const bodyInfo = findConditionalBodyForUsage(usageNode)
+    if (!bodyInfo) {
+      // どれか1つでも条件分岐bodyに到達できない使用箇所があれば対象外
+      return null
+    }
+    bodyInfos.push(bodyInfo)
+  }
 
-  // 使用箇所が条件文のどこにあるか判定
-  const usageLocation = getUsageLocation(conditional, usageNode)
+  // 使用箇所が1つだけで、その使用箇所がバリアを超えている場合は対象外
+  // （元のルール：関数スコープ内やループ内のみで使用される場合は移動しない）
+  if (usages.length === 1 && bodyInfos[0].crossedBarrier) {
+    return null
+  }
 
-  // 条件部分で使用されている場合は対象外（body直下でない）
-  if (!usageLocation || !usageLocation.body) return null
+  // すべての使用箇所が到達できる最小共通祖先bodyを見つける
+  const commonAncestorBody = findCommonAncestorBody(bodyInfos)
+  if (!commonAncestorBody) return null
 
-  // 移動先のbodyを取得
-  const targetBody = usageLocation.body
+  const targetBody = commonAncestorBody.body
 
-  // 条件文から宣言位置まで遡って、ループや関数スコープがないかチェック
-  let current = conditional.parent
+  // 変数宣言がtargetBodyの外側にあるかチェック
+  if (containsNode(targetBody, variableDeclaration)) {
+    // 既にtargetBody内にある場合は移動不要
+    return null
+  }
+
+  // 変数宣言からtargetBodyまでの間にバリア（関数スコープやループ）がないかチェック
+  let current = commonAncestorBody.conditional
   while (current && current !== declarationScope) {
     // 関数スコープがあったら対象外
     if (isFunctionScope(current)) {
@@ -389,21 +480,19 @@ function analyzeVariable(sourceCode, node) {
     current = current.parent
   }
 
-  // 宣言と使用箇所の間にコードがあるかチェック
-  // 条件文が宣言スコープの直下にあるか、ネストしているかを判定
+  // 宣言と条件文の間の位置関係をチェック
   const statements = declarationScope.body || declarationScope.statements || []
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   // 条件文が宣言スコープ直下にある場合
-  if (statements.includes(conditional)) {
-    const conditionalIndex = statements.indexOf(conditional)
+  if (statements.includes(commonAncestorBody.conditional)) {
+    const conditionalIndex = statements.indexOf(commonAncestorBody.conditional)
     if (conditionalIndex <= declarationIndex) return null
   } else {
     // 条件文がネストしている場合、宣言より後にある必要がある
-    // 条件文を含むstatementを探す
     let conditionalIndex = -1
     for (let i = 0; i < statements.length; i++) {
-      if (containsNode(statements[i], conditional)) {
+      if (containsNode(statements[i], commonAncestorBody.conditional)) {
         conditionalIndex = i
         break
       }

@@ -961,5 +961,230 @@ console.log(x)
         },
       ],
     },
+    // 同じif内で複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 同じcase内で複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log(x)
+            doSomething()
+            console.log(x)
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition) {
+          case 'a':
+            const x = getValue()
+            console.log(x)
+            doSomething()
+            console.log(x)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたif内の複数箇所で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            console.log(x)
+          }
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          const x = getValue()
+          if (condition2) {
+            console.log(x)
+          }
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if内の複数ループで使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          for (let i = 0; i < 10; i++) {
+            console.log(x)
+          }
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          for (let i = 0; i < 10; i++) {
+            console.log(x)
+          }
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if内の関数スコープで複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          array.forEach(() => {
+            console.log(x)
+          })
+          array.map(() => {
+            return x
+          })
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          array.forEach(() => {
+            console.log(x)
+          })
+          array.map(() => {
+            return x
+          })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch内のif（複数箇所）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            if (condition3) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a':
+            const x = getValue()
+            if (condition2) {
+              console.log(x)
+            }
+            if (condition3) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if内で複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          const x = getValue()
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
   ],
 })

@@ -665,18 +665,6 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
       earlyExitIndex = earlyExit.statementIndex
     }
 
-    // 早期終了と使用箇所が同じstatement内にある場合は対象外
-    // （ネストした制御フローでreturnしないパスがある可能性）
-    if (earlyExit.type !== 'try-catch') {
-      const earlyExitStatement = statements[earlyExitIndex]
-      const hasUsageInSameStatement = usages.some(usage => {
-        return containsNode(earlyExitStatement, usage)
-      })
-      if (hasUsageInSameStatement) {
-        continue
-      }
-    }
-
     // すべての使用箇所が早期終了の後にあるかチェック
     const allUsagesAfterEarlyExit = usages.every(usage => {
       // 使用箇所が含まれるstatementのインデックスを探す

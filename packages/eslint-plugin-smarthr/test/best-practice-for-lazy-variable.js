@@ -426,8 +426,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
     },
   ],
   invalid: [
-    // ネストした早期return（returnせずに使われるパスがある）
-    // TODO: このケースは本来validだが、現在のロジックではinvalidと判定される（要修正）
+    // ネストした早期return
     {
       code: `
         function test() {

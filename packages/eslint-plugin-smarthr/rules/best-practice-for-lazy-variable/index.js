@@ -624,10 +624,8 @@ function findEarlyExits(declarationScope, variableDeclaration) {
  * ノードから早期終了文を収集
  */
 function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
-  if (!node || typeof node !== 'object') return
-
   // 関数スコープを超えない
-  if (isFunctionScope(node)) return
+  if (!node || typeof node !== 'object' || isFunctionScope(node)) return
 
   // return/throw文を検出
   if (isEarlyExitStatement(node)) {
@@ -695,8 +693,7 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
  * ノード内で変数が使用されているかチェック
  */
 function containsVariableUsage(node, varName, declarationNode, excludeNode = null, stopAtFunctionScope = false) {
-  if (!node || typeof node !== 'object') return false
-  if (node === excludeNode) return false
+  if (!node || typeof node !== 'object' || node === excludeNode) return false
 
   if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
     return true

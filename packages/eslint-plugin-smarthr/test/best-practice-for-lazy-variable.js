@@ -787,41 +787,40 @@ switch (condition) {
         },
       ],
     },
-    // TODO: switch default内で使用（block無し → blockを追加）
-    // 現在、fixerの実装に問題があるため一時的に無効化
-    // {
-    //   code: `
-    //     const x = getValue()
-    //     someCode()
-    //     switch (condition) {
-    //       case 'a':
-    //         console.log('a')
-    //         break
-    //       default:
-    //         console.log(x)
-    //         break
-    //     }
-    //   `,
-    //   output: `
-    //     someCode()
-    //     switch (condition) {
-    //       case 'a':
-    //         console.log('a')
-    //         break
-    //       default: {
-    //         const x = getValue()
-    //         console.log(x)
-    //         break
-    //       }
-    //     }
-    //   `,
-    //   errors: [
-    //     {
-    //       messageId: 'moveToLazy',
-    //       data: { name: 'x' },
-    //     },
-    //   ],
-    // },
+    // switch default内で使用（block無し → blockを追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default:
+            console.log(x)
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default: {
+            const x = getValue()
+            console.log(x)
+            break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
     // ネストしたif（if > if）
     {
       code: `

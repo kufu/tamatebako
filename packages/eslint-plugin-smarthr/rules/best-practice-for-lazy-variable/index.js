@@ -412,12 +412,17 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
         }
         const colonPos = pos
 
-        // caseラベルのインデント（`case`の位置）を取得
+        // caseラベルのインデント（行の先頭から最初の非空白文字まで）を取得
         let caseLineStart = colonPos
         while (caseLineStart > 0 && text[caseLineStart - 1] !== '\n' && text[caseLineStart - 1] !== '\r') {
           caseLineStart--
         }
-        const caseIndent = text.substring(caseLineStart, text.indexOf('case', caseLineStart))
+        // 行の先頭から最初の非空白文字（'case'または'default'）までを取得
+        let caseKeywordStart = caseLineStart
+        while (caseKeywordStart < colonPos && (text[caseKeywordStart] === ' ' || text[caseKeywordStart] === '\t')) {
+          caseKeywordStart++
+        }
+        const caseIndent = text.substring(caseLineStart, caseKeywordStart)
 
         // bodyのテキストを取得（インデントも含めて行の先頭から）
         // firstStatementの行の先頭位置を探す

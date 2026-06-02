@@ -23,16 +23,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         console.log(x)
       `,
     },
-    // 条件部分で使用
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        if (x > 10) {
-          console.log("ok")
-        }
-      `,
-    },
     // 2回以上使用
     {
       code: `
@@ -78,13 +68,40 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // switch文 - 対象外
+    // switch文のdiscriminant（条件部分）で使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (x) {
+          case 'a':
+            console.log('matched')
+            break
+        }
+      `,
+    },
+    // switch文のcase内で使用（単一case） - 対象外（今後のPRで対応予定）
     {
       code: `
         const x = getValue()
         someCode()
         switch (condition) {
           case 'a':
+            console.log(x)
+            break
+        }
+      `,
+    },
+    // switch文で複数caseで使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log(x)
+            break
+          case 'b':
             console.log(x)
             break
         }

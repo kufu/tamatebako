@@ -92,7 +92,6 @@ function findParentIfStatement(node, declarationScope) {
     // if文を見つけた
     if (current.type === 'IfStatement') {
       // if文が宣言と同じ階層にあるかチェック
-      // if文の親が宣言の親と同じ階層にある必要がある
       let ifParent = current.parent
       while (ifParent && ifParent.type !== 'Program' && ifParent.type !== 'BlockStatement') {
         ifParent = ifParent.parent
@@ -113,35 +112,37 @@ function findParentIfStatement(node, declarationScope) {
 }
 
 /**
- * 使用箇所がif文の条件部分かbody部分かを判定
+ * 使用箇所がif文のどこにあるかを判定
  */
 function getUsageLocation(ifStatement, usageNode) {
-  // test（条件部分）に含まれているか
-  if (containsNode(ifStatement.test, usageNode)) {
-    return 'test'
-  }
-
-  // consequent（then節）に含まれているか
-  if (containsNode(ifStatement.consequent, usageNode)) {
-    // consequent直下かチェック（別関数スコープを経由していないか）
-    if (isDirectChild(ifStatement.consequent, usageNode)) {
-      return 'consequent'
+  if (ifStatement.type === 'IfStatement') {
+    // test（条件部分）に含まれているか
+    if (containsNode(ifStatement.test, usageNode)) {
+      return { type: 'test', body: null }
     }
-  }
 
-  // alternate（else節）に含まれているか
-  if (ifStatement.alternate) {
-    // else if の場合
-    if (ifStatement.alternate.type === 'IfStatement') {
-      const elseIfResult = getUsageLocation(ifStatement.alternate, usageNode)
-      if (elseIfResult) {
-        return elseIfResult
+    // consequent（then節）に含まれているか
+    if (containsNode(ifStatement.consequent, usageNode)) {
+      // consequent直下かチェック（別関数スコープを経由していないか）
+      if (isDirectChild(ifStatement.consequent, usageNode)) {
+        return { type: 'consequent', body: ifStatement.consequent }
       }
-    } else {
-      // else の場合
-      if (containsNode(ifStatement.alternate, usageNode)) {
-        if (isDirectChild(ifStatement.alternate, usageNode)) {
-          return 'alternate'
+    }
+
+    // alternate（else節）に含まれているか
+    if (ifStatement.alternate) {
+      // else if の場合
+      if (ifStatement.alternate.type === 'IfStatement') {
+        const elseIfResult = getUsageLocation(ifStatement.alternate, usageNode)
+        if (elseIfResult) {
+          return elseIfResult
+        }
+      } else {
+        // else の場合
+        if (containsNode(ifStatement.alternate, usageNode)) {
+          if (isDirectChild(ifStatement.alternate, usageNode)) {
+            return { type: 'alternate', body: ifStatement.alternate }
+          }
         }
       }
     }
@@ -193,18 +194,6 @@ function isDirectChild(bodyNode, usageNode) {
 }
 
 /**
- * if/else if/elseのbodyを取得
- */
-function getIfBody(ifStatement, usageLocation) {
-  if (usageLocation === 'consequent') {
-    return ifStatement.consequent
-  } else if (usageLocation === 'alternate') {
-    return ifStatement.alternate
-  }
-  return null
-}
-
-/**
  * ノードのインデントを取得
  */
 function getIndent(sourceCode, node) {
@@ -250,7 +239,14 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
     const fixes = [fixer.removeRange([lineStart, removeEnd])]
 
     // 移動先に挿入
-    if (targetBody.type === 'BlockStatement') {
+    if (Array.isArray(targetBody)) {
+      // Switch caseのconsequent（配列）の場合
+      if (targetBody.length > 0) {
+        // 先頭のstatementの前に挿入
+        const targetIndent = getIndent(sourceCode, targetBody[0])
+        fixes.push(fixer.insertTextBefore(targetBody[0], declarationText + '\n' + targetIndent))
+      }
+    } else if (targetBody.type === 'BlockStatement') {
       // ブロックがある場合はbodyの先頭に挿入
       if (targetBody.body.length > 0) {
         // 移動先のインデントを取得
@@ -305,15 +301,11 @@ function analyzeVariable(sourceCode, node) {
   // 使用箇所がif文のどこにあるか判定
   const usageLocation = getUsageLocation(ifStatement, usageNode)
 
-  // test（条件部分）で使用されている場合は対象外
-  if (usageLocation === 'test') return null
-
-  // body直下でない場合は対象外
-  if (!usageLocation || usageLocation === 'test') return null
+  // 条件部分で使用されている場合は対象外（body直下でない）
+  if (!usageLocation || !usageLocation.body) return null
 
   // 移動先のbodyを取得
-  const targetBody = getIfBody(ifStatement, usageLocation)
-  if (!targetBody) return null
+  const targetBody = usageLocation.body
 
   // 宣言と使用箇所の間にコードがあるかチェック
   const statements = declarationScope.body || declarationScope.statements || []

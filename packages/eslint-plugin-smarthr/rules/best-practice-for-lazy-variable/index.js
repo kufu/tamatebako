@@ -537,11 +537,9 @@ function findTryCatchWithThrow(node) {
 
   while (current) {
     if (current.type === 'TryStatement') {
-      // try内にthrowがあるかチェック
-      const hasThrowInTry = containsThrow(current.block)
-      const hasThrowInCatch = current.handler && containsThrow(current.handler.body)
-
-      if (hasThrowInTry || hasThrowInCatch) {
+      // try内またはcatch内にthrowがあるかチェック
+      if (containsThrow(current.block) ||
+          (current.handler && containsThrow(current.handler.body))) {
         return current
       }
     }
@@ -604,18 +602,15 @@ function findEarlyExits(declarationScope, variableDeclaration) {
     const statement = statements[i]
 
     // try-catchブロック（throw含む）を検出
-    if (statement.type === 'TryStatement') {
-      const hasThrowInTry = containsThrow(statement.block)
-      const hasThrowInCatch = statement.handler && containsThrow(statement.handler.body)
-
-      if (hasThrowInTry || hasThrowInCatch) {
-        earlyExits.push({
-          type: 'try-catch',
-          node: statement,
-          index: i,
-        })
-        continue
-      }
+    if (statement.type === 'TryStatement' &&
+        (containsThrow(statement.block) ||
+         (statement.handler && containsThrow(statement.handler.body)))) {
+      earlyExits.push({
+        type: 'try-catch',
+        node: statement,
+        index: i,
+      })
+      continue
     }
 
     // 早期終了文を再帰的に検出
@@ -776,20 +771,17 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
     const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
     // すべての使用箇所が早期終了の後にあるかチェック
-    const allUsagesAfter = usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)
-
-    if (allUsagesAfter && usages.length > 0) {
+    if (usages.length > 0 &&
+        usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
       const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
 
-      if (firstUsageIndex > earlyExitIndex) {
-        return {
-          node,
-          varName,
-          variableDeclaration,
-          targetBody: null,
-          insertBeforeStatement: statements[firstUsageIndex],
-          moveType: 'after-early-exit',
-        }
+      return {
+        node,
+        varName,
+        variableDeclaration,
+        targetBody: null,
+        insertBeforeStatement: statements[firstUsageIndex],
+        moveType: 'after-early-exit',
       }
     }
   }

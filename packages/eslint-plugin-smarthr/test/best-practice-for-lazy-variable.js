@@ -424,6 +424,56 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         console.log(data)
       `,
     },
+    // React Hooks（useCallback）は移動対象外
+    {
+      code: `
+        function Component() {
+          const handleClick = useCallback(() => {
+            console.log('clicked')
+          }, [])
+          if (!condition) {
+            return null
+          }
+          console.log(handleClick)
+        }
+      `,
+    },
+    // React Hooks（useState）は移動対象外
+    {
+      code: `
+        function Component() {
+          const [count, setCount] = useState(0)
+          if (condition) {
+            console.log(count)
+          }
+        }
+      `,
+    },
+    // React Hooks（useMemo）は移動対象外
+    {
+      code: `
+        function Component() {
+          const value = useMemo(() => calculate(), [deps])
+          if (!condition) {
+            return null
+          }
+          console.log(value)
+        }
+      `,
+    },
+    // React Hooks（useEffect）は移動対象外
+    {
+      code: `
+        function Component() {
+          const cleanup = useEffect(() => {
+            return () => console.log('cleanup')
+          }, [])
+          if (condition) {
+            console.log(cleanup)
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // ネストした早期return

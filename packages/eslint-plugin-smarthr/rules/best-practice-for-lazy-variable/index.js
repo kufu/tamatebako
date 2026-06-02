@@ -719,6 +719,14 @@ function analyzeVariable(sourceCode, node) {
     return null
   }
 
+  // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
+  if (node.init && node.init.type === 'CallExpression') {
+    const callee = node.init.callee
+    if (callee.type === 'Identifier' && callee.name.startsWith('use')) {
+      return null
+    }
+  }
+
   const varName = node.id.name
   const usages = getVariableUsages(sourceCode, varName, node)
 

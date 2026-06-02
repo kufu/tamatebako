@@ -334,12 +334,11 @@ function containsNode(parent, target) {
     for (const key in node) {
       if (key === 'parent') continue
       const child = node[key]
-      if (child) {
-        if (Array.isArray(child)) {
-          if (child.some(c => traverse(c))) return true
-        } else if (typeof child === 'object') {
-          if (traverse(child)) return true
-        }
+      if (child && (
+        (Array.isArray(child) && child.some(c => traverse(c))) ||
+        (typeof child === 'object' && traverse(child))
+      )) {
+        return true
       }
     }
     return false
@@ -573,12 +572,11 @@ function containsNodeType(node, nodeType) {
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (child) {
-      if (Array.isArray(child)) {
-        if (child.some(c => containsNodeType(c, nodeType))) return true
-      } else if (typeof child === 'object') {
-        if (containsNodeType(child, nodeType)) return true
-      }
+    if (child && (
+      (Array.isArray(child) && child.some(c => containsNodeType(c, nodeType))) ||
+      (typeof child === 'object' && containsNodeType(child, nodeType))
+    )) {
+      return true
     }
   }
 
@@ -718,16 +716,11 @@ function containsVariableUsage(node, varName, declarationNode, excludeNode = nul
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (child) {
-      if (Array.isArray(child)) {
-        if (child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) {
-          return true
-        }
-      } else if (typeof child === 'object') {
-        if (containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)) {
-          return true
-        }
-      }
+    if (child && (
+      (Array.isArray(child) && child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) ||
+      (typeof child === 'object' && containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope))
+    )) {
+      return true
     }
   }
 

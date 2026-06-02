@@ -660,12 +660,7 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
   const declarationIndex = statements.indexOf(variableDeclaration)
 
   // 早期終了のインデックスを取得
-  let earlyExitIndex
-  if (earlyExit.type === 'try-catch') {
-    earlyExitIndex = earlyExit.index
-  } else {
-    earlyExitIndex = earlyExit.statementIndex
-  }
+  const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
   // 宣言から早期終了までのstatementをチェック
   for (let i = declarationIndex + 1; i <= earlyExitIndex; i++) {

@@ -1,12 +1,29 @@
 const SCHEMA = []
 
+const FUNCTION_SCOPE_TYPES = new Set([
+  'FunctionDeclaration',
+  'FunctionExpression',
+  'ArrowFunctionExpression',
+])
+
+const LOOP_STATEMENT_TYPES = new Set([
+  'ForStatement',
+  'ForInStatement',
+  'ForOfStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+])
+
+const EARLY_EXIT_STATEMENT_TYPES = new Set([
+  'ReturnStatement',
+  'ThrowStatement',
+])
+
 /**
  * ノードが関数スコープかどうか判定
  */
 function isFunctionScope(node) {
-  return node.type === 'FunctionDeclaration' ||
-         node.type === 'FunctionExpression' ||
-         node.type === 'ArrowFunctionExpression'
+  return FUNCTION_SCOPE_TYPES.has(node.type)
 }
 
 /**
@@ -81,11 +98,7 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
  * ループ構文かどうか判定
  */
 function isLoopStatement(node) {
-  return node.type === 'ForStatement' ||
-         node.type === 'ForInStatement' ||
-         node.type === 'ForOfStatement' ||
-         node.type === 'WhileStatement' ||
-         node.type === 'DoWhileStatement'
+  return LOOP_STATEMENT_TYPES.has(node.type)
 }
 
 /**
@@ -150,16 +163,19 @@ function findConditionalBodyForUsage(usageNode) {
       continue
     }
 
-    // if文のbody内にいるか確認
-    if (current.type === 'IfStatement') {
-      const result = findIfBodyForUsage(current, usageNode, crossedBarrier)
-      if (result) return result
-    }
-
-    // switch文のcase内にいるか確認
-    if (current.type === 'SwitchStatement') {
-      const result = findSwitchBodyForUsage(current, usageNode, crossedBarrier)
-      if (result) return result
+    switch (current.type) {
+      // if文のbody内にいるか確認
+      case 'IfStatement': {
+        const result = findIfBodyForUsage(current, usageNode, crossedBarrier)
+        if (result) return result
+        break
+      }
+      // switch文のcase内にいるか確認
+      case 'SwitchStatement': {
+        const result = findSwitchBodyForUsage(current, usageNode, crossedBarrier)
+        if (result) return result
+        break
+      }
     }
 
     current = current.parent
@@ -176,21 +192,26 @@ function buildAncestorChain(conditional) {
   let current = conditional
 
   while (current && !isFunctionScope(current) && !isLoopStatement(current)) {
-    if (current.type === 'IfStatement') {
-      if (current.consequent.type === 'BlockStatement') {
-        ancestors.push({ type: 'if-body', body: current.consequent, conditional: current })
-      }
-      if (current.alternate && current.alternate.type !== 'IfStatement' && current.alternate.type === 'BlockStatement') {
-        ancestors.push({ type: 'if-body', body: current.alternate, conditional: current })
-      }
-    } else if (current.type === 'SwitchStatement') {
-      for (const caseNode of current.cases) {
-        if (caseNode.consequent.length > 0) {
-          const body = caseNode.consequent[0].type === 'BlockStatement'
-            ? caseNode.consequent[0]
-            : caseNode.consequent
-          ancestors.push({ type: 'case-body', body, conditional: current })
+    switch (current.type) {
+      case 'IfStatement': {
+        if (current.consequent.type === 'BlockStatement') {
+          ancestors.push({ type: 'if-body', body: current.consequent, conditional: current })
         }
+        if (current.alternate && current.alternate.type !== 'IfStatement' && current.alternate.type === 'BlockStatement') {
+          ancestors.push({ type: 'if-body', body: current.alternate, conditional: current })
+        }
+        break
+      }
+      case 'SwitchStatement': {
+        for (const caseNode of current.cases) {
+          if (caseNode.consequent.length > 0) {
+            const body = caseNode.consequent[0].type === 'BlockStatement'
+              ? caseNode.consequent[0]
+              : caseNode.consequent
+            ancestors.push({ type: 'case-body', body, conditional: current })
+          }
+        }
+        break
       }
     }
     current = current.parent
@@ -296,13 +317,14 @@ function getUsageLocationInSwitch(conditional, usageNode) {
  * 使用箇所が条件文のどこにあるかを判定
  */
 function getUsageLocation(conditional, usageNode) {
-  if (conditional.type === 'IfStatement') {
-    return getUsageLocationInIf(conditional, usageNode)
+  switch (conditional.type) {
+    case 'IfStatement':
+      return getUsageLocationInIf(conditional, usageNode)
+    case 'SwitchStatement':
+      return getUsageLocationInSwitch(conditional, usageNode)
+    default:
+      return null
   }
-  if (conditional.type === 'SwitchStatement') {
-    return getUsageLocationInSwitch(conditional, usageNode)
-  }
-  return null
 }
 
 /**
@@ -511,7 +533,7 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
  * ノードがreturn/throw文かどうか判定
  */
 function isEarlyExitStatement(node) {
-  return node.type === 'ReturnStatement' || node.type === 'ThrowStatement'
+  return EARLY_EXIT_STATEMENT_TYPES.has(node.type)
 }
 
 /**

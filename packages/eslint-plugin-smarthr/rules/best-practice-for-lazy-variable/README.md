@@ -98,6 +98,19 @@ const y = obj?.method(x)
 
 ```js
 // 早期終了（return）後にのみ使用される変数
+function render() {
+  const container = document.getElementById('root')
+  if (!container) {
+    return null
+  }
+  const theme = createTheme()
+  const store = createStore()
+  // theme, storeは早期終了されなかった場合にのみ必要
+}
+```
+
+```js
+// 早期終了（throw）後にのみ使用される変数
 const container = document.getElementById('root')
 if (!container) {
   throw new Error('Not found')
@@ -296,6 +309,32 @@ switch (condition) {
 #### 4. 早期終了後への移動
 
 早期終了（return/throw）の後でのみ使用される変数は、早期終了文の直後に移動されます。
+
+**returnの例:**
+
+```js
+// Before
+function render() {
+  const theme = createTheme()
+  const container = document.getElementById('root')
+  if (!container) {
+    return null
+  }
+  const root = createRoot(container)
+}
+
+// After
+function render() {
+  const container = document.getElementById('root')
+  if (!container) {
+    return null
+  }
+  const theme = createTheme()
+  const root = createRoot(container)
+}
+```
+
+**throwの例:**
 
 ```js
 // Before

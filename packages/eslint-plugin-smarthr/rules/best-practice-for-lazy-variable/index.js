@@ -115,34 +115,32 @@ function findParentIfStatement(node, declarationScope) {
  * 使用箇所がif文のどこにあるかを判定
  */
 function getUsageLocation(ifStatement, usageNode) {
-  if (ifStatement.type === 'IfStatement') {
-    // test（条件部分）に含まれているか
-    if (containsNode(ifStatement.test, usageNode)) {
-      return { type: 'test', body: null }
-    }
+  // test（条件部分）に含まれているか
+  if (containsNode(ifStatement.test, usageNode)) {
+    return { type: 'test', body: null }
+  }
 
-    // consequent（then節）に含まれているか
-    if (containsNode(ifStatement.consequent, usageNode)) {
-      // consequent直下かチェック（別関数スコープを経由していないか）
-      if (isDirectChild(ifStatement.consequent, usageNode)) {
-        return { type: 'consequent', body: ifStatement.consequent }
+  // consequent（then節）に含まれているか
+  if (containsNode(ifStatement.consequent, usageNode)) {
+    // consequent直下かチェック（別関数スコープを経由していないか）
+    if (isDirectChild(ifStatement.consequent, usageNode)) {
+      return { type: 'consequent', body: ifStatement.consequent }
+    }
+  }
+
+  // alternate（else節）に含まれているか
+  if (ifStatement.alternate) {
+    // else if の場合
+    if (ifStatement.alternate.type === 'IfStatement') {
+      const elseIfResult = getUsageLocation(ifStatement.alternate, usageNode)
+      if (elseIfResult) {
+        return elseIfResult
       }
-    }
-
-    // alternate（else節）に含まれているか
-    if (ifStatement.alternate) {
-      // else if の場合
-      if (ifStatement.alternate.type === 'IfStatement') {
-        const elseIfResult = getUsageLocation(ifStatement.alternate, usageNode)
-        if (elseIfResult) {
-          return elseIfResult
-        }
-      } else {
-        // else の場合
-        if (containsNode(ifStatement.alternate, usageNode)) {
-          if (isDirectChild(ifStatement.alternate, usageNode)) {
-            return { type: 'alternate', body: ifStatement.alternate }
-          }
+    } else {
+      // else の場合
+      if (containsNode(ifStatement.alternate, usageNode)) {
+        if (isDirectChild(ifStatement.alternate, usageNode)) {
+          return { type: 'alternate', body: ifStatement.alternate }
         }
       }
     }
@@ -218,7 +216,7 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
     const text = sourceCode.text
     const declarationText = sourceCode.getText(variableDeclaration)
 
-    // 変数宣言の行全体を削除（インデント含む）
+    // 変数宣言の削除範囲を計算
     const startPos = variableDeclaration.range[0]
     const endPos = variableDeclaration.range[1]
 
@@ -236,34 +234,34 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody) {
       removeEnd = endPos + 2
     }
 
-    const fixes = [fixer.removeRange([lineStart, removeEnd])]
-
     // 移動先に挿入
-    if (Array.isArray(targetBody)) {
-      // Switch caseのconsequent（配列）の場合
-      if (targetBody.length > 0) {
-        // 先頭のstatementの前に挿入
-        const targetIndent = getIndent(sourceCode, targetBody[0])
-        fixes.push(fixer.insertTextBefore(targetBody[0], declarationText + '\n' + targetIndent))
-      }
-    } else if (targetBody.type === 'BlockStatement') {
+    if (targetBody.type === 'BlockStatement') {
       // ブロックがある場合はbodyの先頭に挿入
       if (targetBody.body.length > 0) {
         // 移動先のインデントを取得
         const targetIndent = getIndent(sourceCode, targetBody.body[0])
-        fixes.push(fixer.insertTextBefore(targetBody.body[0], declarationText + '\n' + targetIndent))
+        return [
+          fixer.removeRange([lineStart, removeEnd]),
+          fixer.insertTextBefore(targetBody.body[0], declarationText + '\n' + targetIndent)
+        ]
       } else {
         // 空のブロックの場合は、開き括弧の後に挿入
         const openBrace = sourceCode.getFirstToken(targetBody)
-        fixes.push(fixer.insertTextAfter(openBrace, '\n' + declarationText))
+        return [
+          fixer.removeRange([lineStart, removeEnd]),
+          fixer.insertTextAfter(openBrace, '\n' + declarationText)
+        ]
       }
     } else {
       // ブロックがない場合（単一文）はブロック化する
       const statementText = sourceCode.getText(targetBody)
-      fixes.push(fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`))
+      return [
+        fixer.removeRange([lineStart, removeEnd]),
+        fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`)
+      ]
     }
 
-    return fixes
+    return []
   }
 }
 

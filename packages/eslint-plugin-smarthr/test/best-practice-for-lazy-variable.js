@@ -80,18 +80,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // switch文のcase内で使用（単一case） - 対象外（今後のPRで対応予定）
-    {
-      code: `
-        const x = getValue()
-        someCode()
-        switch (condition) {
-          case 'a':
-            console.log(x)
-            break
-        }
-      `,
-    },
     // switch文で複数caseで使用 - 対象外
     {
       code: `

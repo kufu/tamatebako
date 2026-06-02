@@ -671,16 +671,16 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
   for (let i = declarationIndex + 1; i <= earlyExitIndex; i++) {
     const statement = statements[i]
 
-    if (earlyExit.type === 'try-catch' && statement === earlyExit.node) {
+    if (earlyExit.type !== 'try-catch') {
+      // 早期終了文を含むstatement内での使用をチェック
+      if (containsVariableUsageBeforeEarlyExit(statement, varName, declarationNode, earlyExit.node)) {
+        return true
+      }
+    } else if (statement === earlyExit.node) {
       // try-catchブロック内での使用をチェック
       if (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
           (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
           (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode))) {
-        return true
-      }
-    } else if (earlyExit.type !== 'try-catch') {
-      // 早期終了文を含むstatement内での使用をチェック
-      if (containsVariableUsageBeforeEarlyExit(statement, varName, declarationNode, earlyExit.node)) {
         return true
       }
     }

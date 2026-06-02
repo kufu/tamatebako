@@ -137,6 +137,118 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         const y = condition && x
       `,
     },
+    // while内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        while (condition) {
+          if (check) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // do-while内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        do {
+          if (check) {
+            console.log(x)
+          }
+        } while (condition)
+      `,
+    },
+    // for-in内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const key in obj) {
+          if (check) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // for-of内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const item of array) {
+          if (check) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // ネストした条件文の途中に関数スコープ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          function helper() {
+            if (condition2) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // ネストした条件文の途中にループ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          for (let i = 0; i < 10; i++) {
+            if (condition2) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // var宣言 - 対象外
+    {
+      code: `
+        var x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+    },
+    // if条件部分とbody両方で使用 - 対象外（2回使用）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (x > 10) {
+          console.log(x)
+        }
+      `,
+    },
+    // 深いネスト（3階層）で途中にループ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          for (let i = 0; i < 10; i++) {
+            if (condition2) {
+              if (condition3) {
+                console.log(x)
+              }
+            }
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // 基本: if body内で1回使用、間にコードあり
@@ -421,6 +533,182 @@ switch (condition) {
               console.log(x)
             }
             break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 深いネスト（if > if > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            if (condition3) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            if (condition3) {
+              const x = getValue()
+              console.log(x)
+            }
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch > switch
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                console.log(x)
+                break
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                const x = getValue()
+                console.log(x)
+                break
+            }
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if > if のネスト
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          if (condition3) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // let変数の移動
+    {
+      code: `
+        let x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          let x = getValue()
+          console.log(x)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ブロックなしelse（ブロック追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log("a")
+        } else console.log(x)
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          console.log("a")
+        } else {
+const x = getValue()
+console.log(x)
+}
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 深いネスト（if > else > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else {
+          if (condition2) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else {
+          if (condition2) {
+            const x = getValue()
+            console.log(x)
+          }
         }
       `,
       errors: [

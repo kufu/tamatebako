@@ -42,6 +42,8 @@ if (condition) {
 
 ## ❌ Incorrect
 
+### 基本的なパターン
+
 ```js
 // if文のbody内でのみ使用される変数
 const x = getValue()
@@ -92,7 +94,22 @@ someCode()
 const y = obj?.method(x)
 ```
 
+### 早期終了のパターン
+
+```js
+// 早期終了（return）後にのみ使用される変数
+const container = document.getElementById('root')
+if (!container) {
+  throw new Error('Not found')
+}
+const theme = createTheme()
+const store = createStore()
+// theme, storeは早期終了されなかった場合にのみ必要
+```
+
 ## ✅ Correct
+
+### 移動不要なパターン
 
 ```js
 // 条件分岐がない場合
@@ -165,6 +182,8 @@ if (condition) {
 }
 ```
 
+### 除外されるパターン
+
 ```js
 // React Hooks（useXxxで始まる関数）で初期化される変数
 function Component() {
@@ -178,14 +197,155 @@ function Component() {
 }
 ```
 
+```js
+// await式（非同期処理の順序を保持）
+async function fetchData() {
+  const result = await fetchAPI()
+  someCode()
+  if (result.status === 200) {
+    console.log(result.data)
+  }
+}
+```
+
+```js
+// ループ変数
+for (const item of items) {
+  const value = item.value
+  if (condition) {
+    console.log(value)
+  }
+}
+```
+
 ## autofix
 
 このルールは自動修正に対応しています。
 
-変数宣言は以下のように移動されます：
+### 移動パターン
 
-- **条件部分で使用される場合**: 条件文の直前に移動
-- **body内でのみ使用される場合**: body内の最初の使用箇所の直前に移動
-- **switch caseでblockが無い場合**: blockを自動的に追加して、その中に変数を移動
+#### 1. 条件文の直前への移動
+
+条件部分で使用される変数は、条件文の直前に移動されます。
+
+```js
+// Before
+const x = getValue()
+someCode()
+if (x > 0) {
+  doSomething()
+}
+
+// After
+someCode()
+const x = getValue()
+if (x > 0) {
+  doSomething()
+}
+```
+
+#### 2. 最初の使用箇所の直前への移動
+
+条件分岐内で複数の文がある場合、最初に変数が使用される文の直前に移動されます。
+
+```js
+// Before
+const x = getValue()
+someCode()
+if (condition) {
+  console.log('start')
+  console.log(x)
+  doSomething()
+}
+
+// After
+someCode()
+if (condition) {
+  console.log('start')
+  const x = getValue()
+  console.log(x)
+  doSomething()
+}
+```
+
+#### 3. switch文でのblock自動追加
+
+blockが無いcaseには自動的にblockを追加して、その中に変数を移動します。
+
+```js
+// Before
+const x = getValue()
+someCode()
+switch (condition) {
+  case 'a':
+    console.log(x)
+    break
+}
+
+// After
+someCode()
+switch (condition) {
+  case 'a': {
+    const x = getValue()
+    console.log(x)
+    break
+  }
+}
+```
+
+#### 4. 早期終了後への移動
+
+早期終了（return/throw）の後でのみ使用される変数は、早期終了文の直後に移動されます。
+
+```js
+// Before
+const theme = createTheme()
+const store = createStore()
+const container = document.getElementById('root')
+if (!container) {
+  throw new Error('Not found')
+}
+const root = createRoot(container)
+
+// After
+const container = document.getElementById('root')
+if (!container) {
+  throw new Error('Not found')
+}
+const theme = createTheme()
+const store = createStore()
+const root = createRoot(container)
+```
+
+#### 5. 複数case fallthroughへの対応
+
+複数のcaseラベルが同じ処理を共有している場合も正しく処理されます。
+
+```js
+// Before
+const serverError = response.data
+switch (response.status) {
+  case 400:
+  case 404:
+    if (serverError.code === 'ERROR') {
+      console.log(serverError.message)
+    }
+    break
+}
+
+// After
+switch (response.status) {
+  case 400:
+  case 404: {
+    const serverError = response.data
+    if (serverError.code === 'ERROR') {
+      console.log(serverError.message)
+    }
+    break
+  }
+}
+```
+
+### フォーマット
 
 自動修正後はprettierやoxfmtなどのフォーマッターによってインデントや改行が整形されます。

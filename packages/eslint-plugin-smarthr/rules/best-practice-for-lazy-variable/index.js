@@ -713,6 +713,12 @@ function analyzeVariable(sourceCode, node) {
   if (node.parent.kind === 'var') return null
   if (node.id.type !== 'Identifier') return null
 
+  // ループ変数は対象外（for-in, for-of, for文のinit部分）
+  const varDecl = node.parent
+  if (varDecl.parent && isLoopStatement(varDecl.parent)) {
+    return null
+  }
+
   const varName = node.id.name
   const usages = getVariableUsages(sourceCode, varName, node)
 

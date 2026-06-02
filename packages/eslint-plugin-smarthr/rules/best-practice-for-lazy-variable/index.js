@@ -119,9 +119,21 @@ function findConditionalBodyForUsage(usageNode) {
     // switch文のcase内にいるか確認
     if (current.type === 'SwitchStatement') {
       for (const caseNode of current.cases) {
-        for (const statement of caseNode.consequent) {
-          if (containsNode(statement, usageNode)) {
-            return { type: 'case-body', body: caseNode.consequent, conditional: current, crossedBarrier }
+        // block付きcaseの場合、最初の要素がBlockStatementになる
+        if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
+          const blockStatement = caseNode.consequent[0]
+          if (containsNode(blockStatement, usageNode)) {
+            // 直下かチェック
+            if (isDirectChild(blockStatement, usageNode)) {
+              return { type: 'case-body', body: blockStatement, conditional: current, crossedBarrier }
+            }
+          }
+        } else {
+          // block無しのcaseもチェック（autofixでblockを追加する）
+          for (const statement of caseNode.consequent) {
+            if (containsNode(statement, usageNode)) {
+              return { type: 'case-body', body: caseNode.consequent, conditional: current, crossedBarrier }
+            }
           }
         }
       }
@@ -236,11 +248,23 @@ function getUsageLocation(conditional, usageNode) {
 
     // どのcase/defaultに含まれているか探す
     for (const caseNode of conditional.cases) {
-      for (const statement of caseNode.consequent) {
-        if (containsNode(statement, usageNode)) {
-          // 直下かチェック（別関数スコープを経由していないか）
-          if (isDirectChildInArray(caseNode.consequent, usageNode)) {
-            return { type: 'case', body: caseNode.consequent }
+      // block付きcaseの場合、最初の要素がBlockStatementになる
+      if (caseNode.consequent.length > 0 && caseNode.consequent[0].type === 'BlockStatement') {
+        const blockStatement = caseNode.consequent[0]
+        if (containsNode(blockStatement, usageNode)) {
+          // 直下かチェック
+          if (isDirectChild(blockStatement, usageNode)) {
+            return { type: 'case', body: blockStatement }
+          }
+        }
+      } else {
+        // block無しのcaseもチェック（autofixでblockを追加する）
+        for (const statement of caseNode.consequent) {
+          if (containsNode(statement, usageNode)) {
+            // 直下かチェック
+            if (isDirectChildInArray(caseNode.consequent, usageNode)) {
+              return { type: 'case', body: caseNode.consequent }
+            }
           }
         }
       }
@@ -369,27 +393,53 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
 
     // 移動先に挿入
     if (Array.isArray(targetBody)) {
-      // Switch caseのconsequent（配列）の場合
+      // Switch caseのconsequent（配列）の場合 - block無しなのでblockを追加
       if (targetBody.length > 0) {
         const firstStatement = targetBody[0]
-        const targetIndent = getIndent(sourceCode, firstStatement)
+        const lastStatement = targetBody[targetBody.length - 1]
+        const statementIndent = getIndent(sourceCode, firstStatement)
 
-        // 挿入位置 = firstStatementの行の先頭（インデント開始位置）
-        const insertPos = firstStatement.range[0] - targetIndent.length
-
-        // 削除範囲が挿入位置より前にある場合
-        if (removeEnd <= insertPos) {
-          // 削除範囲から挿入位置までを置換
-          const middleText = text.substring(removeEnd, insertPos)
-          const newText = middleText + targetIndent + declarationText + '\n'
-
-          return [
-            fixer.replaceTextRange([lineStart, insertPos], newText)
-          ]
-        } else {
-          // 挿入位置が削除範囲より前にある場合（通常はこのケースはないはず）
-          return []
+        // case文のラベル（`case 'a':`）の終了位置を探す
+        // firstStatementの前の行を見て、コロン（:）を探す
+        let pos = firstStatement.range[0] - 1
+        // 空白・改行をスキップ
+        while (pos > 0 && (text[pos] === ' ' || text[pos] === '\t' || text[pos] === '\n' || text[pos] === '\r')) {
+          pos--
         }
+        // コロンの位置を見つける
+        while (pos > 0 && text[pos] !== ':') {
+          pos--
+        }
+        const colonPos = pos
+
+        // caseラベルのインデント（`case`の位置）を取得
+        let caseLineStart = colonPos
+        while (caseLineStart > 0 && text[caseLineStart - 1] !== '\n' && text[caseLineStart - 1] !== '\r') {
+          caseLineStart--
+        }
+        const caseIndent = text.substring(caseLineStart, text.indexOf('case', caseLineStart))
+
+        // bodyのテキストを取得（インデントも含めて行の先頭から）
+        // firstStatementの行の先頭位置を探す
+        let firstLineStart = firstStatement.range[0]
+        while (firstLineStart > 0 && text[firstLineStart - 1] !== '\n' && text[firstLineStart - 1] !== '\r') {
+          firstLineStart--
+        }
+
+        const bodyText = text.substring(firstLineStart, lastStatement.range[1])
+
+        // blockで囲んで変数宣言を追加
+        // ` {\n    const x = getValue()\n    console.log(x)\n    break\n  }`
+        const newBody = ` {\n${statementIndent}${declarationText}\n${bodyText}\n${caseIndent}}`
+
+        // 変数宣言の削除とcaseのbody置換を1つの操作で行う
+        // 変数宣言の開始からcaseのbodyの終わりまでを置換
+        const middleText = text.substring(removeEnd, colonPos + 1)
+        const fullReplacement = middleText + newBody
+
+        return [
+          fixer.replaceTextRange([lineStart, lastStatement.range[1]], fullReplacement)
+        ]
       }
     } else if (targetBody.type === 'BlockStatement') {
       // ブロックがある場合はbodyの先頭に挿入
@@ -472,6 +522,29 @@ function containsThrow(node) {
       if (child.some(c => containsThrow(c))) return true
     } else if (child && typeof child === 'object') {
       if (containsThrow(child)) return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * ノード内にawait式が含まれているかチェック
+ */
+function containsAwait(node) {
+  if (!node || typeof node !== 'object') return false
+  if (node.type === 'AwaitExpression') return true
+
+  // 関数スコープを超えない（内部の関数のawaitは無視）
+  if (isFunctionScope(node)) return false
+
+  for (const key in node) {
+    if (key === 'parent') continue
+    const child = node[key]
+    if (Array.isArray(child)) {
+      if (child.some(c => containsAwait(c))) return true
+    } else if (child && typeof child === 'object') {
+      if (containsAwait(child)) return true
     }
   }
 
@@ -725,6 +798,11 @@ function analyzeVariable(sourceCode, node) {
     if (callee.type === 'Identifier' && callee.name.startsWith('use')) {
       return null
     }
+  }
+
+  // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
+  if (node.init && containsAwait(node.init)) {
+    return null
   }
 
   const varName = node.id.name

@@ -108,25 +108,51 @@ function createInlineFixer(sourceCode, declarationNode, usage) {
     const variableDeclaration = declarationNode.parent
     const initText = sourceCode.getText(declarationNode.init)
 
-    // 変数宣言を削除
-    const text = sourceCode.text
-    const startPos = variableDeclaration.range[0]
-    const endPos = variableDeclaration.range[1]
+    // VariableDeclarationに含まれるdeclaratorが1つだけの場合は行全体を削除
+    if (variableDeclaration.declarations.length === 1) {
+      const text = sourceCode.text
+      const startPos = variableDeclaration.range[0]
+      const endPos = variableDeclaration.range[1]
 
-    let lineStart = startPos
-    while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
-      lineStart--
+      let lineStart = startPos
+      while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
+        lineStart--
+      }
+
+      let removeEnd = endPos
+      if (text[endPos] === '\n') {
+        removeEnd = endPos + 1
+      } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
+        removeEnd = endPos + 2
+      }
+
+      return [
+        fixer.removeRange([lineStart, removeEnd]),
+        fixer.replaceText(usage, initText)
+      ]
     }
 
-    let removeEnd = endPos
-    if (text[endPos] === '\n') {
-      removeEnd = endPos + 1
-    } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
-      removeEnd = endPos + 2
+    // 複数のdeclaratorがある場合は、このdeclaratorのみを削除
+    // const x = 1, y = 2 のようなケース
+    const declarators = variableDeclaration.declarations
+    const index = declarators.indexOf(declarationNode)
+
+    if (index === -1) return []
+
+    // 最初のdeclarator
+    if (index === 0) {
+      // 次のdeclaratorの前のカンマまで削除
+      const nextDeclarator = declarators[1]
+      return [
+        fixer.removeRange([declarationNode.range[0], nextDeclarator.range[0]]),
+        fixer.replaceText(usage, initText)
+      ]
     }
 
+    // 最後以外のdeclarator: カンマを含めて削除
+    const prevDeclarator = declarators[index - 1]
     return [
-      fixer.removeRange([lineStart, removeEnd]),
+      fixer.removeRange([prevDeclarator.range[1], declarationNode.range[1]]),
       fixer.replaceText(usage, initText)
     ]
   }

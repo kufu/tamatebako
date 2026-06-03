@@ -254,5 +254,153 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
+    // 複数の変数宣言（最初のdeclaratorのみが1回使用）
+    {
+      code: `
+        const x = getValue(), y = getOther()
+        console.log(x)
+        console.log(y)
+        console.log(y)
+      `,
+      output: `
+        const y = getOther()
+        console.log(getValue())
+        console.log(y)
+        console.log(y)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 複数の変数宣言（2番目のdeclaratorのみが1回使用）
+    {
+      code: `
+        const x = getValue(), y = getOther()
+        console.log(x)
+        console.log(x)
+        console.log(y)
+      `,
+      output: `
+        const x = getValue()
+        console.log(x)
+        console.log(x)
+        console.log(getOther())
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'y' },
+        },
+      ],
+    },
+    // if条件内で使用
+    {
+      code: `
+        const value = getValue()
+        if (value) {
+          doSomething()
+        }
+      `,
+      output: `
+        if (getValue()) {
+          doSomething()
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 別の変数の初期化で使用
+    {
+      code: `
+        const x = getValue()
+        const y = x + 1
+      `,
+      output: `
+        const y = getValue() + 1
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 配列リテラル内で使用
+    {
+      code: `
+        const value = getValue()
+        const arr = [1, value, 3]
+      `,
+      output: `
+        const arr = [1, getValue(), 3]
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // オブジェクトリテラル内で使用
+    {
+      code: `
+        const value = getValue()
+        const obj = { key: value }
+      `,
+      output: `
+        const obj = { key: getValue() }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // テンプレートリテラル内で使用
+    {
+      code: `
+        const name = getName()
+        const message = \`Hello, \${name}!\`
+      `,
+      output: `
+        const message = \`Hello, \${getName()}!\`
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'name' },
+        },
+      ],
+    },
+    // switch文の条件で使用
+    {
+      code: `
+        const value = getValue()
+        switch (value) {
+          case 'a':
+            break
+        }
+      `,
+      output: `
+        switch (getValue()) {
+          case 'a':
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
   ],
 })

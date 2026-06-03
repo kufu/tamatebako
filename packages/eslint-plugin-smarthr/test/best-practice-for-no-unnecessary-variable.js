@@ -14,12 +14,12 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
   valid: [
     // 使用箇所がない
     {
-      code: 'const x = getValue()',
+      code: 'const x = a + b * c',
     },
     // 2回以上使用
     {
       code: `
-        const x = getValue()
+        const x = obj.property
         console.log(x)
         console.log(x)
       `,
@@ -27,7 +27,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     // var宣言は除外
     {
       code: `
-        var x = getValue()
+        var x = array[index]
         console.log(x)
       `,
     },
@@ -48,7 +48,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     {
       code: `
         let x
-        x = getValue()
+        x = condition ? a : b
         console.log(x)
       `,
     },
@@ -63,7 +63,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     // ループ内で使用される変数は除外
     {
       code: `
-        const x = getValue()
+        const x = a + b
         for (let i = 0; i < 10; i++) {
           console.log(x)
         }
@@ -71,7 +71,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     },
     {
       code: `
-        const x = getValue()
+        const x = obj?.method()
         while (condition) {
           console.log(x)
         }
@@ -80,7 +80,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     // 関数スコープ内で使用される変数は除外
     {
       code: `
-        const x = getValue()
+        const x = data.filter(Boolean)
         array.forEach(() => {
           console.log(x)
         })
@@ -88,7 +88,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     },
     {
       code: `
-        const x = getValue()
+        const x = 'constant'
         const fn = () => console.log(x)
       `,
     },
@@ -112,16 +112,32 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         }
       `,
     },
+    // 2回以上使用（演算式）
+    {
+      code: `
+        const sum = a + b + c
+        console.log(sum)
+        doSomething(sum)
+      `,
+    },
+    // 2回以上使用（配列アクセス）
+    {
+      code: `
+        const first = items[0]
+        doSomething(first)
+        process(first)
+      `,
+    },
   ],
   invalid: [
     // 基本パターン
     {
       code: `
-        const x = getValue()
+        const x = a + b * c
         console.log(x)
       `,
       output: `
-        console.log(getValue())
+        console.log(a + b * c)
       `,
       errors: [
         {
@@ -134,13 +150,13 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     {
       code: `
         function foo() {
-          const x = getValue()
+          const x = array[0]
           return x
         }
       `,
       output: `
         function foo() {
-          return getValue()
+          return array[0]
         }
       `,
       errors: [
@@ -153,11 +169,11 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     // 関数呼び出しの引数として使用
     {
       code: `
-        const x = getValue()
+        const x = condition ? value1 : value2
         doSomething(x)
       `,
       output: `
-        doSomething(getValue())
+        doSomething(condition ? value1 : value2)
       `,
       errors: [
         {
@@ -170,13 +186,13 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
     {
       code: `
         if (condition) {
-          const x = getValue()
+          const x = obj.property
           console.log(x)
         }
       `,
       output: `
         if (condition) {
-          console.log(getValue())
+          console.log(obj.property)
         }
       `,
       errors: [
@@ -203,6 +219,38 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'result' },
+        },
+      ],
+    },
+    // リテラル値
+    {
+      code: `
+        const value = 42
+        console.log(value)
+      `,
+      output: `
+        console.log(42)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // オプショナルチェーン
+    {
+      code: `
+        const data = obj?.nested?.property
+        process(data)
+      `,
+      output: `
+        process(obj?.nested?.property)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'data' },
         },
       ],
     },

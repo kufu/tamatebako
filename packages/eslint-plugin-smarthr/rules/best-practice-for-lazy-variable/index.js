@@ -1,37 +1,20 @@
+const {
+  FUNCTION_SCOPE_TYPES,
+  LOOP_STATEMENT_TYPES,
+  isFunctionScope,
+  isLoopStatement,
+  getStatements,
+  containsNode,
+  containsNodeType,
+  containsAwait,
+} = require('../../libs/ast-utils')
+
 const SCHEMA = []
-
-const FUNCTION_SCOPE_TYPES = new Set([
-  'FunctionDeclaration',
-  'FunctionExpression',
-  'ArrowFunctionExpression',
-])
-
-const LOOP_STATEMENT_TYPES = new Set([
-  'ForStatement',
-  'ForInStatement',
-  'ForOfStatement',
-  'WhileStatement',
-  'DoWhileStatement',
-])
 
 const EARLY_EXIT_STATEMENT_TYPES = new Set([
   'ReturnStatement',
   'ThrowStatement',
 ])
-
-/**
- * ノードが関数スコープかどうか判定
- */
-function isFunctionScope(node) {
-  return FUNCTION_SCOPE_TYPES.has(node.type)
-}
-
-/**
- * スコープのstatements配列を取得
- */
-function getStatements(scope) {
-  return scope.body || scope.statements || []
-}
 
 /**
  * 変数の全ての使用箇所を取得（宣言と同じスコープ内、関数スコープ内やループ内も含む）
@@ -96,13 +79,6 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
   }
 
   return usages
-}
-
-/**
- * ループ構文かどうか判定
- */
-function isLoopStatement(node) {
-  return LOOP_STATEMENT_TYPES.has(node.type)
 }
 
 /**
@@ -322,32 +298,6 @@ function getUsageLocation(conditional, usageNode) {
 }
 
 /**
- * あるノードが別のノードを含んでいるか確認
- */
-function containsNode(parent, target) {
-  if (parent === target) return true
-
-  function traverse(node) {
-    if (node === target) return true
-    if (!node || typeof node !== 'object') return false
-
-    for (const key in node) {
-      if (key === 'parent') continue
-      const child = node[key]
-      if (child && (
-        (Array.isArray(child) && child.some(c => traverse(c))) ||
-        (typeof child === 'object' && traverse(child))
-      )) {
-        return true
-      }
-    }
-    return false
-  }
-
-  return traverse(parent)
-}
-
-/**
  * 使用箇所がbody直下にあるか（別関数スコープを経由していないか）
  */
 function isDirectChild(body, usageNode) {
@@ -557,36 +507,8 @@ function findTryCatchWithThrow(node) {
 /**
  * ノード内にthrow文が含まれているかチェック
  */
-/**
- * 指定した型のノードが含まれているかチェック（関数スコープを超えない）
- */
-function containsNodeType(node, nodeType) {
-  if (!node || typeof node !== 'object') return false
-  if (node.type === nodeType) return true
-
-  // 関数スコープを超えない
-  if (isFunctionScope(node)) return false
-
-  for (const key in node) {
-    if (key === 'parent') continue
-    const child = node[key]
-    if (child && (
-      (Array.isArray(child) && child.some(c => containsNodeType(c, nodeType))) ||
-      (typeof child === 'object' && containsNodeType(child, nodeType))
-    )) {
-      return true
-    }
-  }
-
-  return false
-}
-
 function containsThrow(node) {
   return containsNodeType(node, 'ThrowStatement')
-}
-
-function containsAwait(node) {
-  return containsNodeType(node, 'AwaitExpression')
 }
 
 /**

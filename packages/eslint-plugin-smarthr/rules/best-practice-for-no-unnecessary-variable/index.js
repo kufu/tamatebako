@@ -1,0 +1,189 @@
+const {
+  isFunctionScope,
+  isLoopStatement,
+  getStatements,
+  containsAwait,
+} = require('../../libs/ast-utils')
+
+const SCHEMA = []
+
+/**
+ * 変数がスキップ対象かどうかを判定
+ */
+function shouldSkipVariable(node) {
+  if (
+    // const/let のみ対象（varは除外）
+    node.parent.kind === 'var' ||
+    // 分割代入は除外（将来的に対応予定: ArrayPattern, ObjectPattern）
+    node.id.type !== 'Identifier' ||
+    // 初期化なしは除外
+    !node.init ||
+    // ループ変数は対象外（for-in, for-of, for文のinit部分）
+    (node.parent.parent && isLoopStatement(node.parent.parent)) ||
+    // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
+    (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
+    // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
+    containsAwait(node.init)
+  ) {
+    return true
+  }
+
+  return false
+}
+
+/**
+ * 同一スコープ内で変数が使用される回数をカウント
+ * ループ内、関数スコープ内で使用される場合はバリアとして除外
+ */
+function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
+  const usages = []
+  const variableDeclaration = declarationNode.parent
+  let scopeNode = variableDeclaration.parent
+
+  // BlockStatementまたはProgramまで遡る
+  while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
+    scopeNode = scopeNode.parent
+  }
+
+  if (!scopeNode) return { usages: [], crossedBarrier: false }
+
+  let crossedBarrier = false
+
+  /**
+   * 同一スコープ内のみを探索（ループ・関数スコープはバリア）
+   */
+  function traverse(node) {
+    if (!node || typeof node !== 'object') return
+
+    // バリアを検出
+    if (isFunctionScope(node) || isLoopStatement(node)) {
+      crossedBarrier = true
+      return
+    }
+
+    // 変数名が一致するIdentifierを収集（宣言自体は除外）
+    if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
+      usages.push(node)
+      return
+    }
+
+    // 同名変数の再宣言がある場合はその先を探索しない
+    if (node.type === 'VariableDeclarator' &&
+        node !== declarationNode &&
+        node.id.type === 'Identifier' &&
+        node.id.name === varName) {
+      return
+    }
+
+    // 子ノードを再帰的に探索
+    for (const key in node) {
+      if (key === 'parent') continue
+      const child = node[key]
+      if (child) {
+        if (Array.isArray(child)) {
+          child.forEach(c => traverse(c))
+        } else if (typeof child === 'object' && child.type) {
+          traverse(child)
+        }
+      }
+    }
+  }
+
+  // 宣言以降のノードのみを探索
+  const statements = getStatements(scopeNode)
+  const declarationIndex = statements.indexOf(variableDeclaration)
+
+  for (let i = declarationIndex + 1; i < statements.length; i++) {
+    traverse(statements[i])
+  }
+
+  return { usages, crossedBarrier }
+}
+
+/**
+ * インライン化のfixer関数を生成
+ */
+function createInlineFixer(sourceCode, declarationNode, usage) {
+  return function(fixer) {
+    const variableDeclaration = declarationNode.parent
+    const initText = sourceCode.getText(declarationNode.init)
+
+    // 変数宣言を削除
+    const text = sourceCode.text
+    const startPos = variableDeclaration.range[0]
+    const endPos = variableDeclaration.range[1]
+
+    let lineStart = startPos
+    while (lineStart > 0 && text[lineStart - 1] !== '\n' && text[lineStart - 1] !== '\r') {
+      lineStart--
+    }
+
+    let removeEnd = endPos
+    if (text[endPos] === '\n') {
+      removeEnd = endPos + 1
+    } else if (text[endPos] === '\r' && text[endPos + 1] === '\n') {
+      removeEnd = endPos + 2
+    }
+
+    return [
+      fixer.removeRange([lineStart, removeEnd]),
+      fixer.replaceText(usage, initText)
+    ]
+  }
+}
+
+/**
+ * 変数が不要な変数化かどうかを判定
+ */
+function analyzeVariable(sourceCode, node) {
+  if (shouldSkipVariable(node)) return null
+
+  const varName = node.id.name
+  const { usages, crossedBarrier } = getVariableUsagesInScope(sourceCode, varName, node)
+
+  // バリアを超えている場合は対象外
+  if (crossedBarrier) return null
+
+  // 使用回数が1回のみ
+  if (usages.length === 1) {
+    return {
+      node,
+      varName,
+      usage: usages[0],
+    }
+  }
+
+  return null
+}
+
+/**
+ * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
+ */
+module.exports = {
+  meta: {
+    type: 'suggestion',
+    fixable: 'code',
+    schema: SCHEMA,
+    messages: {
+      inlineVariable: '変数"{{name}}"は一度しか使用されていません。直接使用してください。',
+    },
+  },
+  create(context) {
+    const sourceCode = context.sourceCode || context.getSourceCode()
+
+    return {
+      'VariableDeclarator': (node) => {
+        const analysis = analyzeVariable(sourceCode, node)
+        if (!analysis) return
+
+        context.report({
+          node: analysis.node,
+          messageId: 'inlineVariable',
+          data: { name: analysis.varName },
+          fix: createInlineFixer(sourceCode, analysis.node, analysis.usage),
+        })
+      },
+    }
+  },
+}
+module.exports.schema = SCHEMA

@@ -23,7 +23,10 @@ function shouldSkipVariable(node) {
     // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
     (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
-    containsAwait(node.init)
+    containsAwait(node.init) ||
+    // 関数式は除外（インライン化時に括弧が必要になるため）
+    node.init.type === 'ArrowFunctionExpression' ||
+    node.init.type === 'FunctionExpression'
   ) {
     return true
   }
@@ -50,6 +53,19 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
   let crossedBarrier = false
 
   /**
+   * ノードが宣言の初期化式の中にあるかチェック
+   */
+  function isInsideInit(node) {
+    let current = node
+    while (current) {
+      if (current === declarationNode.init) return true
+      if (current === declarationNode) return false
+      current = current.parent
+    }
+    return false
+  }
+
+  /**
    * 同一スコープ内のみを探索（ループ・関数スコープはバリア）
    */
   function traverse(node) {
@@ -61,8 +77,8 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
       return
     }
 
-    // 変数名が一致するIdentifierを収集（宣言自体は除外）
-    if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
+    // 変数名が一致するIdentifierを収集（宣言自体と初期化式内は除外）
+    if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id && !isInsideInit(node)) {
       usages.push(node)
       return
     }

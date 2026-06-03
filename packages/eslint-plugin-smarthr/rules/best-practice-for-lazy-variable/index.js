@@ -785,6 +785,7 @@ function shouldSkipVariable(node) {
   if (
     // const/let のみ対象（varは除外）
     node.parent.kind === 'var' ||
+    // 分割代入は除外（将来的に対応予定: ArrayPattern, ObjectPattern）
     node.id.type !== 'Identifier' ||
     // ループ変数は対象外（for-in, for-of, for文のinit部分）
     (varDecl.parent && isLoopStatement(varDecl.parent)) ||

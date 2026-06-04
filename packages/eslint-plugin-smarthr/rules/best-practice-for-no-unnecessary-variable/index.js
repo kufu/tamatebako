@@ -62,8 +62,10 @@ function shouldSkipVariableExceptComplexity(node) {
 
 /**
  * 使用箇所の複雑さを計算
+ * @param {object} usageNode - 使用箇所のノード
+ * @param {number} [maxComplexity] - 最大複雑さ（この値に達したら計算を中断）
  */
-function calculateUsageComplexity(usageNode) {
+function calculateUsageComplexity(usageNode, maxComplexity) {
   // 使用箇所が含まれるステートメントを探す
   let current = usageNode.parent
   while (current) {
@@ -74,7 +76,7 @@ function calculateUsageComplexity(usageNode) {
       current.type === 'SwitchStatement' ||
       current.type === 'VariableDeclaration'
     ) {
-      return calculateComplexity(current)
+      return calculateComplexity(current, maxComplexity)
     }
     current = current.parent
   }
@@ -266,8 +268,16 @@ function analyzeVariable(sourceCode, node, options = {}) {
     const isReturnUsage = isUsedInReturnStatement(usage)
 
     // return文の場合は、移動元の複雑さチェックをスキップ
-    const sourceComplexity = isReturnUsage ? 0 : calculateComplexity(node.init)
-    const targetComplexity = calculateUsageComplexity(usage)
+    const sourceComplexity = isReturnUsage ? 0 : calculateComplexity(node.init, maxComplexity + 1)
+
+    // sourceComplexityがmaxComplexityを超えている場合は早期終了
+    if (sourceComplexity > maxComplexity) {
+      return null
+    }
+
+    // 残りの許容複雑さを計算
+    const remainingComplexity = maxComplexity - sourceComplexity + 1
+    const targetComplexity = calculateUsageComplexity(usage, remainingComplexity)
     const totalComplexity = sourceComplexity + targetComplexity
 
     // 合計の複雑さがmaxComplexityを超える場合はスキップ

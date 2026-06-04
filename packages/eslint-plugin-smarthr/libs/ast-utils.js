@@ -97,11 +97,16 @@ function containsAwait(node) {
 /**
  * 式の複雑さを計算
  * 関数呼び出し、プロパティアクセス、演算子などの数をカウント
+ * @param {object} node - ASTノード
+ * @param {number} [maxComplexity] - 最大複雑さ（この値に達したら計算を中断）
  */
-function calculateComplexity(node) {
+function calculateComplexity(node, maxComplexity) {
   let complexity = 0
 
   function traverse(n) {
+    // 早期終了: maxComplexityに達したら計算を中断
+    if (maxComplexity !== undefined && complexity >= maxComplexity) return
+
     if (!n || typeof n !== 'object') return
 
     switch (n.type) {

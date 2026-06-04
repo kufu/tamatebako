@@ -176,14 +176,14 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
-    // 関数呼び出しの引数として使用
+    // 関数呼び出しの引数として使用（三項演算子は括弧で囲む）
     {
       code: `
         const x = condition ? value1 : value2
         doSomething(x)
       `,
       output: `
-        doSomething(condition ? value1 : value2)
+        doSomething((condition ? value1 : value2))
       `,
       errors: [
         {
@@ -429,6 +429,38 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'x' },
+        },
+      ],
+    },
+    // new式（括弧が必要）
+    {
+      code: `
+        const instance = new MyClass()
+        console.log(instance.property)
+      `,
+      output: `
+        console.log((new MyClass()).property)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'instance' },
+        },
+      ],
+    },
+    // 三項演算子（括弧が必要）
+    {
+      code: `
+        const result = condition ? value1 : value2
+        const y = result.property
+      `,
+      output: `
+        const y = (condition ? value1 : value2).property
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'result' },
         },
       ],
     },

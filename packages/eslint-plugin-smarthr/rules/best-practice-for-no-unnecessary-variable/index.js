@@ -24,11 +24,12 @@ function shouldSkipVariable(node) {
     (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
     containsAwait(node.init) ||
-    // 関数式は除外（インライン化時に括弧が必要になるため）
+    // 関数式は除外（インライン化時に括弧が必要になり、可読性が下がるため）
     node.init.type === 'ArrowFunctionExpression' ||
     node.init.type === 'FunctionExpression' ||
-    // 論理式は除外（演算子の優先順位が変わる可能性があるため）
-    node.init.type === 'LogicalExpression' ||
+    // オブジェクト/配列式は除外（スプレッド構文が含まれる場合、意味が変わる可能性があるため）
+    node.init.type === 'ObjectExpression' ||
+    node.init.type === 'ArrayExpression' ||
     // TaggedTemplateExpressionは除外（styled componentなど）
     node.init.type === 'TaggedTemplateExpression'
   ) {
@@ -121,12 +122,32 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
 }
 
 /**
+ * 括弧が必要な式タイプかどうかを判定
+ */
+function needsParentheses(initNode) {
+  const typesNeedingParens = new Set([
+    'NewExpression',
+    'ObjectExpression',
+    'TSAsExpression',
+    'TSNonNullExpression',
+    'TSTypeAssertion',
+    'ConditionalExpression',
+  ])
+  return typesNeedingParens.has(initNode.type)
+}
+
+/**
  * インライン化のfixer関数を生成
  */
 function createInlineFixer(sourceCode, declarationNode, usage) {
   return function(fixer) {
     const variableDeclaration = declarationNode.parent
-    const initText = sourceCode.getText(declarationNode.init)
+    let initText = sourceCode.getText(declarationNode.init)
+
+    // 括弧が必要な式の場合は括弧で囲む
+    if (needsParentheses(declarationNode.init)) {
+      initText = `(${initText})`
+    }
 
     // VariableDeclarationに含まれるdeclaratorが1つだけの場合は行全体を削除
     if (variableDeclaration.declarations.length === 1) {

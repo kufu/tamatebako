@@ -95,8 +95,6 @@ function containsAwait(node) {
 }
 
 module.exports = {
-  FUNCTION_SCOPE_TYPES,
-  LOOP_STATEMENT_TYPES,
   isFunctionScope,
   isLoopStatement,
   getStatements,

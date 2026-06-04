@@ -116,6 +116,8 @@ function calculateComplexity(node) {
       case 'ConditionalExpression':
       case 'ObjectExpression':
       case 'ArrayExpression':
+      case 'ArrowFunctionExpression':
+      case 'FunctionExpression':
         complexity += 2
         break
     }

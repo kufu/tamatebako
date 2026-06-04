@@ -217,6 +217,20 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         const locale = typeof messages
       `,
     },
+    // ArrowFunctionExpression（Complexity 2）を含む式、デフォルトで除外
+    {
+      code: `
+        const result = array.map(() => getValue())
+        console.log(result)
+      `,
+    },
+    // FunctionExpression（Complexity 2）を含む式、デフォルトで除外
+    {
+      code: `
+        const result = array.map(function() { return getValue() })
+        console.log(result)
+      `,
+    },
   ],
   invalid: [
     // 基本パターン
@@ -726,6 +740,26 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'obj' },
+        },
+      ],
+    },
+    // ArrowFunctionExpression（Complexity 2）を含む式をreturn文で使用
+    {
+      code: `
+        function foo() {
+          const result = array.map(() => getValue())
+          return result
+        }
+      `,
+      output: `
+        function foo() {
+          return array.map(() => getValue())
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'result' },
         },
       ],
     },

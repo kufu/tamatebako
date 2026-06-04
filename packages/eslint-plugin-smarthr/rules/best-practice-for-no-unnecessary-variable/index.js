@@ -26,7 +26,11 @@ function shouldSkipVariable(node) {
     containsAwait(node.init) ||
     // 関数式は除外（インライン化時に括弧が必要になるため）
     node.init.type === 'ArrowFunctionExpression' ||
-    node.init.type === 'FunctionExpression'
+    node.init.type === 'FunctionExpression' ||
+    // 論理式は除外（演算子の優先順位が変わる可能性があるため）
+    node.init.type === 'LogicalExpression' ||
+    // TaggedTemplateExpressionは除外（styled componentなど）
+    node.init.type === 'TaggedTemplateExpression'
   ) {
     return true
   }

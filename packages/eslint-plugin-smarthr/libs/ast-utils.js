@@ -94,6 +94,62 @@ function containsAwait(node) {
   return containsNodeType(node, 'AwaitExpression')
 }
 
+/**
+ * 式の複雑さを計算
+ * 関数呼び出し、プロパティアクセス、演算子などの数をカウント
+ */
+function calculateComplexity(node) {
+  let complexity = 0
+
+  function traverse(n) {
+    if (!n || typeof n !== 'object') return
+
+    switch (n.type) {
+      case 'CallExpression':
+      case 'MemberExpression':
+      case 'BinaryExpression':
+      case 'LogicalExpression':
+      case 'NewExpression':
+        complexity++
+        break
+      case 'ConditionalExpression':
+        complexity += 2
+        break
+    }
+
+    // 再帰的に子ノードを探索
+    for (const key in n) {
+      if (key === 'parent') continue
+      const child = n[key]
+      if (child) {
+        if (Array.isArray(child)) {
+          child.forEach(c => traverse(c))
+        } else if (typeof child === 'object' && child.type) {
+          traverse(child)
+        }
+      }
+    }
+  }
+
+  traverse(node)
+  return complexity
+}
+
+/**
+ * インライン化時に括弧が必要な式タイプかどうかを判定
+ */
+function needsParentheses(node) {
+  const typesNeedingParens = new Set([
+    'NewExpression',
+    'ObjectExpression',
+    'TSAsExpression',
+    'TSNonNullExpression',
+    'TSTypeAssertion',
+    'ConditionalExpression',
+  ])
+  return typesNeedingParens.has(node.type)
+}
+
 module.exports = {
   isFunctionScope,
   isLoopStatement,
@@ -101,4 +157,6 @@ module.exports = {
   containsNode,
   containsNodeType,
   containsAwait,
+  calculateComplexity,
+  needsParentheses,
 }

@@ -2,24 +2,32 @@
  * AST操作の汎用ユーティリティ
  */
 
+const FUNCTION_SCOPE_TYPES = new Set([
+  'FunctionDeclaration',
+  'FunctionExpression',
+  'ArrowFunctionExpression',
+])
+
+const LOOP_STATEMENT_TYPES = new Set([
+  'ForStatement',
+  'ForInStatement',
+  'ForOfStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+])
+
 /**
  * ノードが関数スコープかどうか判定
  */
 function isFunctionScope(node) {
-  return node.type === 'FunctionDeclaration' ||
-    node.type === 'FunctionExpression' ||
-    node.type === 'ArrowFunctionExpression'
+  return FUNCTION_SCOPE_TYPES.has(node.type)
 }
 
 /**
  * ループ構文かどうか判定
  */
 function isLoopStatement(node) {
-  return node.type === 'ForStatement' ||
-    node.type === 'ForInStatement' ||
-    node.type === 'ForOfStatement' ||
-    node.type === 'WhileStatement' ||
-    node.type === 'DoWhileStatement'
+  return LOOP_STATEMENT_TYPES.has(node.type)
 }
 
 /**
@@ -87,6 +95,8 @@ function containsAwait(node) {
 }
 
 module.exports = {
+  FUNCTION_SCOPE_TYPES,
+  LOOP_STATEMENT_TYPES,
   isFunctionScope,
   isLoopStatement,
   getStatements,

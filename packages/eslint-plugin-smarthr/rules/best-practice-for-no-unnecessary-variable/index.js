@@ -200,6 +200,27 @@ function createInlineFixer(sourceCode, declarationNode, usage) {
 }
 
 /**
+ * 使用箇所が変数宣言の直後にあるかチェック
+ */
+function isImmediatelyFollowing(variableDeclaration, usage, scopeNode) {
+  const statements = getStatements(scopeNode)
+  const declarationIndex = statements.indexOf(variableDeclaration)
+
+  // 使用箇所を含むstatementを見つける
+  let usageStatement = usage
+  while (usageStatement && usageStatement.parent !== scopeNode) {
+    usageStatement = usageStatement.parent
+  }
+
+  if (!usageStatement) return false
+
+  const usageIndex = statements.indexOf(usageStatement)
+
+  // 変数宣言の直後のstatementに使用箇所がある場合のみtrue
+  return usageIndex === declarationIndex + 1
+}
+
+/**
  * 変数が不要な変数化かどうかを判定
  */
 function analyzeVariable(sourceCode, node) {
@@ -213,6 +234,21 @@ function analyzeVariable(sourceCode, node) {
 
   // 使用回数が1回のみ
   if (usages.length === 1) {
+    const variableDeclaration = node.parent
+    let scopeNode = variableDeclaration.parent
+
+    // BlockStatementまたはProgramまで遡る
+    while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
+      scopeNode = scopeNode.parent
+    }
+
+    if (!scopeNode) return null
+
+    // 使用箇所が変数宣言の直後にない場合は対象外
+    if (!isImmediatelyFollowing(variableDeclaration, usages[0], scopeNode)) {
+      return null
+    }
+
     return {
       node,
       varName,

@@ -138,6 +138,23 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         })
       `,
     },
+    // 使用箇所が直後ではない（間に別のstatement）
+    {
+      code: `
+        const x = getValue()
+        doSomething()
+        console.log(x)
+      `,
+    },
+    // 使用箇所が直後ではない（複数の変数宣言、後で使用）
+    {
+      code: `
+        const x = getValue(), y = getOther()
+        console.log(x)
+        console.log(x)
+        console.log(y)
+      `,
+    },
   ],
   invalid: [
     // 基本パターン
@@ -282,27 +299,6 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'x' },
-        },
-      ],
-    },
-    // 複数の変数宣言（2番目のdeclaratorのみが1回使用）
-    {
-      code: `
-        const x = getValue(), y = getOther()
-        console.log(x)
-        console.log(x)
-        console.log(y)
-      `,
-      output: `
-        const x = getValue()
-        console.log(x)
-        console.log(x)
-        console.log(getOther())
-      `,
-      errors: [
-        {
-          messageId: 'inlineVariable',
-          data: { name: 'y' },
         },
       ],
     },

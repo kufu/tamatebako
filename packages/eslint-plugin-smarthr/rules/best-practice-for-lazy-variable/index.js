@@ -269,10 +269,6 @@ function isDirectChild(body, usageNode) {
   return false
 }
 
-function isDirectChildInArray(bodyArray, usageNode) {
-  return isDirectChild(bodyArray, usageNode)
-}
-
 /**
  * ノードのインデントを取得
  */

@@ -383,6 +383,28 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // プロパティ名は変数参照ではない
+    {
+      code: `
+        const status = getStatus()
+        doSomething()
+        if (cond) {
+          obj.status = 1
+        }
+      `,
+    },
+    // オブジェクトのキーは変数参照ではない
+    {
+      code: `
+        function test() {
+          const name = getName()
+          doSomething()
+          if (cond) {
+            return { name: 'value' }
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // ネストした早期return
@@ -1472,6 +1494,33 @@ console.log(x)
         {
           messageId: 'moveToLazy',
           data: { name: 'x' },
+        },
+      ],
+    },
+    // ショートハンドプロパティは変数参照
+    {
+      code: `
+        function test() {
+          const name = getName()
+          doSomething()
+          if (cond) {
+            return { name }
+          }
+        }
+      `,
+      output: `
+        function test() {
+          doSomething()
+          if (cond) {
+            const name = getName()
+            return { name }
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'name' },
         },
       ],
     },

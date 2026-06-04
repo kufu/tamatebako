@@ -17,6 +17,31 @@ const EARLY_EXIT_STATEMENT_TYPES = new Set([
 ])
 
 /**
+ * Identifierが変数参照かどうかを判定
+ */
+function isVariableReference(node) {
+  const parent = node.parent
+  if (!parent) return true
+
+  // MemberExpressionのプロパティ部分は変数参照ではない (obj.status の status)
+  if (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) {
+    return false
+  }
+
+  // Propertyのキー部分は変数参照ではない ({ status: 1 } の status)
+  if (parent.type === 'Property' && parent.key === node && !parent.computed) {
+    return false
+  }
+
+  // ラベルは変数参照ではない (label: statement の label)
+  if (parent.type === 'LabeledStatement' && parent.label === node) {
+    return false
+  }
+
+  return true
+}
+
+/**
  * 変数の全ての使用箇所を取得（宣言と同じスコープ内、関数スコープ内やループ内も含む）
  */
 function getVariableUsages(sourceCode, varName, declarationNode) {
@@ -39,8 +64,8 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
 
     switch (node.type) {
       case 'Identifier': {
-        // 変数名が一致するIdentifierを収集（宣言自体は除外）
-        if (node.name === varName && node !== declarationNode.id) {
+        // 変数名が一致し、変数参照である場合のみ収集（宣言自体は除外）
+        if (node.name === varName && node !== declarationNode.id && isVariableReference(node)) {
           usages.push(node)
         }
         break
@@ -477,31 +502,6 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
  */
 function isEarlyExitStatement(node) {
   return EARLY_EXIT_STATEMENT_TYPES.has(node.type)
-}
-
-/**
- * try-catchブロックを検出（throw文を含む場合）
- */
-function findTryCatchWithThrow(node) {
-  let current = node.parent
-
-  while (current) {
-    if (current.type === 'TryStatement') {
-      // try内またはcatch内にthrowがあるかチェック
-      if (containsThrow(current.block) ||
-          (current.handler && containsThrow(current.handler.body))) {
-        return current
-      }
-    }
-
-    if (isFunctionScope(current)) {
-      return null
-    }
-
-    current = current.parent
-  }
-
-  return null
 }
 
 /**

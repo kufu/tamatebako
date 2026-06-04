@@ -26,6 +26,7 @@
 - [best-practice-for-date](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date)
 - [best-practice-for-default-props](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-default-props)
 - [best-practice-for-interactive-element](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element)
+- [best-practice-for-lazy-variable](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-lazy-variable)
 - [best-practice-for-layouts](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-layouts)
 - [best-practice-for-nested-attributes-array-index](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index)
 - [best-practice-for-optional-chaining](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining)

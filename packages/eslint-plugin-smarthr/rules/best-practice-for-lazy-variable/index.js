@@ -21,21 +21,33 @@ const EARLY_EXIT_STATEMENT_TYPES = new Set([
  */
 function isVariableReference(node) {
   const parent = node.parent
-  if (!parent) return true
+  if (parent) {
+    switch (parent.type) {
+      case 'MemberExpression': {
+        // MemberExpressionのプロパティ部分は変数参照ではない (obj.status の status)
+        if (parent.property === node && !parent.computed) {
+          return false
+        }
 
-  // MemberExpressionのプロパティ部分は変数参照ではない (obj.status の status)
-  if (parent.type === 'MemberExpression' && parent.property === node && !parent.computed) {
-    return false
-  }
+        break
+      }
+      case 'Property': {
+        // Propertyのキー部分は変数参照ではない ({ status: 1 } の status)
+        if (parent.key === node && !parent.computed) {
+          return false
+        }
 
-  // Propertyのキー部分は変数参照ではない ({ status: 1 } の status)
-  if (parent.type === 'Property' && parent.key === node && !parent.computed) {
-    return false
-  }
+        break
+      }
+      case 'LabeledStatement': {
+        // ラベルは変数参照ではない (label: statement の label)
+        if (parent.label === node) {
+          return false
+        }
 
-  // ラベルは変数参照ではない (label: statement の label)
-  if (parent.type === 'LabeledStatement' && parent.label === node) {
-    return false
+        break
+      }
+    }
   }
 
   return true

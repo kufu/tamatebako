@@ -110,9 +110,12 @@ function calculateComplexity(node) {
       case 'BinaryExpression':
       case 'LogicalExpression':
       case 'NewExpression':
+      case 'SpreadElement':
         complexity++
         break
       case 'ConditionalExpression':
+      case 'ObjectExpression':
+      case 'ArrayExpression':
         complexity += 2
         break
     }

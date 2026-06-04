@@ -186,6 +186,37 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         console.log(x)
       `,
     },
+    // ObjectExpression（Complexity 2）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const obj = { a: 1, b: 2 }
+        console.log(obj)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
+    // ArrayExpression（Complexity 2）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const arr = [1, 2, 3]
+        console.log(arr)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
+    // SpreadElement（Complexity 1）を含むObjectExpression（Complexity 2）+ console.log（Complexity 2）= 5、maxComplexity: 3で除外
+    {
+      code: `
+        const obj = { ...spread, a: 1 }
+        console.log(obj)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
+    // export宣言された変数は除外
+    {
+      code: `
+        export const messages = { a: 1, b: 2 }
+        const locale = typeof messages
+      `,
+    },
   ],
   invalid: [
     // 基本パターン
@@ -601,13 +632,13 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
-    // ネストした三項演算子（Complexity 4）、maxComplexity: 5 ならインライン化
+    // ネストした三項演算子（Complexity 4）、maxComplexity: 7 ならインライン化
     {
       code: `
         const x = a ? (b ? c : d) : e
         console.log(x)
       `,
-      options: [{ maxComplexity: 5 }],
+      options: [{ maxComplexity: 7 }],
       output: `
         console.log((a ? (b ? c : d) : e))
       `,
@@ -635,6 +666,66 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'x' },
+        },
+      ],
+    },
+    // ObjectExpression（Complexity 2）をreturn文で使用（return文は括弧が必要）
+    {
+      code: `
+        function foo() {
+          const obj = { a: 1, b: 2 }
+          return obj
+        }
+      `,
+      output: `
+        function foo() {
+          return ({ a: 1, b: 2 })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'obj' },
+        },
+      ],
+    },
+    // ArrayExpression（Complexity 2）をreturn文で使用
+    {
+      code: `
+        function foo() {
+          const arr = [1, 2, 3]
+          return arr
+        }
+      `,
+      output: `
+        function foo() {
+          return [1, 2, 3]
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'arr' },
+        },
+      ],
+    },
+    // SpreadElementを含むObjectExpression（Complexity 3）をreturn文で使用
+    {
+      code: `
+        function foo() {
+          const obj = { ...spread, a: 1 }
+          return obj
+        }
+      `,
+      output: `
+        function foo() {
+          return ({ ...spread, a: 1 })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'obj' },
         },
       ],
     },

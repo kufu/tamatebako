@@ -15,7 +15,7 @@ const SCHEMA = [
       maxComplexity: {
         type: 'integer',
         minimum: 0,
-        default: 3,
+        default: 5,
       },
     },
     additionalProperties: false,
@@ -42,24 +42,43 @@ function shouldSkipVariableExceptComplexity(node) {
     // 関数式は除外（インライン化時に括弧が必要になり、可読性が下がるため）
     node.init.type === 'ArrowFunctionExpression' ||
     node.init.type === 'FunctionExpression' ||
-    // オブジェクト/配列式は除外（スプレッド構文が含まれる場合、意味が変わる可能性があるため）
-    node.init.type === 'ObjectExpression' ||
-    node.init.type === 'ArrayExpression' ||
     // TaggedTemplateExpressionは除外（styled componentなど）
     node.init.type === 'TaggedTemplateExpression'
   ) {
     return true
   }
 
+  // export宣言された変数は除外（他のファイルから使用される可能性があるため）
+  let current = node.parent
+  while (current) {
+    if (current.type === 'ExportNamedDeclaration' || current.type === 'ExportDefaultDeclaration') {
+      return true
+    }
+    current = current.parent
+  }
+
   return false
 }
 
 /**
- * 複雑さでスキップすべきかを判定
+ * 使用箇所の複雑さを計算
  */
-function shouldSkipByComplexity(node, maxComplexity) {
-  const complexity = calculateComplexity(node.init)
-  return complexity > maxComplexity
+function calculateUsageComplexity(usageNode) {
+  // 使用箇所が含まれるステートメントを探す
+  let current = usageNode.parent
+  while (current) {
+    if (
+      current.type === 'ExpressionStatement' ||
+      current.type === 'ReturnStatement' ||
+      current.type === 'IfStatement' ||
+      current.type === 'SwitchStatement' ||
+      current.type === 'VariableDeclaration'
+    ) {
+      return calculateComplexity(current)
+    }
+    current = current.parent
+  }
+  return 0
 }
 
 /**
@@ -230,7 +249,7 @@ function createInlineFixer(sourceCode, declarationNode, usage) {
  * 変数が不要な変数化かどうかを判定
  */
 function analyzeVariable(sourceCode, node, options = {}) {
-  const maxComplexity = options.maxComplexity ?? 3
+  const maxComplexity = options.maxComplexity ?? 5
 
   // 複雑さ以外の理由でスキップ
   if (shouldSkipVariableExceptComplexity(node)) return null
@@ -244,9 +263,15 @@ function analyzeVariable(sourceCode, node, options = {}) {
   // 使用回数が1回のみ
   if (usages.length === 1) {
     const usage = usages[0]
+    const isReturnUsage = isUsedInReturnStatement(usage)
 
-    // return文以外で使用されている場合は複雑さチェック適用
-    if (!isUsedInReturnStatement(usage) && shouldSkipByComplexity(node, maxComplexity)) {
+    // return文の場合は、移動元の複雑さチェックをスキップ
+    const sourceComplexity = isReturnUsage ? 0 : calculateComplexity(node.init)
+    const targetComplexity = calculateUsageComplexity(usage)
+    const totalComplexity = sourceComplexity + targetComplexity
+
+    // 合計の複雑さがmaxComplexityを超える場合はスキップ
+    if (totalComplexity > maxComplexity) {
       return null
     }
 

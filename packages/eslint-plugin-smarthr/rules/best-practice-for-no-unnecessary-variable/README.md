@@ -121,6 +121,14 @@ async function fetchData() {
 ```
 
 ```js
+// 関数式は除外（インライン化時に括弧が必要になるため）
+const getTitle = () => {
+  return condition ? 'A' : 'B'
+}
+console.log(getTitle())
+```
+
+```js
 // 分割代入は除外（将来的に対応予定: object, array両方）
 const { name } = user
 console.log(name)

@@ -128,6 +128,16 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         process(first)
       `,
     },
+    // 関数スコープ内で宣言・使用（同じスコープ内で2回以上使用）
+    {
+      code: `
+        array.map(() => {
+          const x = getValue()
+          const y = getOther()
+          return x + y + x + y
+        })
+      `,
+    },
   ],
   invalid: [
     // 基本パターン
@@ -399,6 +409,26 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'value' },
+        },
+      ],
+    },
+    // 関数スコープ内で宣言・使用（同じスコープ内）
+    {
+      code: `
+        array.map(() => {
+          const x = getValue()
+          return x
+        })
+      `,
+      output: `
+        array.map(() => {
+          return getValue()
+        })
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
         },
       ],
     },

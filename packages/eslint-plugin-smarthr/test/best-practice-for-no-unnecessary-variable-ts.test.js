@@ -155,5 +155,41 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
         },
       ],
     },
+    // 型注釈付き変数がExpressionStatementの先頭で使用される場合、セミコロンを前置
+    {
+      code: `
+        doSomething()
+        const value: string = getValue()
+        value.toUpperCase()
+      `,
+      output: `
+        doSomething()
+        ;(getValue() as string).toUpperCase()
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 型注釈付き変数（メソッドチェーン）
+    {
+      code: `
+        inputs[0].focus()
+        const input: HTMLInputElement = inputs[0]
+        input.setSelectionRange(0, 0)
+      `,
+      output: `
+        inputs[0].focus()
+        ;(inputs[0] as HTMLInputElement).setSelectionRange(0, 0)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'input' },
+        },
+      ],
+    },
   ],
 })

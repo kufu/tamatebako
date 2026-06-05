@@ -6,6 +6,9 @@ const ruleTester = new RuleTester({
     parserOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
+      ecmaFeatures: {
+        jsx: true,
+      },
     },
   },
 })
@@ -257,6 +260,22 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return \`Result: \${result.name}\`
         }
       `,
+    },
+    // JSXElement（Complexity 2）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const element = <div>Hello</div>
+        console.log(element)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
+    // JSXElement with props（Complexity 3）+ render（Complexity 1）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const element = <Component prop={value.nested} />
+        render(element)
+      `,
+      options: [{ maxComplexity: 3 }],
     },
   ],
   invalid: [
@@ -787,6 +806,46 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         {
           messageId: 'inlineVariable',
           data: { name: 'result' },
+        },
+      ],
+    },
+    // JSXElement（Complexity 2）をreturn文で使用
+    {
+      code: `
+        function Component() {
+          const element = <div>Hello</div>
+          return element
+        }
+      `,
+      output: `
+        function Component() {
+          return <div>Hello</div>
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'element' },
+        },
+      ],
+    },
+    // JSXElement with props（Complexity 2 + MemberExpression）をreturn文で使用
+    {
+      code: `
+        function Component() {
+          const element = <Child prop={value.nested} />
+          return element
+        }
+      `,
+      output: `
+        function Component() {
+          return <Child prop={value.nested} />
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'element' },
         },
       ],
     },

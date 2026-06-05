@@ -123,6 +123,7 @@ function calculateComplexity(node, maxComplexity) {
       case 'ArrayExpression':
       case 'ArrowFunctionExpression':
       case 'FunctionExpression':
+      case 'JSXOpeningElement':
         complexity += 2
         break
     }

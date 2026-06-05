@@ -283,6 +283,16 @@ console.log(obj.property)
 console.log(({ a: 1, b: 2 }).property)
 ```
 
+```js
+// 単項演算子で使用される場合も括弧が必要
+// Before
+const isNothing = value === 'nothing'
+if (!isNothing) allN = false
+
+// After
+if (!(value === 'nothing')) allN = false
+```
+
 ### 型注釈の保持（TypeScript）
 
 TypeScriptで型注釈が付いている変数は、インライン化時に`as`型アサーションとして型情報が保持されます。

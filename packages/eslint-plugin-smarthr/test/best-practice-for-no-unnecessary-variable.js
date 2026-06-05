@@ -809,6 +809,54 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
+    // 単項演算子（!）で使用される場合は括弧で囲む
+    {
+      code: `
+        const isNothing = value === 'nothing'
+        if (!isNothing) allN = false
+      `,
+      output: `
+        if (!(value === 'nothing')) allN = false
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'isNothing' },
+        },
+      ],
+    },
+    // 単項演算子（typeof）で使用される場合は括弧で囲む
+    {
+      code: `
+        const result = getValue()
+        if (typeof result === 'string') doSomething()
+      `,
+      output: `
+        if (typeof (getValue()) === 'string') doSomething()
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'result' },
+        },
+      ],
+    },
+    // 単項演算子（+）で使用される場合は括弧で囲む
+    {
+      code: `
+        const str = getStringValue()
+        const num = +str
+      `,
+      output: `
+        const num = +(getStringValue())
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'str' },
+        },
+      ],
+    },
     // JSXElement（Complexity 2）をreturn文で使用
     {
       code: `

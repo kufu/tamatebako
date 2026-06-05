@@ -227,6 +227,15 @@ export type Config = typeof API_URL
 ```
 
 ```js
+// UPPER_SNAKE_CASE形式の定数は除外（慣習的な定数命名）
+const NULL = { label: '', value: '' }
+console.log(NULL)
+
+const API_BASE_URL = 'https://example.com'
+fetch(API_BASE_URL)
+```
+
+```js
 // 複雑な式は除外（デフォルト maxComplexity: 5）
 // 複雑さ 6 (MemberExpression x2 + CallExpression x1 + ArrowFunction x2 + 引数なしCallExpression x1は0) + console.log (複雑さ 2) = 8
 const result = array.map(() => obj.method())

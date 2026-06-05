@@ -221,6 +221,27 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         const locale = typeof messages
       `,
     },
+    // UPPER_SNAKE_CASE形式の定数は除外
+    {
+      code: `
+        const NULL = { label: '', value: '' }
+        console.log(NULL)
+      `,
+    },
+    {
+      code: `
+        const API_BASE_URL = 'https://example.com'
+        fetch(API_BASE_URL)
+      `,
+    },
+    {
+      code: `
+        function foo() {
+          const MAX_COUNT_123 = 100
+          return MAX_COUNT_123
+        }
+      `,
+    },
     // ArrowFunctionExpression（Complexity 2）を含む式、デフォルトで除外
     {
       code: `

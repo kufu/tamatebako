@@ -36,7 +36,9 @@ function shouldSkipVariableExceptComplexity(node) {
     // ループ変数は対象外（for-in, for-of, for文のinit部分）
     (node.parent.parent && isLoopStatement(node.parent.parent)) ||
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
-    containsAwait(node.init)
+    containsAwait(node.init) ||
+    // UPPER_SNAKE_CASE形式の定数は除外（慣習的な定数命名）
+    /^[A-Z0-9_]+$/.test(node.id.name)
   ) {
     return true
   }

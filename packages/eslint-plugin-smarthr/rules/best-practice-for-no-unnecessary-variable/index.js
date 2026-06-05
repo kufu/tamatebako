@@ -74,6 +74,22 @@ function shouldSkipVariableExceptComplexity(node) {
 }
 
 /**
+ * 型注釈のテキストを取得
+ * @param {object} sourceCode - SourceCode
+ * @param {object} node - VariableDeclaratorノード
+ * @returns {string|null} 型注釈のテキスト（`: Type`の形式から`Type`部分のみ）
+ */
+function getTypeAnnotationText(sourceCode, node) {
+  if (node.id.typeAnnotation) {
+    const typeAnnotation = node.id.typeAnnotation
+    const typeText = sourceCode.getText(typeAnnotation)
+    // `: Type` の形式から `: ` を除去
+    return typeText.replace(/^:\s*/, '')
+  }
+  return null
+}
+
+/**
  * 使用箇所の複雑さを計算
  * @param {object} usageNode - 使用箇所のノード
  * @param {number} [maxComplexity] - 最大複雑さ（この値に達したら計算を中断）
@@ -207,13 +223,16 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
 /**
  * インライン化のfixer関数を生成
  */
-function createInlineFixer(sourceCode, declarationNode, usage) {
+function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
   return function(fixer) {
     const variableDeclaration = declarationNode.parent
     let initText = sourceCode.getText(declarationNode.init)
 
-    // 括弧が必要な式の場合は括弧で囲む
-    if (needsParentheses(declarationNode.init)) {
+    // 型注釈がある場合は as Type を追加
+    if (typeAnnotation) {
+      initText = `(${initText} as ${typeAnnotation})`
+    } else if (needsParentheses(declarationNode.init)) {
+      // 括弧が必要な式の場合は括弧で囲む
       initText = `(${initText})`
     }
 
@@ -287,8 +306,12 @@ function analyzeVariable(sourceCode, node, options = {}) {
     const usage = usages[0]
     const isReturnUsage = isUsedInReturnStatement(usage)
 
+    // 型注釈がある場合は複雑度+1
+    const typeAnnotation = getTypeAnnotationText(sourceCode, node)
+    const typeComplexity = typeAnnotation ? 1 : 0
+
     // return文の場合は、移動元の複雑さチェックをスキップ
-    const sourceComplexity = isReturnUsage ? 0 : calculateComplexity(node.init, maxComplexity + 1)
+    const sourceComplexity = isReturnUsage ? 0 : calculateComplexity(node.init, maxComplexity + 1) + typeComplexity
 
     // sourceComplexityがmaxComplexityを超えている場合は早期終了
     if (sourceComplexity > maxComplexity) {
@@ -309,6 +332,7 @@ function analyzeVariable(sourceCode, node, options = {}) {
       node,
       varName,
       usage,
+      typeAnnotation,
     }
   }
 
@@ -340,7 +364,7 @@ module.exports = {
           node: analysis.node,
           messageId: 'inlineVariable',
           data: { name: analysis.varName },
-          fix: createInlineFixer(sourceCode, analysis.node, analysis.usage),
+          fix: createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation),
         })
       },
     }

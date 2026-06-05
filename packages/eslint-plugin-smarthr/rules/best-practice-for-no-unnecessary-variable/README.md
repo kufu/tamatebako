@@ -65,6 +65,7 @@ return obj.property
 - new式 (`NewExpression`)
 - スプレッド構文 (`SpreadElement`)
 - 型アサーション (`TSAsExpression`, `TSTypeAssertion`)
+- 型注釈 (TypeScript: `const x: Type = ...`)
 
 **複雑さ +2:**
 - 三項演算子 (`ConditionalExpression`)
@@ -281,6 +282,34 @@ console.log(obj.property)
 // After
 console.log(({ a: 1, b: 2 }).property)
 ```
+
+### 型注釈の保持（TypeScript）
+
+TypeScriptで型注釈が付いている変数は、インライン化時に`as`型アサーションとして型情報が保持されます。
+
+```ts
+// Before
+const value: string = getValue()
+console.log(value)
+
+// After
+console.log((getValue() as string))
+```
+
+```ts
+// Before
+function getUser() {
+  const user: User | null = fetchUser()
+  return user
+}
+
+// After
+function getUser() {
+  return (fetchUser() as User | null)
+}
+```
+
+**注意:** 型注釈は複雑度+1として計算されます。
 
 ### フォーマット
 

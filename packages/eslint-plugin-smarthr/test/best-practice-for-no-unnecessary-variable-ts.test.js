@@ -29,6 +29,22 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
       `,
       options: [{ maxComplexity: 3 }],
     },
+    // 型注釈（Complexity 1）+ CallExpression（Complexity 1）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const value: string = getValue()
+        console.log(value)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
+    // 型注釈（Complexity 1）+ MemberExpression（Complexity 1）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    {
+      code: `
+        const value: number = obj.property
+        console.log(value)
+      `,
+      options: [{ maxComplexity: 3 }],
+    },
   ],
   invalid: [
     // TSAsExpression（Complexity 1）をreturn文で使用（括弧が必要）
@@ -63,6 +79,74 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
         function getValue() {
           return (element.value as string)
         }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 型注釈付き変数をreturn文で使用（型注釈をasで保持）
+    {
+      code: `
+        function getValue() {
+          const value: string = getStringValue()
+          return value
+        }
+      `,
+      output: `
+        function getValue() {
+          return (getStringValue() as string)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 型注釈付き変数を通常の文で使用（型注釈をasで保持）
+    {
+      code: `
+        const value: number = 123
+        console.log(value)
+      `,
+      output: `
+        console.log((123 as number))
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 型注釈付き変数（複雑な型）
+    {
+      code: `
+        const user: User | null = getUser()
+        console.log(user)
+      `,
+      output: `
+        console.log((getUser() as User | null))
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'user' },
+        },
+      ],
+    },
+    // 型注釈（Complexity 1）+ MemberExpression（Complexity 1）= 2、maxComplexity: 5なのでインライン化
+    {
+      code: `
+        const value: string = obj.property
+        console.log(value)
+      `,
+      output: `
+        console.log((obj.property as string))
       `,
       errors: [
         {

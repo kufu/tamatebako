@@ -35,25 +35,38 @@ function shouldSkipVariableExceptComplexity(node) {
     !node.init ||
     // ループ変数は対象外（for-in, for-of, for文のinit部分）
     (node.parent.parent && isLoopStatement(node.parent.parent)) ||
-    // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
-    (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
-    containsAwait(node.init) ||
-    // 関数式は除外（インライン化時に括弧が必要になり、可読性が下がるため）
-    node.init.type === 'ArrowFunctionExpression' ||
-    node.init.type === 'FunctionExpression' ||
-    // TaggedTemplateExpressionは除外（styled componentなど）
-    node.init.type === 'TaggedTemplateExpression'
+    containsAwait(node.init)
   ) {
     return true
+  }
+
+  switch (node.init.type) {
+    case 'CallExpression': {
+      // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
+      if (node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) {
+        return true
+      }
+
+      break
+    }
+    // 関数式は除外（インライン化時に括弧が必要になり、可読性が下がるため）
+    case 'ArrowFunctionExpression':
+    case 'FunctionExpression':
+    // TaggedTemplateExpressionは除外（styled componentなど）
+    case 'TaggedTemplateExpression':
+      return true
   }
 
   // export宣言された変数は除外（他のファイルから使用される可能性があるため）
   let current = node.parent
   while (current) {
-    if (current.type === 'ExportNamedDeclaration' || current.type === 'ExportDefaultDeclaration') {
-      return true
+    switch (current.type) {
+      case 'ExportNamedDeclaration':
+      case 'ExportDefaultDeclaration':
+        return true
     }
+
     current = current.parent
   }
 
@@ -69,15 +82,15 @@ function calculateUsageComplexity(usageNode, maxComplexity) {
   // 使用箇所が含まれるステートメントを探す
   let current = usageNode.parent
   while (current) {
-    if (
-      current.type === 'ExpressionStatement' ||
-      current.type === 'ReturnStatement' ||
-      current.type === 'IfStatement' ||
-      current.type === 'SwitchStatement' ||
-      current.type === 'VariableDeclaration'
-    ) {
-      return calculateComplexity(current, maxComplexity)
+    switch (current.type) {
+      case 'ExpressionStatement':
+      case 'ReturnStatement':
+      case 'IfStatement':
+      case 'SwitchStatement':
+      case 'VariableDeclaration':
+        return calculateComplexity(current, maxComplexity)
     }
+
     current = current.parent
   }
   return 0
@@ -95,13 +108,14 @@ function isUsedInReturnStatement(usageNode) {
     if (current.type === 'ReturnStatement') {
       // return文の引数が単一の変数（Identifier）である場合のみtrue
       return current.argument && current.argument.type === 'Identifier' && current.argument === usageNode
-    }
-    // 関数スコープを超えたら終了
-    if (isFunctionScope(current)) {
+    } else if (isFunctionScope(current)) {
+      // 関数スコープを超えたら終了
       return false
     }
+
     current = current.parent
   }
+
   return false
 }
 
@@ -131,6 +145,7 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
     while (current) {
       if (current === declarationNode.init) return true
       if (current === declarationNode) return false
+
       current = current.parent
     }
     return false

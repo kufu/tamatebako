@@ -180,6 +180,8 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
   const statements = getStatements(scopeNode)
   const declarationIndex = statements.indexOf(variableDeclaration)
 
+  if (declarationIndex === -1) return { usages: [], crossedBarrier: false }
+
   for (let i = declarationIndex + 1; i < statements.length; i++) {
     traverse(statements[i])
   }

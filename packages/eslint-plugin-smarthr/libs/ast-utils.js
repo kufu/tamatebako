@@ -104,8 +104,8 @@ function calculateComplexity(node, maxComplexity) {
   let complexity = 0
 
   function traverse(n) {
-    // 早期終了: maxComplexityに達したら計算を中断
-    if (maxComplexity !== undefined && complexity >= maxComplexity) return
+    // 早期終了: maxComplexityを超えたら計算を中断
+    if (maxComplexity !== undefined && complexity > maxComplexity) return
 
     if (!n || typeof n !== 'object') return
 
@@ -136,9 +136,13 @@ function calculateComplexity(node, maxComplexity) {
       const child = n[key]
       if (child) {
         if (Array.isArray(child)) {
-          child.forEach(c => traverse(c))
+          for (const c of child) {
+            traverse(c)
+            if (maxComplexity !== undefined && complexity > maxComplexity) return
+          }
         } else if (typeof child === 'object' && child.type) {
           traverse(child)
+          if (maxComplexity !== undefined && complexity > maxComplexity) return
         }
       }
     }

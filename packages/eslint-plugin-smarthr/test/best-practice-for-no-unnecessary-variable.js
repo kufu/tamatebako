@@ -857,6 +857,74 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
+    // ダブル否定（!!）で使用される場合も括弧で囲む
+    {
+      code: `
+        const value = getValue()
+        const bool = !!value
+      `,
+      output: `
+        const bool = !!(getValue())
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // ダブル否定（!!）をif文で使用
+    {
+      code: `
+        const isValid = check()
+        if (!!isValid) doSomething()
+      `,
+      output: `
+        if (!!(check())) doSomething()
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'isValid' },
+        },
+      ],
+    },
+    // ExpressionStatementの先頭で使用される場合、セミコロンを前置
+    {
+      code: `
+        inputs[0].focus()
+        const input = inputs[0]
+        input.setSelectionRange(0, 0)
+      `,
+      output: `
+        inputs[0].focus()
+        ;inputs[0].setSelectionRange(0, 0)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'input' },
+        },
+      ],
+    },
+    // ExpressionStatementの先頭で使用（括弧が必要な場合）
+    {
+      code: `
+        doSomething()
+        const obj = { a: 1 }
+        obj.property()
+      `,
+      output: `
+        doSomething()
+        ;({ a: 1 }).property()
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'obj' },
+        },
+      ],
+    },
     // JSXElement（Complexity 2）をreturn文で使用
     {
       code: `

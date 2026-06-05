@@ -293,6 +293,20 @@ if (!isNothing) allN = false
 if (!(value === 'nothing')) allN = false
 ```
 
+```js
+// ExpressionStatementの先頭で使用される場合、セミコロンを前置
+// Before
+inputs[0].focus()
+const input = inputs[0]
+input.setSelectionRange(0, 0)
+
+// After
+inputs[0].focus()
+;inputs[0].setSelectionRange(0, 0)
+```
+
+**注意:** セミコロンの前置は、前の文とのメソッドチェーンを防ぐために行われます。
+
 ### 型注釈の保持（TypeScript）
 
 TypeScriptで型注釈が付いている変数は、インライン化時に`as`型アサーションとして型情報が保持されます。

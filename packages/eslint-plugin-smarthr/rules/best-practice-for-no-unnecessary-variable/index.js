@@ -239,6 +239,13 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
       initText = `(${initText})`
     }
 
+    // 使用箇所がExpressionStatementの先頭にある場合、セミコロンを前置
+    // （前の文とのメソッドチェーンを防ぐため）
+    const isAtStart = isAtStartOfExpressionStatement(usage)
+    if (isAtStart) {
+      initText = `;${initText}`
+    }
+
     // VariableDeclarationに含まれるdeclaratorが1つだけの場合は行全体を削除
     if (variableDeclaration.declarations.length === 1) {
       const text = sourceCode.text
@@ -287,6 +294,53 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
       fixer.replaceText(usage, initText)
     ]
   }
+}
+
+/**
+ * 使用箇所がExpressionStatementの式の先頭（左端）にあるかチェック
+ * 例: input.setSelectionRange(0, 0) のinputは先頭
+ *     console.log(x) のxは先頭ではない（consoleが先頭）
+ */
+function isAtStartOfExpressionStatement(usageNode) {
+  let current = usageNode
+  let parent = usageNode.parent
+
+  // 親を辿って、ExpressionStatementに到達するまでチェック
+  while (parent) {
+    if (parent.type === 'ExpressionStatement') {
+      // ExpressionStatementの式が現在のノードである場合、先頭
+      return parent.expression === current
+    }
+
+    // 親ノードのタイプによって、currentが左端（先頭）にあるかチェック
+    if (parent.type === 'MemberExpression') {
+      // obj.property の場合、objが左端
+      if (parent.object !== current) {
+        return false
+      }
+    } else if (parent.type === 'CallExpression') {
+      // func(arg) の場合、funcが左端（argは先頭ではない）
+      if (parent.callee !== current) {
+        return false
+      }
+    } else if (parent.type === 'UnaryExpression') {
+      // !x の場合、xが左端（単項演算子の引数）
+      // これは先頭と見なす
+    } else if (parent.type === 'TSAsExpression' || parent.type === 'TSTypeAssertion') {
+      // (x as Type) の場合、xが左端
+      if (parent.expression !== current) {
+        return false
+      }
+    } else {
+      // それ以外の構造（BinaryExpression、LogicalExpressionなど）
+      // これらは先頭ではない
+      return false
+    }
+
+    current = parent
+    parent = parent.parent
+  }
+  return false
 }
 
 /**

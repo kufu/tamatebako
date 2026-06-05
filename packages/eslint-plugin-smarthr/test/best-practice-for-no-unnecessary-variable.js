@@ -141,7 +141,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         })
       `,
     },
-    // return文以外：複雑な式は除外（デフォルトmaxComplexity: 3）
+    // return文以外：複雑な式は除外（引数なし関数呼び出しはComplexity 0なので、maxComplexity: 4で除外）
     {
       code: `
         function foo() {
@@ -149,6 +149,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           console.log(result)
         }
       `,
+      options: [{ maxComplexity: 4 }],
     },
     // return文：複雑さ以外の除外条件（await）は依然として適用
     {

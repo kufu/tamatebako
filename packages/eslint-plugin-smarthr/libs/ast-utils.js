@@ -111,6 +111,11 @@ function calculateComplexity(node, maxComplexity) {
 
     switch (n.type) {
       case 'CallExpression':
+        // 引数なしの関数呼び出しは複雑さにカウントしない
+        if (n.arguments.length > 0) {
+          complexity++
+        }
+        break
       case 'MemberExpression':
       case 'BinaryExpression':
       case 'LogicalExpression':

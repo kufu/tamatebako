@@ -29,13 +29,13 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
       `,
       options: [{ maxComplexity: 3 }],
     },
-    // 型注釈（Complexity 1）+ CallExpression（Complexity 1）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
+    // 型注釈（Complexity 1）+ CallExpression（引数なしComplexity 0）+ console.log（Complexity 2）= 3、maxComplexity: 2で除外
     {
       code: `
         const value: string = getValue()
         console.log(value)
       `,
-      options: [{ maxComplexity: 3 }],
+      options: [{ maxComplexity: 2 }],
     },
     // 型注釈（Complexity 1）+ MemberExpression（Complexity 1）+ console.log（Complexity 2）= 4、maxComplexity: 3で除外
     {

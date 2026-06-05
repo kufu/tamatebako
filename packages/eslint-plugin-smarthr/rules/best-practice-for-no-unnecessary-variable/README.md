@@ -58,7 +58,7 @@ return obj.property
 #### 複雑さの計算方法
 
 **複雑さ +1:**
-- 関数呼び出し (`CallExpression`)
+- 関数呼び出し (`CallExpression`) ※引数がある場合のみ
 - プロパティアクセス (`MemberExpression`)
 - 二項演算子 (`BinaryExpression`)
 - 論理演算子 (`LogicalExpression`)
@@ -66,6 +66,9 @@ return obj.property
 - スプレッド構文 (`SpreadElement`)
 - 型アサーション (`TSAsExpression`, `TSTypeAssertion`)
 - 型注釈 (TypeScript: `const x: Type = ...`)
+
+**複雑さ +0:**
+- 引数なし関数呼び出し (`getValue()`, `Date.now()` など)
 
 **複雑さ +2:**
 - 三項演算子 (`ConditionalExpression`)
@@ -80,10 +83,18 @@ return obj.property
 **総合複雑さ = 変数の式の複雑さ + 使用箇所の複雑さ**
 
 ```js
-// 変数の式: obj.method() = 2 (MemberExpression + CallExpression)
+// 変数の式: obj.method() = 1 (MemberExpression) ※引数なしCallExpressionは0
 // 使用箇所: console.log(x) = 2 (MemberExpression + CallExpression)
-// 総合複雑さ: 4
+// 総合複雑さ: 3
 const result = obj.method()
+console.log(result)
+// → maxComplexity: 5 なのでインライン化される
+
+// 引数ありの場合
+// 変数の式: obj.method(arg) = 2 (MemberExpression + CallExpression)
+// 使用箇所: console.log(x) = 2
+// 総合複雑さ: 4
+const result = obj.method(arg)
 console.log(result)
 // → maxComplexity: 5 なのでインライン化される
 ```
@@ -95,17 +106,17 @@ console.log(result)
 ```js
 // return文で単一変数を返す場合
 function foo() {
-  const result = obj.method().another().property  // 複雑さ 3
+  const result = obj.method().another().property  // 複雑さ 3 (MemberExpression x3、引数なしCallExpression x2は0)
   return result  // 使用箇所の複雑さ 0
 }
 // → 総合複雑さ 0 なのでインライン化される
 
 // return文で式を含む場合（特別扱いされない）
 function bar() {
-  const result = obj.method()  // 複雑さ 2
+  const result = obj.method()  // 複雑さ 1 (MemberExpression、引数なしCallExpressionは0)
   return result.property  // 使用箇所の複雑さ 1
 }
-// → 総合複雑さ 3 なのでインライン化される（maxComplexity: 5）
+// → 総合複雑さ 2 なのでインライン化される（maxComplexity: 5）
 ```
 
 ## ❌ Incorrect
@@ -217,7 +228,7 @@ export type Config = typeof API_URL
 
 ```js
 // 複雑な式は除外（デフォルト maxComplexity: 5）
-// 複雑さ 6 (MemberExpression x2 + CallExpression x2 + ArrowFunction x2) + console.log (複雑さ 2) = 8
+// 複雑さ 6 (MemberExpression x2 + CallExpression x1 + ArrowFunction x2 + 引数なしCallExpression x1は0) + console.log (複雑さ 2) = 8
 const result = array.map(() => obj.method())
 console.log(result)
 ```

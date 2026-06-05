@@ -116,6 +116,8 @@ function calculateComplexity(node, maxComplexity) {
       case 'LogicalExpression':
       case 'NewExpression':
       case 'SpreadElement':
+      case 'TSAsExpression':
+      case 'TSTypeAssertion':
         complexity++
         break
       case 'ConditionalExpression':

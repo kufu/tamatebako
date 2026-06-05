@@ -84,14 +84,17 @@ function calculateUsageComplexity(usageNode, maxComplexity) {
 }
 
 /**
- * 変数がreturn文で使用されているかを判定
+ * 変数がreturn文で単一の変数として使用されているかを判定
+ * return x → true
+ * return x.property → false
+ * return func(x) → false
  */
 function isUsedInReturnStatement(usageNode) {
   let current = usageNode.parent
   while (current) {
     if (current.type === 'ReturnStatement') {
-      // return文の引数部分であることを確認
-      return current.argument && containsNode(current.argument, usageNode)
+      // return文の引数が単一の変数（Identifier）である場合のみtrue
+      return current.argument && current.argument.type === 'Identifier' && current.argument === usageNode
     }
     // 関数スコープを超えたら終了
     if (isFunctionScope(current)) {

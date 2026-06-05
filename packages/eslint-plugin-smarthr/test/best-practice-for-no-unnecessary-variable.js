@@ -231,6 +231,33 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         console.log(result)
       `,
     },
+    // return文で変数のプロパティを返す場合（単一変数ではない）
+    {
+      code: `
+        function foo() {
+          const result = models.find((model) => model.model === match)
+          return result.name
+        }
+      `,
+    },
+    // return文で変数を関数の引数として使う場合（単一変数ではない）
+    {
+      code: `
+        function foo() {
+          const result = models.find((model) => model.model === match)
+          return Response.json({ message: result.name })
+        }
+      `,
+    },
+    // return文でテンプレートリテラル内で変数を使う場合（単一変数ではない）
+    {
+      code: `
+        function foo() {
+          const result = models.find((model) => model.model === match)
+          return \`Result: \${result.name}\`
+        }
+      `,
+    },
   ],
   invalid: [
     // 基本パターン

@@ -221,6 +221,14 @@ console.log(getTitle())
 ```
 
 ```js
+// TaggedTemplateExpression（styled componentなど）
+const StyledDiv = styled.div`
+  color: red;
+`
+console.log(StyledDiv)
+```
+
+```js
 // export宣言された変数は除外（他のファイルから参照される可能性があるため）
 export const API_URL = 'https://example.com/api'
 export type Config = typeof API_URL
@@ -243,9 +251,26 @@ console.log(result)
 ```
 
 ```js
+// var宣言は除外（スコープの扱いが複雑なため）
+var x = getValue()
+console.log(x)
+```
+
+```js
 // 分割代入は除外（将来的に対応予定: object, array両方）
 const { name } = user
 console.log(name)
+```
+
+```js
+// ループの宣言部分で定義される変数（for-in, for-of, for文のinit）
+for (const item of items) {
+  console.log(item)
+}
+
+for (let i = 0; i < 10; i++) {
+  console.log(i)
+}
 ```
 
 ```js
@@ -354,6 +379,20 @@ function getUser() {
 ```
 
 **注意:** 型注釈は複雑度+1として計算されます。
+
+### 複数変数宣言への対応
+
+複数の変数を同時に宣言している場合、対象の変数のみが削除されます。
+
+```js
+// Before
+const x = 1, y = getValue(), z = 3
+console.log(y)
+
+// After
+const x = 1, z = 3
+console.log(getValue())
+```
 
 ### フォーマット
 

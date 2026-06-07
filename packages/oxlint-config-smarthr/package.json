@@ -28,8 +28,10 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
+  "dependencies": {
+    "eslint-plugin-smarthr": ">=6.14.0"
+  },
   "peerDependencies": {
-    "eslint-plugin-smarthr": ">=6.14.0",
     "oxlint": ">=1.0.0"
   }
 }

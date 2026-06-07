@@ -300,13 +300,12 @@ function prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation) {
 function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
   return function(fixer) {
     const variableDeclaration = declarationNode.parent
-    const initText = prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation)
 
     // 単一declaratorの場合は行全体を削除
     if (variableDeclaration.declarations.length === 1) {
       return [
         fixer.removeRange(getLineRemovalRange(sourceCode, variableDeclaration)),
-        fixer.replaceText(usage, initText)
+        fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation))
       ]
     }
 
@@ -316,7 +315,7 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
     return range
       ? [
           fixer.removeRange(range),
-          fixer.replaceText(usage, initText)
+          fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation))
         ]
       : []
   }

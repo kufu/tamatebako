@@ -312,12 +312,13 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
 
     // 複数declaratorの場合は該当部分のみを削除
     const range = getDeclaratorRemovalRange(declarationNode, variableDeclaration)
-    if (!range) return []
 
-    return [
-      fixer.removeRange(range),
-      fixer.replaceText(usage, initText)
-    ]
+    return range
+      ? [
+          fixer.removeRange(range),
+          fixer.replaceText(usage, initText)
+        ]
+      : []
   }
 }
 
@@ -332,12 +333,10 @@ function isAtStartOfExpressionStatement(usageNode) {
 
   // 親を辿って、ExpressionStatementに到達するまでチェック
   while (parent) {
-    if (parent.type === 'ExpressionStatement') {
-      return parent.expression === current
-    }
-
-    // 親ノードのタイプによって、currentが左端（先頭）にあるかチェック
     switch (parent.type) {
+      case 'ExpressionStatement':
+        return parent.expression === current
+      // ここから下のcaseで親ノードのタイプによって、currentが左端（先頭）にあるかチェック
       case 'MemberExpression':
         // obj.property の場合、objが左端
         if (parent.object !== current) return false
@@ -403,11 +402,10 @@ function analyzeVariable(sourceCode, node, options = {}) {
   const varName = node.id.name
   const { usages, crossedBarrier } = getVariableUsagesInScope(sourceCode, varName, node)
 
-  // バリアを超えている場合は対象外
-  if (crossedBarrier) return null
-
-  // 使用回数が1回のみ
-  if (usages.length !== 1) return null
+  // 以下の条件に該当する場合は対象外
+  if (crossedBarrier || usages.length !== 1) {
+    return null
+  }
 
   const usage = usages[0]
   const typeAnnotation = getTypeAnnotationText(sourceCode, node)

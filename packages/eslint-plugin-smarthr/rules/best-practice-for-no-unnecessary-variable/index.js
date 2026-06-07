@@ -275,13 +275,14 @@ function getDeclaratorRemovalRange(declarationNode, variableDeclaration) {
 function prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation) {
   let initText = sourceCode.getText(declarationNode.init)
 
-  // 使用箇所が単項演算子の引数の場合は括弧が必要
-  const usageNeedsParentheses = usage.parent && usage.parent.type === 'UnaryExpression' && usage.parent.argument === usage
-
   // 型注釈がある場合は as Type を追加
   if (typeAnnotation) {
     initText = `(${initText} as ${typeAnnotation})`
-  } else if (needsParentheses(declarationNode.init) || usageNeedsParentheses) {
+  } else if (
+    needsParentheses(declarationNode.init) ||
+    // 使用箇所が単項演算子の引数の場合は括弧が必要
+    usage.parent && usage.parent.type === 'UnaryExpression' && usage.parent.argument === usage
+  ) {
     // 括弧が必要な式の場合は括弧で囲む
     initText = `(${initText})`
   }

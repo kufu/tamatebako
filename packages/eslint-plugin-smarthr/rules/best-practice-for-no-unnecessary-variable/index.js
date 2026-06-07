@@ -258,11 +258,12 @@ function getDeclaratorRemovalRange(declarationNode, variableDeclaration) {
   const declarators = variableDeclaration.declarations
   const index = declarators.indexOf(declarationNode)
 
-  if (index === -1) return null
-
-  // 最初のdeclarator: 次のdeclaratorの前のカンマまで削除
-  if (index === 0) {
-    return [declarationNode.range[0], declarators[1].range[0]]
+  switch (index) {
+    case -1:
+      return null
+    // 最初のdeclarator: 次のdeclaratorの前のカンマまで削除
+    case 0:
+      return [declarationNode.range[0], declarators[1].range[0]]
   }
 
   // 最後以外のdeclarator: カンマを含めて削除

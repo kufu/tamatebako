@@ -44,20 +44,12 @@ function shouldSkipVariableExceptComplexity(node) {
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
     containsAwait(node.init) ||
     // UPPER_SNAKE_CASE形式の定数は除外（慣習的な定数命名）
-    UPPER_SNAKE_CASE_PATTERN.test(node.id.name)
+    UPPER_SNAKE_CASE_PATTERN.test(node.id.name) ||
+    // 関数式、TaggedTemplateExpressionは除外
+    EXCLUDED_INIT_TYPES.includes(node.init.type) ||
+    // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
+    (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use'))
   ) {
-    return true
-  }
-
-  // 関数式、TaggedTemplateExpressionは除外
-  if (EXCLUDED_INIT_TYPES.includes(node.init.type)) {
-    return true
-  }
-
-  // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
-  if (node.init.type === 'CallExpression' &&
-      node.init.callee.type === 'Identifier' &&
-      node.init.callee.name.startsWith('use')) {
     return true
   }
 
@@ -80,13 +72,10 @@ function shouldSkipVariableExceptComplexity(node) {
  * @returns {string|null} 型注釈のテキスト（`: Type`の形式から`Type`部分のみ）
  */
 function getTypeAnnotationText(sourceCode, node) {
-  if (node.id.typeAnnotation) {
-    const typeAnnotation = node.id.typeAnnotation
-    const typeText = sourceCode.getText(typeAnnotation)
+  return node.id.typeAnnotation
     // `: Type` の形式から `: ` を除去
-    return typeText.replace(/^:\s*/, '')
-  }
-  return null
+    ? sourceCode.getText(node.id.typeAnnotation).replace(/^:\s*/, '')
+    : null
 }
 
 /**
@@ -139,7 +128,7 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
   let scopeNode = variableDeclaration.parent
 
   // BlockStatementまたはProgramまで遡る
-  while (scopeNode && scopeNode.type !== 'Program' && scopeNode.type !== 'BlockStatement') {
+  while (scopeNode && scopeNode.type !== 'BlockStatement' && scopeNode.type !== 'Program') {
     scopeNode = scopeNode.parent
   }
 
@@ -153,11 +142,18 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
   function isInsideInit(node) {
     let current = node
     while (current) {
-      if (current === declarationNode.init) return true
-      if (current === declarationNode) return false
+      switch (current) {
+        case declarationNode: {
+          return false
+        }
+        case declarationNode.init: {
+          return true
+        }
+      }
 
       current = current.parent
     }
+
     return false
   }
 
@@ -206,13 +202,14 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
 
     // 子ノードを再帰的に探索
     for (const key in node) {
-      if (key === 'parent') continue
-      const child = node[key]
-      if (child) {
-        if (Array.isArray(child)) {
-          child.forEach(c => traverse(c))
-        } else if (typeof child === 'object' && child.type) {
-          traverse(child)
+      if (key !== 'parent') {
+        const child = node[key]
+        if (child) {
+          if (Array.isArray(child)) {
+            child.forEach(c => traverse(c))
+          } else if (typeof child === 'object' && child.type) {
+            traverse(child)
+          }
         }
       }
     }
@@ -265,13 +262,11 @@ function getDeclaratorRemovalRange(declarationNode, variableDeclaration) {
 
   // 最初のdeclarator: 次のdeclaratorの前のカンマまで削除
   if (index === 0) {
-    const nextDeclarator = declarators[1]
-    return [declarationNode.range[0], nextDeclarator.range[0]]
+    return [declarationNode.range[0], declarators[1].range[0]]
   }
 
   // 最後以外のdeclarator: カンマを含めて削除
-  const prevDeclarator = declarators[index - 1]
-  return [prevDeclarator.range[1], declarationNode.range[1]]
+  return [declarators[index - 1].range[1], declarationNode.range[1]]
 }
 
 /**
@@ -309,9 +304,8 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
 
     // 単一declaratorの場合は行全体を削除
     if (variableDeclaration.declarations.length === 1) {
-      const range = getLineRemovalRange(sourceCode, variableDeclaration)
       return [
-        fixer.removeRange(range),
+        fixer.removeRange(getLineRemovalRange(sourceCode, variableDeclaration)),
         fixer.replaceText(usage, initText)
       ]
     }
@@ -450,14 +444,15 @@ module.exports = {
     return {
       'VariableDeclarator': (node) => {
         const analysis = analyzeVariable(sourceCode, node, options)
-        if (!analysis) return
 
-        context.report({
-          node: analysis.node,
-          messageId: 'inlineVariable',
-          data: { name: analysis.varName },
-          fix: createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation),
-        })
+        if (analysis) {
+          context.report({
+            node: analysis.node,
+            messageId: 'inlineVariable',
+            data: { name: analysis.varName },
+            fix: createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation),
+          })
+        }
       },
     }
   },

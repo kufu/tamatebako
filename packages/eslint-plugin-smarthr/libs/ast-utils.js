@@ -16,6 +16,15 @@ const LOOP_STATEMENT_TYPES = new Set([
   'DoWhileStatement',
 ])
 
+const NEEDING_PARENS_TYPES = new Set([
+  'NewExpression',
+  'ObjectExpression',
+  'TSAsExpression',
+  'TSNonNullExpression',
+  'TSTypeAssertion',
+  'ConditionalExpression',
+])
+
 /**
  * ノードが関数スコープかどうか判定
  */
@@ -104,10 +113,13 @@ function calculateComplexity(node, maxComplexity) {
   let complexity = 0
 
   function traverse(n) {
-    // 早期終了: maxComplexityを超えたら計算を中断
-    if (maxComplexity !== undefined && complexity > maxComplexity) return
-
-    if (!n || typeof n !== 'object') return
+    if (
+      !n || typeof n !== 'object' ||
+      // maxComplexityを超えたら計算を中断
+      maxComplexity !== undefined && complexity > maxComplexity
+    ) {
+      return
+    }
 
     switch (n.type) {
       case 'CallExpression':
@@ -137,17 +149,19 @@ function calculateComplexity(node, maxComplexity) {
 
     // 再帰的に子ノードを探索
     for (const key in n) {
-      if (key === 'parent') continue
-      const child = n[key]
-      if (child) {
-        if (Array.isArray(child)) {
-          for (const c of child) {
-            traverse(c)
+      if (key !== 'parent') {
+        const child = n[key]
+
+        if (child) {
+          if (Array.isArray(child)) {
+            for (const c of child) {
+              traverse(c)
+              if (maxComplexity !== undefined && complexity > maxComplexity) return
+            }
+          } else if (typeof child === 'object' && child.type) {
+            traverse(child)
             if (maxComplexity !== undefined && complexity > maxComplexity) return
           }
-        } else if (typeof child === 'object' && child.type) {
-          traverse(child)
-          if (maxComplexity !== undefined && complexity > maxComplexity) return
         }
       }
     }
@@ -161,15 +175,7 @@ function calculateComplexity(node, maxComplexity) {
  * インライン化時に括弧が必要な式タイプかどうかを判定
  */
 function needsParentheses(node) {
-  const typesNeedingParens = new Set([
-    'NewExpression',
-    'ObjectExpression',
-    'TSAsExpression',
-    'TSNonNullExpression',
-    'TSTypeAssertion',
-    'ConditionalExpression',
-  ])
-  return typesNeedingParens.has(node.type)
+  return NEEDING_PARENS_TYPES.has(node.type)
 }
 
 module.exports = {

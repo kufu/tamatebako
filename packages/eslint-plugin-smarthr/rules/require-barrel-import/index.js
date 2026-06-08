@@ -64,9 +64,12 @@ const REPLACE_PATHS_INFO = Object.entries(replacePaths).map(([key, values]) => {
 // @/ と ~/ のパスのみをrootとする（READMEの仕様通り）
 const ALL_ROOT_PATHS = (() => {
   const rootKeys = ['@/', '~/']
-  return REPLACE_PATHS_INFO
-    .filter(info => rootKeys.includes(info.key))
-    .flatMap(info => info.resolvedPaths)
+  return REPLACE_PATHS_INFO.reduce((acc, info) => {
+    if (rootKeys.includes(info.key)) {
+      acc.push(...info.resolvedPaths)
+    }
+    return acc
+  }, [])
 })()
 
 /**

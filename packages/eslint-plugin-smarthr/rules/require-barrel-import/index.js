@@ -196,8 +196,13 @@ const checkAllowedImports = (node, importerDir, targetAllowedImports, allowedImp
         isDenyPath = true
         deniedModules.push(true)
       } else {
-        const importedNames = node.specifiers.map(s => s.imported?.name)
-        const notAllowedModules = importedNames.filter(name => !allowedModules.includes(name))
+        const notAllowedModules = node.specifiers.reduce((acc, s) => {
+          const name = s.imported?.name
+          if (name && !allowedModules.includes(name)) {
+            acc.push(name)
+          }
+          return acc
+        }, [])
         deniedModules.push(notAllowedModules)
       }
     }

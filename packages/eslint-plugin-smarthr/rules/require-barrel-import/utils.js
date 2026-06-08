@@ -12,10 +12,7 @@ const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
  * @param {Array<string>} barrelFileNames - バレルファイル名のリスト（index, client, server等）
  * @returns {boolean}
  */
-const isBarrelFile = (filePath, barrelFileNames) => {
-  const fileName = path.basename(filePath, path.extname(filePath))
-  return barrelFileNames.includes(fileName)
-}
+const isBarrelFile = (filePath, barrelFileNames) => barrelFileNames.includes(path.basename(filePath, path.extname(filePath)))
 
 /**
  * バレルファイルの純粋性をチェックするビジター
@@ -63,9 +60,7 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
  * @param {string} filePath - ファイルパス
  * @returns {string} ファイル名（拡張子なし）
  */
-const extractFileName = (filePath) => {
-  return filePath.split('/').pop().replace(REGEX_BARREL_FILE_EXT, '')
-}
+const extractFileName = (filePath) => filePath.split('/').pop().replace(REGEX_BARREL_FILE_EXT, '')
 
 /**
  * 指定されたbarrelファイル名の候補パスを生成する
@@ -73,9 +68,7 @@ const extractFileName = (filePath) => {
  * @param {Array<string>} fileNames - barrelファイル名の配列
  * @returns {Array<string>} パス候補の配列
  */
-const generateBarrelFilePaths = (dir, fileNames) => {
-  return fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
-}
+const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
 
 /**
  * 同じディレクトリ内の他のバレルファイルを取得
@@ -84,16 +77,20 @@ const generateBarrelFilePaths = (dir, fileNames) => {
  * @returns {Array<string>} 他のバレルファイルのパスの配列
  */
 const getSiblingBarrelFiles = (currentBarrelPath, barrelFileNames) => {
-  const dir = getParentDir(currentBarrelPath)
   const currentFileName = extractFileName(currentBarrelPath)
 
-  return generateBarrelFilePaths(dir, barrelFileNames)
-    .filter(barrelPath => {
-      return barrelPath !== currentBarrelPath &&
-             extractFileName(barrelPath) !== currentFileName &&
-             fs.existsSync(barrelPath)
-    })
+  return generateBarrelFilePaths(getParentDir(currentBarrelPath), barrelFileNames)
+    .filter(
+      barrelPath =>
+        barrelPath !== currentBarrelPath &&
+        extractFileName(barrelPath) !== currentFileName &&
+        fs.existsSync(barrelPath)
+    )
 }
+
+// export { A, B } from './file' パターン
+const NAMED_EXPORT_PATTERN_REGEX = /export\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"]/g
+const EXPORT_AS_REGEX = /^(.+?)\s+as\s+(.+)$/
 
 /**
  * バレルファイルからexportされている識別子を抽出
@@ -106,13 +103,11 @@ const extractExportsFromBarrel = (barrelFilePath) => {
   try {
     const content = fs.readFileSync(barrelFilePath, 'utf-8')
 
-    // export { A, B } from './file' パターン
-    const namedExportPattern = /export\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'"]+)['"]/g
     let match
-    while ((match = namedExportPattern.exec(content)) !== null) {
+    while ((match = NAMED_EXPORT_PATTERN_REGEX.exec(content)) !== null) {
       const exportedNames = match[1].split(',').map(name => {
         // "as" を使っている場合は、asの後の名前を取得
-        const asMatch = name.trim().match(/^(.+?)\s+as\s+(.+)$/)
+        const asMatch = name.trim().match(EXPORT_AS_REGEX)
         return asMatch ? asMatch[2].trim() : name.trim()
       })
       exportedNames.forEach(name => exports.add(name))
@@ -175,19 +170,16 @@ const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileN
  * @returns {string} エラーメッセージ
  */
 const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath) => {
-  const currentFileName = path.basename(currentFilePath)
   const siblingFileName = path.basename(siblingPath)
-  const currentBarrelName = extractFileName(currentFilePath)
-  const siblingBarrelName = extractFileName(siblingPath)
 
   return `'${exportedName}' は ${siblingFileName} でも export されています。同じディレクトリの複数のバレルファイルから同じ識別子を export することは禁止されています。
 
-現在のファイル: ${currentFileName}
+現在のファイル: ${path.basename(currentFilePath)}
 重複が検出されたファイル: ${siblingFileName}
 
 解決方法:
   - どちらか一方のバレルファイルから '${exportedName}' の export を削除してください
-  - または、${currentBarrelName} と ${siblingBarrelName} で異なるモジュールを export するように整理してください
+  - または、${extractFileName(currentFilePath)} と ${extractFileName(siblingPath)} で異なるモジュールを export するように整理してください
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`
 }

@@ -128,6 +128,70 @@ const extractExportsFromBarrel = (barrelFilePath) => {
   return exports
 }
 
+/**
+ * 重複するexportを検出する
+ * @param {string} currentFilePath - 現在のバレルファイルのパス
+ * @param {Array<{node: object, exportedName: string}>} currentBarrelExports - 現在のバレルファイルのexport一覧
+ * @param {Array<string>} barrelFileNames - バレルファイル名のリスト
+ * @returns {Array<{node: object, exportedName: string, siblingPath: string}>} 重複しているexportの配列
+ */
+const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileNames) => {
+  if (currentBarrelExports.length === 0) {
+    return []
+  }
+
+  const siblingBarrels = getSiblingBarrelFiles(currentFilePath, barrelFileNames)
+  if (siblingBarrels.length === 0) {
+    return []
+  }
+
+  // 各兄弟バレルファイルのexportを取得
+  const siblingExportsMap = new Map()
+  for (const siblingPath of siblingBarrels) {
+    const exports = extractExportsFromBarrel(siblingPath)
+    if (exports.size > 0) {
+      siblingExportsMap.set(siblingPath, exports)
+    }
+  }
+
+  // 重複をチェック
+  const duplicates = []
+  for (const { node, exportedName } of currentBarrelExports) {
+    for (const [siblingPath, siblingExports] of siblingExportsMap) {
+      if (siblingExports.has(exportedName)) {
+        duplicates.push({ node, exportedName, siblingPath })
+      }
+    }
+  }
+
+  return duplicates
+}
+
+/**
+ * 重複exportのエラーメッセージを生成する
+ * @param {string} exportedName - export識別子名
+ * @param {string} currentFilePath - 現在のファイルパス
+ * @param {string} siblingPath - 重複が検出された兄弟ファイルパス
+ * @returns {string} エラーメッセージ
+ */
+const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath) => {
+  const currentFileName = path.basename(currentFilePath)
+  const siblingFileName = path.basename(siblingPath)
+  const currentBarrelName = extractFileName(currentFilePath)
+  const siblingBarrelName = extractFileName(siblingPath)
+
+  return `'${exportedName}' は ${siblingFileName} でも export されています。同じディレクトリの複数のバレルファイルから同じ識別子を export することは禁止されています。
+
+現在のファイル: ${currentFileName}
+重複が検出されたファイル: ${siblingFileName}
+
+解決方法:
+  - どちらか一方のバレルファイルから '${exportedName}' の export を削除してください
+  - または、${currentBarrelName} と ${siblingBarrelName} で異なるモジュールを export するように整理してください
+
+詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`
+}
+
 module.exports = {
   // 定数
   REGEX_BARREL_FILE_EXT,
@@ -139,4 +203,6 @@ module.exports = {
   generateBarrelFilePaths,
   getSiblingBarrelFiles,
   extractExportsFromBarrel,
+  findDuplicateExports,
+  createDuplicateExportMessage,
 }

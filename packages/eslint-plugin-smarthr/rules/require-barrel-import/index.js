@@ -3,6 +3,8 @@ const fs = require('fs')
 const { replacePaths, rootPath } = require('../../libs/common')
 const { getParentDir } = require('../../libs/util')
 const {
+  REGEX_BARREL_FILE_EXT,
+  TARGET_EXTS,
   isBarrelFile,
   createBarrelPurityVisitor,
   extractFileName,
@@ -44,8 +46,6 @@ const CWD = process.cwd()
 const REGEX_UNNECESSARY_SLASH = /(\/)+/g
 const REGEX_ROOT_PATH = new RegExp(`^${rootPath}/index\.`)
 const REGEX_INDEX_FILE = /\/index\.(ts|js)x?$/
-const REGEX_BARREL_FILE_EXT = /\.(ts|js)x?$/
-const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 
 // Path aliasの情報を事前計算してキャッシュ
 const REPLACE_PATHS_INFO = Object.entries(replacePaths).map(([key, values]) => {

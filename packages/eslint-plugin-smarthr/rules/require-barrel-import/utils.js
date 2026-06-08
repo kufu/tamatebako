@@ -129,6 +129,10 @@ const extractExportsFromBarrel = (barrelFilePath) => {
 }
 
 module.exports = {
+  // 定数
+  REGEX_BARREL_FILE_EXT,
+  TARGET_EXTS,
+  // 関数
   isBarrelFile,
   createBarrelPurityVisitor,
   extractFileName,

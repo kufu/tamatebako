@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const { replacePaths, rootPath } = require('../../libs/common')
 const { getParentDir } = require('../../libs/util')
-const { createBarrelPurityVisitor } = require('./barrel-purity-checker')
+const { isBarrelFile, createBarrelPurityVisitor } = require('./barrel-purity-checker')
 
 const SCHEMA = [
   {
@@ -131,17 +131,6 @@ const generateBarrelFilePaths = (dir, fileNames) => {
  */
 const extractFileName = (filePath) => {
   return filePath.split('/').pop().replace(REGEX_BARREL_FILE_EXT, '')
-}
-
-/**
- * ファイルが指定されたbarrelファイルのいずれかであるかチェック
- * @param {string} filePath - チェックするファイルパス
- * @param {Array<string>} barrelFileNames - バレルファイル名のリスト（index, client, server等）
- * @returns {boolean} バレルファイルであればtrue
- */
-const isBarrelFile = (filePath, barrelFileNames) => {
-  const fileName = extractFileName(filePath)
-  return barrelFileNames.includes(fileName)
 }
 
 /**

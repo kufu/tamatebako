@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@commitlint/cli':
-        specifier: ^21.0.1
+        specifier: ^21.0.2
         version: 21.0.2(@types/node@20.19.42)(conventional-commits-parser@6.3.0)(typescript@6.0.3)
       '@commitlint/config-conventional':
-        specifier: ^21.0.1
+        specifier: ^21.0.2
         version: 21.0.2
       '@types/jest':
         specifier: ^30.0.0
@@ -3574,11 +3574,6 @@ packages:
 
   eslint-plugin-smarthr@6.14.0:
     resolution: {integrity: sha512-s5UPhg6XT1GRhbKG9xFaPTt1c+JkyFAC3SfNxO5BnrPKUVnXZBQ7qWNXbth5qb3qEAYJm4M+ZExc60MC+uQJzQ==}
-    peerDependencies:
-      eslint: ^9
-
-  eslint-plugin-smarthr@6.16.0:
-    resolution: {integrity: sha512-yU+cmtEnogu2ef0AVwu80v8+RQIPDfXNKMGfSWGbuY6qzdVvfxnXLRT5azmpEgwv+nNpz61FBpRq7OvxZo010A==}
     peerDependencies:
       eslint: ^9
 
@@ -10008,11 +10003,6 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-smarthr@6.14.0(eslint@9.39.4(jiti@2.4.2)):
-    dependencies:
-      eslint: 9.39.4(jiti@2.4.2)
-      json5: 2.2.3
-
-  eslint-plugin-smarthr@6.16.0(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

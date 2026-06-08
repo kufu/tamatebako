@@ -493,6 +493,12 @@ export * from '${existingBarrelWithAlias}'
           return
         }
 
+        // import元とimport先が同じディレクトリにあるかチェック
+        // 異なるディレクトリ（親→子、子→親）の場合はスキップ
+        if (importerDir !== barrelDir) {
+          return
+        }
+
         // import先が自分自身の場合はスキップ
         const importerPath = context.filename
         const isImportingSelf = importedPathCandidates.includes(importerPath)

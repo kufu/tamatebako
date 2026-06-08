@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.5...oxlint-config-smarthr-v0.1.6) (2026-06-08)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthr の eslint-plugin-smarthr への依存を dependencies に移動 ([#1338](https://github.com/kufu/tamatebako/issues/1338)) ([2fa5fd7](https://github.com/kufu/tamatebako/commit/2fa5fd7659e4843518aca710d228201d79f0b34b))
+
 ## [0.1.5](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.4...oxlint-config-smarthr-v0.1.5) (2026-05-19)
 
 

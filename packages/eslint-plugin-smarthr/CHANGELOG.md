@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.17.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.16.0...eslint-plugin-smarthr-v6.17.0) (2026-06-08)
+
+
+### Features
+
+* add smarthr-ui v94 to v95 migrator ([#1334](https://github.com/kufu/tamatebako/issues/1334)) ([0d2692c](https://github.com/kufu/tamatebako/commit/0d2692cdf272f32f730623b672594c0898155742))
+* best-practice-for-lazy-variable ルールを追加 ([#1335](https://github.com/kufu/tamatebako/issues/1335)) ([a849c1c](https://github.com/kufu/tamatebako/commit/a849c1cb5bf5a7e940ff56b75d11c93ffb79e9da))
+
 ## [6.16.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.15.0...eslint-plugin-smarthr-v6.16.0) (2026-05-19)
 
 

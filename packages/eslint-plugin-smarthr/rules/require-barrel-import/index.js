@@ -403,14 +403,9 @@ module.exports = {
           const barrelDir = path.dirname(directBarrelPath)
 
           // import元がバレルと同階層、またはバレルディレクトリ以下にある場合はNG
-          const isSameLevelOrChild = importerDir === barrelDir || importerDir.startsWith(barrelDir + '/')
-
-          if (isSameLevelOrChild) {
+          if (importerDir === barrelDir || importerDir.startsWith(barrelDir + '/')) {
             // import元がbarrelファイルの場合は、より詳細なチェック（cross-barrel import check）に任せる
-            const importerFileName = path.basename(context.filename, path.extname(context.filename))
-            const isImporterBarrel = barrelFileNames.includes(importerFileName)
-
-            if (!isImporterBarrel) {
+            if (!isBarrelFile(context.filename, barrelFileNames)) {
               // import元が通常ファイルの場合のみここでエラー
               const barrelWithAlias = convertToPathAlias(directBarrelPath)
 
@@ -427,10 +422,9 @@ module.exports = {
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
               })
               return
-            }
-            // import元がbarrelファイルの場合は、次のチェック（cross-barrel import check）に進む
-            // 同階層のbarrelファイルの場合、directBarrelPathをbarrelPathとして使用
-            if (importerDir === barrelDir) {
+            } else if (importerDir === barrelDir) {
+              // import元がbarrelファイルの場合は、次のチェック（cross-barrel import check）に進む
+              // 同階層のbarrelファイルの場合、directBarrelPathをbarrelPathとして使用
               useDirectBarrelAsBarrelPath = true
             }
           }
@@ -453,18 +447,18 @@ module.exports = {
 
       // barrel が見つからない、またはroot pathのindex.tsの場合はスキップ
       if (!barrelPath || REGEX_ROOT_PATH.test(barrelPath)) {
-          return
-        }
+        return
+      }
 
       // 親階層でclient.ts/server.tsが見つからず、index.tsのみ見つかった場合
       // barrelファイル自体からのimportでも一貫性チェックは実行
       if (missingBarrel) {
-          const missingBarrelWithAlias = convertToPathAlias(`${missingBarrel.parentDir}/${missingBarrel.fileName}`)
-          const existingBarrelWithAlias = convertToPathAlias(barrelPath).replace(REGEX_BARREL_FILE_EXT, '')
+        const missingBarrelWithAlias = convertToPathAlias(`${missingBarrel.parentDir}/${missingBarrel.fileName}`)
+        const existingBarrelWithAlias = convertToPathAlias(barrelPath).replace(REGEX_BARREL_FILE_EXT, '')
 
-          context.report({
-            node,
-            message: `${missingBarrelWithAlias}.ts を作成して、${existingBarrelWithAlias} のexportをまとめてください
+        context.report({
+          node,
+          message: `${missingBarrelWithAlias}.ts を作成して、${existingBarrelWithAlias} のexportをまとめてください
 
 親ディレクトリに ${missingBarrel.fileName}.ts が存在しないため、一貫性のあるbarrel構造を保つために作成が必要です。
 
@@ -473,9 +467,10 @@ module.exports = {
 export * from '${existingBarrelWithAlias}'
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`,
-          })
-          return
-        }
+        })
+
+        return
+      }
 
       // ========================================
       // 同階層の他のバレルファイルからのimportチェック
@@ -494,10 +489,7 @@ export * from '${existingBarrelWithAlias}'
 
       if (isImportingFromBarrel) {
           // import元がbarrelファイルかチェック
-          const importerFileName = path.basename(context.filename, path.extname(context.filename))
-          const isImporterBarrel = barrelFileNames.includes(importerFileName)
-
-          if (isImporterBarrel) {
+          if (isBarrelFile(context.filename, barrelFileNames)) {
             // import元がbarrelファイルで、import先も同階層のbarrelファイルの場合
             // import先が自分自身でない場合はエラー
             const importerPath = context.filename

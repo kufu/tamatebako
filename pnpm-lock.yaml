@@ -182,8 +182,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: '>=6.17.0'
-        version: 6.17.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.18.0
+        version: 6.18.0(eslint@9.39.4(jiti@2.4.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -3579,6 +3579,11 @@ packages:
     peerDependencies:
       eslint: ^9
 
+  eslint-plugin-smarthr@6.18.0:
+    resolution: {integrity: sha512-0vNKLSjpkTO4zH7C93RYiLKPzpxLJjlV8NZRDgSEKSBB8MJzNa26Vbe7G6HDdeY2d94KMwRDdkVA8Fjo7yrLGQ==}
+    peerDependencies:
+      eslint: ^9
+
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
     engines: {node: '>=8.0.0'}
@@ -4043,9 +4048,6 @@ packages:
     engines: {node: ^10 || ^12 || >= 14}
     peerDependencies:
       postcss: ^8.1.0
-
-  icu-minify@4.11.1:
-    resolution: {integrity: sha512-C0tsPVuvyNp+++qWJP+mty/KLLStjerOZqu3W1xWLJkChEDbDi9Taoj6blK7L/onxbuVzwgH6k9Sf+rOV6lOvw==}
 
   icu-minify@4.13.0:
     resolution: {integrity: sha512-SIFMeUHZJjzS5RvIGvybKvWoHjDm9cGVEs2EpJ8PmywOdJLWyblPm7TdPLLoUtkJtwQD7iGhl2WMptZ+N0on+w==}
@@ -5939,11 +5941,6 @@ packages:
   url@0.11.4:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
-
-  use-intl@4.11.1:
-    resolution: {integrity: sha512-/dqWSqUSbVMzC+fdy7io8enhGYHeGeHK1bFhTLrp0ZblqdzY4FkE+tkffW6IfCauqaIA2/z4DQae4XEn93+raw==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
   use-intl@4.13.0:
     resolution: {integrity: sha512-fAFDrWaASxlhXOipcOyb5VDD+YONqj6+8O8EcG/J7RBoOUF3A8YahRWLN+mBxYMrlMQB8N6Voqk5X+YC+HSL0A==}
@@ -10010,6 +10007,11 @@ snapshots:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
+  eslint-plugin-smarthr@6.18.0(eslint@9.39.4(jiti@2.4.2)):
+    dependencies:
+      eslint: 9.39.4(jiti@2.4.2)
+      json5: 2.2.3
+
   eslint-scope@5.1.1:
     dependencies:
       esrecurse: 4.3.0
@@ -10553,10 +10555,6 @@ snapshots:
   icss-utils@5.1.0(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-
-  icu-minify@4.11.1:
-    dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.7
 
   icu-minify@4.13.0:
     dependencies:
@@ -12823,14 +12821,6 @@ snapshots:
     dependencies:
       punycode: 1.4.1
       qs: 6.14.0
-
-  use-intl@4.11.1(react@19.2.6):
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.4
-      '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.11.1
-      intl-messageformat: 11.2.4
-      react: 19.2.6
 
   use-intl@4.13.0(react@19.2.6):
     dependencies:

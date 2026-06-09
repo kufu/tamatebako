@@ -59,8 +59,7 @@ module.exports = {
     { code: `<Button />`, options: v91ToV92Options },
     { code: `<Button size={dynamicSize} />`, options: v91ToV92Options },
 
-    // 対象外のコンポーネント
-    { code: `<CustomButton size="default" />`, options: v91ToV92Options },
+    // 対象外のコンポーネント（Buttonサフィックスを持たないもの）
     { code: `<Text size="s" />`, options: v91ToV92Options },
 
     // smarthrUiAliasオプション: aliasファイル外では置換しない
@@ -175,6 +174,20 @@ const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] 
     createSizeConversionTest('Button', 'default', 'M'),
     createSizeConversionTest('Button', 's', 'S'),
     createSizeConversionTest('AnchorButton', 'default', 'M'),
+
+    // Button variants
+    createSizeConversionTest('PrimaryButton', 's', 'S'),
+    createSizeConversionTest('PrimaryButton', 'default', 'M'),
+    createSizeConversionTest('DangerButton', 's', 'S'),
+    createSizeConversionTest('SkeletonButton', 's', 'S'),
+    createSizeConversionTest('TextButton', 's', 'S'),
+
+    // AnchorButton variants
+    createSizeConversionTest('PrimaryAnchorButton', 's', 'S'),
+    createSizeConversionTest('PrimaryAnchorButton', 'default', 'M'),
+    createSizeConversionTest('DangerAnchorButton', 's', 'S'),
+    createSizeConversionTest('SkeletonAnchorButton', 's', 'S'),
+    createSizeConversionTest('TextAnchorButton', 's', 'S'),
 
     // Select
     createSizeConversionTest('Select', 's', 'S'),

@@ -39,18 +39,18 @@ const SIZE_VALUE_MAP = {
   m: 'M',
 }
 
-// サイズ指定を持つコンポーネント
-const SIZE_COMPONENTS = [
-  'Button',
-  'AnchorButton',
-  'Select',
-  'SegmentedControl',
-  'SideNav',
-  'SideNavItemButton',
-  'SideNavItemAnchor',
-  'InputFile',
-  'Loader',
-  'LoaderSpinner',
+// サイズ指定を持つコンポーネント（正規表現パターン）
+const SIZE_COMPONENT_PATTERNS = [
+  /Button$/, // XxxxButton (例: Button, PrimaryButton, DangerButton)
+  /AnchorButton$/, // XxxxAnchorButton (例: AnchorButton, PrimaryAnchorButton, DangerAnchorButton)
+  /^Select$/,
+  /^SegmentedControl$/,
+  /^SideNav$/,
+  /^SideNavItemButton$/,
+  /^SideNavItemAnchor$/,
+  /^InputFile$/,
+  /^Loader$/,
+  /^LoaderSpinner$/,
 ]
 
 // 3. decorators属性を持つコンポーネント
@@ -285,8 +285,9 @@ module.exports = {
       'JSXAttribute[name.name="size"][value.type="Literal"]'(node) {
         const componentName = node.parent.name.name
 
-        // 対象コンポーネントかチェック
-        if (!SIZE_COMPONENTS.includes(componentName)) return
+        // 対象コンポーネントかチェック（正規表現パターンマッチング）
+        const isTargetComponent = SIZE_COMPONENT_PATTERNS.some(pattern => pattern.test(componentName))
+        if (!isTargetComponent) return
 
         const sizeValue = node.value.value
         const newValue = SIZE_VALUE_MAP[sizeValue]

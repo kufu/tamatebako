@@ -55,11 +55,15 @@ export default [
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
+      'smarthr/best-practice-for-consecutive-definition-list': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-data-test-attribute': 'off',
+      'smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-interactive-element': 'error',
+      'smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
+      'smarthr/best-practice-for-no-unnecessary-variable': 'off',
       'smarthr/best-practice-for-optional-chaining': 'error',
       'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
@@ -70,8 +74,10 @@ export default [
       'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
+      'smarthr/design-system-guideline-bulk-action-row-button': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
       'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
+      'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',

@@ -157,7 +157,7 @@ importers:
         specifier: ^19.2.6
         version: 19.2.6
       use-intl:
-        specifier: ^4.12.0
+        specifier: ^4.13.0
         version: 4.13.0(react@19.2.6)
 
   packages/next-auth:

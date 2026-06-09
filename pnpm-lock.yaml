@@ -116,7 +116,7 @@ importers:
         specifier: ^19.2.16
         version: 19.2.17
       vitest:
-        specifier: ^4.1.7
+        specifier: ^4.1.8
         version: 4.1.8(@types/node@20.19.42)(jsdom@26.1.0)(vite@7.2.1(@types/node@20.19.42)(jiti@2.4.2)(terser@5.36.0))
 
   packages/eslint-plugin-smarthr:
@@ -217,7 +217,7 @@ importers:
         specifier: ^40.0.0
         version: 40.0.0(stylelint@17.6.0(typescript@6.0.3))
       vitest:
-        specifier: ^4.1.7
+        specifier: ^4.1.8
         version: 4.1.8(@types/node@20.19.42)(jsdom@26.1.0)(vite@7.2.1(@types/node@20.19.42)(jiti@2.4.2)(terser@5.36.0))
 
   packages/use-bulk-check:
@@ -5738,10 +5738,6 @@ packages:
     resolution: {integrity: sha512-u9r3uZC0bdpGOXtlxUIdwf9pkmvhqJdrVCH9fapQtgy/OeTTMZ1nqH7agtvEfmGui6e1XxjcdrlxvxJvc3sMqw==}
     engines: {node: '>=18'}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.16:
     resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
     engines: {node: '>=12.0.0'}
@@ -8755,7 +8751,7 @@ snapshots:
       debug: 4.4.3
       minimatch: 10.2.4
       semver: 7.7.4
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       ts-api-utils: 2.4.0(typescript@6.0.3)
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -12715,11 +12711,6 @@ snapshots:
   tinybench@2.9.0: {}
 
   tinyexec@1.0.4: {}
-
-  tinyglobby@0.2.15:
-    dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
 
   tinyglobby@0.2.16:
     dependencies:

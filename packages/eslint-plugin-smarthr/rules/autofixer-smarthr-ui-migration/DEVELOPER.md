@@ -2,6 +2,16 @@
 
 このドキュメントは、`autofixer-smarthr-ui-migration` ルールに新しいバージョンの移行ルールを追加する開発者向けのガイドです。
 
+## 重要: decorators属性の前提知識
+
+decorators属性に関する移行ルールを作成する際は、**必ず [DECORATORS.md](./DECORATORS.md) を参照してください。**
+
+**要点:**
+- decorators = デフォルト文言変更用（主用途: 多言語化）
+- v94以降 = 内部で翻訳対応（decorators不要）
+- エラーメッセージ = 利用者視点で「翻訳は自動対応」を明示
+- 「IntlProviderのみ使用」等の内部実装詳細は避ける
+
 ## 新バージョン追加の流れ
 
 新しいバージョン（例: v91→v92）の移行ルールを追加する際の手順：
@@ -56,10 +66,10 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 ## 参考にするファイル
 
 必ず以下のファイルを読んで、実装パターンを踏襲してください（最新のversionディレクトリを参照）：
-- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/REFERENCE.md（実装パターンの詳細説明）
-- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/index.js（実装例）
-- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/README.md（ユーザー向け移行ガイド）
-- rules/autofixer-smarthr-ui-migration/versions/v91-to-v92/test.js（テストケース）
+- rules/autofixer-smarthr-ui-migration/versions/v94-to-v95/REFERENCE.md（実装パターンの詳細説明）
+- rules/autofixer-smarthr-ui-migration/versions/v94-to-v95/index.js（実装例）
+- rules/autofixer-smarthr-ui-migration/versions/v94-to-v95/README.md（ユーザー向け移行ガイド）
+- rules/autofixer-smarthr-ui-migration/versions/v94-to-v95/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
 - libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
@@ -578,7 +588,7 @@ https://github.com/kufu/smarthr-ui/releases
 
 各versionディレクトリに`REFERENCE.md`があり、実装パターンや注意点が記載されています。
 
-**最新version:** [v91-to-v92/REFERENCE.md](./versions/v91-to-v92/REFERENCE.md)
+**最新version:** [v94-to-v95/REFERENCE.md](./versions/v94-to-v95/REFERENCE.md)
 
 このドキュメントには以下が含まれます：
 - ファイル構造と各セクションの説明

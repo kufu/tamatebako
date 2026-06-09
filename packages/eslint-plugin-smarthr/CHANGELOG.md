@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.18.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.17.0...eslint-plugin-smarthr-v6.18.0) (2026-06-09)
+
+
+### Features
+
+* best-practice-for-lazy-variable に fix オプション追加 ([#1355](https://github.com/kufu/tamatebako/issues/1355)) ([d2d1cd6](https://github.com/kufu/tamatebako/commit/d2d1cd6df5d800a0ff9907ec528e597eca930261))
+* best-practice-for-no-unnecessary-variableルールを追加 ([#1339](https://github.com/kufu/tamatebako/issues/1339)) ([57f82c2](https://github.com/kufu/tamatebako/commit/57f82c24ba97a3c4ea191c1c197b75a87d576d3a))
+
+## [6.17.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.16.0...eslint-plugin-smarthr-v6.17.0) (2026-06-08)
+
+
+### Features
+
+* add smarthr-ui v94 to v95 migrator ([#1334](https://github.com/kufu/tamatebako/issues/1334)) ([0d2692c](https://github.com/kufu/tamatebako/commit/0d2692cdf272f32f730623b672594c0898155742))
+* best-practice-for-lazy-variable ルールを追加 ([#1335](https://github.com/kufu/tamatebako/issues/1335)) ([a849c1c](https://github.com/kufu/tamatebako/commit/a849c1cb5bf5a7e940ff56b75d11c93ffb79e9da))
+
+## [6.16.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.15.0...eslint-plugin-smarthr-v6.16.0) (2026-05-19)
+
+
+### Features
+
+* design-system-guideline-bulk-action-row-button のlinterルールを追加 ([#1309](https://github.com/kufu/tamatebako/issues/1309)) ([d5934ae](https://github.com/kufu/tamatebako/commit/d5934ae3cc95ef9cb5696c00f22840351b5567ea))
+* InformationPanelを白背景に配置することを禁止するルールを追加 ([#1319](https://github.com/kufu/tamatebako/issues/1319)) ([6b3a9b6](https://github.com/kufu/tamatebako/commit/6b3a9b621956e196eb9fb5984e3acba458893eca))
+
+## [6.15.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.14.0...eslint-plugin-smarthr-v6.15.0) (2026-05-17)
+
+
+### Features
+
+* add v93-to-v94 migrator for smarthr-ui ([#1315](https://github.com/kufu/tamatebako/issues/1315)) ([06dce27](https://github.com/kufu/tamatebako/commit/06dce272572991f49f3de635790a06d2c6360f4f))
+* best-practice-for-consecutive-definition-listルールを追加 ([#1313](https://github.com/kufu/tamatebako/issues/1313)) ([4e5778f](https://github.com/kufu/tamatebako/commit/4e5778f95d598b233ca3a2e66e023247ed2fdb2f))
+* best-practice-for-default-propsルールを追加 ([#1312](https://github.com/kufu/tamatebako/issues/1312)) ([b0b0bb2](https://github.com/kufu/tamatebako/commit/b0b0bb2e8dd1a4533a9dbfe6583f45da8a6b8d81))
+* 同階層のバレルファイル間のimportを禁止 ([#1310](https://github.com/kufu/tamatebako/issues/1310)) ([4420109](https://github.com/kufu/tamatebako/commit/4420109a6c9f7fc23175928f7c605b69332ddbb7))
+
+## [6.14.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.13.0...eslint-plugin-smarthr-v6.14.0) (2026-05-13)
+
+
+### Features
+
+* **require-barrel-import:** バレルファイルの純粋性チェックを追加 ([#1271](https://github.com/kufu/tamatebako/issues/1271)) ([99c16ab](https://github.com/kufu/tamatebako/commit/99c16abc2c7aacedceafdc89df7ab6d8eda9eeb4))
+
 ## [6.13.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.12.1...eslint-plugin-smarthr-v6.13.0) (2026-04-20)
 
 

@@ -217,11 +217,15 @@ const config = {
     'eslint-plugin-smarthr/a11y-trigger-has-button': 'error',
     'eslint-plugin-smarthr/best-practice-for-async-current-target': 'error',
     'eslint-plugin-smarthr/best-practice-for-button-element': 'error',
+    'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/best-practice-for-date': 'error',
     'eslint-plugin-smarthr/best-practice-for-data-test-attribute': 'off',
+    'eslint-plugin-smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/best-practice-for-interactive-element': 'error',
+    'eslint-plugin-smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',
     'eslint-plugin-smarthr/best-practice-for-nested-attributes-array-index': 'error',
+    'eslint-plugin-smarthr/best-practice-for-no-unnecessary-variable': 'off',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
     'eslint-plugin-smarthr/best-practice-for-remote-trigger-dialog': 'error',
@@ -232,8 +236,10 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-text-component': 'warn',
     'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
     'eslint-plugin-smarthr/component-name': 'error',
+    'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/format-import-path': 'off',
     'eslint-plugin-smarthr/format-translate-component': 'off',
     'eslint-plugin-smarthr/no-import-other-domain': 'off',

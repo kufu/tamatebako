@@ -8,7 +8,7 @@ React + TypeScript プロジェクトでの利用を想定しています。
 ## インストール
 
 ```sh
-pnpm add --dev oxlint eslint-plugin-smarthr # peerDependencies
+pnpm add --dev oxlint # peerDependencies
 pnpm add --dev oxlint-config-smarthr
 ```
 

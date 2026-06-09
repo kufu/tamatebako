@@ -7,7 +7,18 @@ const {
   containsAwait,
 } = require('../../libs/ast-utils')
 
-const SCHEMA = []
+const SCHEMA = [
+  {
+    type: 'object',
+    properties: {
+      fix: {
+        type: 'boolean',
+        default: false,
+      },
+    },
+    additionalProperties: false,
+  },
+]
 
 const EARLY_EXIT_STATEMENT_TYPES = new Set([
   'ReturnStatement',
@@ -768,6 +779,8 @@ module.exports = {
   },
   create(context) {
     const sourceCode = context.sourceCode || context.getSourceCode()
+    const options = context.options[0] || {}
+    const fix = options.fix
 
     return {
       'VariableDeclarator': (node) => {
@@ -778,13 +791,13 @@ module.exports = {
           node: analysis.node,
           messageId: 'moveToLazy',
           data: { name: analysis.varName },
-          fix: createMoveFixer(
+          fix: fix ? createMoveFixer(
             sourceCode,
             analysis.variableDeclaration,
             analysis.targetBody,
             analysis.insertBeforeStatement,
             analysis.firstUsageStatement
-          ),
+          ) : null,
         })
       },
     }

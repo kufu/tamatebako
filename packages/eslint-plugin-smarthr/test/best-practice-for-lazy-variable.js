@@ -433,6 +433,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(data)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -456,6 +457,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -483,6 +485,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -510,6 +513,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -531,6 +535,7 @@ const x = getValue()
 console.log(x)
 }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -558,6 +563,7 @@ console.log(x)
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -579,6 +585,7 @@ console.log(x)
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -603,6 +610,7 @@ switch (condition) {
     break
   }
 }`,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -637,6 +645,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -680,6 +689,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -707,6 +717,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -739,6 +750,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -770,6 +782,7 @@ switch (condition) {
             break
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -801,6 +814,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -837,6 +851,7 @@ switch (condition) {
             break
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -868,6 +883,7 @@ switch (condition) {
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -891,6 +907,7 @@ switch (condition) {
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -916,6 +933,7 @@ const x = getValue()
 console.log(x)
 }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -947,6 +965,7 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -974,6 +993,7 @@ console.log(x)
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1006,6 +1026,7 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1039,6 +1060,7 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1072,6 +1094,7 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1105,6 +1128,7 @@ console.log(x)
           })
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1143,6 +1167,7 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1174,6 +1199,7 @@ console.log(x)
           console.log(x)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1201,6 +1227,7 @@ console.log(x)
           console.log(data)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1228,6 +1255,7 @@ console.log(x)
           console.log(user)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1255,6 +1283,7 @@ console.log(x)
           return value
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1294,6 +1323,7 @@ console.log(x)
           console.log(data)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1331,6 +1361,7 @@ console.log(x)
           console.log(data)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1368,6 +1399,7 @@ console.log(x)
           console.log(data)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1401,6 +1433,7 @@ console.log(x)
         const data = getData()
         console.log(data)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1430,6 +1463,7 @@ console.log(x)
         const data = getData()
         console.log(data)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1463,6 +1497,7 @@ console.log(x)
         const data = getData()
         console.log(data)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1490,6 +1525,7 @@ console.log(x)
           doSomething()
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
@@ -1517,10 +1553,68 @@ console.log(x)
           }
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'moveToLazy',
           data: { name: 'name' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - 自動修正なし
+    {
+      code: `
+        const data = fetchData()
+        doWork()
+        if (needsData) {
+          process(data)
+        }
+      `,
+      options: [{ fix: false }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - オプション指定なしでも自動修正なし
+    {
+      code: `
+        const result = calculate()
+        log()
+        if (shouldUse) {
+          apply(result)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'result' },
+        },
+      ],
+    },
+    // fix: true - 自動修正あり
+    {
+      code: `
+        const value = compute()
+        prepare()
+        if (ready) {
+          use(value)
+        }
+      `,
+      output: `
+        prepare()
+        if (ready) {
+          const value = compute()
+          use(value)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
         },
       ],
     },

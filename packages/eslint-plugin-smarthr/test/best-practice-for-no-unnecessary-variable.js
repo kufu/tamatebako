@@ -310,6 +310,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         console.log(a + b * c)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -330,6 +331,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return array[0]
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -346,6 +348,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         doSomething((condition ? value1 : value2))
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -366,6 +369,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           console.log(obj.property)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -386,6 +390,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return obj.method().property
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -402,6 +407,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         console.log(42)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -418,6 +424,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         process(obj?.nested?.property)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -439,6 +446,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         console.log(y)
         console.log(y)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -460,6 +468,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         console.log(x)
         console.log(getOther())
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -480,6 +489,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           doSomething()
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -496,6 +506,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const y = getValue() + 1
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -512,6 +523,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const arr = [1, getValue(), 3]
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -528,6 +540,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const obj = { key: getValue() }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -544,6 +557,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const message = \`Hello, \${getName()}!\`
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -566,6 +580,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
             break
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -586,6 +601,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return getValue()
         })
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -602,6 +618,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         console.log((new MyClass()).property)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -618,6 +635,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const y = (condition ? value1 : value2).property
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -638,6 +656,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return obj.method().another().property
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -651,7 +670,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         const x = obj.method().property
         console.log(x)
       `,
-      options: [{ maxComplexity: 5 }],
+      options: [{ maxComplexity: 5, fix: true }],
       output: `
         console.log(obj.method().property)
       `,
@@ -671,6 +690,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         console.log(a && b)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -687,6 +707,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         console.log((a ? b : c))
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -707,6 +728,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return obj.method().another().property
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -720,7 +742,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         const x = a ? (b ? c : d) : e
         console.log(x)
       `,
-      options: [{ maxComplexity: 7 }],
+      options: [{ maxComplexity: 7, fix: true }],
       output: `
         console.log((a ? (b ? c : d) : e))
       `,
@@ -744,6 +766,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return (a ? (b ? c : d) : e)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -764,6 +787,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return ({ a: 1, b: 2 })
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -784,6 +808,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return [1, 2, 3]
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -804,6 +829,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return ({ ...spread, a: 1 })
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -824,6 +850,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return array.map(() => getValue())
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -840,6 +867,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         if (!(value === 'nothing')) allN = false
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -856,6 +884,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         if (typeof (getValue()) === 'string') doSomething()
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -872,6 +901,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const num = +(getStringValue())
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -888,6 +918,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         const bool = !!(getValue())
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -904,6 +935,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       output: `
         if (!!(check())) doSomething()
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -922,6 +954,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         inputs[0].focus()
         ;inputs[0].setSelectionRange(0, 0)
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -940,6 +973,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         doSomething()
         ;({ a: 1 }).property()
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -960,6 +994,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return <div>Hello</div>
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -980,10 +1015,94 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
           return <Child prop={value.nested} />
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
           data: { name: 'element' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - 自動修正なし
+    {
+      code: `
+        const x = getValue()
+        console.log(x)
+      `,
+      options: [{ fix: false }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - オプション指定なしでも自動修正なし
+    {
+      code: `
+        const x = getValue()
+        console.log(x)
+      `,
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // fix: true - 自動修正あり
+    {
+      code: `
+        const x = getValue()
+        console.log(x)
+      `,
+      output: `
+        console.log(getValue())
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // fix: true - return文での自動修正
+    {
+      code: `
+        function foo() {
+          const result = obj.method()
+          return result
+        }
+      `,
+      output: `
+        function foo() {
+          return obj.method()
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'result' },
+        },
+      ],
+    },
+    // fix: true - 複数変数宣言での自動修正
+    {
+      code: `
+        const x = 1, y = getValue(), z = 3
+        console.log(y)
+      `,
+      output: `
+        const x = 1, z = 3
+        console.log(getValue())
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'y' },
         },
       ],
     },

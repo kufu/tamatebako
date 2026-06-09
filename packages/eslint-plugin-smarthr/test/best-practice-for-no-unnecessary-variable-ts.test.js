@@ -60,6 +60,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
           return (element as HTMLInputElement)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -80,6 +81,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
           return (element.value as string)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -100,6 +102,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
           return (getStringValue() as string)
         }
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -116,6 +119,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
       output: `
         console.log((123 as number))
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -132,6 +136,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
       output: `
         console.log((getUser() as User | null))
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -148,6 +153,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
       output: `
         console.log((obj.property as string))
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -166,6 +172,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
         doSomething()
         ;(getValue() as string).toUpperCase()
       `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',
@@ -184,6 +191,55 @@ ruleTester.run('best-practice-for-no-unnecessary-variable (TypeScript)', rule, {
         inputs[0].focus()
         ;(inputs[0] as HTMLInputElement).setSelectionRange(0, 0)
       `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'input' },
+        },
+      ],
+    },
+    // fix: false - 型注釈付き変数で自動修正なし
+    {
+      code: `
+        const value: string = getValue()
+        console.log(value)
+      `,
+      options: [{ fix: false }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // fix: true - 型注釈付き変数で自動修正あり
+    {
+      code: `
+        const value: string = getValue()
+        console.log(value)
+      `,
+      output: `
+        console.log((getValue() as string))
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'inlineVariable',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // fix: true - TSAsExpressionで自動修正あり
+    {
+      code: `
+        const input = element as HTMLInputElement
+        return input
+      `,
+      output: `
+        return (element as HTMLInputElement)
+      `,
+      options: [{ fix: true }],
       errors: [
         {
           messageId: 'inlineVariable',

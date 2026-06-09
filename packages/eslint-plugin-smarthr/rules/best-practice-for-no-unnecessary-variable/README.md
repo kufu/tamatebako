@@ -34,7 +34,7 @@ return obj.property
 {
   rules: {
     'smarthr/best-practice-for-lazy-variable': 'error',
-    'smarthr/best-practice-for-no-unnecessary-variable': 'error',
+    'smarthr/best-practice-for-no-unnecessary-variable': ['error', { fix: false }],  // デフォルト: 自動修正無効
   },
 }
 ```
@@ -77,6 +77,39 @@ return obj.property
 - アロー関数 (`ArrowFunctionExpression`)
 - 関数式 (`FunctionExpression`)
 - JSX要素 (`JSXOpeningElement`)
+
+### fix
+
+自動修正を有効にするかどうかを指定します。
+
+**デフォルト値**: `false`
+
+```js
+{
+  rules: {
+    'smarthr/best-practice-for-no-unnecessary-variable': ['error', { fix: true }],
+  },
+}
+```
+
+#### ⚠️ 自動修正の注意点
+
+自動修正を有効にすると、変数宣言が削除され、式が直接インライン化されます。
+
+**副作用を持つ関数の場合、実行順序が変わる可能性があります**:
+
+```js
+// Before（副作用を持つ関数の場合）
+const result = sideEffect1()  // ← 先に実行される
+sideEffect2()
+console.log(result)
+
+// After（自動修正後）
+sideEffect2()  // ← 先に実行される
+console.log(sideEffect1())
+```
+
+このため、デフォルトでは自動修正を無効にしています。自動修正を使う前に、手動で確認することを推奨します。
 
 #### 複雑さのチェック方法
 
@@ -286,7 +319,7 @@ console.log(x)
 
 ## autofix
 
-このルールは自動修正に対応しています。
+このルールは自動修正に対応しています。自動修正を有効にするには `fix: true` オプションを指定してください。
 
 ```js
 // Before

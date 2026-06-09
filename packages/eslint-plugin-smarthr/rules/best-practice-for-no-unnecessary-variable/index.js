@@ -17,6 +17,10 @@ const SCHEMA = [
         minimum: 0,
         default: 5,
       },
+      fix: {
+        type: 'boolean',
+        default: false,
+      },
     },
     additionalProperties: false,
   },
@@ -439,6 +443,7 @@ module.exports = {
   create(context) {
     const sourceCode = context.sourceCode || context.getSourceCode()
     const options = context.options[0] || {}
+    const fix = options.fix
 
     return {
       'VariableDeclarator': (node) => {
@@ -449,7 +454,7 @@ module.exports = {
             node: analysis.node,
             messageId: 'inlineVariable',
             data: { name: analysis.varName },
-            fix: createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation),
+            fix: fix ? createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation) : null,
           })
         }
       },

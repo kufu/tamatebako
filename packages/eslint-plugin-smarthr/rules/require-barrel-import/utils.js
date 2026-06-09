@@ -93,24 +93,55 @@ const NAMED_EXPORT_PATTERN_REGEX = /export\s*\{\s*([^}]+)\s*\}\s*from\s*['"]([^'
 const EXPORT_AS_REGEX = /^(.+?)\s+as\s+(.+)$/
 
 /**
- * バレルファイルからexportされている識別子を抽出
+ * バレルファイルからexportされている情報を抽出
  * @param {string} barrelFilePath - バレルファイルのパス
- * @returns {Set<string>} exportされている識別子のSet
+ * @returns {Array<{sourceFile: string, importedName: string, exportedName: string}>} exportされている情報の配列
  */
 const extractExportsFromBarrel = (barrelFilePath) => {
-  const exports = new Set()
+  const exports = []
+  const barrelDir = getParentDir(barrelFilePath)
 
   try {
     const content = fs.readFileSync(barrelFilePath, 'utf-8')
 
     let match
     while ((match = NAMED_EXPORT_PATTERN_REGEX.exec(content)) !== null) {
-      const exportedNames = match[1].split(',').map(name => {
-        // "as" を使っている場合は、asの後の名前を取得
-        const asMatch = name.trim().match(EXPORT_AS_REGEX)
-        return asMatch ? asMatch[2].trim() : name.trim()
+      const sourceRelative = match[2] // from './file' の './file' 部分
+      let sourceFile = path.resolve(barrelDir, sourceRelative) // 絶対パスに変換
+
+      // 拡張子がない場合、実際に存在するファイルを探す
+      if (!path.extname(sourceFile)) {
+        const candidates = TARGET_EXTS.map(ext => `${sourceFile}.${ext}`)
+        const existingFile = candidates.find(fs.existsSync)
+        if (existingFile) {
+          sourceFile = existingFile
+        }
+      }
+
+      const exportedItems = match[1].split(',').map(name => {
+        const trimmed = name.trim()
+        // "as" を使っている場合: "Button as MyButton" → importedName: Button, exportedName: MyButton
+        const asMatch = trimmed.match(EXPORT_AS_REGEX)
+        if (asMatch) {
+          return {
+            importedName: asMatch[1].trim(),
+            exportedName: asMatch[2].trim(),
+          }
+        }
+        // "as" がない場合: "Button" → importedName: Button, exportedName: Button
+        return {
+          importedName: trimmed,
+          exportedName: trimmed,
+        }
       })
-      exportedNames.forEach(name => exports.add(name))
+
+      exportedItems.forEach(({ importedName, exportedName }) => {
+        exports.push({
+          sourceFile,
+          importedName,
+          exportedName,
+        })
+      })
     }
 
     // export * from './file' パターン（すべてをre-exportするので、重複チェック対象外とする）
@@ -125,10 +156,11 @@ const extractExportsFromBarrel = (barrelFilePath) => {
 
 /**
  * 重複するexportを検出する
+ * 同じファイルから同じものをre-exportしている場合に重複と判定する
  * @param {string} currentFilePath - 現在のバレルファイルのパス
- * @param {Array<{node: object, exportedName: string}>} currentBarrelExports - 現在のバレルファイルのexport一覧
+ * @param {Array<{node: object, exportedName: string, sourceFile: string, importedName: string}>} currentBarrelExports - 現在のバレルファイルのexport一覧
  * @param {Array<string>} barrelFileNames - バレルファイル名のリスト
- * @returns {Array<{node: object, exportedName: string, siblingPath: string}>} 重複しているexportの配列
+ * @returns {Array<{node: object, exportedName: string, siblingPath: string, sourceFile: string, importedName: string}>} 重複しているexportの配列
  */
 const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileNames) => {
   if (currentBarrelExports.length === 0) {
@@ -144,17 +176,27 @@ const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileN
   const siblingExportsMap = new Map()
   for (const siblingPath of siblingBarrels) {
     const exports = extractExportsFromBarrel(siblingPath)
-    if (exports.size > 0) {
+    if (exports.length > 0) {
       siblingExportsMap.set(siblingPath, exports)
     }
   }
 
   // 重複をチェック
+  // 同じsourceFileから同じimportedNameをexportしている場合に重複と判定
   const duplicates = []
-  for (const { node, exportedName } of currentBarrelExports) {
+  for (const { node, exportedName, sourceFile, importedName } of currentBarrelExports) {
     for (const [siblingPath, siblingExports] of siblingExportsMap) {
-      if (siblingExports.has(exportedName)) {
-        duplicates.push({ node, exportedName, siblingPath })
+      const duplicate = siblingExports.find(
+        exp => exp.sourceFile === sourceFile && exp.importedName === importedName
+      )
+      if (duplicate) {
+        duplicates.push({
+          node,
+          exportedName,
+          siblingPath,
+          sourceFile,
+          importedName,
+        })
       }
     }
   }
@@ -167,18 +209,28 @@ const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileN
  * @param {string} exportedName - export識別子名
  * @param {string} currentFilePath - 現在のファイルパス
  * @param {string} siblingPath - 重複が検出された兄弟ファイルパス
+ * @param {string} sourceFile - importしているソースファイル（絶対パス）
+ * @param {string} importedName - importしている元の識別子名
  * @returns {string} エラーメッセージ
  */
-const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath) => {
+const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath, sourceFile, importedName) => {
   const siblingFileName = path.basename(siblingPath)
+  const sourceFileName = path.basename(sourceFile)
 
-  return `'${exportedName}' は ${siblingFileName} でも export されています。同じディレクトリの複数のバレルファイルから同じ識別子を export することは禁止されています。
+  // export { A as B } の場合と export { A } の場合でメッセージを変える
+  const exportInfo = exportedName !== importedName
+    ? `'${importedName}' (as ${exportedName})`
+    : `'${exportedName}'`
+
+  return `${sourceFileName} の ${exportInfo} は ${siblingFileName} でも export されています。同じディレクトリの複数のバレルファイルから同じファイルの同じ export を re-export することは禁止されています。
 
 現在のファイル: ${path.basename(currentFilePath)}
 重複が検出されたファイル: ${siblingFileName}
+ソースファイル: ${sourceFileName}
+export している識別子: ${importedName}
 
 解決方法:
-  - どちらか一方のバレルファイルから '${exportedName}' の export を削除してください
+  - どちらか一方のバレルファイルから ${sourceFileName} の export を削除してください
   - または、${extractFileName(currentFilePath)} と ${extractFileName(siblingPath)} で異なるモジュールを export するように整理してください
 
 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-barrel-import`

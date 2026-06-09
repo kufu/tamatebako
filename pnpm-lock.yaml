@@ -116,7 +116,7 @@ importers:
         specifier: ^19.2.16
         version: 19.2.17
       vitest:
-        specifier: ^4.1.7
+        specifier: ^4.1.8
         version: 4.1.8(@types/node@20.19.42)(jsdom@26.1.0)(vite@7.2.1(@types/node@20.19.42)(jiti@2.4.2)(terser@5.36.0))
 
   packages/eslint-plugin-smarthr:
@@ -217,7 +217,7 @@ importers:
         specifier: ^40.0.0
         version: 40.0.0(stylelint@17.6.0(typescript@6.0.3))
       vitest:
-        specifier: ^4.1.7
+        specifier: ^4.1.8
         version: 4.1.8(@types/node@20.19.42)(jsdom@26.1.0)(vite@7.2.1(@types/node@20.19.42)(jiti@2.4.2)(terser@5.36.0))
 
   packages/use-bulk-check:
@@ -4044,9 +4044,6 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  icu-minify@4.11.1:
-    resolution: {integrity: sha512-C0tsPVuvyNp+++qWJP+mty/KLLStjerOZqu3W1xWLJkChEDbDi9Taoj6blK7L/onxbuVzwgH6k9Sf+rOV6lOvw==}
-
   icu-minify@4.13.0:
     resolution: {integrity: sha512-SIFMeUHZJjzS5RvIGvybKvWoHjDm9cGVEs2EpJ8PmywOdJLWyblPm7TdPLLoUtkJtwQD7iGhl2WMptZ+N0on+w==}
 
@@ -5736,10 +5733,6 @@ packages:
     resolution: {integrity: sha512-u9r3uZC0bdpGOXtlxUIdwf9pkmvhqJdrVCH9fapQtgy/OeTTMZ1nqH7agtvEfmGui6e1XxjcdrlxvxJvc3sMqw==}
     engines: {node: '>=18'}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.16:
     resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
     engines: {node: '>=12.0.0'}
@@ -5939,11 +5932,6 @@ packages:
   url@0.11.4:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
-
-  use-intl@4.11.1:
-    resolution: {integrity: sha512-/dqWSqUSbVMzC+fdy7io8enhGYHeGeHK1bFhTLrp0ZblqdzY4FkE+tkffW6IfCauqaIA2/z4DQae4XEn93+raw==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
   use-intl@4.13.0:
     resolution: {integrity: sha512-fAFDrWaASxlhXOipcOyb5VDD+YONqj6+8O8EcG/J7RBoOUF3A8YahRWLN+mBxYMrlMQB8N6Voqk5X+YC+HSL0A==}
@@ -8668,7 +8656,7 @@ snapshots:
       debug: 4.4.3
       minimatch: 10.2.4
       semver: 7.7.4
-      tinyglobby: 0.2.15
+      tinyglobby: 0.2.16
       ts-api-utils: 2.4.0(typescript@6.0.3)
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -10553,10 +10541,6 @@ snapshots:
   icss-utils@5.1.0(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-
-  icu-minify@4.11.1:
-    dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.7
 
   icu-minify@4.13.0:
     dependencies:
@@ -12587,11 +12571,6 @@ snapshots:
 
   tinyexec@1.0.4: {}
 
-  tinyglobby@0.2.15:
-    dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-
   tinyglobby@0.2.16:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.4)
@@ -12823,14 +12802,6 @@ snapshots:
     dependencies:
       punycode: 1.4.1
       qs: 6.14.0
-
-  use-intl@4.11.1(react@19.2.6):
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.4
-      '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.11.1
-      intl-messageformat: 11.2.4
-      react: 19.2.6
 
   use-intl@4.13.0(react@19.2.6):
     dependencies:

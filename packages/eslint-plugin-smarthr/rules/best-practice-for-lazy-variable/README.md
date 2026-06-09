@@ -35,7 +35,7 @@ if (condition) {
 ```js
 {
   rules: {
-    'smarthr/best-practice-for-lazy-variable': 'error', // 'warn', 'off'
+    'smarthr/best-practice-for-lazy-variable': ['error', { fix: false }],  // デフォルト: 自動修正無効
   },
 }
 ```
@@ -222,9 +222,49 @@ for (const item of items) {
 }
 ```
 
+## options
+
+### fix
+
+自動修正を有効にするかどうかを指定します。
+
+**デフォルト値**: `false`
+
+```js
+{
+  rules: {
+    'smarthr/best-practice-for-lazy-variable': ['error', { fix: true }],
+  },
+}
+```
+
+#### ⚠️ 自動修正の注意点
+
+自動修正を有効にすると、変数宣言が使用箇所の直前に移動されます。
+
+**副作用を持つ関数の場合、実行順序が変わる可能性があります**:
+
+```js
+// Before（副作用を持つ関数の場合）
+const value = sideEffect1()  // ← 先に実行される
+sideEffect2()
+if (condition) {
+  console.log(value)
+}
+
+// After（自動修正後）
+sideEffect2()  // ← 先に実行される
+if (condition) {
+  const value = sideEffect1()
+  console.log(value)
+}
+```
+
+このため、デフォルトでは自動修正を無効にしています。自動修正を使う前に、手動で確認することを推奨します。
+
 ## autofix
 
-このルールは自動修正に対応しています。
+このルールは自動修正に対応しています。自動修正を有効にするには `fix: true` オプションを指定してください。
 
 ### 移動パターン
 

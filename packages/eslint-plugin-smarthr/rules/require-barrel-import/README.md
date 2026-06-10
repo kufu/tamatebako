@@ -250,7 +250,7 @@ export { Button } from './Button'  // ❌ エラー
 
 // ✅ OK: 異なるファイルからなので重複ではない
 // components/index.ts
-export { Component as Button } from './Component'  // ✅ OK
+export { Button } from './Component'  // ✅ OK
 
 // components/client.ts
 export { Button } from './Button'  // ✅ OK

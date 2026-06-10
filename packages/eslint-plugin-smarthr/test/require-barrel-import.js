@@ -59,8 +59,13 @@ function cleanupFixtures() {
     const entries = fs.readdirSync(fixturesRoot)
     for (const entry of entries) {
       const fullPath = path.join(fixturesRoot, entry)
-      if (fs.statSync(fullPath).isDirectory()) {
-        fs.rmSync(fullPath, { recursive: true, force: true })
+      try {
+        if (fs.statSync(fullPath).isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true })
+        }
+      } catch (err) {
+        // シンボリックリンクが壊れている場合などはスキップ
+        continue
       }
     }
   }

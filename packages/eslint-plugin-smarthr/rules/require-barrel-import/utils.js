@@ -68,10 +68,7 @@ const extractFileName = (filePath) => filePath.split('/').pop().replace(REGEX_BA
  * @param {Array<string>} fileNames - barrelファイル名の配列
  * @returns {Array<string>} パス候補の配列
  */
-const generateBarrelFilePaths = (dir, fileNames) => fileNames.reduce((acc, name) => {
-  TARGET_EXTS.forEach(ext => acc.push(`${dir}/${name}.${ext}`))
-  return acc
-}, [])
+const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
 
 /**
  * 同じディレクトリ内の他のバレルファイルを取得

@@ -39,8 +39,6 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
       }
     ` },
     { code: `const removeIdAttr = ({ id: _id, ...rest }) => rest` },
-    { code: `const hoge = (...rest) => { if ('userMap' in rest) return null }` },
-    { code: `const hoge = ({ id, ...rest }) => 'key' in rest` },
   ],
   invalid: [
     { code: `const hoge = ({ ...rest }) => {}`, errors: [ { message: `意味のない残余引数のため、単一の引数に変更してください${DETAIL_LINK}` } ] },
@@ -56,8 +54,11 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
     { code: `const hoge = rest.hoge`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
     { code: `const hoge = anyRest.hoge.fuga`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
     { code: `const { any } = rest`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
-    // in演算子の右辺のrestはエラーにならないが、プロパティアクセスはエラーになる
-    { code: `const hoge = (...rest) => { if ('userMap' in rest) return rest.userMap }`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
+    // in演算子の右辺も内部属性へのアクセスなのでエラー
+    { code: `const hoge = (...rest) => { if ('userMap' in rest) return null }`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
+    { code: `const hoge = ({ id, ...rest }) => 'key' in rest`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
+    // in演算子とプロパティアクセスの両方でエラー（2つ）
+    { code: `const hoge = (...rest) => { if ('userMap' in rest) return rest.userMap }`, errors: [ { message: ERROR_REST_CHILD_REF }, { message: ERROR_REST_CHILD_REF } ] },
   ]
 })
 

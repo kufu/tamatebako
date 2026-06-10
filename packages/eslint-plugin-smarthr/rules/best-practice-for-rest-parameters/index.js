@@ -50,6 +50,12 @@ module.exports = {
       [`:not(:matches(RestElement,JSXSpreadAttribute,JSXSpreadAttribute > TSAsExpression,SpreadElement,SpreadElement > TSAsExpression,MemberExpression,BinaryExpression,VariableDeclarator,ArrayExpression,CallExpression,ObjectPattern > Property,ObjectExpression > Property,ReturnStatement,ArrowFunctionExpression)) > Identifier[name=${REST_REGEX}]`]: actionNotRest,
       [`:matches(VariableDeclarator[id.name=${REST_REGEX}],ObjectPattern > Property[value.name=${REST_REGEX}],ObjectExpression > Property[key.name=${REST_REGEX}])`]: actionNotRest,
       [`MemberExpression[object.name=${REST_REGEX}]`]: actionMemberExpressionName,
+      [`BinaryExpression[operator="in"][right.name=${REST_REGEX}]`]: (node) => {
+        context.report({
+          node: node.right,
+          message: `残余引数内の属性を参照しないでください${DETAIL_LINK}`,
+        })
+      },
       [`ArrowFunctionExpression > Identifier[name=${REST_REGEX}]`]: (node) => {
         if (node !== node.parent.body) {
           actionNotRest(node)

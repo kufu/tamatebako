@@ -237,15 +237,24 @@ export { api, client } from './modules'  // ❌ 両方ともエラー
 export { api, client } from './modules'  // ❌ 両方ともエラー
 ```
 
-エイリアス（`as`）を使用している場合、エイリアス後の名前でチェックされます：
+エイリアス（`as`）を使用している場合でも、**元のソースファイルと元の識別子名**でチェックされます。エイリアス後の名前は重複チェックには使用されません：
 
 ```typescript
+// ❌ エラー: 同じファイルから同じ識別子をimport
 // components/index.ts
-export { Component as Button } from './Component'  // ❌ エラー
+export { Button as MyButton } from './Button'  // ❌ エラー
 
 // components/client.ts
 export { Button } from './Button'  // ❌ エラー
-// 'Button' という名前が重複しているためエラー
+// './Button' から 'Button' を import している点が重複
+
+// ✅ OK: 異なるファイルからなので重複ではない
+// components/index.ts
+export { Component as Button } from './Component'  // ✅ OK
+
+// components/client.ts
+export { Button } from './Button'  // ✅ OK
+// 異なるソースファイル（./Component と ./Button）なので重複ではない
 ```
 
 ### ✅ 正しい修正方法

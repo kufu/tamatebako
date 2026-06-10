@@ -111,13 +111,12 @@ const extractExportsFromBarrel = (barrelFilePath) => {
 
       // 拡張子がない場合、実際に存在するファイルを探す
       if (!path.extname(sourceFile)) {
-        const existingFile = TARGET_EXTS.reduce((found, ext) => {
-          if (found) return found
+        for (const ext of TARGET_EXTS) {
           const candidate = `${sourceFile}.${ext}`
-          return fs.existsSync(candidate) ? candidate : null
-        }, null)
-        if (existingFile) {
-          sourceFile = existingFile
+          if (fs.existsSync(candidate)) {
+            sourceFile = candidate
+            break
+          }
         }
       }
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.19.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.18.0...eslint-plugin-smarthr-v6.19.0) (2026-06-10)
+
+
+### Features
+
+* require-barrel-import に同一ディレクトリ内の重複export検出機能を追加 ([#1350](https://github.com/kufu/tamatebako/issues/1350)) ([313449a](https://github.com/kufu/tamatebako/commit/313449a088aec3fa984f8bf1ba87e24bad1f10d6))
+
 ## [6.18.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.17.0...eslint-plugin-smarthr-v6.18.0) (2026-06-09)
 
 

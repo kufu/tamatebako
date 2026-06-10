@@ -39,6 +39,8 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
       }
     ` },
     { code: `const removeIdAttr = ({ id: _id, ...rest }) => rest` },
+    // in演算子のleftにrestがあるケースは検知しない（rightのみ検知）
+    { code: `const hoge = (...rest) => { if (rest in obj) return null }` },
   ],
   invalid: [
     { code: `const hoge = ({ ...rest }) => {}`, errors: [ { message: `意味のない残余引数のため、単一の引数に変更してください${DETAIL_LINK}` } ] },
@@ -59,6 +61,12 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
     { code: `const hoge = ({ id, ...rest }) => 'key' in rest`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
     // in演算子とプロパティアクセスの両方でエラー（2つ）
     { code: `const hoge = (...rest) => { if ('userMap' in rest) return rest.userMap }`, errors: [ { message: ERROR_REST_CHILD_REF }, { message: ERROR_REST_CHILD_REF } ] },
+    // 極端なケース: rest in rest（rightのrestのみエラー）
+    { code: `const hoge = (...rest) => { if (rest in rest) return null }`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
+    // hogeRest in rest（rightのrestにエラー）
+    { code: `const hoge = (...rest) => { if (hogeRest in rest) return null }`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
+    // rest in hogeRest（rightのhogeRestにエラー）
+    { code: `const hoge = ({ id, ...rest }) => { if (rest in hogeRest) return null }`, errors: [ { message: ERROR_REST_CHILD_REF } ] },
   ]
 })
 

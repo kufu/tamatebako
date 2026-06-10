@@ -68,7 +68,10 @@ const extractFileName = (filePath) => filePath.split('/').pop().replace(REGEX_BA
  * @param {Array<string>} fileNames - barrelファイル名の配列
  * @returns {Array<string>} パス候補の配列
  */
-const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
+const generateBarrelFilePaths = (dir, fileNames) => fileNames.reduce((acc, name) => {
+  TARGET_EXTS.forEach(ext => acc.push(`${dir}/${name}.${ext}`))
+  return acc
+}, [])
 
 /**
  * 同じディレクトリ内の他のバレルファイルを取得
@@ -111,8 +114,11 @@ const extractExportsFromBarrel = (barrelFilePath) => {
 
       // 拡張子がない場合、実際に存在するファイルを探す
       if (!path.extname(sourceFile)) {
-        const candidates = TARGET_EXTS.map(ext => `${sourceFile}.${ext}`)
-        const existingFile = candidates.find(fs.existsSync)
+        const existingFile = TARGET_EXTS.reduce((found, ext) => {
+          if (found) return found
+          const candidate = `${sourceFile}.${ext}`
+          return fs.existsSync(candidate) ? candidate : null
+        }, null)
         if (existingFile) {
           sourceFile = existingFile
         }

@@ -224,7 +224,7 @@ const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath
     ? `'${importedName}' (as ${exportedName})`
     : `'${exportedName}'`
 
-  return `${sourceFileName} の ${exportInfo} は ${siblingFileName} でも export されています。同じディレクトリの複数のバレルファイルから同じファイルの同じ export を re-export することは禁止されています。
+  return `${sourceFileName} の ${exportInfo} は ${siblingFileName} でも export されています。同じファイルから同じものを複数のバレルファイルで re-export することは禁止されています。
 
 現在のファイル: ${path.basename(currentFilePath)}
 重複が検出されたファイル: ${siblingFileName}

@@ -142,12 +142,12 @@ export { Header } from './Header'        // server component
 export { ButtonIcon } from './ButtonIcon'  // client component
 ```
 
-**パターンB: 両方のbarrelから同じ識別子をexportしている（重複export）**
+**パターンB: 同じファイルから同じものを複数のbarrelでre-exportしている（重複export）**
 
-このルールは同じディレクトリの複数のbarrelファイルから同じ識別子がexportされているパターンも検出します：
+このルールは同じディレクトリの複数のbarrelファイルから同じファイルの同じものをre-exportしているパターンも検出します：
 
 ```typescript
-// ❌ 両方から同じ識別子をexportしている
+// ❌ 同じファイルから同じものを複数のbarrelでre-exportしている
 // components/Button/index.ts
 export { ButtonIcon } from './ButtonIcon'  // ← エラー: client.tsでもexportされています
 
@@ -203,11 +203,11 @@ export { Button } from './ButtonBase'
 
 ## 同じディレクトリの複数バレルファイル間での重複export検出
 
-同じディレクトリに複数のバレルファイル（例: `index.ts` と `client.ts`）が存在する場合、同じ識別子を複数のbarrelからexportすることを禁止します。
+同じディレクトリに複数のバレルファイル（例: `index.ts` と `client.ts`）が存在する場合、同じファイルから同じものを複数のバレルファイルでre-exportすることを禁止します。
 
 ### なぜ重複exportを禁止する必要があるのか
 
-バレルファイルを分けている場合、それぞれに異なる役割があるはずです。同じ識別子を複数のbarrelからexportすると、以下の問題が発生します：
+バレルファイルを分けている場合、それぞれに異なる役割があるはずです。同じファイルから同じものを複数のバレルファイルでre-exportすると、以下の問題が発生します：
 
 1. **意図的な分離の崩壊**: server/client、public/internalなどの分離が無意味になる
 2. **利用者の混乱**: どちらのbarrelからimportすべきか判断できない
@@ -224,7 +224,7 @@ export { ButtonIcon } from './ButtonIcon'  // ❌ エラー
 
 // エラーメッセージ:
 // 'ButtonIcon' は client.ts でも export されています。
-// 同じディレクトリの複数のバレルファイルから同じ識別子を export することは禁止されています。
+// 同じファイルから同じものを複数のバレルファイルで re-export することは禁止されています。
 ```
 
 複数の識別子が重複している場合、それぞれに対してエラーが報告されます：

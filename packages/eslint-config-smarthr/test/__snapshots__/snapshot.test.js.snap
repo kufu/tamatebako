@@ -3059,9 +3059,15 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/best-practice-for-lazy-variable": [
       1,
+      {
+        "fix": false,
+      },
     ],
     "smarthr/best-practice-for-nested-attributes-array-index": [
       2,
+    ],
+    "smarthr/best-practice-for-no-unnecessary-variable": [
+      0,
     ],
     "smarthr/best-practice-for-optional-chaining": [
       2,

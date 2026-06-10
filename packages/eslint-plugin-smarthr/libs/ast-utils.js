@@ -16,6 +16,15 @@ const LOOP_STATEMENT_TYPES = new Set([
   'DoWhileStatement',
 ])
 
+const NEEDING_PARENS_TYPES = new Set([
+  'NewExpression',
+  'ObjectExpression',
+  'TSAsExpression',
+  'TSNonNullExpression',
+  'TSTypeAssertion',
+  'ConditionalExpression',
+])
+
 /**
  * ノードが関数スコープかどうか判定
  */
@@ -94,6 +103,81 @@ function containsAwait(node) {
   return containsNodeType(node, 'AwaitExpression')
 }
 
+/**
+ * 式の複雑さを計算
+ * 関数呼び出し、プロパティアクセス、演算子などの数をカウント
+ * @param {object} node - ASTノード
+ * @param {number} [maxComplexity] - 最大複雑さ（この値に達したら計算を中断）
+ */
+function calculateComplexity(node, maxComplexity) {
+  let complexity = 0
+
+  function traverse(n) {
+    if (
+      !n || typeof n !== 'object' ||
+      // maxComplexityを超えたら計算を中断
+      maxComplexity !== undefined && complexity > maxComplexity
+    ) {
+      return
+    }
+
+    switch (n.type) {
+      case 'CallExpression':
+        // 引数なしの関数呼び出しは複雑さにカウントしない
+        if (n.arguments.length > 0) {
+          complexity++
+        }
+        break
+      case 'MemberExpression':
+      case 'BinaryExpression':
+      case 'LogicalExpression':
+      case 'NewExpression':
+      case 'SpreadElement':
+      case 'TSAsExpression':
+      case 'TSTypeAssertion':
+        complexity++
+        break
+      case 'ConditionalExpression':
+      case 'ObjectExpression':
+      case 'ArrayExpression':
+      case 'ArrowFunctionExpression':
+      case 'FunctionExpression':
+      case 'JSXOpeningElement':
+        complexity += 2
+        break
+    }
+
+    // 再帰的に子ノードを探索
+    for (const key in n) {
+      if (key !== 'parent') {
+        const child = n[key]
+
+        if (child) {
+          if (Array.isArray(child)) {
+            for (const c of child) {
+              traverse(c)
+              if (maxComplexity !== undefined && complexity > maxComplexity) return
+            }
+          } else if (typeof child === 'object' && child.type) {
+            traverse(child)
+            if (maxComplexity !== undefined && complexity > maxComplexity) return
+          }
+        }
+      }
+    }
+  }
+
+  traverse(node)
+  return complexity
+}
+
+/**
+ * インライン化時に括弧が必要な式タイプかどうかを判定
+ */
+function needsParentheses(node) {
+  return NEEDING_PARENS_TYPES.has(node.type)
+}
+
 module.exports = {
   isFunctionScope,
   isLoopStatement,
@@ -101,4 +185,6 @@ module.exports = {
   containsNode,
   containsNodeType,
   containsAwait,
+  calculateComplexity,
+  needsParentheses,
 }

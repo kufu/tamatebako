@@ -59,8 +59,13 @@ function cleanupFixtures() {
     const entries = fs.readdirSync(fixturesRoot)
     for (const entry of entries) {
       const fullPath = path.join(fixturesRoot, entry)
-      if (fs.statSync(fullPath).isDirectory()) {
-        fs.rmSync(fullPath, { recursive: true, force: true })
+      try {
+        if (fs.statSync(fullPath).isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true })
+        }
+      } catch (err) {
+        // シンボリックリンクが壊れている場合などはスキップ
+        continue
       }
     }
   }
@@ -519,6 +524,129 @@ ruleTester.run('require-barrel-import', rule, {
         })
         return `${fixturesRoot}/barrel-purity-valid-named-as-default/components/index.ts`
       })(),
+    },
+
+    // ========================================
+    // 同じディレクトリの複数バレルファイル - 異なるexport（エラーにならない）
+    // ========================================
+
+    // index.tsとclient.tsで異なる識別子をexport（エラーにならない）
+    {
+      code: `export { ServerComponent } from './ServerComponent'`,
+      filename: (() => {
+        createFixture('valid-different-exports-index-client', {
+          'components': {
+            'index.ts': 'export { ClientComponent } from "./ClientComponent"',
+            'client.ts': '',
+            'ClientComponent.tsx': 'export const ClientComponent = () => null',
+            'ServerComponent.tsx': 'export const ServerComponent = () => null',
+          },
+        })
+        return `${fixturesRoot}/valid-different-exports-index-client/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+    },
+
+    // client.tsとserver.tsで異なる識別子をexport（エラーにならない）
+    {
+      code: `export { serverApi } from './serverApi'`,
+      filename: (() => {
+        createFixture('valid-different-exports-client-server', {
+          'api': {
+            'client.ts': 'export { clientApi } from "./clientApi"',
+            'server.ts': '',
+            'clientApi.ts': 'export const clientApi = {}',
+            'serverApi.ts': 'export const serverApi = {}',
+          },
+        })
+        return `${fixturesRoot}/valid-different-exports-client-server/api/server.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+    },
+
+    // バレルファイルが1つのみの場合（重複チェック対象外）
+    {
+      code: `export { Button } from './Button'`,
+      filename: (() => {
+        createFixture('valid-single-barrel', {
+          'components': {
+            'index.ts': '',
+            'Button.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/valid-single-barrel/components/index.ts`
+      })(),
+    },
+
+    // export * from は重複チェック対象外（エラーにならない）
+    {
+      code: `export * from './components'`,
+      filename: (() => {
+        createFixture('valid-export-all-no-duplicate-check', {
+          'ui': {
+            'index.ts': 'export { Button } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': 'export const Button = () => null',
+            'components.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/valid-export-all-no-duplicate-check/ui/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+    },
+
+    // default exportが1つのバレルファイルのみの場合（エラーにならない）
+    {
+      code: `export { default } from './Component'`,
+      filename: (() => {
+        createFixture('valid-single-default-export', {
+          'components': {
+            'index.ts': '',
+            'client.ts': 'export { Button } from "./Button"',
+            'Component.tsx': 'export default function Component() { return null }',
+            'Button.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/valid-single-default-export/components/index.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+    },
+
+    // 異なるファイルから異なるものをexport（同じ識別子名でもエラーにならない）
+    {
+      code: `export { Button } from './ComponentA'`,
+      filename: (() => {
+        createFixture('valid-different-files-same-name', {
+          'components': {
+            'index.ts': 'export { Button } from "./ComponentB"',
+            'client.ts': '',
+            'ComponentA.tsx': 'export const Button = () => null',
+            'ComponentB.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/valid-different-files-same-name/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
     },
   ],
 
@@ -1131,7 +1259,7 @@ ruleTester.run('require-barrel-import', rule, {
     // 同階層の他のバレルファイルからのimportチェック
     // ========================================
 
-    // 9. index.tsからclient.tsへのimport
+    // 9. index.tsからclient.tsへのimport（同階層バレルファイル間import）
     {
       code: `export { Button } from './client'`,
       filename: (() => {
@@ -1457,6 +1585,163 @@ ruleTester.run('require-barrel-import', rule, {
       errors: [
         {
           message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // ========================================
+    // 同じディレクトリのバレルファイル間での重複export検出
+    // ========================================
+
+    // 22. index.tsとclient.tsで同じファイルから同じものをexport（重複エラー）
+    {
+      code: `export { Button } from './Button'`,
+      filename: (() => {
+        createFixture('duplicate-export-index-client', {
+          'components': {
+            'index.ts': 'export { Button } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-index-client/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /Button\.tsx の 'Button' は index\.ts でも export されています/,
+        },
+      ],
+    },
+
+    // 23. client.tsとserver.tsで同じファイルから同じものをexport（重複エラー）
+    {
+      code: `export { api } from './api'`,
+      filename: (() => {
+        createFixture('duplicate-export-client-server', {
+          'services': {
+            'client.ts': '',
+            'server.ts': 'export { api } from "./api"',
+            'api.ts': 'export const api = {}',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-client-server/services/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client', 'server'],
+        },
+      ],
+      errors: [
+        {
+          message: /api\.ts の 'api' は server\.ts でも export されています/,
+        },
+      ],
+    },
+
+    // 24. 複数の重複export（複数エラー）
+    {
+      code: `export { Button, Input } from './components'`,
+      filename: (() => {
+        createFixture('duplicate-export-multiple', {
+          'ui': {
+            'index.ts': 'export { Button, Input } from "./components"',
+            'client.ts': '',
+            'components.tsx': 'export const Button = () => null; export const Input = () => null',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-multiple/ui/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /components\.tsx の 'Button' は index\.ts でも export されています/,
+        },
+        {
+          message: /components\.tsx の 'Input' は index\.ts でも export されています/,
+        },
+      ],
+    },
+
+    // 25. export { A as B } での重複（同じファイルから同じものをexport、asで名前変更してもNG）
+    {
+      code: `export { Button as MyButton } from './Button'`,
+      filename: (() => {
+        createFixture('duplicate-export-alias', {
+          'components': {
+            'index.ts': 'export { Button } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-alias/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /Button\.tsx の 'Button' \(as MyButton\) は index\.ts でも export されています/,
+        },
+      ],
+    },
+
+    // 26. default exportの重複（export { default } from './file' - 同じファイルからexport）
+    {
+      code: `export { default } from './Component'`,
+      filename: (() => {
+        createFixture('duplicate-export-default', {
+          'components': {
+            'index.ts': 'export { default } from "./Component"',
+            'client.ts': '',
+            'Component.tsx': 'export default function Component() { return null }',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-default/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /Component\.tsx の 'default' は index\.ts でも export されています/,
+        },
+      ],
+    },
+
+    // 27. default exportの重複（export { Foo as default } from './file' - 同じファイルから同じものをexport）
+    {
+      code: `export { Button as default } from './Button'`,
+      filename: (() => {
+        createFixture('duplicate-export-as-default', {
+          'components': {
+            'index.ts': 'export { Button as default } from "./Button"',
+            'client.ts': '',
+            'Button.tsx': 'export const Button = () => null',
+          },
+        })
+        return `${fixturesRoot}/duplicate-export-as-default/components/client.ts`
+      })(),
+      options: [
+        {
+          additionalBarrelFileNames: ['client'],
+        },
+      ],
+      errors: [
+        {
+          message: /Button\.tsx の 'Button' \(as default\) は index\.ts でも export されています/,
         },
       ],
     },

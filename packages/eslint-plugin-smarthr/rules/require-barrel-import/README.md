@@ -142,17 +142,17 @@ export { Header } from './Header'        // server component
 export { ButtonIcon } from './ButtonIcon'  // client component
 ```
 
-**パターンB: 両方のbarrelから同じファイルをexportしている（間接的な問題）**
+**パターンB: 同じファイルから同じものを複数のbarrelでre-exportしている（重複export）**
 
-このパターンはこのルールでは検出されませんが、本質的に同じ問題です：
+このルールは同じディレクトリの複数のbarrelファイルから同じファイルの同じものをre-exportしているパターンも検出します：
 
 ```typescript
-// ❌ 両方から同じファイルをexportしている
+// ❌ 同じファイルから同じものを複数のbarrelでre-exportしている
 // components/Button/index.ts
-export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+export { ButtonIcon } from './ButtonIcon'  // ← エラー: client.tsでもexportされています
 
 // components/Button/client.ts
-export { ButtonIcon } from './ButtonIcon'  // ← 両方からexport（間接的な問題）
+export { ButtonIcon } from './ButtonIcon'  // ← エラー: index.tsでもexportされています
 
 // ✅ 修正後: どちらか一方からのみexport
 // components/Button/index.ts
@@ -200,6 +200,115 @@ export { Button } from './ButtonBase'
 同じ実装ファイル（`ButtonBase.tsx`）を両方のbarrelファイルからre-exportします。
 
 ただし、この方法は稀なケースです。ほとんどの場合は方法1または方法2で解決できます。
+
+## 同じディレクトリの複数バレルファイル間での重複export検出
+
+同じディレクトリに複数のバレルファイル（例: `index.ts` と `client.ts`）が存在する場合、同じファイルから同じものを複数のバレルファイルでre-exportすることを禁止します。
+
+### なぜ重複exportを禁止する必要があるのか
+
+バレルファイルを分けている場合、それぞれに異なる役割があるはずです。同じファイルから同じものを複数のバレルファイルでre-exportすると、以下の問題が発生します：
+
+1. **意図的な分離の崩壊**: server/client、public/internalなどの分離が無意味になる
+2. **利用者の混乱**: どちらのbarrelからimportすべきか判断できない
+3. **保守性の低下**: 同じコンポーネントが複数箇所から提供され、管理が煩雑になる
+
+### ❌ 検出されるエラーケース
+
+```typescript
+// components/Button/index.ts
+export { ButtonIcon } from './ButtonIcon'  // ❌ エラー
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'  // ❌ エラー
+
+// エラーメッセージ:
+// 'ButtonIcon' は client.ts でも export されています。
+// 同じファイルから同じものを複数のバレルファイルで re-export することは禁止されています。
+```
+
+複数の識別子が重複している場合、それぞれに対してエラーが報告されます：
+
+```typescript
+// services/index.ts
+export { api, client } from './modules'  // ❌ 両方ともエラー
+
+// services/client.ts
+export { api, client } from './modules'  // ❌ 両方ともエラー
+```
+
+エイリアス（`as`）を使用している場合でも、**元のソースファイルと元の識別子名**でチェックされます。エイリアス後の名前は重複チェックには使用されません：
+
+```typescript
+// ❌ エラー: 同じファイルから同じ識別子をimport
+// components/index.ts
+export { Button as MyButton } from './Button'  // ❌ エラー
+
+// components/client.ts
+export { Button } from './Button'  // ❌ エラー
+// './Button' から 'Button' を import している点が重複
+
+// ✅ OK: 異なるファイルからなので重複ではない
+// components/index.ts
+export { Button } from './Component'  // ✅ OK
+
+// components/client.ts
+export { Button } from './Button'  // ✅ OK
+// 異なるソースファイル（./Component と ./Button）なので重複ではない
+```
+
+### ✅ 正しい修正方法
+
+#### 方法1: どちらか一方のbarrelからのみexport（推奨）
+
+```typescript
+// components/Button/index.ts
+export { ServerButton } from './ServerButton'  // server component
+
+// components/Button/client.ts
+export { ButtonIcon } from './ButtonIcon'      // client component
+// 異なる識別子をexportしているのでOK
+```
+
+#### 方法2: export * は重複チェック対象外
+
+`export * from` はすべてをre-exportする意図が明確なため、重複チェックの対象外です：
+
+```typescript
+// ui/index.ts
+export { Button } from './Button'
+
+// ui/client.ts
+export * from './components'  // OK: export * は重複チェック対象外
+```
+
+ただし、明示的なnamed exportは推奨されます。
+
+### よくある発生パターン
+
+このエラーが発生する典型的なケース：
+
+1. 最初は `index.ts` に全てのexportが混在していた
+2. 後から分離の必要性が生じ、`client.ts` を作成した
+3. client componentを `client.ts` に移動したが、`index.ts` からのexportを削除し忘れた
+
+```typescript
+// 修正前: 削除し忘れ
+// index.ts
+export { ServerComponent } from './ServerComponent'
+export { ClientComponent } from './ClientComponent'  // ← 削除し忘れ
+
+// client.ts
+export { ClientComponent } from './ClientComponent'  // ← 重複
+
+// 修正後
+// index.ts
+export { ServerComponent } from './ServerComponent'
+// ClientComponent の export を削除
+
+// client.ts
+export { ClientComponent } from './ClientComponent'
+```
 
 ## バレルファイルの純粋性チェック
 

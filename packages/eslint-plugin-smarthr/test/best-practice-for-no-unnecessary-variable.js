@@ -1106,5 +1106,44 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
+    // export { xxx as yyy } パターン（単純な値の場合はエラーになる）
+    {
+      code: `
+        const _foo = 123
+        export { _foo as foo }
+      `,
+      errors: [
+        {
+          messageId: 'exportDirectly',
+          data: { name: '_foo', exportedName: 'foo' },
+        },
+      ],
+    },
+    // export { xxx as yyy } パターン（関数値の参照の場合はエラーになる）
+    {
+      code: `
+        const _useFormContext = useFormContext
+        export { _useFormContext as useFormContext }
+      `,
+      errors: [
+        {
+          messageId: 'exportDirectly',
+          data: { name: '_useFormContext', exportedName: 'useFormContext' },
+        },
+      ],
+    },
+    // export { xxx as yyy } パターン（React Hooks呼び出しの場合もエラーになる）
+    {
+      code: `
+        const _useFormContext = useFormContext()
+        export { _useFormContext as useFormContext }
+      `,
+      errors: [
+        {
+          messageId: 'exportDirectly',
+          data: { name: '_useFormContext', exportedName: 'useFormContext' },
+        },
+      ],
+    },
   ],
 })

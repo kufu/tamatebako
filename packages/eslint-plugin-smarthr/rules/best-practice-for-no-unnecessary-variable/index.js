@@ -50,9 +50,7 @@ function shouldSkipVariableExceptComplexity(node) {
     // UPPER_SNAKE_CASE形式の定数は除外（慣習的な定数命名）
     UPPER_SNAKE_CASE_PATTERN.test(node.id.name) ||
     // 関数式、TaggedTemplateExpressionは除外
-    EXCLUDED_INIT_TYPES.includes(node.init.type) ||
-    // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
-    (node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use'))
+    EXCLUDED_INIT_TYPES.includes(node.init.type)
   ) {
     return true
   }
@@ -67,6 +65,16 @@ function shouldSkipVariableExceptComplexity(node) {
   }
 
   return false
+}
+
+/**
+ * React Hooksで初期化されているかを判定
+ */
+function isReactHookCall(node) {
+  return node.init &&
+         node.init.type === 'CallExpression' &&
+         node.init.callee.type === 'Identifier' &&
+         node.init.callee.name.startsWith('use')
 }
 
 /**
@@ -372,6 +380,24 @@ function isAtStartOfExpressionStatement(usageNode) {
 }
 
 /**
+ * 使用箇所がexport { xxx as yyy }のExportSpecifierの中にあるかチェック
+ */
+function isInExportSpecifier(usageNode) {
+  let current = usageNode.parent
+  while (current) {
+    if (current.type === 'ExportSpecifier') {
+      return true
+    }
+    // ExportNamedDeclarationまで到達したら終了
+    if (current.type === 'ExportNamedDeclaration') {
+      return false
+    }
+    current = current.parent
+  }
+  return false
+}
+
+/**
  * 複雑さをチェックしてインライン化可能かを判定
  */
 function checkComplexity(sourceCode, node, usage, typeAnnotation, maxComplexity) {
@@ -413,6 +439,13 @@ function analyzeVariable(sourceCode, node, options = {}) {
   }
 
   const usage = usages[0]
+  const isExportSpec = isInExportSpecifier(usage)
+
+  // React Hooks呼び出しは対象外（ただしexport { xxx as yyy }パターンは対象）
+  if (!isExportSpec && isReactHookCall(node)) {
+    return null
+  }
+
   const typeAnnotation = getTypeAnnotationText(sourceCode, node)
 
   // 複雑さチェック
@@ -425,6 +458,7 @@ function analyzeVariable(sourceCode, node, options = {}) {
     varName,
     usage,
     typeAnnotation,
+    isExportSpecifier: isExportSpec,
   }
 }
 
@@ -438,6 +472,7 @@ module.exports = {
     schema: SCHEMA,
     messages: {
       inlineVariable: '変数"{{name}}"は一度しか使用されていません。直接使用してください。',
+      exportDirectly: '変数"{{name}}"は一度しか使用されていません。export const {{exportedName}} = ... の形式で直接エクスポートしてください。',
     },
   },
   create(context) {
@@ -450,12 +485,35 @@ module.exports = {
         const analysis = analyzeVariable(sourceCode, node, options)
 
         if (analysis) {
-          context.report({
-            node: analysis.node,
-            messageId: 'inlineVariable',
-            data: { name: analysis.varName },
-            fix: fix ? createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation) : null,
-          })
+          // export { xxx as yyy } パターンの場合は異なるメッセージを使用
+          if (analysis.isExportSpecifier) {
+            // ExportSpecifierからエクスポート名を取得
+            let exportedName = analysis.varName
+            let current = analysis.usage.parent
+            while (current && current.type !== 'ExportSpecifier') {
+              current = current.parent
+            }
+            if (current && current.type === 'ExportSpecifier' && current.exported) {
+              exportedName = current.exported.name
+            }
+
+            context.report({
+              node: analysis.node,
+              messageId: 'exportDirectly',
+              data: {
+                name: analysis.varName,
+                exportedName,
+              },
+              fix: fix ? createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation) : null,
+            })
+          } else {
+            context.report({
+              node: analysis.node,
+              messageId: 'inlineVariable',
+              data: { name: analysis.varName },
+              fix: fix ? createInlineFixer(sourceCode, analysis.node, analysis.usage, analysis.typeAnnotation) : null,
+            })
+          }
         }
       },
     }

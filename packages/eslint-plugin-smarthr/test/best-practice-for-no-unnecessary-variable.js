@@ -1145,5 +1145,18 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
+    // export { xxx } パターン（asなし）
+    {
+      code: `
+        const useFormContext = hoge
+        export { useFormContext }
+      `,
+      errors: [
+        {
+          messageId: 'exportDirectly',
+          data: { name: 'useFormContext', exportedName: 'useFormContext' },
+        },
+      ],
+    },
   ],
 })

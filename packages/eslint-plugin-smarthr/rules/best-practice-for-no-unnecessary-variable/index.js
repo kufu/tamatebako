@@ -203,7 +203,11 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
 
     // 変数名が一致するIdentifierを収集（宣言自体と初期化式内は除外）
     if (isTargetIdentifier(node)) {
-      usages.push(node)
+      // 同じノードオブジェクトを重複してカウントしないようにする
+      // (export { foo } の場合、localとexportedが同じノードを指すため)
+      if (!usages.includes(node)) {
+        usages.push(node)
+      }
       return
     }
 

@@ -106,6 +106,13 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         }
       `,
     },
+    // React Hooks除外（一度しか使用されていない場合でも、export { xxx as yyy } パターンでなければ除外）
+    {
+      code: `
+        const data = useFormContext()
+        console.log(data)
+      `,
+    },
     // await式除外
     {
       code: `
@@ -1132,7 +1139,7 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
         },
       ],
     },
-    // export { xxx as yyy } パターン（React Hooks呼び出しの場合もエラーになる）
+    // export { xxx as yyy } パターン（React Hooks呼び出しの場合でも除外されずエラーになる）
     {
       code: `
         const _useFormContext = useFormContext()

@@ -23,21 +23,17 @@ const DETAIL_LINK = `
  * @returns {Array<{node: object, name: string}>} 識別子の配列
  */
 function getDependencyIdentifiers(dependenciesArray) {
-  if (!dependenciesArray || dependenciesArray.type !== 'ArrayExpression') {
-    return []
-  }
-
   const identifiers = []
 
-  for (const element of dependenciesArray.elements) {
-    if (!element) continue
-
-    if (element.type === 'Identifier') {
-      // [children]
-      identifiers.push({
-        node: element,
-        name: element.name,
-      })
+  if (dependenciesArray.type === 'ArrayExpression') {
+    for (const element of dependenciesArray.elements) {
+      if (element?.type === 'Identifier') {
+        // [children]
+        identifiers.push({
+          node: element,
+          name: element.name,
+        })
+      }
     }
   }
 
@@ -51,10 +47,7 @@ function getDependencyIdentifiers(dependenciesArray) {
  * @returns {string|null} マッチした名前、マッチしない場合はnull
  */
 function matchesUnstableName(identifierName, unstableNames) {
-  if (unstableNames.includes(identifierName)) {
-    return identifierName
-  }
-  return null
+  return unstableNames.includes(identifierName) ? identifierName : null
 }
 
 /**
@@ -94,6 +87,7 @@ module.exports = {
         // 不安定な参照と予想される名前が含まれているかチェック
         for (const identifier of identifiers) {
           const matchedName = matchesUnstableName(identifier.name, unstableNames)
+
           if (matchedName) {
             context.report({
               node: identifier.node,

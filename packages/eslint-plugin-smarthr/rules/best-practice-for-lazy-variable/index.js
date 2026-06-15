@@ -692,14 +692,9 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
 
     const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
-    // break/continueの場合、親if文の次のstatementを基準にする
-    const effectiveExitIndex = (earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement
-      ? earlyExitIndex  // 親if文のインデックス
-      : earlyExitIndex
-
     // すべての使用箇所が早期終了の後にあるかチェック
     if (usages.length > 0 &&
-        usages.every(usage => getStatementIndex(statements, usage) > effectiveExitIndex)) {
+        usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
       const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
 
       // break/continueの場合、if文の直後に挿入（if文の次のstatementの前）

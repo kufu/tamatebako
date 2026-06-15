@@ -500,13 +500,13 @@ function findEarlyExits(declarationScope, variableDeclaration) {
 /**
  * ノードから早期終了文を収集
  */
-function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopContext = false, inSwitchContext = false, parentIfStatement = null) {
+function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopContext = false, inSwitchContext = false, parentIfStatement = null, loopDepth = 0) {
   // 関数スコープを超えない
   if (!node || typeof node !== 'object' || isFunctionScope(node)) return
 
-  // break文を検出（ラベルなし && ループ内 && switch外）
+  // break文を検出（ラベルなし && ループ内 && switch外 && ネストしたループではない）
   if (node.type === 'BreakStatement') {
-    if (!node.label && inLoopContext && !inSwitchContext) {
+    if (!node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
       earlyExits.push({
         type: 'break',
         node,
@@ -517,9 +517,9 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
     }
   }
 
-  // continue文を検出（ラベルなし && ループ内）
+  // continue文を検出（ラベルなし && ループ内 && ネストしたループではない）
   if (node.type === 'ContinueStatement') {
-    if (!node.label && inLoopContext) {
+    if (!node.label && inLoopContext && loopDepth === 0) {
       earlyExits.push({
         type: 'continue',
         node,
@@ -544,10 +544,12 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
   let newLoopContext = inLoopContext
   let newSwitchContext = inSwitchContext
   let newParentIfStatement = parentIfStatement
+  let newLoopDepth = loopDepth
 
   if (LOOP_STATEMENT_TYPES.has(node.type)) {
     newLoopContext = true
     newSwitchContext = false  // ループに入るとswitchコンテキストはリセット
+    newLoopDepth = loopDepth + 1  // ネストしたループに入った
   } else if (node.type === 'SwitchStatement') {
     newSwitchContext = true
   } else if (node.type === 'IfStatement') {
@@ -561,9 +563,9 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
     const child = node[key]
     if (child) {
       if (Array.isArray(child)) {
-        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement))
+        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement, newLoopDepth))
       } else if (typeof child === 'object') {
-        collectEarlyExitsFromNode(child, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement)
+        collectEarlyExitsFromNode(child, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement, newLoopDepth)
       }
     }
   }

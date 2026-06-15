@@ -453,6 +453,18 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // ネストしたループ：外側で宣言、内側でbreak、外側で使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          console.log(x)
+        }
+      `,
+    },
   ],
   invalid: [
     // ネストした早期return
@@ -1787,6 +1799,38 @@ console.log(x)
         {
           messageId: 'moveToLazy',
           data: { name: 'value' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側でbreak、外側のif内で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            const x = getValue(i)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
         },
       ],
     },

@@ -133,20 +133,6 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         },
       ],
     },
-    // props.children
-    {
-      code: `
-        useEffect(() => {
-          console.log(props.children)
-        }, [props.children])
-      `,
-      errors: [
-        {
-          messageId: 'unstableDependency',
-          data: { name: 'children', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
     // 複数の依存関係の中にchildrenがある
     {
       code: `
@@ -192,21 +178,6 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         {
           messageId: 'unstableDependency',
           data: { name: 'prefix', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // props.icon
-    {
-      code: `
-        useEffect(() => {
-          console.log(props.icon)
-        }, [props.icon])
-      `,
-      options: [{ unstableNames: ['icon'] }],
-      errors: [
-        {
-          messageId: 'unstableDependency',
-          data: { name: 'icon', detailLink: DETAIL_LINK },
         },
       ],
     },

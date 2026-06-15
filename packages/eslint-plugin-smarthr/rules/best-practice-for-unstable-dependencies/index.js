@@ -38,29 +38,6 @@ function getDependencyIdentifiers(dependenciesArray) {
         node: element,
         name: element.name,
       })
-    } else if (element.type === 'MemberExpression') {
-      // [props.children]
-      const names = []
-      let current = element
-
-      while (current) {
-        if (current.type === 'MemberExpression') {
-          if (current.property.type === 'Identifier') {
-            names.unshift(current.property.name)
-          }
-          current = current.object
-        } else if (current.type === 'Identifier') {
-          names.unshift(current.name)
-          break
-        } else {
-          break
-        }
-      }
-
-      identifiers.push({
-        node: element,
-        name: names.join('.'),
-      })
     }
   }
 
@@ -69,16 +46,13 @@ function getDependencyIdentifiers(dependenciesArray) {
 
 /**
  * 識別子が不安定な参照と予想される名前を含むかチェック
- * @param {string} identifierName - 識別子名（props.children等）
+ * @param {string} identifierName - 識別子名
  * @param {Array<string>} unstableNames - 不安定な参照と予想される名前のリスト
  * @returns {string|null} マッチした名前、マッチしない場合はnull
  */
 function matchesUnstableName(identifierName, unstableNames) {
-  for (const unstableName of unstableNames) {
-    // 完全一致 または 末尾一致（props.children等）
-    if (identifierName === unstableName || identifierName.endsWith(`.${unstableName}`)) {
-      return unstableName
-    }
+  if (unstableNames.includes(identifierName)) {
+    return identifierName
   }
   return null
 }

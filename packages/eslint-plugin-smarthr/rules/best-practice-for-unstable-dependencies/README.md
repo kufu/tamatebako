@@ -27,12 +27,6 @@ const memoized = useMemo(() => {
 }, [children])
 ```
 
-```javascript
-useEffect(() => {
-  console.log(props.children)
-}, [props.children])
-```
-
 ### オブジェクト
 
 ```javascript

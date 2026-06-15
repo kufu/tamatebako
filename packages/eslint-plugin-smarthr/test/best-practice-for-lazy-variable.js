@@ -405,16 +405,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // break前に変数宣言し、break後に1回のみ使用（if文の直後のstatementでのみ使用、かつ式文なので移動対象外）
-    {
-      code: `
-        for (let i = 0; i < items.length; i++) {
-          const itemEnd = itemStart + items[i].length
-          if (itemStart >= matchEnd) break
-          console.log(itemEnd)
-        }
-      `,
-    },
     // continue前に変数宣言し、continue前に使用（移動対象外）
     {
       code: `
@@ -460,18 +450,6 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
               break
           }
           console.log(value)
-        }
-      `,
-    },
-    // ネストしたループでbreak（if文の直後でのみ使用、かつ式文なので移動対象外）
-    {
-      code: `
-        for (let i = 0; i < outer.length; i++) {
-          for (let j = 0; j < inner.length; j++) {
-            const value = compute(i, j)
-            if (shouldSkip) break
-            use(value)
-          }
         }
       `,
     },
@@ -1750,6 +1728,58 @@ console.log(x)
           const value = getValue(i)
           const result = process(value)
           results.push(result)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に1回のみ使用（if文の直後のstatementでのみ使用）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const itemEnd = itemStart + items[i].length
+          if (itemStart >= matchEnd) break
+          console.log(itemEnd)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + items[i].length
+          console.log(itemEnd)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // ネストしたループでbreak（if文の直後でのみ使用）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            const value = compute(i, j)
+            if (shouldSkip) break
+            use(value)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+            const value = compute(i, j)
+            use(value)
+          }
         }
       `,
       options: [{ fix: true }],

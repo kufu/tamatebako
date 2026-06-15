@@ -711,20 +711,6 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
         ? earlyExitIndex + 1  // if文の次のstatement
         : firstUsageIndex
 
-      // break/continueの場合、if文の直後のstatementでのみ使用される場合は移動対象外
-      // （移動してもほぼ同じタイミングで実行されるため、遅延初期化の効果が薄い）
-      // ただし、if文の直後のstatementが変数宣言の場合は移動可能
-      // （その変数宣言の前に移動することで、より早く遅延初期化できる）
-      if (isBreakOrContinueInIf &&
-          insertIndex === firstUsageIndex) {
-        // if文の次のstatementでのみ使用されているかチェック
-        const usedOnlyAtInsertIndex = usages.every(usage => getStatementIndex(statements, usage) === insertIndex)
-        // かつ、そのstatementが変数宣言でない場合は移動対象外
-        if (usedOnlyAtInsertIndex && statements[insertIndex].type !== 'VariableDeclaration') {
-          continue
-        }
-      }
-
       return {
         node,
         varName,

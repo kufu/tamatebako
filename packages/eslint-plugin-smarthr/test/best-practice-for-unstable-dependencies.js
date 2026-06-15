@@ -66,32 +66,23 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         }, [value])
       `,
     },
-    // カスタム設定でiconを指定、childrenは許可
+    // iconを追加で指定、childrenは含まれていない
     {
       code: `
         useEffect(() => {
-          console.log(children)
-        }, [children])
+          console.log(value)
+        }, [value])
       `,
-      options: [{ unstableNames: ['icon'] }],
+      options: [{ additionalUnstableNames: ['icon'] }],
     },
-    // カスタムフック（useMyHook）を指定、デフォルトのフックは対象外
-    {
-      code: `
-        useEffect(() => {
-          console.log(children)
-        }, [children])
-      `,
-      options: [{ targetHooks: ['useMyHook'] }],
-    },
-    // カスタムフック（useCustom）は対象だが、childrenは含まれていない
+    // カスタムフックを追加で指定、childrenは含まれていない
     {
       code: `
         useCustom(() => {
           console.log(value)
         }, [value])
       `,
-      options: [{ targetHooks: ['useCustom'] }],
+      options: [{ additionalTargetHooks: ['useCustom'] }],
     },
   ],
   invalid: [
@@ -172,7 +163,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(icon)
         }, [icon])
       `,
-      options: [{ unstableNames: ['icon'] }],
+      options: [{ additionalUnstableNames: ['icon'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -187,7 +178,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(icon, prefix)
         }, [icon, prefix])
       `,
-      options: [{ unstableNames: ['icon', 'prefix'] }],
+      options: [{ additionalUnstableNames: ['icon', 'prefix'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -206,7 +197,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(object.key)
         }, [object])
       `,
-      options: [{ unstableNames: ['object'] }],
+      options: [{ additionalUnstableNames: ['object'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -221,7 +212,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           return items.map(i => i.value)
         }, [items])
       `,
-      options: [{ unstableNames: ['items'] }],
+      options: [{ additionalUnstableNames: ['items'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -236,7 +227,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           callback()
         }, [callback])
       `,
-      options: [{ unstableNames: ['callback'] }],
+      options: [{ additionalUnstableNames: ['callback'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -251,7 +242,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(children)
         }, [children])
       `,
-      options: [{ targetHooks: ['useCustom'] }],
+      options: [{ additionalTargetHooks: ['useCustom'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -266,7 +257,7 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(children)
         }, [children])
       `,
-      options: [{ targetHooks: ['useCustom1', 'useCustom2'] }],
+      options: [{ additionalTargetHooks: ['useCustom1', 'useCustom2'] }],
       errors: [
         {
           messageId: 'unstableDependency',
@@ -274,18 +265,18 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         },
       ],
     },
-    // デフォルトフックとカスタムフックを併用
+    // カスタムフックと追加の不安定な名前を併用
     {
       code: `
         useCustom(() => {
-          console.log(children)
-        }, [children])
+          console.log(icon)
+        }, [icon])
       `,
-      options: [{ targetHooks: ['useEffect', 'useCustom'], unstableNames: ['children'] }],
+      options: [{ additionalTargetHooks: ['useCustom'], additionalUnstableNames: ['icon'] }],
       errors: [
         {
           messageId: 'unstableDependency',
-          data: { name: 'children', detailLink: DETAIL_LINK },
+          data: { name: 'icon', detailLink: DETAIL_LINK },
         },
       ],
     },

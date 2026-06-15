@@ -2,15 +2,15 @@ const SCHEMA = [
   {
     type: 'object',
     properties: {
-      unstableNames: {
+      additionalUnstableNames: {
         type: 'array',
         items: { type: 'string' },
-        default: ['children'],
+        default: [],
       },
-      targetHooks: {
+      additionalTargetHooks: {
         type: 'array',
         items: { type: 'string' },
-        default: ['useEffect', 'useLayoutEffect', 'useCallback', 'useMemo'],
+        default: [],
       },
     },
     additionalProperties: false,
@@ -71,8 +71,8 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0] || {}
-    const unstableNames = options.unstableNames || DEFAULT_UNSTABLE_NAMES
-    const targetHooks = options.targetHooks || DEFAULT_TARGET_HOOKS
+    const unstableNames = [...DEFAULT_UNSTABLE_NAMES, ...(options.additionalUnstableNames || [])]
+    const targetHooks = [...DEFAULT_TARGET_HOOKS, ...(options.additionalTargetHooks || [])]
 
     const unstableNamesRegex = buildRegex(unstableNames)
     const targetHooksRegex = buildRegex(targetHooks)

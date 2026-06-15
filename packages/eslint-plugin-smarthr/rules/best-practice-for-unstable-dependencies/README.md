@@ -248,31 +248,29 @@ useEffect(() => {
 
 ## オプション
 
-### unstableNames
+### additionalUnstableNames
 
-デフォルトでは `children` のみをチェックしますが、他の変数名も指定できます。
-
-```javascript
-{
-  "smarthr/best-practice-for-unstable-dependencies": ["error", {
-    "unstableNames": ["children", "icon", "prefix", "object", "items", "callback"]
-  }]
-}
-```
-
-### targetHooks
-
-デフォルトでは `useEffect`, `useLayoutEffect`, `useCallback`, `useMemo` をチェックしますが、カスタムフックも指定できます。
+デフォルトでは `children` のみをチェックしますが、他の変数名を追加できます。
 
 ```javascript
 {
   "smarthr/best-practice-for-unstable-dependencies": ["error", {
-    "targetHooks": ["useEffect", "useLayoutEffect", "useCallback", "useMemo", "useCustomHook"]
+    "additionalUnstableNames": ["icon", "prefix", "object", "items", "callback"]
   }]
 }
 ```
 
-**注意:** `targetHooks` を指定すると、デフォルトのフックは置き換えられます。デフォルトのフックもチェックしたい場合は、明示的に含める必要があります。
+### additionalTargetHooks
+
+デフォルトでは `useEffect`, `useLayoutEffect`, `useCallback`, `useMemo` をチェックしますが、カスタムフックを追加できます。
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalTargetHooks": ["useCustomHook", "useMyEffect"]
+  }]
+}
+```
 
 ## 検出対象のHooks（デフォルト）
 
@@ -283,16 +281,15 @@ useEffect(() => {
 
 ## 使用例
 
-### unstableNamesの包括的な設定
+### 不安定な参照の追加
 
-プロジェクトでよく使われる不安定な参照をすべて指定することで、チーム全体で一貫したコードを書くことができます。
+プロジェクトでよく使われる不安定な参照を追加することで、チーム全体で一貫したコードを書くことができます。
 
 ```javascript
 {
   "smarthr/best-practice-for-unstable-dependencies": ["error", {
-    "unstableNames": [
+    "additionalUnstableNames": [
       // ReactNode
-      "children",
       "icon",
       "prefix",
       "suffix",
@@ -324,17 +321,8 @@ useEffect(() => {
 ```javascript
 {
   "smarthr/best-practice-for-unstable-dependencies": ["error", {
-    "unstableNames": ["children", "icon", "items"],
-    "targetHooks": [
-      // デフォルトのフック
-      "useEffect",
-      "useLayoutEffect",
-      "useCallback",
-      "useMemo",
-      // カスタムフック
-      "useCustomEffect",
-      "useMyMemo"
-    ]
+    "additionalUnstableNames": ["icon", "items"],
+    "additionalTargetHooks": ["useCustomEffect", "useMyMemo"]
   }]
 }
 ```

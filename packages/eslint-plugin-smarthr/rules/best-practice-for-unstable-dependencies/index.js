@@ -55,9 +55,10 @@ module.exports = {
     const options = context.options[0] || {}
     const unstableNames = options.unstableNames || ['children']
 
-    // $をエスケープして正規表現を生成（$width等のprefix付き変数名に対応）
-    const escapedNames = unstableNames.map(name => name.replace(/\$/g, '\\$'))
-    const unstableNamesRegex = new RegExp(`^(${escapedNames.join('|')})$`)
+    // $をエスケープして正規表現パターンを生成（$width等のprefix付き変数名に対応）
+    const pattern = unstableNames.reduce((acc, name, i) =>
+      acc + (i > 0 ? '|' : '') + name.replace(/\$/g, '\\$'), '')
+    const unstableNamesRegex = new RegExp(`^(${pattern})$`)
 
     return {
       CallExpression(node) {

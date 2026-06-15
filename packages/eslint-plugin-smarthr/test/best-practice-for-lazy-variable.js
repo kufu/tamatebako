@@ -1834,5 +1834,67 @@ console.log(x)
         },
       ],
     },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で2回使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+          process(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+          process(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
   ],
 })

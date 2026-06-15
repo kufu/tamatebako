@@ -542,15 +542,21 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
   let newParentIfStatement = parentIfStatement
   let newLoopDepth = loopDepth
 
-  if (LOOP_STATEMENT_TYPES.has(node.type)) {
-    newLoopContext = true
-    newSwitchContext = false  // ループに入るとswitchコンテキストはリセット
-    newLoopDepth = loopDepth + 1  // ネストしたループに入った
-  } else if (node.type === 'SwitchStatement') {
-    newSwitchContext = true
-  } else if (node.type === 'IfStatement') {
-    // if文の中のbreak/continueを検出するため、親if文を記録
-    newParentIfStatement = node
+  switch (node.type) {
+    case 'SwitchStatement':
+      newSwitchContext = true
+      break
+    case 'IfStatement':
+      // if文の中のbreak/continueを検出するため、親if文を記録
+      newParentIfStatement = node
+      break
+    default:
+      if (LOOP_STATEMENT_TYPES.has(node.type)) {
+        newLoopContext = true
+        newSwitchContext = false  // ループに入るとswitchコンテキストはリセット
+        newLoopDepth = loopDepth + 1  // ネストしたループに入った
+      }
+      break
   }
 
   // 子ノードを再帰的に探索

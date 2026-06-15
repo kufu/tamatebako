@@ -55,6 +55,10 @@ module.exports = {
     const options = context.options[0] || {}
     const unstableNames = options.unstableNames || ['children']
 
+    // $をエスケープして正規表現を生成（$width等のprefix付き変数名に対応）
+    const escapedNames = unstableNames.map(name => name.replace(/\$/g, '\\$'))
+    const unstableNamesRegex = new RegExp(`^(${escapedNames.join('|')})$`)
+
     return {
       CallExpression(node) {
         // 対象のHooksかチェック
@@ -76,7 +80,7 @@ module.exports = {
 
         // 不安定な参照と予想される名前が含まれているかチェック
         for (const identifier of identifiers) {
-          if (unstableNames.includes(identifier.name)) {
+          if (unstableNamesRegex.test(identifier.name)) {
             context.report({
               node: identifier.node,
               messageId: 'unstableDependency',

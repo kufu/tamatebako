@@ -580,8 +580,12 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
   // 早期終了のインデックスを取得
   const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
+  // break/continueかつ親if文がある場合
+  const isBreakOrContinue = earlyExit.type === 'break' || earlyExit.type === 'continue'
+  const isBreakOrContinueInIf = isBreakOrContinue && earlyExit.parentIfStatement
+
   // break/continueの場合、親if文のconsequent内での使用をチェック
-  if ((earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement) {
+  if (isBreakOrContinueInIf) {
     const ifConsequent = earlyExit.parentIfStatement.consequent
     // break/continue文の前（if文のconsequent内）に使用があるかチェック
     if (containsVariableUsageBeforeEarlyExit(ifConsequent, varName, declarationNode, earlyExit.node)) {
@@ -697,9 +701,13 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
         usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
       const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
 
+      // break/continueかつ親if文がある場合
+      const isBreakOrContinue = earlyExit.type === 'break' || earlyExit.type === 'continue'
+      const isBreakOrContinueInIf = isBreakOrContinue && earlyExit.parentIfStatement
+
       // break/continueの場合、if文の直後に挿入（if文の次のstatementの前）
       // それ以外の場合、最初の使用箇所の前に挿入
-      const insertIndex = (earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement
+      const insertIndex = isBreakOrContinueInIf
         ? earlyExitIndex + 1  // if文の次のstatement
         : firstUsageIndex
 
@@ -707,8 +715,7 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
       // （移動してもほぼ同じタイミングで実行されるため、遅延初期化の効果が薄い）
       // ただし、if文の直後のstatementが変数宣言の場合は移動可能
       // （その変数宣言の前に移動することで、より早く遅延初期化できる）
-      if ((earlyExit.type === 'break' || earlyExit.type === 'continue') &&
-          earlyExit.parentIfStatement &&
+      if (isBreakOrContinueInIf &&
           insertIndex === firstUsageIndex) {
         // if文の次のstatementでのみ使用されているかチェック
         const usedOnlyAtInsertIndex = usages.every(usage => getStatementIndex(statements, usage) === insertIndex)

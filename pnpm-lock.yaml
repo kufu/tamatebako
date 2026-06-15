@@ -173,7 +173,7 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       ioredis:
-        specifier: ^5.11.0
+        specifier: ^5.11.1
         version: 5.11.1
       next-auth:
         specifier: ^4.24.14
@@ -13249,7 +13249,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
-      postcss: 8.5.14
+      postcss: 8.5.15
       rollup: 4.60.3
       tinyglobby: 0.2.16
     optionalDependencies:

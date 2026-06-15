@@ -519,9 +519,15 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
       }
       break
     case 'ReturnStatement':
+      earlyExits.push({
+        type: 'return',
+        node,
+        statementIndex,
+      })
+      return
     case 'ThrowStatement':
       earlyExits.push({
-        type: node.type === 'ReturnStatement' ? 'return' : 'throw',
+        type: 'throw',
         node,
         statementIndex,
       })

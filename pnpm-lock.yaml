@@ -173,7 +173,7 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       ioredis:
-        specifier: ^5.11.0
+        specifier: ^5.11.1
         version: 5.11.1
       next-auth:
         specifier: ^4.24.14

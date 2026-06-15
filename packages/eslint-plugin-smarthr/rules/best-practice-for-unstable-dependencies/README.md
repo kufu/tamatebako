@@ -140,6 +140,8 @@ useEffect(() => {
 
 オブジェクトや配列の場合は、必要なプリミティブ値のみを依存配列に含めます。
 
+**プロパティアクセスの例:**
+
 ```javascript
 // ❌ オブジェクト全体を依存配列に含める
 useEffect(() => {
@@ -152,6 +154,8 @@ useEffect(() => {
 }, [config.apiUrl])
 ```
 
+**配列のプロパティの例:**
+
 ```javascript
 // ❌ 配列全体を依存配列に含める
 useEffect(() => {
@@ -163,6 +167,30 @@ useEffect(() => {
   console.log(items.length)
 }, [items.length])
 ```
+
+**スプレッド構文を使っている場合:**
+
+スプレッド構文（`...config`など）で展開している箇所は、実際に必要な値のみをベタ書きできないか検証してください。
+
+```javascript
+// ❌ オブジェクト全体を展開
+useEffect(() => {
+  const newConfig = { ...config, newProp: value }
+  doSomething(newConfig)
+}, [config])
+
+// ✅ 必要な値のみをベタ書き
+useEffect(() => {
+  const newConfig = {
+    apiUrl: config.apiUrl,
+    timeout: config.timeout,
+    newProp: value
+  }
+  doSomething(newConfig)
+}, [config.apiUrl, config.timeout])
+```
+
+**ヒント:** 多くの場合、スプレッド構文で展開しているオブジェクトは、実際には一部のプロパティしか使っていないことがあります。使用箇所を確認して、必要な値のみを明示的に指定することで、依存配列を最小限に抑えられます。配列の場合も、実際に必要なのは`length`や特定のインデックスの値だけかもしれません。
 
 ### 方法4: useCallbackやuseMemoでメモ化する
 

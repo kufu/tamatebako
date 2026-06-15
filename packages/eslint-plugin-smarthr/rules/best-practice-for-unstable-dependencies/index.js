@@ -41,16 +41,6 @@ function getDependencyIdentifiers(dependenciesArray) {
 }
 
 /**
- * 識別子が不安定な参照と予想される名前を含むかチェック
- * @param {string} identifierName - 識別子名
- * @param {Array<string>} unstableNames - 不安定な参照と予想される名前のリスト
- * @returns {string|null} マッチした名前、マッチしない場合はnull
- */
-function matchesUnstableName(identifierName, unstableNames) {
-  return unstableNames.includes(identifierName) ? identifierName : null
-}
-
-/**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
 module.exports = {
@@ -86,14 +76,12 @@ module.exports = {
 
         // 不安定な参照と予想される名前が含まれているかチェック
         for (const identifier of identifiers) {
-          const matchedName = matchesUnstableName(identifier.name, unstableNames)
-
-          if (matchedName) {
+          if (unstableNames.includes(identifier.name)) {
             context.report({
               node: identifier.node,
               messageId: 'unstableDependency',
               data: {
-                name: matchedName,
+                name: identifier.name,
                 detailLink: DETAIL_LINK,
               },
             })

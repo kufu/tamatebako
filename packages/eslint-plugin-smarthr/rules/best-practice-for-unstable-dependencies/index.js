@@ -25,6 +25,17 @@ const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unstable-dependencies`
 
 /**
+ * 名前の配列から正規表現を生成する（$をエスケープして処理）
+ * @param {string[]} names - 名前の配列
+ * @returns {RegExp} 生成された正規表現
+ */
+function buildRegex(names) {
+  const pattern = names.reduce((acc, name, i) =>
+    acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
+  return new RegExp(`^(${pattern})$`)
+}
+
+/**
  * 依存配列内の識別子を取得する
  * @param {object} dependenciesArray - 依存配列のArrayExpressionノード
  * @returns {Array<{node: object, name: string}>} 識別子の配列
@@ -63,15 +74,8 @@ module.exports = {
     const unstableNames = options.unstableNames || DEFAULT_UNSTABLE_NAMES
     const targetHooks = options.targetHooks || DEFAULT_TARGET_HOOKS
 
-    // $をエスケープして正規表現パターンを生成（$width等のprefix付き変数名に対応）
-    const unstableNamesPattern = unstableNames.reduce((acc, name, i) =>
-      acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
-    const unstableNamesRegex = new RegExp(`^(${unstableNamesPattern})$`)
-
-    // 対象フックの正規表現パターンを生成
-    const targetHooksPattern = targetHooks.reduce((acc, name, i) =>
-      acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
-    const targetHooksRegex = new RegExp(`^(${targetHooksPattern})$`)
+    const unstableNamesRegex = buildRegex(unstableNames)
+    const targetHooksRegex = buildRegex(targetHooks)
 
     return {
       CallExpression(node) {

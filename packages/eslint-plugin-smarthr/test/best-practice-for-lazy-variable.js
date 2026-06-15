@@ -405,6 +405,76 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // break前に変数宣言し、break後に1回のみ使用（if文の直後のstatementでのみ使用、かつ式文なので移動対象外）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const itemEnd = itemStart + items[i].length
+          if (itemStart >= matchEnd) break
+          console.log(itemEnd)
+        }
+      `,
+    },
+    // continue前に変数宣言し、continue前に使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (!value) continue
+          console.log(value)
+        }
+      `,
+    },
+    // ラベル付きbreak（移動対象外）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // ラベル付きcontinue（移動対象外）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // switch内のbreak（switch脱出なので早期終了ではない）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          switch (value) {
+            case 'a':
+              doSomething()
+              break
+          }
+          console.log(value)
+        }
+      `,
+    },
+    // ネストしたループでbreak（if文の直後でのみ使用、かつ式文なので移動対象外）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            const value = compute(i, j)
+            if (shouldSkip) break
+            use(value)
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // ネストした早期return
@@ -1608,6 +1678,78 @@ console.log(x)
         if (ready) {
           const value = compute()
           use(value)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に変数を使用（break前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          if (itemStart >= matchEnd) break
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      output: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // continue後に変数を使用（continue前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (skipCondition) continue
+          const result = process(value)
+          results.push(result)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (skipCondition) continue
+          const value = getValue(i)
+          const result = process(value)
+          results.push(result)
         }
       `,
       options: [{ fix: true }],

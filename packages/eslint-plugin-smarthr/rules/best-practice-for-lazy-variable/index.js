@@ -25,6 +25,14 @@ const EARLY_EXIT_STATEMENT_TYPES = new Set([
   'ThrowStatement',
 ])
 
+const LOOP_STATEMENT_TYPES = new Set([
+  'ForStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+  'ForInStatement',
+  'ForOfStatement',
+])
+
 /**
  * Identifierが変数参照かどうかを判定
  */
@@ -463,6 +471,9 @@ function findEarlyExits(declarationScope, variableDeclaration) {
   const declarationIndex = statements.indexOf(variableDeclaration)
   const earlyExits = []
 
+  // declarationScopeがループのbody内かどうかを判定
+  const isInLoop = declarationScope.parent && LOOP_STATEMENT_TYPES.has(declarationScope.parent.type)
+
   // 宣言より後のstatementを探索
   for (let i = declarationIndex + 1; i < statements.length; i++) {
     const statement = statements[i]
@@ -479,8 +490,8 @@ function findEarlyExits(declarationScope, variableDeclaration) {
       continue
     }
 
-    // 早期終了文を再帰的に検出
-    collectEarlyExitsFromNode(statement, earlyExits, i)
+    // 早期終了文を再帰的に検出（ループ内の場合はinLoopContext = true）
+    collectEarlyExitsFromNode(statement, earlyExits, i, isInLoop, false)
   }
 
   return earlyExits
@@ -489,9 +500,35 @@ function findEarlyExits(declarationScope, variableDeclaration) {
 /**
  * ノードから早期終了文を収集
  */
-function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
+function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopContext = false, inSwitchContext = false, parentIfStatement = null) {
   // 関数スコープを超えない
   if (!node || typeof node !== 'object' || isFunctionScope(node)) return
+
+  // break文を検出（ラベルなし && ループ内 && switch外）
+  if (node.type === 'BreakStatement') {
+    if (!node.label && inLoopContext && !inSwitchContext) {
+      earlyExits.push({
+        type: 'break',
+        node,
+        statementIndex,
+        parentIfStatement,  // break/continueを含むif文
+      })
+      return
+    }
+  }
+
+  // continue文を検出（ラベルなし && ループ内）
+  if (node.type === 'ContinueStatement') {
+    if (!node.label && inLoopContext) {
+      earlyExits.push({
+        type: 'continue',
+        node,
+        statementIndex,
+        parentIfStatement,  // break/continueを含むif文
+      })
+      return
+    }
+  }
 
   // return/throw文を検出
   if (isEarlyExitStatement(node)) {
@@ -503,15 +540,30 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
     return
   }
 
+  // コンテキスト更新
+  let newLoopContext = inLoopContext
+  let newSwitchContext = inSwitchContext
+  let newParentIfStatement = parentIfStatement
+
+  if (LOOP_STATEMENT_TYPES.has(node.type)) {
+    newLoopContext = true
+    newSwitchContext = false  // ループに入るとswitchコンテキストはリセット
+  } else if (node.type === 'SwitchStatement') {
+    newSwitchContext = true
+  } else if (node.type === 'IfStatement') {
+    // if文の中のbreak/continueを検出するため、親if文を記録
+    newParentIfStatement = node
+  }
+
   // 子ノードを再帰的に探索
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
     if (child) {
       if (Array.isArray(child)) {
-        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
+        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement))
       } else if (typeof child === 'object') {
-        collectEarlyExitsFromNode(child, earlyExits, statementIndex)
+        collectEarlyExitsFromNode(child, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement)
       }
     }
   }
@@ -527,6 +579,23 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
 
   // 早期終了のインデックスを取得
   const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
+
+  // break/continueの場合、親if文のconsequent内での使用をチェック
+  if ((earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement) {
+    const ifConsequent = earlyExit.parentIfStatement.consequent
+    // break/continue文の前（if文のconsequent内）に使用があるかチェック
+    if (containsVariableUsageBeforeEarlyExit(ifConsequent, varName, declarationNode, earlyExit.node)) {
+      return true
+    }
+    // 宣言からif文までのstatementもチェック
+    for (let i = declarationIndex + 1; i < earlyExitIndex; i++) {
+      const statement = statements[i]
+      if (containsVariableUsage(statement, varName, declarationNode)) {
+        return true
+      }
+    }
+    return false
+  }
 
   // 宣言から早期終了までのstatementをチェック
   for (let i = declarationIndex + 1; i <= earlyExitIndex; i++) {
@@ -623,17 +692,43 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
 
     const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
+    // break/continueの場合、親if文の次のstatementを基準にする
+    const effectiveExitIndex = (earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement
+      ? earlyExitIndex  // 親if文のインデックス
+      : earlyExitIndex
+
     // すべての使用箇所が早期終了の後にあるかチェック
     if (usages.length > 0 &&
-        usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
+        usages.every(usage => getStatementIndex(statements, usage) > effectiveExitIndex)) {
       const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
+
+      // break/continueの場合、if文の直後に挿入（if文の次のstatementの前）
+      // それ以外の場合、最初の使用箇所の前に挿入
+      const insertIndex = (earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement
+        ? earlyExitIndex + 1  // if文の次のstatement
+        : firstUsageIndex
+
+      // break/continueの場合、if文の直後のstatementでのみ使用される場合は移動対象外
+      // （移動してもほぼ同じタイミングで実行されるため、遅延初期化の効果が薄い）
+      // ただし、if文の直後のstatementが変数宣言の場合は移動可能
+      // （その変数宣言の前に移動することで、より早く遅延初期化できる）
+      if ((earlyExit.type === 'break' || earlyExit.type === 'continue') &&
+          earlyExit.parentIfStatement &&
+          insertIndex === firstUsageIndex) {
+        // if文の次のstatementでのみ使用されているかチェック
+        const usedOnlyAtInsertIndex = usages.every(usage => getStatementIndex(statements, usage) === insertIndex)
+        // かつ、そのstatementが変数宣言でない場合は移動対象外
+        if (usedOnlyAtInsertIndex && statements[insertIndex].type !== 'VariableDeclaration') {
+          continue
+        }
+      }
 
       return {
         node,
         varName,
         variableDeclaration,
         targetBody: null,
-        insertBeforeStatement: statements[firstUsageIndex],
+        insertBeforeStatement: statements[insertIndex],
         moveType: 'after-early-exit',
       }
     }

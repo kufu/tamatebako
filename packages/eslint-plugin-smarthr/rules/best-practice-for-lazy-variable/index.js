@@ -505,29 +505,25 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
   if (!node || typeof node !== 'object' || isFunctionScope(node)) return
 
   // break文を検出（ラベルなし && ループ内 && switch外 && ネストしたループではない）
-  if (node.type === 'BreakStatement') {
-    if (!node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
-      earlyExits.push({
-        type: 'break',
-        node,
-        statementIndex,
-        parentIfStatement,  // break/continueを含むif文
-      })
-      return
-    }
+  if (node.type === 'BreakStatement' && !node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
+    earlyExits.push({
+      type: 'break',
+      node,
+      statementIndex,
+      parentIfStatement,  // break/continueを含むif文
+    })
+    return
   }
 
   // continue文を検出（ラベルなし && ループ内 && ネストしたループではない）
-  if (node.type === 'ContinueStatement') {
-    if (!node.label && inLoopContext && loopDepth === 0) {
-      earlyExits.push({
-        type: 'continue',
-        node,
-        statementIndex,
-        parentIfStatement,  // break/continueを含むif文
-      })
-      return
-    }
+  if (node.type === 'ContinueStatement' && !node.label && inLoopContext && loopDepth === 0) {
+    earlyExits.push({
+      type: 'continue',
+      node,
+      statementIndex,
+      parentIfStatement,  // break/continueを含むif文
+    })
+    return
   }
 
   // return/throw文を検出

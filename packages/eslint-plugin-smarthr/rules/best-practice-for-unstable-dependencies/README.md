@@ -164,6 +164,60 @@ useEffect(() => {
 }, [items.length])
 ```
 
+### 方法4: useCallbackやuseMemoでメモ化する
+
+不安定な参照を安定化させるために、useCallbackやuseMemoでラップします。
+
+**関数の場合（useCallback）:**
+
+```javascript
+// ❌ 関数を直接依存配列に含める
+useEffect(() => {
+  callback()
+}, [callback])
+
+// ✅ useCallbackでメモ化
+const memoizedCallback = useCallback(callback, [/* callbackの依存関係 */])
+
+useEffect(() => {
+  memoizedCallback()
+}, [memoizedCallback])
+```
+
+**オブジェクトの場合（useMemo）:**
+
+```javascript
+// ❌ オブジェクトを直接依存配列に含める
+useEffect(() => {
+  console.log(config.apiUrl)
+}, [config])
+
+// ✅ useMemoでメモ化
+const memoizedConfig = useMemo(() => config, [/* configの依存関係 */])
+
+useEffect(() => {
+  console.log(memoizedConfig.apiUrl)
+}, [memoizedConfig])
+```
+
+**配列の場合（useMemo）:**
+
+```javascript
+// ❌ 配列を直接依存配列に含める
+useEffect(() => {
+  console.log(items.length)
+}, [items])
+
+// ✅ useMemoでメモ化
+const memoizedItems = useMemo(() => items, [/* itemsの依存関係 */])
+
+useEffect(() => {
+  console.log(memoizedItems.length)
+}, [memoizedItems])
+```
+
+**注意:** メモ化は依存関係が明確な場合に有効です。依存関係が不明確な場合は、方法1のrefを使用することを推奨します。
+
 ## オプション
 
 デフォルトでは `children` のみをチェックしますが、他の変数名も指定できます。

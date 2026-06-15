@@ -454,7 +454,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
       code: `
         for (let i = 0; i < items.length; i++) {
           const value = getValue(i)
-          switch (value) {
+          switch (condition) {
             case 'a':
               doSomething()
               break

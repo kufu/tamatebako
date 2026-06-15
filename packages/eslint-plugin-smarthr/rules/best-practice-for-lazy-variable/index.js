@@ -20,11 +20,6 @@ const SCHEMA = [
   },
 ]
 
-const EARLY_EXIT_STATEMENT_TYPES = new Set([
-  'ReturnStatement',
-  'ThrowStatement',
-])
-
 const LOOP_STATEMENT_TYPES = new Set([
   'ForStatement',
   'WhileStatement',
@@ -450,13 +445,6 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
 }
 
 /**
- * ノードがreturn/throw文かどうか判定
- */
-function isEarlyExitStatement(node) {
-  return EARLY_EXIT_STATEMENT_TYPES.has(node.type)
-}
-
-/**
  * ノード内にthrow文が含まれているかチェック
  */
 function containsThrow(node) {
@@ -504,36 +492,40 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
   // 関数スコープを超えない
   if (!node || typeof node !== 'object' || isFunctionScope(node)) return
 
-  // break文を検出（ラベルなし && ループ内 && switch外 && ネストしたループではない）
-  if (node.type === 'BreakStatement' && !node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
-    earlyExits.push({
-      type: 'break',
-      node,
-      statementIndex,
-      parentIfStatement,  // break/continueを含むif文
-    })
-    return
-  }
-
-  // continue文を検出（ラベルなし && ループ内 && ネストしたループではない）
-  if (node.type === 'ContinueStatement' && !node.label && inLoopContext && loopDepth === 0) {
-    earlyExits.push({
-      type: 'continue',
-      node,
-      statementIndex,
-      parentIfStatement,  // break/continueを含むif文
-    })
-    return
-  }
-
-  // return/throw文を検出
-  if (isEarlyExitStatement(node)) {
-    earlyExits.push({
-      type: node.type === 'ReturnStatement' ? 'return' : 'throw',
-      node,
-      statementIndex,
-    })
-    return
+  // 早期終了文を検出
+  switch (node.type) {
+    case 'BreakStatement':
+      // ラベルなし && ループ内 && switch外 && ネストしたループではない
+      if (!node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
+        earlyExits.push({
+          type: 'break',
+          node,
+          statementIndex,
+          parentIfStatement,  // break/continueを含むif文
+        })
+        return
+      }
+      break
+    case 'ContinueStatement':
+      // ラベルなし && ループ内 && ネストしたループではない
+      if (!node.label && inLoopContext && loopDepth === 0) {
+        earlyExits.push({
+          type: 'continue',
+          node,
+          statementIndex,
+          parentIfStatement,  // break/continueを含むif文
+        })
+        return
+      }
+      break
+    case 'ReturnStatement':
+    case 'ThrowStatement':
+      earlyExits.push({
+        type: node.type === 'ReturnStatement' ? 'return' : 'throw',
+        node,
+        statementIndex,
+      })
+      return
   }
 
   // コンテキスト更新

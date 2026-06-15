@@ -53,9 +53,56 @@ useEffect(() => {
 
 ## ✅ OK
 
-### 方法1: refを使用する
+### 方法1: refを使用する（最も推奨）
 
-DOM要素のrefを通じて子要素にアクセスします（ReactNodeの場合）。
+依存配列で再実行する必要がない変数は、refに保存して依存配列から除外します。
+
+refは任意の値を保持でき、更新してもコンポーネントの再レンダリングをトリガーしません。
+
+```javascript
+const valueRef = useRef()
+valueRef.current = value  // レンダリングごとに最新の値に更新
+
+useEffect(() => {
+  // valueRef.currentを使用
+  console.log(valueRef.current)
+}, [/* valueを含めない */])
+```
+
+**オブジェクトの場合:**
+
+```javascript
+const configRef = useRef()
+configRef.current = config
+
+useEffect(() => {
+  console.log(configRef.current.apiUrl)
+}, [/* configを含めない */])
+```
+
+**配列の場合:**
+
+```javascript
+const itemsRef = useRef()
+itemsRef.current = items
+
+useEffect(() => {
+  console.log(itemsRef.current.length)
+}, [/* itemsを含めない */])
+```
+
+**関数の場合:**
+
+```javascript
+const callbackRef = useRef()
+callbackRef.current = callback
+
+useEffect(() => {
+  callbackRef.current()
+}, [/* callbackを含めない */])
+```
+
+**ReactNode（DOM要素のrefを使う場合）:**
 
 ```javascript
 const childrenRef = useRef()
@@ -89,19 +136,7 @@ useEffect(() => {
 }, [])
 ```
 
-### 方法3: useCallbackでラップする
-
-関数の場合は、useCallbackでラップして参照を安定化させます。
-
-```javascript
-const stableCallback = useCallback(callback, [/* 必要な依存関係のみ */])
-
-useEffect(() => {
-  stableCallback()
-}, [stableCallback])
-```
-
-### 方法4: プリミティブ値を依存配列に含める
+### 方法3: プリミティブ値のみを依存配列に含める
 
 オブジェクトや配列の場合は、必要なプリミティブ値のみを依存配列に含めます。
 
@@ -127,17 +162,6 @@ useEffect(() => {
 useEffect(() => {
   console.log(items.length)
 }, [items.length])
-```
-
-### 方法5: 依存配列から除外する
-
-本当に必要な値のみを依存配列に含めます。
-
-```javascript
-useEffect(() => {
-  // 不安定な参照は依存配列に含めない
-  console.log(children)
-}, [/* 他の依存関係のみ */])
 ```
 
 ## オプション

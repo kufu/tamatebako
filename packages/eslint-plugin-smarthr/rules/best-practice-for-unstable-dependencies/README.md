@@ -248,6 +248,8 @@ useEffect(() => {
 
 ## オプション
 
+### unstableNames
+
 デフォルトでは `children` のみをチェックしますが、他の変数名も指定できます。
 
 ```javascript
@@ -258,7 +260,21 @@ useEffect(() => {
 }
 ```
 
-## 検出対象のHooks
+### targetHooks
+
+デフォルトでは `useEffect`, `useLayoutEffect`, `useCallback`, `useMemo` をチェックしますが、カスタムフックも指定できます。
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "targetHooks": ["useEffect", "useLayoutEffect", "useCallback", "useMemo", "useCustomHook"]
+  }]
+}
+```
+
+**注意:** `targetHooks` を指定すると、デフォルトのフックは置き換えられます。デフォルトのフックもチェックしたい場合は、明示的に含める必要があります。
+
+## 検出対象のHooks（デフォルト）
 
 - `useEffect`
 - `useCallback`
@@ -266,6 +282,8 @@ useEffect(() => {
 - `useLayoutEffect`
 
 ## 使用例
+
+### unstableNamesの包括的な設定
 
 プロジェクトでよく使われる不安定な参照をすべて指定することで、チーム全体で一貫したコードを書くことができます。
 
@@ -294,6 +312,28 @@ useEffect(() => {
       "onClick",
       "onChange",
       "onSubmit"
+    ]
+  }]
+}
+```
+
+### カスタムフックの追加
+
+プロジェクト固有のカスタムフックも検出対象に追加できます。
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "unstableNames": ["children", "icon", "items"],
+    "targetHooks": [
+      // デフォルトのフック
+      "useEffect",
+      "useLayoutEffect",
+      "useCallback",
+      "useMemo",
+      // カスタムフック
+      "useCustomEffect",
+      "useMyMemo"
     ]
   }]
 }

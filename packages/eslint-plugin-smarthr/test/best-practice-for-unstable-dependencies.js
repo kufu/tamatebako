@@ -75,6 +75,24 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
       `,
       options: [{ unstableNames: ['icon'] }],
     },
+    // カスタムフック（useMyHook）を指定、デフォルトのフックは対象外
+    {
+      code: `
+        useEffect(() => {
+          console.log(children)
+        }, [children])
+      `,
+      options: [{ targetHooks: ['useMyHook'] }],
+    },
+    // カスタムフック（useCustom）は対象だが、childrenは含まれていない
+    {
+      code: `
+        useCustom(() => {
+          console.log(value)
+        }, [value])
+      `,
+      options: [{ targetHooks: ['useCustom'] }],
+    },
   ],
   invalid: [
     // useEffect with children
@@ -223,6 +241,51 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         {
           messageId: 'unstableDependency',
           data: { name: 'callback', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // カスタムフック（useCustom）でchildrenを検出
+    {
+      code: `
+        useCustom(() => {
+          console.log(children)
+        }, [children])
+      `,
+      options: [{ targetHooks: ['useCustom'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'children', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 複数のカスタムフックを指定
+    {
+      code: `
+        useCustom1(() => {
+          console.log(children)
+        }, [children])
+      `,
+      options: [{ targetHooks: ['useCustom1', 'useCustom2'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'children', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // デフォルトフックとカスタムフックを併用
+    {
+      code: `
+        useCustom(() => {
+          console.log(children)
+        }, [children])
+      `,
+      options: [{ targetHooks: ['useEffect', 'useCustom'], unstableNames: ['children'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'children', detailLink: DETAIL_LINK },
         },
       ],
     },

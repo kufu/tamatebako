@@ -7,14 +7,19 @@ const SCHEMA = [
         items: { type: 'string' },
         default: ['children'],
       },
+      targetHooks: {
+        type: 'array',
+        items: { type: 'string' },
+        default: ['useEffect', 'useLayoutEffect', 'useCallback', 'useMemo'],
+      },
     },
     additionalProperties: false,
   },
 ]
 
-const TARGET_HOOKS_REGEX = /^use((Layout)?Effect|Callback|Memo)$/
 const DOLLAR_SIGN_REGEX = /\$/g
 const DEFAULT_UNSTABLE_NAMES = ['children']
+const DEFAULT_TARGET_HOOKS = ['useEffect', 'useLayoutEffect', 'useCallback', 'useMemo']
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unstable-dependencies`
@@ -56,18 +61,24 @@ module.exports = {
   create(context) {
     const options = context.options[0] || {}
     const unstableNames = options.unstableNames || DEFAULT_UNSTABLE_NAMES
+    const targetHooks = options.targetHooks || DEFAULT_TARGET_HOOKS
 
     // $をエスケープして正規表現パターンを生成（$width等のprefix付き変数名に対応）
-    const pattern = unstableNames.reduce((acc, name, i) =>
+    const unstableNamesPattern = unstableNames.reduce((acc, name, i) =>
       acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
-    const unstableNamesRegex = new RegExp(`^(${pattern})$`)
+    const unstableNamesRegex = new RegExp(`^(${unstableNamesPattern})$`)
+
+    // 対象フックの正規表現パターンを生成
+    const targetHooksPattern = targetHooks.reduce((acc, name, i) =>
+      acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
+    const targetHooksRegex = new RegExp(`^(${targetHooksPattern})$`)
 
     return {
       CallExpression(node) {
         // 対象のHooksかチェック
         if (
           node.callee.type !== 'Identifier' ||
-          !TARGET_HOOKS_REGEX.test(node.callee.name)
+          !targetHooksRegex.test(node.callee.name)
         ) {
           return
         }

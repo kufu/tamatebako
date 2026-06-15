@@ -13,6 +13,8 @@ const SCHEMA = [
 ]
 
 const TARGET_HOOKS_REGEX = /^use((Layout)?Effect|Callback|Memo)$/
+const DOLLAR_SIGN_REGEX = /\$/g
+const DEFAULT_UNSTABLE_NAMES = ['children']
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unstable-dependencies`
@@ -53,11 +55,11 @@ module.exports = {
   },
   create(context) {
     const options = context.options[0] || {}
-    const unstableNames = options.unstableNames || ['children']
+    const unstableNames = options.unstableNames || DEFAULT_UNSTABLE_NAMES
 
     // $をエスケープして正規表現パターンを生成（$width等のprefix付き変数名に対応）
     const pattern = unstableNames.reduce((acc, name, i) =>
-      acc + (i > 0 ? '|' : '') + name.replace(/\$/g, '\\$'), '')
+      acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
     const unstableNamesRegex = new RegExp(`^(${pattern})$`)
 
     return {

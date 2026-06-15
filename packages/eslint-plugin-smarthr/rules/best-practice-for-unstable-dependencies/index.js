@@ -12,7 +12,7 @@ const SCHEMA = [
   },
 ]
 
-const TARGET_HOOKS = ['useEffect', 'useCallback', 'useMemo', 'useLayoutEffect']
+const TARGET_HOOKS_REGEX = /^use((Layout)?Effect|Callback|Memo)$/
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unstable-dependencies`
@@ -70,7 +70,7 @@ module.exports = {
         // 対象のHooksかチェック
         if (
           node.callee.type !== 'Identifier' ||
-          !TARGET_HOOKS.includes(node.callee.name)
+          !TARGET_HOOKS_REGEX.test(node.callee.name)
         ) {
           return
         }

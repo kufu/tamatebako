@@ -6,6 +6,9 @@ const ruleTester = new RuleTester({
     parserOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
+      ecmaFeatures: {
+        jsx: true,
+      },
     },
   },
 })
@@ -465,6 +468,26 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // JSX: 複数回使用されている（useSectionWrapperの引数とJSXタグ名）
+    {
+      code: `
+        const Component = as || 'div'
+        const Wrapper = useSectionWrapper(Component)
+        const body = <Component {...rest} ref={ref} className={actualClassName} />
+      `,
+    },
+    // JSX: if文の中でJSXタグとして使用、その前にも使用（2回使用）
+    {
+      code: `
+        function test() {
+          const Component = as || 'div'
+          const Wrapper = useSectionWrapper(Component)
+          if (condition) {
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // ネストした早期return
@@ -522,6 +545,34 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         {
           messageId: 'moveToLazy',
           data: { name: 'x' },
+        },
+      ],
+    },
+    // JSX: if文の中でのみJSXタグとして使用（1回のみなので移動対象）
+    {
+      code: `
+        function test() {
+          const Component = as || 'div'
+          someCode()
+          if (condition) {
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+      output: `
+        function test() {
+          someCode()
+          if (condition) {
+            const Component = as || 'div'
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'Component' },
         },
       ],
     },

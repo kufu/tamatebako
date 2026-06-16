@@ -306,6 +306,24 @@ ruleTester.run('best-practice-for-no-unnecessary-variable', rule, {
       `,
       options: [{ maxComplexity: 3 }],
     },
+    // JSXIdentifier: JSXタグ名として使用されている場合はインライン化できない
+    {
+      code: `
+        function MyComponent({ as, rest }) {
+          const Component = as || 'div'
+          return <Component {...rest} />
+        }
+      `,
+    },
+    // JSXIdentifier: 複雑さが低くてもJSXタグ名はインライン化できない
+    {
+      code: `
+        function MyComponent() {
+          const Tag = 'div'
+          return <Tag>content</Tag>
+        }
+      `,
+    },
   ],
   invalid: [
     // 基本パターン

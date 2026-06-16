@@ -84,7 +84,8 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
     if (!node || typeof node !== 'object') return
 
     switch (node.type) {
-      case 'Identifier': {
+      case 'Identifier':
+      case 'JSXIdentifier': {
         // 変数名が一致し、変数参照である場合のみ収集（宣言自体は除外）
         if (node.name === varName && node !== declarationNode.id && isVariableReference(node)) {
           usages.push(node)

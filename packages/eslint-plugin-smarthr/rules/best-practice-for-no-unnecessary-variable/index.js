@@ -443,12 +443,13 @@ function analyzeVariable(sourceCode, node, options = {}) {
   }
 
   const usage = usages[0]
-  const isExportSpec = isInExportSpecifier(usage)
 
   // JSXIdentifierとして使用されている場合は対象外（JSXタグ名はインライン化できない）
   if (usage.type === 'JSXIdentifier') {
     return null
   }
+
+  const isExportSpec = isInExportSpecifier(usage)
 
   // React Hooks呼び出しは対象外（ただしexport { xxx as yyy }パターンは対象）
   if (!isExportSpec && isReactHookCall(node)) {

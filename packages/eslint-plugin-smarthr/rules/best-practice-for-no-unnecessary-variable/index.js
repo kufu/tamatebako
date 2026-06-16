@@ -173,7 +173,7 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
    * 変数の使用箇所として収集すべきIdentifierかチェック
    */
   function isTargetIdentifier(node) {
-    return node.type === 'Identifier' &&
+    return (node.type === 'Identifier' || node.type === 'JSXIdentifier') &&
            node.name === varName &&
            node !== declarationNode.id &&
            !isInsideInit(node)
@@ -443,6 +443,12 @@ function analyzeVariable(sourceCode, node, options = {}) {
   }
 
   const usage = usages[0]
+
+  // JSXIdentifierとして使用されている場合は対象外（JSXタグ名はインライン化できない）
+  if (usage.type === 'JSXIdentifier') {
+    return null
+  }
+
   const isExportSpec = isInExportSpecifier(usage)
 
   // React Hooks呼び出しは対象外（ただしexport { xxx as yyy }パターンは対象）

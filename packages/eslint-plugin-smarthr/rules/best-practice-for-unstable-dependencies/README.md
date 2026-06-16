@@ -84,8 +84,6 @@ return (
 
 refは任意の値を保持でき、更新してもコンポーネントの再レンダリングをトリガーしません。
 
-**基本的な使用例:**
-
 ```javascript
 const valueRef = useRef()
 valueRef.current = value  // レンダリングごとに最新の値に更新
@@ -94,39 +92,6 @@ useEffect(() => {
   // valueRef.currentを使用
   console.log(valueRef.current)
 }, [/* valueを含めない */])
-```
-
-**オブジェクトの場合:**
-
-```javascript
-const configRef = useRef()
-configRef.current = config
-
-useEffect(() => {
-  console.log(configRef.current.apiUrl)
-}, [/* configを含めない */])
-```
-
-**配列の場合:**
-
-```javascript
-const itemsRef = useRef()
-itemsRef.current = items
-
-useEffect(() => {
-  console.log(itemsRef.current.length)
-}, [/* itemsを含めない */])
-```
-
-**関数の場合:**
-
-```javascript
-const callbackRef = useRef()
-callbackRef.current = callback
-
-useEffect(() => {
-  callbackRef.current()
-}, [/* callbackを含めない */])
 ```
 
 ### 方法2: MutationObserverを使用する
@@ -165,22 +130,6 @@ return (
 ### 方法3: プリミティブ値のみを依存配列に含める
 
 オブジェクトや配列の場合は、必要なプリミティブ値のみを依存配列に含めます。
-
-**プロパティアクセスの例:**
-
-```javascript
-// ❌ オブジェクト全体を依存配列に含める
-useEffect(() => {
-  console.log(config.apiUrl)
-}, [config])
-
-// ✅ 必要な値のみを依存配列に含める
-useEffect(() => {
-  console.log(config.apiUrl)
-}, [config.apiUrl])
-```
-
-**配列のプロパティの例:**
 
 ```javascript
 // ❌ 配列全体を依存配列に含める
@@ -252,22 +201,6 @@ const memoizedConfig = useMemo(() => config, [/* configの依存関係 */])
 useEffect(() => {
   console.log(memoizedConfig.apiUrl)
 }, [memoizedConfig])
-```
-
-**配列の場合（useMemo）:**
-
-```javascript
-// ❌ 配列を直接依存配列に含める
-useEffect(() => {
-  console.log(items.length)
-}, [items])
-
-// ✅ useMemoでメモ化
-const memoizedItems = useMemo(() => items, [/* itemsの依存関係 */])
-
-useEffect(() => {
-  console.log(memoizedItems.length)
-}, [memoizedItems])
 ```
 
 **注意:** メモ化は依存関係が明確な場合に有効です。依存関係が不明確な場合は、方法1のrefを使用することを推奨します。

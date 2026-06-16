@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.20.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.19.0...eslint-plugin-smarthr-v6.20.0) (2026-06-16)
+
+
+### Features
+
+* **best-practice-for-no-unnecessary-variable:** export { xxx as yyy } パターンで適切なメッセージを表示 ([#1375](https://github.com/kufu/tamatebako/issues/1375)) ([52d90fa](https://github.com/kufu/tamatebako/commit/52d90fa6eb682c956d71a12269d2cc2c4173d3dd))
+* 依存配列に不安定な参照を含めることを禁止するルールを追加 ([#1376](https://github.com/kufu/tamatebako/issues/1376)) ([af7c18e](https://github.com/kufu/tamatebako/commit/af7c18e74ce38391078a0bd14bf815529e852f8a))
+
+
+### Bug Fixes
+
+* best-practice-for-rest-parametersでin演算子も内部属性アクセスとして検知 ([#1372](https://github.com/kufu/tamatebako/issues/1372)) ([086b414](https://github.com/kufu/tamatebako/commit/086b414ef731ebd27aee935f2d31aa5d303dd9fd))
+* lazy-variable/no-unnecessary-variableでjsxタグ名を正しく扱う ([#1382](https://github.com/kufu/tamatebako/issues/1382)) ([391fe7e](https://github.com/kufu/tamatebako/commit/391fe7ea655e030ded3d2a3d45ae511c2da75dd1))
+
 ## [6.19.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.18.0...eslint-plugin-smarthr-v6.19.0) (2026-06-10)
 
 

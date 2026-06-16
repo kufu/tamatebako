@@ -4,16 +4,18 @@ React Hooksの依存配列に不安定な参照（オブジェクト、配列、
 
 これらの値は参照が頻繁に変わるため、依存配列に含めると不要な再実行や無限ループの原因となります。
 
-## 対象となる不安定な参照
+**デフォルトでは `children` のみを検出します。**他の変数名を検出したい場合は、オプションで追加してください。
 
-- **ReactNode**: `children`、`icon`、`prefix`など
-- **オブジェクト**: `object`、`config`、`options`など
-- **配列**: `items`、`list`、`data`など
-- **関数**: `callback`、`handler`、`onSomething`など
+## 不安定な参照の種類（オプションで追加可能）
+
+- **ReactNode**: `children`（デフォルト）、`icon`、`prefix`、`suffix`など
+- **オブジェクト**: `object`、`config`、`options`、`settings`など
+- **配列**: `items`、`list`、`data`、`records`など
+- **関数**: `callback`、`handler`、`onClick`、`onChange`、`onSubmit`など
 
 ## ❌ NG
 
-### ReactNode（children）
+### children（デフォルトで検出）
 
 ```javascript
 useEffect(() => {
@@ -27,25 +29,32 @@ const memoized = useMemo(() => {
 }, [children])
 ```
 
-### オブジェクト
+### オプション追加時の例
+
+以下は `additionalUnstableNames` オプションで変数名を追加した場合の検出例です。
+
+**オブジェクト:**
 
 ```javascript
+// additionalUnstableNames: ["object"] を設定した場合
 useEffect(() => {
   console.log(object.key)
 }, [object])
 ```
 
-### 配列
+**配列:**
 
 ```javascript
+// additionalUnstableNames: ["items"] を設定した場合
 const memoized = useMemo(() => {
   return items.map(i => i.value)
 }, [items])
 ```
 
-### 関数
+**関数:**
 
 ```javascript
+// additionalUnstableNames: ["callback"] を設定した場合
 useEffect(() => {
   callback()
 }, [callback])
@@ -57,7 +66,25 @@ useEffect(() => {
 
 依存配列で再実行する必要がない変数は、refに保存して依存配列から除外します。
 
+**children（DOM要素のrefを使う場合）:**
+
+```javascript
+const childrenRef = useRef()
+
+useEffect(() => {
+  console.log(childrenRef.current)
+}, [/* childrenを含めない */])
+
+...
+
+return (
+  <Any ref={childrenRef}>{children}</Any>
+)
+```
+
 refは任意の値を保持でき、更新してもコンポーネントの再レンダリングをトリガーしません。
+
+**基本的な使用例:**
 
 ```javascript
 const valueRef = useRef()
@@ -102,38 +129,37 @@ useEffect(() => {
 }, [/* callbackを含めない */])
 ```
 
-**ReactNode（DOM要素のrefを使う場合）:**
+### 方法2: MutationObserverを使用する
+
+`children` の変更を検知する必要がある場合は、DOM要素にrefを設定してMutationObserverで監視します。
 
 ```javascript
-const childrenRef = useRef()
+const containerRef = useRef()
 
 useEffect(() => {
-  console.log(childrenRef.current)
-}, [/* childrenを含めない */])
+  const observer = new MutationObserver(() => {
+    // children内のDOM要素が追加/削除されたときの処理
+    console.log('子要素が変更されました')
+  })
+
+  if (containerRef.current) {
+    // containerRef内の子要素の変更を監視
+    observer.observe(containerRef.current, {
+      childList: true,      // 直接の子要素の追加/削除を監視
+      subtree: true,        // 子孫要素の変更も監視（必要に応じて）
+    })
+  }
+
+  return () => observer.disconnect()
+}, [])  // childrenは依存配列に含めない
 
 ...
 
 return (
-  <Any ref={childrenRef}>{children}</Any>
+  <div ref={containerRef}>
+    {children}
+  </div>
 )
-```
-
-### 方法2: MutationObserverを使用する
-
-子要素の変更を検知する必要がある場合は、MutationObserverを使用します。
-
-```javascript
-useEffect(() => {
-  const observer = new MutationObserver(() => {
-    // 子要素の変更を検知
-  })
-
-  if (containerRef.current) {
-    observer.observe(containerRef.current, { childList: true })
-  }
-
-  return () => observer.disconnect()
-}, [])
 ```
 
 ### 方法3: プリミティブ値のみを依存配列に含める
@@ -177,7 +203,7 @@ useEffect(() => {
 useEffect(() => {
   const newConfig = { ...config, newProp: value }
   doSomething(newConfig)
-}, [config])
+}, [config, value])
 
 // ✅ 必要な値のみをベタ書き
 useEffect(() => {
@@ -187,7 +213,7 @@ useEffect(() => {
     newProp: value
   }
   doSomething(newConfig)
-}, [config.apiUrl, config.timeout])
+}, [config.apiUrl, config.timeout, value])
 ```
 
 **ヒント:** 多くの場合、スプレッド構文で展開しているオブジェクトは、実際には一部のプロパティしか使っていないことがあります。使用箇所を確認して、必要な値のみを明示的に指定することで、依存配列を最小限に抑えられます。配列の場合も、実際に必要なのは`length`や特定のインデックスの値だけかもしれません。

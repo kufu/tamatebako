@@ -3100,6 +3100,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
+    "smarthr/best-practice-for-unstable-dependencies": [
+      1,
+    ],
     "smarthr/component-name": [
       2,
     ],

@@ -1,6 +1,7 @@
+import { screen } from 'storybook/test'
+
 import type { StoryObj } from '@storybook/react'
 import type { PlayFunction } from 'storybook/internal/types'
-import { screen } from 'storybook/test'
 
 export interface FocusIndicatorConfig {
   /**

@@ -124,7 +124,7 @@ export default [
       smarthr,
     },
     rules: {
-      'smarthr/storybook-require-focus-indicator-test': 'warn', // または 'error'
+      'smarthr/storybook-require-focus-indicator-test': 'error',
     },
   },
 ]
@@ -138,7 +138,7 @@ export default [
     {
       files: ['*.stories.ts', '*.stories.tsx'],
       rules: {
-        'smarthr/storybook-require-focus-indicator-test': 'warn'
+        'smarthr/storybook-require-focus-indicator-test': 'error'
       }
     }
   ]

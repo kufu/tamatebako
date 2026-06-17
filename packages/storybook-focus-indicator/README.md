@@ -20,10 +20,12 @@ pnpm add -D storybook-focus-indicator
 
 ## 前提条件
 
-このパッケージは [Storybook Pseudo States Addon](https://storybook.js.org/addons/storybook-addon-pseudo-states) を使用します。
+このパッケージは [Storybook Pseudo States Addon](https://storybook.js.org/addons/storybook-addon-pseudo-states) を使用します（peerDependencyとして指定されています）。
 
 ```bash
 npm install --save-dev storybook-addon-pseudo-states
+# or
+pnpm add -D storybook-addon-pseudo-states
 ```
 
 `.storybook/main.ts` に追加:
@@ -36,6 +38,15 @@ export default {
   ],
 }
 ```
+
+## 動作
+
+このテンプレートは以下の処理を自動で実行します：
+
+1. **Pseudo States Addonの設定**: `:focus`、`:focus-visible`、`:focus-within` 疑似クラスを有効化
+2. **自動フォーカス**: Story内の最初のリンク（`role="link"`）とコンボボックス（`role="combobox"`）に自動的にフォーカスを当てる
+
+これにより、フォーカスリングが正しく表示されているかを視覚的に確認できます。
 
 ## 使い方
 
@@ -67,34 +78,33 @@ export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default)
 
 ### カスタマイズ
 
-フォーカスを当てる要素を限定したい場合:
-
-```typescript
-export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default, {
-  // 特定のroleのみチェック
-  targetRoles: ['button', 'link'],
-})
-```
-
 Pseudo States Addonの設定をカスタマイズしたい場合:
 
 ```typescript
 export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default, {
   pseudoOptions: {
-    rootSelector: '#custom-root', // カスタムルート要素
-    focus: true,
-    focusVisible: true,
-    focusWithin: false, // focus-within を無効化
+    rootSelector: '#custom-root', // カスタムルート要素を指定
+    focus: true,                   // :focus を有効化（デフォルト: true）
+    focusVisible: true,            // :focus-visible を有効化（デフォルト: true）
+    focusWithin: false,            // :focus-within を無効化（デフォルト: true）
   },
 })
 ```
+
+通常はデフォルト設定で問題ありません。特殊なDOM構造（Dialogなど）でフォーカス状態が適用されない場合のみカスタマイズしてください。
 
 ## チェック方法
 
 1. Storybookを起動
 2. `FocusIndicatorTest` Storyを開く
-3. 画面上のインタラクティブ要素にフォーカスが当たった状態で表示される
+3. 自動的にリンクとコンボボックスにフォーカスが当たります
 4. フォーカスリングの四辺がすべて表示されているか目視で確認
+5. 必要に応じてTabキーで他の要素にも移動して確認
+
+**確認ポイント:**
+- フォーカスリングが四辺すべて見えているか
+- `overflow: hidden` などで途切れていないか
+- フォーカスリングの色やスタイルが適切か
 
 ## ESLintルールとの併用
 
@@ -112,16 +122,15 @@ export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default, {
 
 ### フォーカスが当たらない
 
+このテンプレートは最初の `link` と `combobox` にのみ自動フォーカスします。
+
 - 対象の要素が適切な `role` 属性を持っているか確認してください
-- `targetRoles` オプションで明示的に指定してください
+- `button` や `textbox` など他の要素は、Pseudo States Addonによりフォーカス疑似クラスが適用されるため、タブキーで移動すれば確認できます
 
 ### Dialogなどでフォーカスが当たらない
 
-- `rootSelector: 'body'` を指定してください（デフォルトで設定済み）
-
-### 特定の要素のみチェックしたい
-
-- `targetRoles` オプションで対象を絞り込んでください
+- デフォルトで `rootSelector: 'body'` が設定されているため、通常は問題ありません
+- カスタムルート要素を使用している場合は `pseudoOptions.rootSelector` で指定してください
 
 ## ライセンス
 

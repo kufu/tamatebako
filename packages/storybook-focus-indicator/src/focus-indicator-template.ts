@@ -4,11 +4,6 @@ import { screen } from 'storybook/test'
 
 export interface FocusIndicatorConfig {
   /**
-   * フォーカスを当てる要素のrole
-   * @default ['link', 'button', 'combobox', 'textbox']
-   */
-  targetRoles?: string[]
-  /**
    * Pseudo States Addonの設定をカスタマイズする場合
    */
   pseudoOptions?: {
@@ -18,8 +13,6 @@ export interface FocusIndicatorConfig {
     rootSelector?: string
   }
 }
-
-const DEFAULT_TARGET_ROLES = ['link', 'button', 'combobox', 'textbox']
 
 /**
  * アクセシビリティ簡易チェックリストの「フォーカスリングの四辺がすべて表示されている」を満たすかどうかチェックするためのStoryテンプレート
@@ -38,7 +31,6 @@ const DEFAULT_TARGET_ROLES = ['link', 'button', 'combobox', 'textbox']
  *
  * ```typescript
  * export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default, {
- *   targetRoles: ['button', 'link'], // フォーカスを当てる要素を限定
  *   pseudoOptions: {
  *     rootSelector: '#custom-root' // カスタムルート要素を指定
  *   }
@@ -53,7 +45,6 @@ export const focusIndicatorTemplate = <TStory>(
   defaultStory: TStory,
   config: FocusIndicatorConfig = {}
 ): TStory => {
-  const targetRoles = config.targetRoles ?? DEFAULT_TARGET_ROLES
   const pseudoOptions = config.pseudoOptions ?? {}
 
   return {
@@ -76,18 +67,22 @@ export const focusIndicatorTemplate = <TStory>(
       // defaultStoryのplay関数があれば実行する
       await (defaultStory as StoryObj<any>).play?.(args)
 
-      // 各roleの要素にフォーカスを当てる
-      for (const role of targetRoles) {
-        try {
-          const elements = await screen.findAllByRole(role)
-          if (elements.length > 0) {
-            elements[0]!.focus()
-            console.log(`${role}にフォーカスを当てました`)
-          }
-        } catch {
-          // タイムアウトした場合はスキップ
-          console.log(`${role}が見つからなかったため、フォーカスをスキップしました`)
-        }
+      // 最初のリンクにフォーカスを当てるためのplay function
+      try {
+        const link = await screen.findByRole('link')
+        link.focus()
+      } catch {
+        // タイムアウトした場合はここに来るが、何もしないことでエラーを回避
+        console.log('リンクが出現しなかったため、フォーカスをスキップしました')
+      }
+
+      // 最初のcomboboxにフォーカスを当てるためのplay function
+      try {
+        const combobox = await screen.findByRole('combobox')
+        combobox.focus()
+      } catch {
+        // タイムアウトした場合はここに来るが、何もしないことでエラーを回避
+        console.log('コンボボックスが出現しなかったため、フォーカスをスキップしました')
       }
     },
   } as TStory

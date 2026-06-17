@@ -178,6 +178,7 @@ ruleTester.run('component-name', rule, {
     { code: `import { FormDialog as HogeDialog } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'HogeDialog', matcher: /FormDialog$/, base: 'FormDialog' }) } ] },
     { code: 'const PaginationFuga = styled(FugaPagination)``', errors: [ { message: messageInheritance({ extended: 'PaginationFuga', matcher: /Pagination$/ }) } ]  },
     { code: `import { HogeSideNav as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Nav$/, base: 'HogeSideNav' }) }, { message: messageImportAs({ extended: 'Hoge', matcher: /SideNav$/, base: 'HogeSideNav' }) } ] },
+    { code: 'const AccordionAny = styled(FugaAccordion)``', errors: [ { message: messageInheritance({ extended: 'AccordionAny', matcher: /Accordion$/ }) } ]  },
     { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [ { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /AccordionPanel$/ }) } ]  },
     { code: `import { HogeFilterDropdown as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /FilterDropdown$/, base: 'HogeFilterDropdown' }) } ] },
     { code: `const Hoge = styled.fieldset`, errors: [ { message: messageInheritance({ extended: 'Hoge', matcher: /Fieldset$/ }) } ] },

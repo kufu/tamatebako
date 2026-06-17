@@ -77,18 +77,27 @@ pnpm add -D storybook-focus-indicator
 
 詳細な使い方は [storybook-focus-indicator のドキュメント](https://github.com/kufu/tamatebako/tree/master/packages/storybook-focus-indicator) を参照してください。
 
-## 無効化したい場合
+## 無効化について
 
-### 特定のファイルのみ無効化
+> **⚠️ 推奨事項**
+>
+> フォーカスするべき要素がないコンポーネントの場合でも、**できる限り無効化せず `FocusIndicatorTest` を追加することを推奨します。**
+>
+> **理由:**
+> - 意図せずフォーカス可能になっている要素がないことを確認できる
+> - 将来的にインタラクティブな要素が追加された際の安全網になる
+> - リンクやボタンが見つからない場合は自動的にスキップされるため、エラーにはならない
 
-フォーカスするべき要素がないStory（静的なテキスト表示のみなど）の場合は、ファイル単位で無効化できます:
+### どうしても無効化が必要な場合
+
+本当にインタラクティブな要素を含まず、今後も追加する予定がない静的なStoryのみ、ファイル単位で無効化できます:
 
 ```typescript
 /* eslint-disable smarthr/storybook-require-focus-indicator-test */
 import type { Meta, StoryObj } from '@storybook/react'
 
-// 例: インタラクティブな要素を含まないStory
-export const TextOnly: Story = {
+// 例: 完全に静的な表示のみで、今後もインタラクティブ要素を追加しないStory
+export const StaticDisplay: Story = {
   render: () => <div>静的なテキスト表示のみ</div>
 }
 ```

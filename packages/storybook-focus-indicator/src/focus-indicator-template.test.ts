@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import type { StoryObj } from '@storybook/react'
+
 import { focusIndicatorTemplate } from './focus-indicator-template'
+
+import type { StoryObj } from '@storybook/react'
 
 describe('focusIndicatorTemplate', () => {
   it('defaultStoryのparametersを保持する', () => {

@@ -110,13 +110,42 @@ export const FocusIndicatorTest: Story = focusIndicatorTemplate(Default, {
 
 `eslint-plugin-smarthr` の `storybook-require-focus-indicator-test` ルールを使用することで、`FocusIndicatorTest` Storyの追加を強制できます。
 
+### 推奨設定（Storybookファイルのみに適用）
+
+ESLint Flat Config形式の場合:
+
+```javascript
+import smarthr from 'eslint-plugin-smarthr'
+
+export default [
+  {
+    files: ['**/*.stories.{ts,tsx}'],
+    plugins: {
+      smarthr,
+    },
+    rules: {
+      'smarthr/storybook-require-focus-indicator-test': 'warn', // または 'error'
+    },
+  },
+]
+```
+
+従来の設定形式の場合:
+
 ```javascript
 {
-  rules: {
-    'smarthr/storybook-require-focus-indicator-test': 'warn'
-  }
+  overrides: [
+    {
+      files: ['*.stories.ts', '*.stories.tsx'],
+      rules: {
+        'smarthr/storybook-require-focus-indicator-test': 'warn'
+      }
+    }
+  ]
 }
 ```
+
+> **Note:** このルールはStorybookファイル (`.stories.ts` / `.stories.tsx`) 専用です。設定で対象ファイルを絞り込むことで、ESLintの実行効率が向上します。
 
 ## トラブルシューティング
 

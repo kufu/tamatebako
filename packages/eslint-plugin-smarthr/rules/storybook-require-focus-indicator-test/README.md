@@ -79,22 +79,18 @@ pnpm add -D storybook-focus-indicator
 
 ## 無効化したい場合
 
-プロジェクト全体で無効化:
+### 特定のファイルのみ無効化
 
-```javascript
-{
-  rules: {
-    'smarthr/storybook-require-focus-indicator-test': 'off'
-  }
-}
-```
-
-特定のファイルのみ無効化:
+フォーカスするべき要素がないStory（静的なテキスト表示のみなど）の場合は、ファイル単位で無効化できます:
 
 ```typescript
 /* eslint-disable smarthr/storybook-require-focus-indicator-test */
 import type { Meta, StoryObj } from '@storybook/react'
-// ...
+
+// 例: インタラクティブな要素を含まないStory
+export const TextOnly: Story = {
+  render: () => <div>静的なテキスト表示のみ</div>
+}
 ```
 
 ## 関連リンク

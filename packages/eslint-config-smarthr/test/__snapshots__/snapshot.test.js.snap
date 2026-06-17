@@ -3154,6 +3154,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/require-import": [
       0,
     ],
+    "smarthr/storybook-require-focus-indicator-test": [
+      0,
+    ],
     "smarthr/trim-props": [
       2,
     ],

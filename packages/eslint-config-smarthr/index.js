@@ -91,6 +91,7 @@ export default [
       'smarthr/require-export': 'off',
       'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
       'smarthr/require-import': 'off',
+      'smarthr/storybook-require-focus-indicator-test': 'off', // TODO: 2026/07にoffで導入。各プロダクトで試験的に有効化してフィードバックを収集予定
       'smarthr/trim-props': 'error',
     }
 

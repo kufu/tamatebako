@@ -253,6 +253,7 @@ const config = {
     'eslint-plugin-smarthr/require-export': 'off',
     'eslint-plugin-smarthr/require-i18n-text': 'warn',
     'eslint-plugin-smarthr/require-import': 'off',
+    'eslint-plugin-smarthr/storybook-require-focus-indicator-test': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',
   },
 }

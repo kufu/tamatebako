@@ -205,6 +205,56 @@ useEffect(() => {
 
 **注意:** メモ化は依存関係が明確な場合に有効です。依存関係が不明確な場合は、方法1のrefを使用することを推奨します。
 
+### 方法5: イベントオブジェクトから値を取得する（useCallbackの場合）
+
+useCallbackでイベントハンドラーを定義する場合、値を依存配列に含めずに、イベントオブジェクトから取得できます。
+
+**button要素の`value`属性を使う:**
+
+```javascript
+// ❌ 値を依存配列に含める
+const handleClick = useCallback(() => {
+  doSomething(itemId)
+}, [itemId])  // itemIdが変わるたびにコールバックが再生成される
+
+<button onClick={handleClick}>削除</button>
+```
+
+```javascript
+// ✅ イベントから値を取得
+const handleClick = useCallback((e) => {
+  const itemId = e.currentTarget.value
+  doSomething(itemId)
+}, [])  // 依存配列が空になり、コールバックが安定する
+
+<button value={itemId} onClick={handleClick}>削除</button>
+```
+
+**data-*属性も同様に使える:**
+
+```javascript
+const handleClick = useCallback((e) => {
+  const itemId = e.currentTarget.getAttribute('data-id')
+  const itemType = e.currentTarget.getAttribute('data-type')
+  doSomething(itemId, itemType)
+}, [])
+
+<button
+  data-id={itemId}
+  data-type={itemType}
+  onClick={handleClick}
+>
+  削除
+</button>
+```
+
+**メリット:**
+- 依存配列が空になり、コールバックが安定する
+- コンポーネントの再レンダリングが減る
+- リスト内の各アイテムで異なるコールバック関数を生成する必要がない
+
+**注意:** この方法はイベントハンドラー（onClick、onChange等）でのみ使用できます。useEffect内など、イベントオブジェクトがない場合は他の方法を使用してください。
+
 ## オプション
 
 ### additionalUnstableNames

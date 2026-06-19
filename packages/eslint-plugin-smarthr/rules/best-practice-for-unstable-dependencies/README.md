@@ -253,7 +253,9 @@ const handleClick = useCallback((e) => {
 - コンポーネントの再レンダリングが減る
 - リスト内の各アイテムで異なるコールバック関数を生成する必要がない
 
-**注意:** この方法はイベントハンドラー（onClick、onChange等）でのみ使用できます。useEffect内など、イベントオブジェクトがない場合は他の方法を使用してください。
+**注意:**
+- この方法はイベントハンドラー（onClick、onChange等）でのみ使用できます。useEffect内など、イベントオブジェクトがない場合は他の方法を使用してください。
+- `value`属性や`getAttribute()`で取得した値は**文字列**になります。数値や真偽値が必要な場合は適切に変換してください（例: `Number(e.currentTarget.value)`、`e.currentTarget.value === 'true'`）。
 
 ## オプション
 

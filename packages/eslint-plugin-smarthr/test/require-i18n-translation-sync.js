@@ -120,6 +120,48 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       filename: setupTestFile('valid-escape-tab.ts', { key1: 'タブ\tあり' }),
       options: defaultOptions,
     },
+
+    // 特殊パターン: プレースホルダーを含む
+    {
+      code: "export const translations = { greeting: 'こんにちは、{name}さん' }",
+      filename: setupTestFile('valid-placeholder.ts', { greeting: 'こんにちは、{name}さん' }),
+      options: defaultOptions,
+    },
+
+    // 特殊パターン: HTMLタグを含む
+    {
+      code: "export const translations = { message: 'これは改行<br></br>のテストです' }",
+      filename: setupTestFile('valid-br-tag.ts', { message: 'これは改行<br></br>のテストです' }),
+      options: defaultOptions,
+    },
+
+    // 特殊パターン: 複数のプレースホルダーを含む
+    {
+      code: "export const translations = { count: '{count}件のうち{total}件を表示' }",
+      filename: setupTestFile('valid-multi-placeholder.ts', { count: '{count}件のうち{total}件を表示' }),
+      options: defaultOptions,
+    },
+
+    // 特殊パターン: 改行変数を含む
+    {
+      code: "export const translations = { error: 'エラーが発生しました。{br}再度お試しください。' }",
+      filename: setupTestFile('valid-br-variable.ts', { error: 'エラーが発生しました。{br}再度お試しください。' }),
+      options: defaultOptions,
+    },
+
+    // 特殊パターン: 複合的なパターン
+    {
+      code: "export const translations = { complex: '{user}さん、<strong>重要</strong>なお知らせです。{br}詳細は{link}をご確認ください。' }",
+      filename: setupTestFile('valid-complex.ts', { complex: '{user}さん、<strong>重要</strong>なお知らせです。{br}詳細は{link}をご確認ください。' }),
+      options: defaultOptions,
+    },
+
+    // 特殊パターン: 空のオブジェクト
+    {
+      code: "export const translations = {}",
+      filename: setupTestFile('valid-empty.ts', {}),
+      options: defaultOptions,
+    },
   ],
 
   invalid: [

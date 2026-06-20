@@ -13,7 +13,8 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'i18n-sync-test-'))
  */
 function setupTestFile(basename, translations, options = {}) {
   const tsPath = path.join(tmpDir, basename)
-  const jsonPath = path.join(tmpDir, basename.replace(/\.ts$/, '.json'))
+  const parsed = path.parse(basename)
+  const jsonPath = path.join(tmpDir, parsed.name + '.json')
 
   // JSONファイルを作成
   const indent = options.indent || 2
@@ -84,6 +85,27 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       code: "export const translations = { key1: 'value1' }",
       filename: setupTestFile('en_us.ts', { key1: 'value1' }),
       options: [{ targetFileName: 'en_us.ts' }],
+    },
+
+    // カスタムファイル名: .js拡張子
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: setupTestFile('custom.js', { key1: 'value1' }),
+      options: [{ targetFileName: 'custom.js' }],
+    },
+
+    // カスタムファイル名: .tsx拡張子
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: setupTestFile('custom.tsx', { key1: 'value1' }),
+      options: [{ targetFileName: 'custom.tsx' }],
+    },
+
+    // カスタムファイル名: .jsx拡張子
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: setupTestFile('custom.jsx', { key1: 'value1' }),
+      options: [{ targetFileName: 'custom.jsx' }],
     },
 
     // エスケープ: ダブルクォートを含む（シングルクォート文字列）

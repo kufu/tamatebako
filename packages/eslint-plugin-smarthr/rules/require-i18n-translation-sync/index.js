@@ -229,7 +229,8 @@ module.exports = {
 
         // JSONファイルのパス
         const tsFilePath = filename
-        const jsonFilePath = tsFilePath.replace(/\.ts$/, '.json')
+        const parsed = path.parse(tsFilePath)
+        const jsonFilePath = path.join(parsed.dir, parsed.name + '.json')
 
         // JSON文字列を生成
         const indent = options.indent || 2

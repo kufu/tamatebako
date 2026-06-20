@@ -45,48 +45,55 @@ function extractTranslations(node, sourceCode) {
 
     // キーの取得
     let key
-    if (prop.key.type === 'Identifier') {
-      key = prop.key.name
-    } else if (prop.key.type === 'Literal') {
-      key = String(prop.key.value)
-    } else {
-      errors.push({
-        node: prop.key,
-        message: 'キーは文字列リテラルまたは識別子である必要があります。',
-      })
-      continue
+    switch (prop.key.type) {
+      case 'Identifier':
+        key = prop.key.name
+        break
+      case 'Literal':
+        key = String(prop.key.value)
+        break
+      default:
+        errors.push({
+          node: prop.key,
+          message: 'キーは文字列リテラルまたは識別子である必要があります。',
+        })
+        continue
     }
 
     // 値の検証
-    if (prop.value.type === 'Literal') {
-      if (typeof prop.value.value !== 'string') {
+    switch (prop.value.type) {
+      case 'Literal':
+        if (typeof prop.value.value !== 'string') {
+          errors.push({
+            node: prop.value,
+            message: `キー "${key}" の値は文字列である必要があります。数値、真偽値などは使用できません。`,
+          })
+          continue
+        }
+        translations[key] = prop.value.value
+        break
+      case 'TemplateLiteral':
+        // テンプレートリテラルで式がない場合のみ許可
+        if (prop.value.expressions.length === 0) {
+          translations[key] = prop.value.quasis[0].value.cooked
+        } else {
+          errors.push({
+            node: prop.value,
+            message: `キー "${key}" の値は静的な文字列である必要があります。テンプレートリテラルに式を含めることはできません。`,
+          })
+        }
+        break
+      case 'ObjectExpression':
         errors.push({
           node: prop.value,
-          message: `キー "${key}" の値は文字列である必要があります。数値、真偽値などは使用できません。`,
+          message: `キー "${key}" の値はネストされたオブジェクトです。翻訳ファイルはフラットな構造である必要があります。`,
         })
-        continue
-      }
-      translations[key] = prop.value.value
-    } else if (prop.value.type === 'TemplateLiteral') {
-      // テンプレートリテラルで式がない場合のみ許可
-      if (prop.value.expressions.length === 0) {
-        translations[key] = prop.value.quasis[0].value.cooked
-      } else {
+        break
+      default:
         errors.push({
           node: prop.value,
-          message: `キー "${key}" の値は静的な文字列である必要があります。テンプレートリテラルに式を含めることはできません。`,
+          message: `キー "${key}" の値は文字列リテラルである必要があります。`,
         })
-      }
-    } else if (prop.value.type === 'ObjectExpression') {
-      errors.push({
-        node: prop.value,
-        message: `キー "${key}" の値はネストされたオブジェクトです。翻訳ファイルはフラットな構造である必要があります。`,
-      })
-    } else {
-      errors.push({
-        node: prop.value,
-        message: `キー "${key}" の値は文字列リテラルである必要があります。`,
-      })
     }
   }
 
@@ -104,15 +111,20 @@ function findExportedObject(program) {
 
   for (const node of program.body) {
     // export const translations = { ... }
-    if (node.type === 'ExportNamedDeclaration' && node.declaration) {
-      if (node.declaration.type === 'VariableDeclaration') {
-        for (const decl of node.declaration.declarations) {
-          exportCount++
-          if (decl.init && decl.init.type === 'ObjectExpression') {
-            exportedObject = decl.init
-          } else if (decl.init && decl.init.type === 'TSAsExpression' && decl.init.expression.type === 'ObjectExpression') {
-            // as const などの型アサーション
-            exportedObject = decl.init.expression
+    if (node.type === 'ExportNamedDeclaration' && node.declaration && node.declaration.type === 'VariableDeclaration') {
+      for (const decl of node.declaration.declarations) {
+        exportCount++
+        if (decl.init) {
+          switch (decl.init.type) {
+            case 'ObjectExpression':
+              exportedObject = decl.init
+              break
+            case 'TSAsExpression':
+              if (decl.init.expression.type === 'ObjectExpression') {
+                // as const などの型アサーション
+                exportedObject = decl.init.expression
+              }
+              break
           }
         }
       }
@@ -121,10 +133,15 @@ function findExportedObject(program) {
     // export default { ... }
     if (node.type === 'ExportDefaultDeclaration') {
       exportCount++
-      if (node.declaration.type === 'ObjectExpression') {
-        exportedObject = node.declaration
-      } else if (node.declaration.type === 'TSAsExpression' && node.declaration.expression.type === 'ObjectExpression') {
-        exportedObject = node.declaration.expression
+      switch (node.declaration.type) {
+        case 'ObjectExpression':
+          exportedObject = node.declaration
+          break
+        case 'TSAsExpression':
+          if (node.declaration.expression.type === 'ObjectExpression') {
+            exportedObject = node.declaration.expression
+          }
+          break
       }
     }
   }

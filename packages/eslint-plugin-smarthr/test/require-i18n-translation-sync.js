@@ -46,28 +46,28 @@ ruleTester.run('require-i18n-translation-sync', rule, {
   valid: [
     // 対象ファイル名でない場合はスキップ
     {
-      code: 'export const translations = { "key1": "value1" }',
+      code: "export const translations = { key1: 'value1' }",
       filename: createTestPath('en.ts'),
       options: defaultOptions,
     },
 
     // ja.ts と ja.json が一致している場合
     {
-      code: 'export const translations = { "key1": "value1", "key2": "value2" }',
+      code: "export const translations = { key1: 'value1', key2: 'value2' }",
       filename: setupTestFile('valid-sync.ts', { key1: 'value1', key2: 'value2' }),
       options: defaultOptions,
     },
 
     // export default でも OK
     {
-      code: 'export default { "key1": "value1" }',
+      code: "export default { key1: 'value1' }",
       filename: setupTestFile('valid-default.ts', { key1: 'value1' }),
       options: defaultOptions,
     },
 
     // Identifierキーでも OK
     {
-      code: 'export const translations = { key1: "value1", key2: "value2" }',
+      code: "export const translations = { key1: 'value1', key2: 'value2' }",
       filename: setupTestFile('valid-identifier.ts', { key1: 'value1', key2: 'value2' }),
       options: defaultOptions,
     },
@@ -81,16 +81,51 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // カスタムファイル名
     {
-      code: 'export const translations = { "key1": "value1" }',
+      code: "export const translations = { key1: 'value1' }",
       filename: setupTestFile('en_us.ts', { key1: 'value1' }),
       options: [{ targetFileName: 'en_us.ts' }],
+    },
+
+    // エスケープ: ダブルクォートを含む（シングルクォート文字列）
+    {
+      code: "export const translations = { key1: 'hogefuga\"piyo\".' }",
+      filename: setupTestFile('valid-escape-double.ts', { key1: 'hogefuga"piyo".' }),
+      options: defaultOptions,
+    },
+
+    // エスケープ: シングルクォートを含む（ダブルクォート文字列）
+    {
+      code: "export const translations = { key1: \"hoge'fuga'.\" }",
+      filename: setupTestFile('valid-escape-single.ts', { key1: "hoge'fuga'." }),
+      options: defaultOptions,
+    },
+
+    // エスケープ: バックスラッシュを含む
+    {
+      code: "export const translations = { key1: '円記号\\\\あり' }",
+      filename: setupTestFile('valid-escape-backslash.ts', { key1: '円記号\\あり' }),
+      options: defaultOptions,
+    },
+
+    // エスケープ: 改行を含む
+    {
+      code: "export const translations = { key1: '改行\\nあり' }",
+      filename: setupTestFile('valid-escape-newline.ts', { key1: '改行\nあり' }),
+      options: defaultOptions,
+    },
+
+    // エスケープ: タブを含む
+    {
+      code: "export const translations = { key1: 'タブ\\tあり' }",
+      filename: setupTestFile('valid-escape-tab.ts', { key1: 'タブ\tあり' }),
+      options: defaultOptions,
     },
   ],
 
   invalid: [
     // 複数のexport
     {
-      code: 'export const a = { "key1": "value1" }; export const b = { "key2": "value2" }',
+      code: "export const a = { key1: 'value1' }; export const b = { key2: 'value2' }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'multipleExports' }],
@@ -98,7 +133,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // exportがない
     {
-      code: 'const translations = { "key1": "value1" }',
+      code: "const translations = { key1: 'value1' }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'noExport' }],
@@ -106,7 +141,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // オブジェクト以外をexport
     {
-      code: 'export const translations = "not an object"',
+      code: "export const translations = 'not an object'",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'notObject' }],
@@ -114,7 +149,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 配列をexport
     {
-      code: 'export const translations = ["array"]',
+      code: "export const translations = ['array']",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'notObject' }],
@@ -122,7 +157,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（数値）
     {
-      code: 'export const translations = { "key1": 123 }',
+      code: "export const translations = { key1: 123 }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -130,7 +165,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（真偽値）
     {
-      code: 'export const translations = { "key1": true }',
+      code: "export const translations = { key1: true }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -138,7 +173,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（null）
     {
-      code: 'export const translations = { "key1": null }',
+      code: "export const translations = { key1: null }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -146,7 +181,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // ネストされたオブジェクト
     {
-      code: 'export const translations = { "key1": { "nested": "value" } }',
+      code: "export const translations = { key1: { nested: 'value' } }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -154,7 +189,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // スプレッド構文
     {
-      code: 'const base = { "key1": "value1" }; export const translations = { ...base, "key2": "value2" }',
+      code: "const base = { key1: 'value1' }; export const translations = { ...base, key2: 'value2' }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -170,7 +205,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // JSONファイルが存在しない
     {
-      code: 'export const translations = { "key1": "value1" }',
+      code: "export const translations = { key1: 'value1' }",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'notSync' }],
@@ -178,7 +213,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // ja.ts と ja.json が不一致
     {
-      code: 'export const translations = { "key1": "new value" }',
+      code: "export const translations = { key1: 'new value' }",
       filename: (() => {
         const tsPath = path.join(tmpDir, 'sub1', 'ja.ts')
         const jsonPath = path.join(tmpDir, 'sub1', 'ja.json')

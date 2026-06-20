@@ -267,7 +267,43 @@ JSON出力時の改行コードを指定します。デフォルトは`lf`です
 
 ## 使用例
 
-### 基本的な使用
+### 推奨: 対象ファイルのみに適用（効率的）
+
+**このルールは対象ファイル（デフォルト: ja.ts）のみをチェックするため、全ファイルに対して実行すると無駄なチェックが発生します。**
+
+ESLintの `files` オプションで対象ファイルを指定することで、効率的にチェックできます。
+
+**Flat Config（ESLint v9以降）の場合:**
+
+```javascript
+export default [
+  {
+    files: ['**/ja.ts'],
+    rules: {
+      'smarthr/require-i18n-translation-sync': 'error'
+    }
+  }
+]
+```
+
+**Legacy Config（.eslintrc.js）の場合:**
+
+```javascript
+{
+  overrides: [
+    {
+      files: ['**/ja.ts'],
+      rules: {
+        'smarthr/require-i18n-translation-sync': 'error'
+      }
+    }
+  ]
+}
+```
+
+### 基本的な使用（非推奨）
+
+全ファイルに対してルールを有効化する場合（対象外ファイルは内部でスキップされますが効率が悪いです）：
 
 ```javascript
 {
@@ -277,13 +313,39 @@ JSON出力時の改行コードを指定します。デフォルトは`lf`です
 
 ### カスタム設定
 
+**Flat Config:**
+
+```javascript
+export default [
+  {
+    files: ['**/ja.ts'],
+    rules: {
+      'smarthr/require-i18n-translation-sync': ['error', {
+        targetFileName: 'ja.ts',
+        indent: 2,
+        endOfLine: 'lf'
+      }]
+    }
+  }
+]
+```
+
+**Legacy Config:**
+
 ```javascript
 {
-  "smarthr/require-i18n-translation-sync": ["error", {
-    "targetFileName": "ja.ts",
-    "indent": 2,
-    "endOfLine": "lf"
-  }]
+  overrides: [
+    {
+      files: ['**/ja.ts'],
+      rules: {
+        'smarthr/require-i18n-translation-sync': ['error', {
+          targetFileName: 'ja.ts',
+          indent: 2,
+          endOfLine: 'lf'
+        }]
+      }
+    }
+  ]
 }
 ```
 
@@ -291,22 +353,47 @@ JSON出力時の改行コードを指定します。デフォルトは`lf`です
 
 英語の翻訳ファイルも同様にチェックする場合：
 
+**Flat Config:**
+
+```javascript
+export default [
+  {
+    files: ['**/ja.ts'],
+    rules: {
+      'smarthr/require-i18n-translation-sync': ['error', {
+        targetFileName: 'ja.ts'
+      }]
+    }
+  },
+  {
+    files: ['**/en.ts'],
+    rules: {
+      'smarthr/require-i18n-translation-sync': ['error', {
+        targetFileName: 'en.ts'
+      }]
+    }
+  }
+]
+```
+
+**Legacy Config:**
+
 ```javascript
 {
-  "overrides": [
+  overrides: [
     {
-      "files": ["**/ja.ts"],
-      "rules": {
-        "smarthr/require-i18n-translation-sync": ["error", {
-          "targetFileName": "ja.ts"
+      files: ['**/ja.ts'],
+      rules: {
+        'smarthr/require-i18n-translation-sync': ['error', {
+          targetFileName: 'ja.ts'
         }]
       }
     },
     {
-      "files": ["**/en.ts"],
-      "rules": {
-        "smarthr/require-i18n-translation-sync": ["error", {
-          "targetFileName": "en.ts"
+      files: ['**/en.ts'],
+      rules: {
+        'smarthr/require-i18n-translation-sync': ['error', {
+          targetFileName: 'en.ts'
         }]
       }
     }

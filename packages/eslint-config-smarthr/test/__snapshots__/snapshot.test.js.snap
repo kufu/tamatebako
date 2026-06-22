@@ -3151,6 +3151,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/require-i18n-text": [
       1,
     ],
+    "smarthr/require-i18n-translation-sync": [
+      0,
+    ],
     "smarthr/require-import": [
       0,
     ],

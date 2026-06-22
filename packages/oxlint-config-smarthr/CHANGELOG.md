@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.13](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.12...oxlint-config-smarthr-v0.1.13) (2026-06-22)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthrのrepository URLをHTTPS形式に変更 ([#1412](https://github.com/kufu/tamatebako/issues/1412)) ([a78d956](https://github.com/kufu/tamatebako/commit/a78d9562a3a7d8c034559a7d1af3063fe8e03c7f))
+
 ## [0.1.12](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.11...oxlint-config-smarthr-v0.1.12) (2026-06-22)
 
 

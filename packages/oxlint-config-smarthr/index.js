@@ -252,6 +252,7 @@ const config = {
     'eslint-plugin-smarthr/require-declaration': 'off',
     'eslint-plugin-smarthr/require-export': 'off',
     'eslint-plugin-smarthr/require-i18n-text': 'warn',
+    'eslint-plugin-smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
     'eslint-plugin-smarthr/require-import': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',
   },

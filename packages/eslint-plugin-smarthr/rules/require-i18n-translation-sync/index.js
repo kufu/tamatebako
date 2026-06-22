@@ -103,25 +103,26 @@ function extractTranslations(node, sourceCode) {
 /**
  * export文からオブジェクトを探す
  * @param {import('estree').Program} program
- * @returns {import('estree').ObjectExpression | null}
+ * @returns {{ objectExportCount: number, exportedObject: import('estree').ObjectExpression | null }}
  */
 function findExportedObject(program) {
-  let exportCount = 0
+  let objectExportCount = 0
   let exportedObject = null
 
   for (const node of program.body) {
     // export const translations = { ... }
     if (node.type === 'ExportNamedDeclaration' && node.declaration && node.declaration.type === 'VariableDeclaration') {
       for (const decl of node.declaration.declarations) {
-        exportCount++
         if (decl.init) {
           switch (decl.init.type) {
             case 'ObjectExpression':
+              objectExportCount++
               exportedObject = decl.init
               break
             case 'TSAsExpression':
               if (decl.init.expression.type === 'ObjectExpression') {
                 // as const などの型アサーション
+                objectExportCount++
                 exportedObject = decl.init.expression
               }
               break
@@ -132,13 +133,14 @@ function findExportedObject(program) {
 
     // export default { ... }
     if (node.type === 'ExportDefaultDeclaration') {
-      exportCount++
       switch (node.declaration.type) {
         case 'ObjectExpression':
+          objectExportCount++
           exportedObject = node.declaration
           break
         case 'TSAsExpression':
           if (node.declaration.expression.type === 'ObjectExpression') {
+            objectExportCount++
             exportedObject = node.declaration.expression
           }
           break
@@ -146,7 +148,7 @@ function findExportedObject(program) {
     }
   }
 
-  return { exportCount, exportedObject }
+  return { objectExportCount, exportedObject }
 }
 
 /**
@@ -158,8 +160,8 @@ module.exports = {
     fixable: 'code',
     schema: SCHEMA,
     messages: {
-      multipleExports: '翻訳ファイルは1つのオブジェクトのみをexportする必要があります。現在{{count}}個のexportがあります。',
-      noExport: '翻訳ファイルはオブジェクトをexportする必要があります。',
+      multipleExports: '翻訳ファイルはオブジェクトリテラルを1つのみexportする必要があります。現在{{count}}個のオブジェクトがexportされています。',
+      noExport: '翻訳ファイルはオブジェクトリテラルをexportする必要があります。',
       notObject: 'exportする値はオブジェクトリテラルである必要があります。',
       invalidValue: '{{message}}',
       notSync: '翻訳ファイル（{{tsFile}}）とJSONファイル（{{jsonFile}}）の内容が一致しません。autofixで同期できます。',
@@ -179,20 +181,20 @@ module.exports = {
 
     return {
       Program(node) {
-        const { exportCount, exportedObject } = findExportedObject(node)
+        const { objectExportCount, exportedObject } = findExportedObject(node)
 
-        // exportが複数ある場合
-        if (exportCount > 1) {
+        // オブジェクトのexportが複数ある場合
+        if (objectExportCount > 1) {
           context.report({
             node,
             messageId: 'multipleExports',
-            data: { count: exportCount },
+            data: { count: objectExportCount },
           })
           return
         }
 
-        // exportがない場合
-        if (exportCount === 0) {
+        // オブジェクトのexportがない場合
+        if (objectExportCount === 0) {
           context.report({
             node,
             messageId: 'noExport',
@@ -200,7 +202,7 @@ module.exports = {
           return
         }
 
-        // exportがオブジェクトでない場合
+        // exportがオブジェクトでない場合（念のためのチェック）
         if (!exportedObject) {
           context.report({
             node,

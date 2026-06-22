@@ -36,8 +36,11 @@ function createTestPath(basename) {
 
 const ruleTester = new RuleTester({
   languageOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
+    parser: require('@typescript-eslint/parser'),
+    parserOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
+    },
   },
 })
 
@@ -184,10 +187,24 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       filename: setupTestFile('valid-empty.ts', {}),
       options: defaultOptions,
     },
+
+    // 複数のexport: 型とオブジェクトを両方export
+    {
+      code: "export type TranslationKeys = string; export const translations = { key1: 'value1' }",
+      filename: setupTestFile('valid-with-type.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
+
+    // 複数のexport: 型定義が複数ある場合
+    {
+      code: "export type Foo = string; export type Bar = number; export const translations = { key1: 'value1' }",
+      filename: setupTestFile('valid-with-multiple-types.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
   ],
 
   invalid: [
-    // 複数のexport
+    // 複数のオブジェクトをexport
     {
       code: "export const a = { key1: 'value1' }; export const b = { key2: 'value2' }",
       filename: createTestPath('ja.ts'),
@@ -195,7 +212,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       errors: [{ messageId: 'multipleExports' }],
     },
 
-    // exportがない
+    // オブジェクトのexportがない
     {
       code: "const translations = { key1: 'value1' }",
       filename: createTestPath('ja.ts'),
@@ -203,20 +220,20 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       errors: [{ messageId: 'noExport' }],
     },
 
-    // オブジェクト以外をexport
+    // オブジェクト以外をexport（文字列）
     {
       code: "export const translations = 'not an object'",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
-      errors: [{ messageId: 'notObject' }],
+      errors: [{ messageId: 'noExport' }],
     },
 
-    // 配列をexport
+    // オブジェクト以外をexport（配列）
     {
       code: "export const translations = ['array']",
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
-      errors: [{ messageId: 'notObject' }],
+      errors: [{ messageId: 'noExport' }],
     },
 
     // 値が文字列以外（数値）

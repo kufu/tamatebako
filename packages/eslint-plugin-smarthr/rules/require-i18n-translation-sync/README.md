@@ -200,6 +200,25 @@ export const translations = {
 } as const
 ```
 
+### satisfies演算子
+
+```typescript
+// satisfies のみ
+export const translations = {
+  'Common/Button/Submit': '送信'
+} satisfies Record<string, string>
+
+// as const と satisfies の併用
+export const translations = {
+  'Common/Button/Submit': '送信'
+} as const satisfies Record<string, string>
+
+// satisfies と as const の併用（順序逆）
+export const translations = {
+  'Common/Button/Submit': '送信'
+} satisfies Record<string, string> as const
+```
+
 ### 型注釈
 
 ```typescript

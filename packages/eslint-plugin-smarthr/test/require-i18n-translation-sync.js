@@ -201,6 +201,41 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       filename: setupTestFile('valid-with-multiple-types.ts', { key1: 'value1' }),
       options: defaultOptions,
     },
+
+    // as const satisfies パターン
+    {
+      code: "export const translations = { key1: 'value1' } as const satisfies Record<string, string>",
+      filename: setupTestFile('valid-as-const-satisfies.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
+
+    // satisfies as const パターン
+    {
+      code: "export const translations = { key1: 'value1' } satisfies Record<string, string> as const",
+      filename: setupTestFile('valid-satisfies-as-const.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
+
+    // satisfies のみのパターン
+    {
+      code: "export const translations = { key1: 'value1' } satisfies Record<string, string>",
+      filename: setupTestFile('valid-satisfies-only.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
+
+    // export default with satisfies
+    {
+      code: "export default { key1: 'value1' } satisfies Record<string, string>",
+      filename: setupTestFile('valid-default-satisfies.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
+
+    // export default with as const satisfies
+    {
+      code: "export default { key1: 'value1' } as const satisfies Record<string, string>",
+      filename: setupTestFile('valid-default-as-const-satisfies.ts', { key1: 'value1' }),
+      options: defaultOptions,
+    },
   ],
 
   invalid: [

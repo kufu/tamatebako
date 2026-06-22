@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.21.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.20.0...eslint-plugin-smarthr-v6.21.0) (2026-06-22)
+
+
+### Features
+
+* require-i18n-translation-sync ESLintルールを追加 ([#1406](https://github.com/kufu/tamatebako/issues/1406)) ([5286bbb](https://github.com/kufu/tamatebako/commit/5286bbb94c6b774f9132f6d40ef36c216cff0399))
+
 ## [6.20.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.19.0...eslint-plugin-smarthr-v6.20.0) (2026-06-16)
 
 

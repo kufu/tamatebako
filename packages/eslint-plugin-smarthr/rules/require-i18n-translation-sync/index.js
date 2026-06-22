@@ -126,6 +126,18 @@ function findExportedObject(program) {
                 exportedObject = decl.init.expression
               }
               break
+            case 'TSSatisfiesExpression':
+              if (decl.init.expression.type === 'ObjectExpression') {
+                // satisfies Type
+                objectExportCount++
+                exportedObject = decl.init.expression
+              } else if (decl.init.expression.type === 'TSAsExpression' &&
+                         decl.init.expression.expression.type === 'ObjectExpression') {
+                // as const satisfies Type のパターン
+                objectExportCount++
+                exportedObject = decl.init.expression.expression
+              }
+              break
           }
         }
       }
@@ -142,6 +154,18 @@ function findExportedObject(program) {
           if (node.declaration.expression.type === 'ObjectExpression') {
             objectExportCount++
             exportedObject = node.declaration.expression
+          }
+          break
+        case 'TSSatisfiesExpression':
+          if (node.declaration.expression.type === 'ObjectExpression') {
+            // satisfies Type
+            objectExportCount++
+            exportedObject = node.declaration.expression
+          } else if (node.declaration.expression.type === 'TSAsExpression' &&
+                     node.declaration.expression.expression.type === 'ObjectExpression') {
+            // as const satisfies Type のパターン
+            objectExportCount++
+            exportedObject = node.declaration.expression.expression
           }
           break
       }

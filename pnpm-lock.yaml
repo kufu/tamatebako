@@ -253,10 +253,10 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3(storybook@10.4.5(@testing-library/dom@10.4.1)(@types/react@19.2.17)(prettier@3.8.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.95.0(@swc/core@1.13.5)(postcss@8.5.15))
       '@storybook/react':
-        specifier: ^10.4.4
+        specifier: ^10.4.5
         version: 10.4.5(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.4.5(@testing-library/dom@10.4.1)(@types/react@19.2.17)(prettier@3.8.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@storybook/react-webpack5':
-        specifier: ^10.4.4
+        specifier: ^10.4.5
         version: 10.4.5(@swc/core@1.13.5)(@types/react@19.2.17)(postcss@8.5.15)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.4.5(@testing-library/dom@10.4.1)(@types/react@19.2.17)(prettier@3.8.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@types/react':
         specifier: ^19.2.17
@@ -271,7 +271,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       storybook:
-        specifier: ^10.4.4
+        specifier: ^10.4.5
         version: 10.4.5(@testing-library/dom@10.4.1)(@types/react@19.2.17)(prettier@3.8.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   packages/wareki: {}
@@ -11624,7 +11624,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       merge-stream: 2.0.0
       supports-color: 8.1.1
 

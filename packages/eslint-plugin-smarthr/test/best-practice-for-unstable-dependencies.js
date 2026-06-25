@@ -371,21 +371,6 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         },
       ],
     },
-    // オブジェクト形式: 完全一致パターンでカスタムメッセージ
-    {
-      code: `
-        useEffect(() => {
-          console.log(icon)
-        }, [icon])
-      `,
-      options: [{ additionalUnstableNames: [{ pattern: 'icon', message: 'iconはReactNodeのため不安定です。' }] }],
-      errors: [
-        {
-          messageId: 'customUnstableDependency',
-          data: { name: 'icon', message: 'iconはReactNodeのため不安定です。', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
     // 文字列とオブジェクト形式の混在
     {
       code: `

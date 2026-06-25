@@ -326,10 +326,6 @@ useEffect(() => {
       {
         "pattern": "/^on[A-Z]/",
         "message": "イベントハンドラーは依存配列に含めないでください。"
-      },
-      {
-        "pattern": "icon",
-        "message": "iconはReactNodeのため不安定です。"
       }
     ]
   }]
@@ -347,23 +343,6 @@ useEffect(() => {
   onClick()
 }, [onClick])
 // エラー: 依存配列に不安定な参照と予想される"onClick"が含まれています。イベントハンドラーは依存配列に含めないでください。
-```
-
-**複数形式の混在も可能:**
-
-```javascript
-{
-  "smarthr/best-practice-for-unstable-dependencies": ["error", {
-    "additionalUnstableNames": [
-      "icon",      // 文字列（完全一致）
-      "/Ref$/",    // 正規表現
-      {            // オブジェクト（カスタムメッセージ）
-        "pattern": "/^on[A-Z]/",
-        "message": "イベントハンドラーは依存配列に含めないでください。"
-      }
-    ]
-  }]
-}
 ```
 
 ### additionalTargetHooks

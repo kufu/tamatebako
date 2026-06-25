@@ -46,9 +46,8 @@ function parseUnstableNames(names) {
   return names.map(name => {
     if (typeof name === 'string') {
       return { pattern: name, message: null }
-    } else {
-      return { pattern: name.pattern, message: name.message || null }
     }
+    return { pattern: name.pattern, message: name.message || null }
   })
 }
 
@@ -59,14 +58,11 @@ function parseUnstableNames(names) {
  */
 function buildPatternMatchers(parsedNames) {
   return parsedNames.map(({ pattern, message }) => {
-    let regex
-    if (pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2) {
-      // 正規表現パターン: /pattern/ → pattern
-      regex = new RegExp(pattern.slice(1, -1))
-    } else {
-      // 完全一致パターン: name → ^name$
-      regex = new RegExp(`^${pattern.replace(DOLLAR_SIGN_REGEX, '\\$')}$`)
-    }
+    const regexPattern = pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
+      ? pattern.slice(1, -1)  // 正規表現パターン: /pattern/ → pattern
+      : `^${pattern.replace(DOLLAR_SIGN_REGEX, '\\$')}$`  // 完全一致パターン: name → ^name$
+
+    const regex = new RegExp(regexPattern)
 
     return { regex, message, pattern }
   })

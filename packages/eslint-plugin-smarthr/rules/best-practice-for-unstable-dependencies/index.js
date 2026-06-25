@@ -4,7 +4,20 @@ const SCHEMA = [
     properties: {
       additionalUnstableNames: {
         type: 'array',
-        items: { type: 'string' },
+        items: {
+          oneOf: [
+            { type: 'string' },
+            {
+              type: 'object',
+              properties: {
+                pattern: { type: 'string' },
+                message: { type: 'string' },
+              },
+              required: ['pattern'],
+              additionalProperties: false,
+            },
+          ],
+        },
         default: [],
       },
       additionalTargetHooks: {
@@ -23,6 +36,41 @@ const DEFAULT_TARGET_HOOKS = ['useEffect', 'useLayoutEffect', 'useCallback', 'us
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-unstable-dependencies`
+
+/**
+ * 文字列またはオブジェクト形式の設定をパースする
+ * @param {Array<string | {pattern: string, message?: string}>} names - 名前の配列
+ * @returns {Array<{pattern: string, message: string | null}>}
+ */
+function parseUnstableNames(names) {
+  return names.map(name => {
+    if (typeof name === 'string') {
+      return { pattern: name, message: null }
+    } else {
+      return { pattern: name.pattern, message: name.message || null }
+    }
+  })
+}
+
+/**
+ * パースされた設定からマッチャーを構築する
+ * @param {Array<{pattern: string, message: string | null}>} parsedNames - パース済み設定
+ * @returns {Array<{regex: RegExp, message: string | null, pattern: string}>}
+ */
+function buildPatternMatchers(parsedNames) {
+  return parsedNames.map(({ pattern, message }) => {
+    let regex
+    if (pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2) {
+      // 正規表現パターン: /pattern/ → pattern
+      regex = new RegExp(pattern.slice(1, -1))
+    } else {
+      // 完全一致パターン: name → ^name$
+      regex = new RegExp(`^${pattern.replace(DOLLAR_SIGN_REGEX, '\\$')}$`)
+    }
+
+    return { regex, message, pattern }
+  })
+}
 
 /**
  * 名前の配列から正規表現を生成する（$をエスケープして処理）
@@ -67,14 +115,17 @@ module.exports = {
     schema: SCHEMA,
     messages: {
       unstableDependency: '依存配列に不安定な参照と予想される"{{name}}"が含まれています。オブジェクトやReactNodeなどの参照は頻繁に変わるため、不要な再実行や無限ループの原因となります。{{detailLink}}',
+      customUnstableDependency: '依存配列に不安定な参照と予想される"{{name}}"が含まれています。{{message}}{{detailLink}}',
     },
   },
   create(context) {
     const options = context.options[0] || {}
-    const unstableNames = [...DEFAULT_UNSTABLE_NAMES, ...(options.additionalUnstableNames || [])]
+    const additionalUnstableNames = options.additionalUnstableNames || []
     const targetHooks = [...DEFAULT_TARGET_HOOKS, ...(options.additionalTargetHooks || [])]
 
-    const unstableNamesRegex = buildRegex(unstableNames)
+    // パターンマッチャーを構築
+    const parsedUnstableNames = parseUnstableNames([...DEFAULT_UNSTABLE_NAMES, ...additionalUnstableNames])
+    const unstableNameMatchers = buildPatternMatchers(parsedUnstableNames)
     const targetHooksRegex = buildRegex(targetHooks)
 
     return {
@@ -98,15 +149,20 @@ module.exports = {
 
         // 不安定な参照と予想される名前が含まれているかチェック
         for (const identifier of identifiers) {
-          if (unstableNamesRegex.test(identifier.name)) {
-            context.report({
-              node: identifier.node,
-              messageId: 'unstableDependency',
-              data: {
-                name: identifier.name,
-                detailLink: DETAIL_LINK,
-              },
-            })
+          // パターンマッチャーで順番にチェック
+          for (const matcher of unstableNameMatchers) {
+            if (matcher.regex.test(identifier.name)) {
+              context.report({
+                node: identifier.node,
+                messageId: matcher.message ? 'customUnstableDependency' : 'unstableDependency',
+                data: {
+                  name: identifier.name,
+                  message: matcher.message || '',
+                  detailLink: DETAIL_LINK,
+                },
+              })
+              break // 最初にマッチしたパターンで報告して終了
+            }
           }
         }
       },

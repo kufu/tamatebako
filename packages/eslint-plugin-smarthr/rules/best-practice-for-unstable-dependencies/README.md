@@ -263,10 +263,105 @@ const handleClick = useCallback((e) => {
 
 デフォルトでは `children` のみをチェックしますが、他の変数名を追加できます。
 
+#### 文字列形式（完全一致）
+
 ```javascript
 {
   "smarthr/best-practice-for-unstable-dependencies": ["error", {
     "additionalUnstableNames": ["icon", "prefix", "object", "items", "callback"]
+  }]
+}
+```
+
+#### 正規表現パターン
+
+`/pattern/` のように先頭と末尾を `/` で囲むと、正規表現パターンとして扱われます。
+
+**例1: Refで終わる変数を検出**
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": ["/Ref$/"]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  console.log(inputRef.current)
+}, [inputRef])  // "inputRef"はパターン/Ref$/にマッチ
+```
+
+**例2: onで始まる変数（イベントハンドラー）を検出**
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": ["/^on[A-Z]/"]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  onClick()
+}, [onClick])  // "onClick"はパターン/^on[A-Z]/にマッチ
+```
+
+#### オブジェクト形式（カスタムメッセージ付き）
+
+特定のパターンに対して独自のエラーメッセージを設定できます。
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": [
+      {
+        "pattern": "/Ref$/",
+        "message": "Refは再レンダリングをトリガーしません。"
+      },
+      {
+        "pattern": "/^on[A-Z]/",
+        "message": "イベントハンドラーは依存配列に含めないでください。"
+      },
+      {
+        "pattern": "icon",
+        "message": "iconはReactNodeのため不安定です。"
+      }
+    ]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  console.log(inputRef.current)
+}, [inputRef])
+// エラー: 依存配列に不安定な参照と予想される"inputRef"が含まれています。Refは再レンダリングをトリガーしません。
+
+useEffect(() => {
+  onClick()
+}, [onClick])
+// エラー: 依存配列に不安定な参照と予想される"onClick"が含まれています。イベントハンドラーは依存配列に含めないでください。
+```
+
+**複数形式の混在も可能:**
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": [
+      "icon",      // 文字列（完全一致）
+      "/Ref$/",    // 正規表現
+      {            // オブジェクト（カスタムメッセージ）
+        "pattern": "/^on[A-Z]/",
+        "message": "イベントハンドラーは依存配列に含めないでください。"
+      }
+    ]
   }]
 }
 ```

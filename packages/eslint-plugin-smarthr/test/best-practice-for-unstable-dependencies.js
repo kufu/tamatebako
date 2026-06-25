@@ -375,14 +375,14 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
     {
       code: `
         useEffect(() => {
-          console.log(children, onClick)
-        }, [children, onClick])
+          console.log(icon, onClick)
+        }, [icon, onClick])
       `,
-      options: [{ additionalUnstableNames: ['children', { pattern: '/^on[A-Z]/', message: 'イベントハンドラーは依存配列に含めないでください。' }] }],
+      options: [{ additionalUnstableNames: ['icon', { pattern: '/^on[A-Z]/', message: 'イベントハンドラーは依存配列に含めないでください。' }] }],
       errors: [
         {
           messageId: 'unstableDependency',
-          data: { name: 'children', detailLink: DETAIL_LINK },
+          data: { name: 'icon', detailLink: DETAIL_LINK },
         },
         {
           messageId: 'customUnstableDependency',

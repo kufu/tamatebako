@@ -97,8 +97,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(eslint@9.39.4(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.21.0
-        version: 6.21.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.21.1
+        version: 6.21.1(eslint@9.39.4(jiti@2.4.2))
       globals:
         specifier: ^17.6.0
         version: 17.6.0
@@ -182,8 +182,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.21.0
-        version: 6.21.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.21.1
+        version: 6.21.1(eslint@9.39.4(jiti@2.4.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -3851,8 +3851,8 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.21.0:
-    resolution: {integrity: sha512-Awj4j34hE6xyfLYXRbfUWoKG0xQdzc7UGiPwAg7awa3SHouG1wgU8x2Oc63P9bYTos6X1trKPv5x5TLKXPElyQ==}
+  eslint-plugin-smarthr@6.21.1:
+    resolution: {integrity: sha512-fFYpIMVMtmSgl8D06m4YtEJeLczVoyTscic44zX1FVkdLIokvPTENgeovGQ9gu3OZoAPexRbwtj6QO6X7sQFXw==}
     peerDependencies:
       eslint: ^9
 
@@ -4126,6 +4126,7 @@ packages:
   git-raw-commits@5.0.1:
     resolution: {integrity: sha512-Y+csSm2GD/PCSh6Isd/WiMjNAydu0VBiG9J7EdQsNA5P9uXvLayqjmTsNlK5Gs9IhblFZqOU0yid5Il5JPoLiQ==}
     engines: {node: '>=18'}
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   glob-parent@5.1.2:
@@ -10370,7 +10371,7 @@ snapshots:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
-  eslint-plugin-smarthr@6.21.0(eslint@9.39.4(jiti@2.4.2)):
+  eslint-plugin-smarthr@6.21.1(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

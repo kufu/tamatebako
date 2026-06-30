@@ -8,12 +8,13 @@ Frontend packages for projects at SmartHR
 ## Package Index
 
 | Package                  | Version                                                                                                                                  | Description                                              |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | use-bulk-check           | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check)         | React hooks for managing the values in the checkbox list |
 | use-virtual-scroll       | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll) | React hooks for virtual scroll                           |
 | wareki                   | [![npm version](https://badge.fury.io/js/%40smarthr%2Fwareki.svg)](https://badge.fury.io/js/%40smarthr%2Fwareki)                         | Japanese 'wareki' formatter                              |
 | create-lint-set          | [![npm version](https://badge.fury.io/js/%40smarthr%2Fcreate-lint-set.svg)](https://badge.fury.io/js/%40smarthr%2Fcreate-lint-set)       | Lint installer                                           |
 | next-auth                | [![npm version](https://badge.fury.io/js/%40smarthr%2Fnext-auth.svg)](https://badge.fury.io/js/%40smarthr%2Fnext-auth)                   | SmartHR's next-auth utility                              |
+| oxlint-config-smarthr    | [![npm version](https://badge.fury.io/js/oxlint-config-smarthr.svg)](https://badge.fury.io/js/oxlint-config-smarthr)                     | Oxlint config for SmartHR                                |
 | eslint-config-smarthr    | [![npm version](https://badge.fury.io/js/eslint-config-smarthr.svg)](https://badge.fury.io/js/eslint-config-smarthr)                     | ESLint config for SmartHR                                |
 | eslint-plugin-smarthr    | [![npm version](https://badge.fury.io/js/eslint-plugin-smarthr.svg)](https://badge.fury.io/js/eslint-plugin-smarthr)                     | ESLint plugin for SmartHR                                |
 | prettier-config-smarthr  | [![npm version](https://badge.fury.io/js/prettier-config-smarthr.svg)](https://badge.fury.io/js/prettier-config-smarthr)                 | Prettier config for SmartHR                              |
@@ -51,6 +52,7 @@ $ pnpm release
 ## 新しいパッケージの追加方法
 
 1. `packages` ディレクトリに新しいパッケージ用のディレクトリを作成し、必要なファイルを追加します。
+   - `package.json` の `name` は特別な理由がない限り `@smarthr/` で始まる名前にしてください。(スコープ付きの名前にすることで、自動で smarthr の organization にパッケージがひも付きます)
 2. pnpm がリリースしてしまわないように、`package.json` に `private: true` を追記します。
 3. tsc のビルド対象に含める場合は、`packages/tsconfig.json` の `references` に追加します。
 4. 通常通り conventional commits でコミットを行い、プルリクエストを作成します。
@@ -60,6 +62,7 @@ $ pnpm release
 
 1. 下記の3つの変更を含んだプルリクエストを作成します。
    - 新しいパッケージの `package.json` に `version: "1.0.0"` を追記します。
+   - 新しいパッケージの `package.json` に `"publishConfig": { "access": "public" }` を追加します。
    - 新しいパッケージの `package.json` から `private: true` を削除します。
    - release-please がリリース用のプルリクエストを作るように `release-please-config.json` に下記のような行を追加します。 (もし `0.1.0` などのマイナーバージョンでリリースしたい場合は [`initial-version`](https://github.com/googleapis/release-please/blob/a9b82178ce8040af09e55be509911fa36e0c20e7/schemas/config.json#L245-L247) を指定し、該当パッケージの `package.json` の `version` も合わせてください。)
 ```

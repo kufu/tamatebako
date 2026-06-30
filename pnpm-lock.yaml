@@ -3851,11 +3851,6 @@ packages:
     peerDependencies:
       eslint: ^9
 
-  eslint-plugin-smarthr@6.21.1:
-    resolution: {integrity: sha512-fFYpIMVMtmSgl8D06m4YtEJeLczVoyTscic44zX1FVkdLIokvPTENgeovGQ9gu3OZoAPexRbwtj6QO6X7sQFXw==}
-    peerDependencies:
-      eslint: ^9
-
   eslint-plugin-smarthr@6.21.2:
     resolution: {integrity: sha512-M0s/aNBx/ozaq0RyIACKdwx+gMFoW7Ivu61o7N+u/J9n0RZGCkxKQiKhDiO9DVKIkmCPWzBjLl0wUMYvaAih5A==}
     peerDependencies:
@@ -10376,11 +10371,6 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-smarthr@6.21.0(eslint@9.39.4(jiti@2.4.2)):
-    dependencies:
-      eslint: 9.39.4(jiti@2.4.2)
-      json5: 2.2.3
-
-  eslint-plugin-smarthr@6.21.1(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

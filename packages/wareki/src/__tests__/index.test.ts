@@ -265,5 +265,33 @@ describe('wareki', () => {
         formatted: '1999:12:31',
       })
     })
+
+    it('parse a date string whose year is 元年 (the first year of an era)', () => {
+      expect(warekiToDate('令和元年5月1日')).toEqual({
+        isValid: true,
+        result: new Date(2019, 5 - 1, 1),
+        formatted: '令和元年5月1日',
+      })
+      expect(warekiToDate('平成元年1月8日')).toEqual({
+        isValid: true,
+        result: new Date(1989, 1 - 1, 8),
+        formatted: '平成元年1月8日',
+      })
+      expect(warekiToDate('昭和元年12月25日')).toEqual({
+        isValid: true,
+        result: new Date(1926, 12 - 1, 25),
+        formatted: '昭和元年12月25日',
+      })
+      expect(warekiToDate('大正元年7月30日')).toEqual({
+        isValid: true,
+        result: new Date(1912, 7 - 1, 30),
+        formatted: '大正元年7月30日',
+      })
+      expect(warekiToDate('明治元年1月25日')).toEqual({
+        isValid: true,
+        result: new Date(1868, 1 - 1, 25),
+        formatted: '明治元年1月25日',
+      })
+    })
   })
 })

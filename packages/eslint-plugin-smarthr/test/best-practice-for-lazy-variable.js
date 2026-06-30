@@ -408,6 +408,66 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
+    // continue前に変数宣言し、continue前に使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (!value) continue
+          console.log(value)
+        }
+      `,
+    },
+    // ラベル付きbreak：外側で宣言、内側でbreak（外側のスコープなので検出されない）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // ラベル付きcontinue：外側で宣言、内側でcontinue（外側のスコープなので検出されない）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // switch内のbreak（switch脱出なので早期終了ではない）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          switch (condition) {
+            case 'a':
+              doSomething()
+              break
+          }
+          console.log(value)
+        }
+      `,
+    },
+    // ネストしたループ：外側で宣言、内側でbreak、外側で使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          console.log(x)
+        }
+      `,
+    },
     // JSX: 複数回使用されている（useSectionWrapperの引数とJSXタグ名）
     {
       code: `
@@ -1666,6 +1726,280 @@ console.log(x)
         {
           messageId: 'moveToLazy',
           data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に変数を使用（break前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          if (itemStart >= matchEnd) break
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      output: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // continue後に変数を使用（continue前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (skipCondition) continue
+          const result = process(value)
+          results.push(result)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (skipCondition) continue
+          const value = getValue(i)
+          const result = process(value)
+          results.push(result)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に1回のみ使用（if文の直後のstatementでのみ使用）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const itemEnd = itemStart + items[i].length
+          if (itemStart >= matchEnd) break
+          console.log(itemEnd)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + items[i].length
+          console.log(itemEnd)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // ネストしたループでbreak（if文の直後でのみ使用）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            const value = compute(i, j)
+            if (shouldSkip) break
+            use(value)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+            const value = compute(i, j)
+            use(value)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側でbreak、外側のif内で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            const x = getValue(i)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きbreak：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) break outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+            const x = getValue(j)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きcontinue：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) continue outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+            const x = getValue(j)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で2回使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+          process(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+          process(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
         },
       ],
     },

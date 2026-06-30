@@ -496,8 +496,9 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
   // 早期終了文を検出
   switch (node.type) {
     case 'BreakStatement':
-      // ラベルなし && ループ内 && switch外 && ネストしたループではない
-      if (!node.label && inLoopContext && !inSwitchContext && loopDepth === 0) {
+      // ループ内 && switch外 && ネストしたループではない
+      // ラベル付きでも、少なくとも現在のループは抜けるため検出対象
+      if (inLoopContext && !inSwitchContext && loopDepth === 0) {
         earlyExits.push({
           type: 'break',
           node,
@@ -508,8 +509,9 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopConte
       }
       break
     case 'ContinueStatement':
-      // ラベルなし && ループ内 && ネストしたループではない
-      if (!node.label && inLoopContext && loopDepth === 0) {
+      // ループ内 && ネストしたループではない
+      // ラベル付きでも、少なくとも現在のループの現在のイテレーションは終了するため検出対象
+      if (inLoopContext && loopDepth === 0) {
         earlyExits.push({
           type: 'continue',
           node,

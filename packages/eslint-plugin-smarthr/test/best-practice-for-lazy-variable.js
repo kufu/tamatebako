@@ -418,7 +418,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ラベル付きbreak（移動対象外）
+    // ラベル付きbreak：外側で宣言、内側でbreak（外側のスコープなので検出されない）
     {
       code: `
         outer: for (let i = 0; i < 10; i++) {
@@ -430,7 +430,7 @@ ruleTester.run('best-practice-for-lazy-variable', rule, {
         }
       `,
     },
-    // ラベル付きcontinue（移動対象外）
+    // ラベル付きcontinue：外側で宣言、内側でcontinue（外側のスコープなので検出されない）
     {
       code: `
         outer: for (let i = 0; i < 10; i++) {
@@ -1873,6 +1873,62 @@ console.log(x)
           }
           if (condition) {
             const x = getValue(i)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きbreak：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) break outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+            const x = getValue(j)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きcontinue：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) continue outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+            const x = getValue(j)
             console.log(x)
           }
         }

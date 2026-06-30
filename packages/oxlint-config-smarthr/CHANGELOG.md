@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.1.14](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.13...oxlint-config-smarthr-v0.1.14) (2026-06-30)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthrのeslint-plugin-smarthrをv6.21.2に更新 ([#1432](https://github.com/kufu/tamatebako/issues/1432)) ([49617b5](https://github.com/kufu/tamatebako/commit/49617b5599beb574a0f8b93e8f1857159870681b))
+
+## [0.1.13](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.12...oxlint-config-smarthr-v0.1.13) (2026-06-22)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthrのrepository URLをHTTPS形式に変更 ([#1412](https://github.com/kufu/tamatebako/issues/1412)) ([a78d956](https://github.com/kufu/tamatebako/commit/a78d9562a3a7d8c034559a7d1af3063fe8e03c7f))
+
+## [0.1.12](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.11...oxlint-config-smarthr-v0.1.12) (2026-06-22)
+
+
+### Features
+
+* eslint-plugin-smarthrを6.21.0に更新（oxlint-config-smarthr） ([#1410](https://github.com/kufu/tamatebako/issues/1410)) ([272db29](https://github.com/kufu/tamatebako/commit/272db2990f878ac63962822adeadabdb631916d8))
+
+## [0.1.11](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.10...oxlint-config-smarthr-v0.1.11) (2026-06-17)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthrのeslint-plugin-smarthrバージョンを修正 ([#1392](https://github.com/kufu/tamatebako/issues/1392)) ([c48617d](https://github.com/kufu/tamatebako/commit/c48617dd303950311a7fe44d8c22cffad54981f2))
+
+## [0.1.10](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.9...oxlint-config-smarthr-v0.1.10) (2026-06-16)
+
+
+### Features
+
+* update eslint-plugin-smarthr to 6.20.0 in oxlint-config-smarthr ([#1387](https://github.com/kufu/tamatebako/issues/1387)) ([60b7c89](https://github.com/kufu/tamatebako/commit/60b7c89ee93f86773c4abc3c0e8845b4aca03a6b))
+
 ## [0.1.9](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.8...oxlint-config-smarthr-v0.1.9) (2026-06-10)
 
 

@@ -3100,6 +3100,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
+    "smarthr/best-practice-for-unstable-dependencies": [
+      1,
+    ],
     "smarthr/component-name": [
       2,
     ],
@@ -3147,6 +3150,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/require-i18n-text": [
       1,
+    ],
+    "smarthr/require-i18n-translation-sync": [
+      0,
     ],
     "smarthr/require-import": [
       0,

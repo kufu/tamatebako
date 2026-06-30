@@ -64,6 +64,7 @@ export default [
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
       'smarthr/best-practice-for-no-unnecessary-variable': 'off',
+      'smarthr/best-practice-for-unstable-dependencies': 'warn', // TODO: 2026/06に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/best-practice-for-optional-chaining': 'error',
       'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
@@ -89,6 +90,7 @@ export default [
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
       'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
+      'smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

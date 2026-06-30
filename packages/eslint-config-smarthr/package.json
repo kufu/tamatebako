@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-smarthr",
-  "version": "14.6.0",
+  "version": "14.8.2",
   "description": "A sharable ESLint config for SmartHR",
   "type": "module",
   "exports": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:kufu/tamatebako.git"
+    "url": "git+https://github.com/kufu/tamatebako.git"
   },
   "keywords": [
     "eslint"
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "eslint": "^9.0.0",
@@ -47,7 +47,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-smarthr": "6.19.0",
+    "eslint-plugin-smarthr": "6.21.2",
     "globals": "^17.6.0",
     "typescript-eslint": "^8.56.1"
   }

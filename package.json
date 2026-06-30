@@ -22,15 +22,15 @@
     "@commitlint/config-conventional": "^21.0.2",
     "@types/jest": "^30.0.0",
     "eslint": "9.39.4",
-    "eslint-config-smarthr": "14.4.0",
+    "eslint-config-smarthr": "14.8.1",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "prettier-config-smarthr": "^1.0.1",
     "react": "^19.2.7",
     "rimraf": "^5.0.10",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@11.5.2"
+  "packageManager": "pnpm@11.6.0"
 }

@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.21.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.1...eslint-plugin-smarthr-v6.21.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* require-i18n-translation-syncでsatisfies演算子に対応 ([#1415](https://github.com/kufu/tamatebako/issues/1415)) ([d0eb87a](https://github.com/kufu/tamatebako/commit/d0eb87a1616c63145499b8adc9fc20d5f6f8c5b9))
+
+## [6.21.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.0...eslint-plugin-smarthr-v6.21.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* **eslint-plugin-smarthr:** use https repository metadata ([#1407](https://github.com/kufu/tamatebako/issues/1407)) ([e6d3d82](https://github.com/kufu/tamatebako/commit/e6d3d82d4d833a2716c67d91f82fe7bd6e2ab6cc))
+
+## [6.21.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.20.0...eslint-plugin-smarthr-v6.21.0) (2026-06-22)
+
+
+### Features
+
+* require-i18n-translation-sync ESLintルールを追加 ([#1406](https://github.com/kufu/tamatebako/issues/1406)) ([5286bbb](https://github.com/kufu/tamatebako/commit/5286bbb94c6b774f9132f6d40ef36c216cff0399))
+
+## [6.20.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.19.0...eslint-plugin-smarthr-v6.20.0) (2026-06-16)
+
+
+### Features
+
+* **best-practice-for-no-unnecessary-variable:** export { xxx as yyy } パターンで適切なメッセージを表示 ([#1375](https://github.com/kufu/tamatebako/issues/1375)) ([52d90fa](https://github.com/kufu/tamatebako/commit/52d90fa6eb682c956d71a12269d2cc2c4173d3dd))
+* 依存配列に不安定な参照を含めることを禁止するルールを追加 ([#1376](https://github.com/kufu/tamatebako/issues/1376)) ([af7c18e](https://github.com/kufu/tamatebako/commit/af7c18e74ce38391078a0bd14bf815529e852f8a))
+
+
+### Bug Fixes
+
+* best-practice-for-rest-parametersでin演算子も内部属性アクセスとして検知 ([#1372](https://github.com/kufu/tamatebako/issues/1372)) ([086b414](https://github.com/kufu/tamatebako/commit/086b414ef731ebd27aee935f2d31aa5d303dd9fd))
+* lazy-variable/no-unnecessary-variableでjsxタグ名を正しく扱う ([#1382](https://github.com/kufu/tamatebako/issues/1382)) ([391fe7e](https://github.com/kufu/tamatebako/commit/391fe7ea655e030ded3d2a3d45ae511c2da75dd1))
+
 ## [6.19.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.18.0...eslint-plugin-smarthr-v6.19.0) (2026-06-10)
 
 

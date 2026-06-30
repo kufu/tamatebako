@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-smarthr",
-  "version": "6.19.0",
+  "version": "6.21.2",
   "author": "SmartHR",
   "license": "MIT",
   "description": "A sharable ESLint plugin for SmartHR",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:kufu/tamatebako.git"
+    "url": "git+https://github.com/kufu/tamatebako.git"
   },
   "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr",
   "publishConfig": {

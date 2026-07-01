@@ -158,6 +158,123 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // early return: if-else if（最後にreturnなし）+ 次にステートメント
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            doAdminAction()
+          } else if (role === 'moderator') {
+            doModeratorAction()
+          }
+          return notify('user')
+        }
+      `,
+    },
+    // early return: if（returnあり）+ 次のステートメントが非return
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          }
+          console.log('Not admin')
+        }
+      `,
+    },
+    // early return: if-else if（片方のみreturn）+ 次にreturn
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          } else if (role === 'moderator') {
+            doSomething()
+          }
+          return notify('user')
+        }
+      `,
+    },
+    // メソッドチェーン: 最初のメソッド名が異なる
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').send(data)
+        } else {
+          api.get('/endpoint').send(data)
+        }
+      `,
+    },
+    // メソッドチェーン: 途中の引数が異なる
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint1').send(data)
+        } else {
+          api.post('/endpoint2').send(data)
+        }
+      `,
+    },
+    // メソッドチェーン: 最後のメソッド名が異なる
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').send(data)
+        } else {
+          api.post('/endpoint').execute(data)
+        }
+      `,
+    },
+    // メソッドチェーン: チェーンの長さが異なる
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').send(data)
+        } else {
+          api.post('/endpoint').send(data).then(handleResponse)
+        }
+      `,
+    },
+    // メソッドチェーン: 3段階で途中が異なる
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').retry(3).send(data)
+        } else {
+          api.post('/endpoint').retry(5).send(data)
+        }
+      `,
+    },
+    // 三項演算子: 関数が異なる
+    {
+      code: `
+        const result = condition ? funcA(data) : funcB(data)
+      `,
+    },
+    // 三項演算子: 片方が関数呼び出しでない
+    {
+      code: `
+        const result = condition ? func(data) : defaultValue
+      `,
+    },
+    // 三項演算子: ネストで関数が異なる
+    {
+      code: `
+        const result = isAdmin ? notifyAdmin('msg') : isModerator ? notifyModerator('msg') : notifyUser('msg')
+      `,
+    },
+    // 三項演算子: メソッドチェーンで途中が異なる
+    {
+      code: `
+        const result = condition ? api.post('/endpoint1').send(data) : api.post('/endpoint2').send(data)
+      `,
+    },
+    // 三項演算子: JSXでコンポーネントが異なる
+    {
+      code: `
+        const element = condition ? <ComponentA>{child}</ComponentA> : <ComponentB>{child}</ComponentB>
+      `,
+    },
   ],
   invalid: [
     // ========================================
@@ -246,6 +363,79 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // early return: if-else if（すべてreturn）+ 次にreturn
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin', { priority: 'high' })
+          } else if (role === 'moderator') {
+            return notify('moderator', { priority: 'medium' })
+          }
+          return notify('user', { priority: 'low' })
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // early return: JSX
+    {
+      code: `
+        function Component() {
+          if (isAdmin) {
+            return <UserCard name="Admin" role="admin" />
+          }
+          return <UserCard name="User" role="user" />
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // early return: メソッドチェーン
+    {
+      code: `
+        function handler() {
+          if (status === 'success') {
+            return api.post('/endpoint').send(dataA)
+          }
+          return api.post('/endpoint').send(dataB)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // early return: 複数のif（すべてreturn）+ 次にreturn
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          }
+          if (role === 'moderator') {
+            return notify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
 
     // ========================================
     // 三項演算子
@@ -262,7 +452,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
-    // ネストした三項演算子
+    // ネストした三項演算子（3分岐）
     {
       code: `
         const result = isAdmin ? notify('admin') : isModerator ? notify('moderator') : notify('user')
@@ -271,6 +461,54 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateFunctionCall',
           data: { functionName: 'notify', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // ネストした三項演算子（4分岐）
+    {
+      code: `
+        const result = a ? func(1) : b ? func(2) : c ? func(3) : func(4)
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'func', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // ネストした三項演算子でメソッドチェーン
+    {
+      code: `
+        const result = isAdmin ? api.post('/endpoint').send('admin') : isModerator ? api.post('/endpoint').send('moderator') : api.post('/endpoint').send('user')
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // ネストした三項演算子でJSX（子要素あり）
+    {
+      code: `
+        const element = isAdmin ? <Layout><Admin /></Layout> : isModerator ? <Layout><Moderator /></Layout> : <Layout><User /></Layout>
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Layout', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // ネストした三項演算子でJSX（子要素なし）
+    {
+      code: `
+        const element = isAdmin ? <UserCard role="admin" /> : isModerator ? <UserCard role="moderator" /> : <UserCard role="user" />
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -369,6 +607,107 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
             break
           case 'B':
             api.post('/endpoint').send(dataB)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: 3段階（if-else）
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').retry(3).send(dataA)
+        } else {
+          api.post('/endpoint').retry(3).send(dataB)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').retry(3).send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: 3段階（switch）
+    {
+      code: `
+        switch (type) {
+          case 'A':
+            api.post('/endpoint').retry(3).send(dataA)
+            break
+          case 'B':
+            api.post('/endpoint').retry(3).send(dataB)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').retry(3).send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: 4段階
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').retry(3).timeout(1000).send(dataA)
+        } else {
+          api.post('/endpoint').retry(3).timeout(1000).send(dataB)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').retry(3).timeout(1000).send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: 三項演算子
+    {
+      code: `
+        const result = condition ? api.post('/endpoint').send(dataA) : api.post('/endpoint').send(dataB)
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: else if
+    {
+      code: `
+        if (x) {
+          api.post('/endpoint').send(dataA)
+        } else if (y) {
+          api.post('/endpoint').send(dataB)
+        } else {
+          api.post('/endpoint').send(dataC)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン: switch fall-through
+    {
+      code: `
+        switch (type) {
+          case 'A':
+          case 'B':
+            api.post('/endpoint').send(dataA)
+            break
+          case 'C':
+            api.post('/endpoint').send(dataC)
             break
         }
       `,

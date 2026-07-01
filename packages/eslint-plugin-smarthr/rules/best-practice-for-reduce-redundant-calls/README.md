@@ -51,6 +51,48 @@ function handler() {
 }
 ```
 
+### パターン2-2: 連続するif文（すべてreturnで終わる）+ 最後のreturn
+
+関数やcaseブロック内で、連続する複数のif文（すべて`else`なし、`return`で終わる）+ 最後の`return`文がある場合も検出されます。
+
+```javascript
+// 関数内の連続するif文
+function handler() {
+  if (condition1) {
+    return func('a')
+  }
+  if (condition2) {
+    return func('b')
+  }
+  return func('c')
+}
+
+// switch case内の連続するif文
+switch (status) {
+  case 'ACTIVE':
+    if (user.isAdmin) {
+      return intl.formatMessage({ id: 'AdminMessage' })
+    }
+    if (user.isModerator) {
+      return intl.formatMessage({ id: 'ModeratorMessage' })
+    }
+    return intl.formatMessage({ id: 'UserMessage' })
+}
+
+// case内に波括弧がある場合も同様
+switch (status) {
+  case 'ACTIVE': {
+    if (user.isAdmin) {
+      return intl.formatMessage({ id: 'AdminMessage' })
+    }
+    if (user.isModerator) {
+      return intl.formatMessage({ id: 'ModeratorMessage' })
+    }
+    return intl.formatMessage({ id: 'UserMessage' })
+  }
+}
+```
+
 ### パターン3: 三項演算子
 
 ```javascript

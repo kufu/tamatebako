@@ -757,6 +757,73 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // switch: case内の複数if + 最後のreturn
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'A':
+              if (condition1) {
+                return func('a1')
+              }
+              if (condition2) {
+                return func('a2')
+              }
+              return func('a3')
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'func', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // switch: case内の複数if + 最後のreturn（波括弧あり）
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'A': {
+              if (condition1) {
+                return func('a1')
+              }
+              if (condition2) {
+                return func('a2')
+              }
+              return func('a3')
+            }
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'func', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 関数内の複数if + 最後のreturn
+    {
+      code: `
+        function handler() {
+          if (condition1) {
+            return func('a')
+          }
+          if (condition2) {
+            return func('b')
+          }
+          return func('c')
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'func', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
     // defaultなし + caseが2つ以上（break使用）
     {
       code: `

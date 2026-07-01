@@ -167,8 +167,17 @@ module.exports = {
     /**
      * switch文のcaseから実行可能なステートメントを取得
      */
-    function getExecutableStatementFromCase(consequent, isLastCase) {
+    function getExecutableStatementFromCase(consequent, isLastCase, switchNode) {
       if (consequent.length === 0) return null
+
+      // consequentが波括弧で囲まれている場合（BlockStatement）
+      if (consequent.length === 1 && consequent[0].type === 'BlockStatement') {
+        // BlockStatementの中身を使う
+        return getExecutableStatementFromCase(consequent[0].body, isLastCase, switchNode)
+      }
+
+      // 連続するif文 + 最後のreturnパターンをチェック
+      checkConsecutiveIfs(consequent, switchNode)
 
       const lastStmt = consequent[consequent.length - 1]
 
@@ -197,7 +206,7 @@ module.exports = {
     /**
      * switch文のfall-throughを考慮して実行ステートメントを解決
      */
-    function resolveExecutableStatement(cases, startIndex) {
+    function resolveExecutableStatement(cases, startIndex, switchNode) {
       // startIndexから順に探して、最初に見つかった実行可能なステートメントを返す
       for (let i = startIndex; i < cases.length; i++) {
         const consequent = cases[i].consequent
@@ -209,7 +218,7 @@ module.exports = {
         const isLastCase = i === cases.length - 1
 
         // 実行可能なステートメントを抽出
-        const stmt = getExecutableStatementFromCase(consequent, isLastCase)
+        const stmt = getExecutableStatementFromCase(consequent, isLastCase, switchNode)
         return stmt
       }
 
@@ -226,6 +235,39 @@ module.exports = {
       // consequent（if部分）
       const consequentStmt = getSingleStatement(node.consequent)
       if (!consequentStmt) return
+
+      // alternateがなく、親がBlockStatementの場合、連続するif文パターンをチェック
+      if (!node.alternate && consequentStmt.type === 'ReturnStatement') {
+        const parent = node.parent
+        if (parent && parent.type === 'BlockStatement') {
+          const ifIndex = parent.body.indexOf(node)
+          if (ifIndex !== -1) {
+            // 前のステートメントがif文（alternateなし、returnで終わる）の場合、
+            // 連続するif文パターンの一部なのでスキップ
+            if (ifIndex > 0) {
+              const prevStmt = parent.body[ifIndex - 1]
+              if (prevStmt.type === 'IfStatement' && !prevStmt.alternate) {
+                const prevConsequent = getSingleStatement(prevStmt.consequent)
+                if (prevConsequent && prevConsequent.type === 'ReturnStatement') {
+                  return
+                }
+              }
+            }
+
+            // 次のステートメントもif文（alternateなし、returnで終わる）の場合、
+            // 連続するif文パターンに該当する可能性があるのでスキップ
+            if (ifIndex + 1 < parent.body.length) {
+              const nextStmt = parent.body[ifIndex + 1]
+              if (nextStmt.type === 'IfStatement' && !nextStmt.alternate) {
+                const nextConsequent = getSingleStatement(nextStmt.consequent)
+                if (nextConsequent && nextConsequent.type === 'ReturnStatement') {
+                  return
+                }
+              }
+            }
+          }
+        }
+      }
 
       // alternateを再帰的に収集
       let current = node
@@ -319,7 +361,7 @@ module.exports = {
         }
 
         // fall-throughを考慮して実行ステートメントを解決
-        const stmt = resolveExecutableStatement(node.cases, i)
+        const stmt = resolveExecutableStatement(node.cases, i, node)
         if (!stmt) return // 解決できない = 対象外
 
         branches.push(stmt)
@@ -423,6 +465,76 @@ module.exports = {
       }
     }
 
+    /**
+     * ステートメント配列内の連続するif文（すべてreturnで終わる）+ 最後のreturn文を検証
+     * @returns {boolean} 検出した場合はtrue
+     */
+    function checkConsecutiveIfs(statements, reportNode) {
+      if (statements.length < 3) return false
+
+      // 連続するif文（alternateなし、returnで終わる）のグループを探す
+      for (let i = 0; i < statements.length - 1; i++) {
+        const branches = []
+        let j = i
+
+        // 連続するif文を収集
+        while (j < statements.length) {
+          const stmt = statements[j]
+
+          // if文でない、またはalternateがある場合は終了
+          if (stmt.type !== 'IfStatement' || stmt.alternate !== null) {
+            break
+          }
+
+          // consequentが単一のreturn文でない場合は終了
+          const consequent = getSingleStatement(stmt.consequent)
+          if (!consequent || consequent.type !== 'ReturnStatement') {
+            break
+          }
+
+          branches.push(consequent)
+          j++
+        }
+
+        // 2つ以上のif文が連続し、その後にreturn文がある場合
+        if (branches.length >= 2 && j < statements.length) {
+          const nextStmt = statements[j]
+          if (nextStmt.type === 'ReturnStatement') {
+            branches.push(nextStmt)
+
+            // すべてのreturn文からCallExpressionを取得
+            const callExpressions = branches.map(getCallExpression).filter(Boolean)
+            if (callExpressions.length === branches.length) {
+              const functionNames = callExpressions.map(getFunctionName)
+              const firstFunctionName = functionNames[0]
+              if (firstFunctionName && functionNames.every((name) => name === firstFunctionName)) {
+                context.report({
+                  node: reportNode || statements[i],
+                  messageId: 'consolidateFunctionCall',
+                  data: { functionName: firstFunctionName },
+                })
+                return true
+              }
+            }
+
+            // すべてのreturn文からJSXElementを取得
+            const jsxElements = branches.map(getJSXElement).filter(Boolean)
+            if (jsxElements.length === branches.length) {
+              checkJSXElements(jsxElements, reportNode || statements[i])
+              return true
+            }
+          }
+        }
+
+        // 次のグループを探す
+        if (j > i) {
+          i = j - 1
+        }
+      }
+
+      return false
+    }
+
     return {
       IfStatement(node) {
         // 最上位のif文のみ検証（ネストしたif文は親で処理される）
@@ -440,6 +552,18 @@ module.exports = {
           (node.parent.consequent !== node && node.parent.alternate !== node)
         ) {
           checkConditionalExpression(node)
+        }
+      },
+      BlockStatement(node) {
+        // 関数本体の場合のみチェック（switch caseはgetExecutableStatementFromCaseで処理される）
+        const parent = node.parent
+        if (
+          parent &&
+          (parent.type === 'FunctionDeclaration' ||
+            parent.type === 'FunctionExpression' ||
+            parent.type === 'ArrowFunctionExpression')
+        ) {
+          checkConsecutiveIfs(node.body, node)
         }
       },
     }

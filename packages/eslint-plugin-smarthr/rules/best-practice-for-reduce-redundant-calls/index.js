@@ -113,6 +113,59 @@ module.exports = {
     }
 
     /**
+     * switch文のcaseから実行可能なステートメントを取得
+     */
+    function getExecutableStatementFromCase(consequent, isLastCase) {
+      if (consequent.length === 0) return null
+
+      const lastStmt = consequent[consequent.length - 1]
+
+      // return/throwの場合：それが唯一のステートメント
+      if (lastStmt.type === 'ReturnStatement' || lastStmt.type === 'ThrowStatement') {
+        if (consequent.length !== 1) return null
+        return lastStmt
+      }
+
+      // break/continueの場合：その前のステートメントが1つのみ
+      if (lastStmt.type === 'BreakStatement' || lastStmt.type === 'ContinueStatement') {
+        if (consequent.length !== 2) return null
+        return consequent[0]
+      }
+
+      // 最後のcase（defaultなど）で、breakがない場合
+      // ステートメントが1つのみならそれを返す
+      if (isLastCase && consequent.length === 1) {
+        return lastStmt
+      }
+
+      // 上記以外（fall-throughなど）は対象外
+      return null
+    }
+
+    /**
+     * switch文のfall-throughを考慮して実行ステートメントを解決
+     */
+    function resolveExecutableStatement(cases, startIndex) {
+      // startIndexから順に探して、最初に見つかった実行可能なステートメントを返す
+      for (let i = startIndex; i < cases.length; i++) {
+        const consequent = cases[i].consequent
+
+        // consequent が空なら次のcaseにfall-through
+        if (consequent.length === 0) continue
+
+        // 最後のcaseかどうか
+        const isLastCase = i === cases.length - 1
+
+        // 実行可能なステートメントを抽出
+        const stmt = getExecutableStatementFromCase(consequent, isLastCase)
+        return stmt
+      }
+
+      // 最後まで見つからなければnull
+      return null
+    }
+
+    /**
      * if-else文を検証（early returnパターンも含む）
      */
     function checkIfStatement(node) {
@@ -143,16 +196,99 @@ module.exports = {
           }
         } else {
           // alternateがない場合、early returnパターンをチェック
-          // if文の次のステートメントがreturnかどうか
-          const parent = current.parent
-          if (parent && parent.type === 'BlockStatement') {
-            const ifIndex = parent.body.indexOf(current)
-            if (ifIndex !== -1 && ifIndex + 1 < parent.body.length) {
-              const nextStmt = parent.body[ifIndex + 1]
-              branches.push(nextStmt)
+          // すべてのbranchesがreturnで終わっている場合のみ、次のステートメントを追加
+          const allBranchesReturn = branches.every((stmt) => stmt.type === 'ReturnStatement')
+
+          if (allBranchesReturn) {
+            const parent = current.parent
+            if (parent && parent.type === 'BlockStatement') {
+              const ifIndex = parent.body.indexOf(current)
+              if (ifIndex !== -1 && ifIndex + 1 < parent.body.length) {
+                const nextStmt = parent.body[ifIndex + 1]
+                branches.push(nextStmt)
+              }
             }
           }
           break
+        }
+      }
+
+      // 分岐が2つ未満の場合は検証不要
+      if (branches.length < 2) return
+
+      // すべての分岐からCallExpressionを取得
+      const callExpressions = branches.map(getCallExpression).filter(Boolean)
+      if (callExpressions.length === branches.length) {
+        // すべて関数呼び出し
+        const functionNames = callExpressions.map(getFunctionName)
+        const firstFunctionName = functionNames[0]
+        if (firstFunctionName && functionNames.every((name) => name === firstFunctionName)) {
+          context.report({
+            node,
+            messageId: 'consolidateFunctionCall',
+            data: { functionName: firstFunctionName },
+          })
+          return
+        }
+      }
+
+      // すべての分岐からJSXElementを取得
+      const jsxElements = branches.map(getJSXElement).filter(Boolean)
+      if (jsxElements.length === branches.length) {
+        // すべてJSX要素
+        const componentNames = jsxElements.map(getJSXElementName)
+        const firstComponentName = componentNames[0]
+        if (firstComponentName && componentNames.every((name) => name === firstComponentName)) {
+          // コンポーネント名が同じ場合、属性も比較
+          const attributes = jsxElements.map(extractJSXAttributes)
+          const firstAttrs = attributes[0]
+          if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
+            context.report({
+              node,
+              messageId: 'consolidateJSXElement',
+              data: { componentName: firstComponentName },
+            })
+          }
+        }
+      }
+    }
+
+    /**
+     * switch文を検証（early returnパターンも含む）
+     */
+    function checkSwitchStatement(node) {
+      const branches = []
+      let hasDefault = false
+
+      // 各caseについて、実際に実行されるステートメントを解決
+      for (let i = 0; i < node.cases.length; i++) {
+        const switchCase = node.cases[i]
+
+        if (switchCase.test === null) {
+          hasDefault = true
+        }
+
+        // fall-throughを考慮して実行ステートメントを解決
+        const stmt = resolveExecutableStatement(node.cases, i)
+        if (!stmt) return // 解決できない = 対象外
+
+        branches.push(stmt)
+      }
+
+      // defaultがない場合、early returnパターンをチェック
+      // すべてのcaseがreturnで終わっている場合のみ、次のステートメントを追加
+      if (!hasDefault) {
+        const allCasesReturn = branches.every((stmt) => stmt.type === 'ReturnStatement')
+
+        if (allCasesReturn) {
+          const parent = node.parent
+          if (parent && parent.type === 'BlockStatement') {
+            const switchIndex = parent.body.indexOf(node)
+            if (switchIndex !== -1 && switchIndex + 1 < parent.body.length) {
+              const nextStmt = parent.body[switchIndex + 1]
+              branches.push(nextStmt)
+            }
+          }
         }
       }
 
@@ -258,6 +394,9 @@ module.exports = {
         if (node.parent.type !== 'IfStatement' || node.parent.alternate !== node) {
           checkIfStatement(node)
         }
+      },
+      SwitchStatement(node) {
+        checkSwitchStatement(node)
       },
       ConditionalExpression(node) {
         // 最上位の三項演算子のみ検証（ネストした三項演算子は親で処理される）

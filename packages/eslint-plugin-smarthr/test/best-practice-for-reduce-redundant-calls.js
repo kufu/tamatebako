@@ -94,6 +94,70 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // switch: 関数が異なる
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendAdminNotification(user)
+            break
+          case 'user':
+            sendUserNotification(user)
+            break
+        }
+      `,
+    },
+    // switch: 複数のステートメント
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            console.log('admin')
+            sendNotification('admin', user)
+            break
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+    },
+    // switch: breakがない（意図しないfall-through）
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendNotification('admin', user)
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+    },
+    // switch: caseが1つのみ
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return sendNotification('admin', user)
+          }
+        }
+      `,
+    },
+    // switch: defaultなし + switch後に関数が異なる
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return sendNotification('admin', user)
+            case 'user':
+              return sendNotification('user', user)
+          }
+          return sendOtherNotification('guest', user)
+        }
+      `,
+    },
   ],
   invalid: [
     // ========================================
@@ -212,6 +276,130 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
     },
 
     // ========================================
+    // switch文
+    // ========================================
+    // 基本的なswitch + break
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendNotification('admin', user)
+            break
+          case 'moderator':
+            sendNotification('moderator', user)
+            break
+          default:
+            sendNotification('user', user)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // fall-through（複数のcaseが同じ処理を共有）
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+          case 'moderator':
+            sendNotification('admin', user)
+            break
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // return文 + defaultあり
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'success':
+              return formatMessage('success', data)
+            case 'error':
+              return formatMessage('error', data)
+            default:
+              return formatMessage('unknown', data)
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'formatMessage', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // return文 + defaultなし + switch後にreturn
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'success':
+              return formatMessage('success', data)
+            case 'error':
+              return formatMessage('error', data)
+          }
+          return formatMessage('unknown', data)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'formatMessage', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // メソッドチェーン
+    {
+      code: `
+        switch (type) {
+          case 'A':
+            api.post('/endpoint').send(dataA)
+            break
+          case 'B':
+            api.post('/endpoint').send(dataB)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // defaultなし + caseが2つ以上（break使用）
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendNotification('admin', user)
+            break
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+
+    // ========================================
     // JSX
     // ========================================
     // 基本的なJSX（同じコンポーネント、同じ属性、異なる子要素）
@@ -295,6 +483,47 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Hoge', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: switch + defaultあり
+    {
+      code: `
+        function Component() {
+          switch (type) {
+            case 'admin':
+              return <Layout><AdminPanel /></Layout>
+            case 'user':
+              return <Layout><UserPanel /></Layout>
+            default:
+              return <Layout><GuestPanel /></Layout>
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Layout', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: switch + defaultなし + switch後にreturn
+    {
+      code: `
+        function Component() {
+          switch (type) {
+            case 'admin':
+              return <Layout><AdminPanel /></Layout>
+            case 'user':
+              return <Layout><UserPanel /></Layout>
+          }
+          return <Layout><GuestPanel /></Layout>
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Layout', detailLink: DETAIL_LINK },
         },
       ],
     },

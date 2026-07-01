@@ -97,6 +97,68 @@ function Component() {
 }
 ```
 
+### パターン5: switch文
+
+```javascript
+// 基本的なswitch + break
+switch (role) {
+  case 'admin':
+    sendNotification('admin', user)
+    break
+  case 'moderator':
+    sendNotification('moderator', user)
+    break
+  default:
+    sendNotification('user', user)
+}
+
+// fall-through（複数のcaseが同じ処理を共有）
+switch (role) {
+  case 'admin':
+  case 'moderator':
+    sendNotification('admin', user)
+    break
+  case 'user':
+    sendNotification('user', user)
+    break
+}
+
+// return文 + defaultあり
+function handler() {
+  switch (status) {
+    case 'success':
+      return formatMessage('success', data)
+    case 'error':
+      return formatMessage('error', data)
+    default:
+      return formatMessage('unknown', data)
+  }
+}
+
+// return文 + defaultなし + switch後にreturn
+function handler() {
+  switch (status) {
+    case 'success':
+      return formatMessage('success', data)
+    case 'error':
+      return formatMessage('error', data)
+  }
+  return formatMessage('unknown', data)
+}
+
+// JSX
+function Component() {
+  switch (type) {
+    case 'admin':
+      return <Layout><AdminPanel /></Layout>
+    case 'user':
+      return <Layout><UserPanel /></Layout>
+    default:
+      return <Layout><GuestPanel /></Layout>
+  }
+}
+```
+
 ## ✅ Valid
 
 ### 関数が異なる場合
@@ -171,6 +233,57 @@ if (condition) {
 }
 ```
 
+### switch: 関数が異なる場合
+
+```javascript
+switch (role) {
+  case 'admin':
+    sendAdminNotification(user)
+    break
+  case 'user':
+    sendUserNotification(user)
+    break
+}
+```
+
+### switch: 複数のステートメントがある場合
+
+```javascript
+switch (role) {
+  case 'admin':
+    console.log('admin')
+    sendNotification('admin', user)
+    break
+  case 'user':
+    sendNotification('user', user)
+    break
+}
+```
+
+### switch: breakがない場合（意図しないfall-through）
+
+```javascript
+switch (role) {
+  case 'admin':
+    sendNotification('admin', user)
+    // break忘れ → 次のcaseの処理も実行される（複数ステートメント扱い）
+  case 'user':
+    sendNotification('user', user)
+    break
+}
+```
+
+### switch: caseが1つのみの場合
+
+```javascript
+function handler() {
+  switch (role) {
+    case 'admin':
+      return sendNotification('admin', user)
+  }
+}
+```
+
 ## 修正方法
 
 このルールは様々なパターンがあるため、自動修正は提供していません。以下の方法を検討してください。
@@ -210,6 +323,30 @@ const roleMap = {
 sendNotification(roleMap[role] || 'user', user)
 ```
 
+**switch文の場合も同様:**
+
+```javascript
+// Before
+switch (role) {
+  case 'admin':
+    sendNotification('admin', user)
+    break
+  case 'moderator':
+    sendNotification('moderator', user)
+    break
+  default:
+    sendNotification('user', user)
+}
+
+// After（方法2と同じ）
+const roleMap = {
+  admin: 'admin',
+  moderator: 'moderator',
+  user: 'user',
+}
+sendNotification(roleMap[role] || 'user', user)
+```
+
 ### 方法3: JSXの子要素を条件分岐にする
 
 ```jsx
@@ -233,3 +370,6 @@ return (
 - メソッドチェーンは完全一致で検出します。例えば、`api.post('/endpoint1').send(dataA)` と `api.post('/endpoint2').send(dataB)` は検出されません（エンドポイントが異なるため）。
 - JSXの場合、コンポーネント名と属性（値を含む）が完全に一致する場合のみ検出します。子要素の違いは検出対象です。
 - JSXのspread attributes（`{...props}`）も含めて全属性を比較します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）は検出されません。
+- **if文/switch文のearly returnパターン:** すべてのブランチが`return`で終わっている場合のみ、次のステートメントも検出対象に含まれます。`break`を使う場合は含まれません。
+- **switch文のfall-through:** 空のcaseは次のcaseにfall-throughし、最初に見つかった処理を実行するものとして扱います。
+- **switch文のdefaultケース:** defaultケースは最後のcaseなので、breakがなくても許容されます。

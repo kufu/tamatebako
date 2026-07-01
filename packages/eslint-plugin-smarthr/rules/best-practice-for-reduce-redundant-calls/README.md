@@ -1,4 +1,4 @@
-# best-practice-for-function-call-consolidation
+# best-practice-for-reduce-redundant-calls
 
 すべての分岐で同じ関数を呼び出している場合、引数のみを条件分岐にすることを推奨します。
 

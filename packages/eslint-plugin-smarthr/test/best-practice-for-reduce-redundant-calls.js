@@ -1,4 +1,4 @@
-const rule = require('../rules/best-practice-for-function-call-consolidation')
+const rule = require('../rules/best-practice-for-reduce-redundant-calls')
 const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
@@ -13,9 +13,9 @@ const ruleTester = new RuleTester({
   },
 })
 
-const DETAIL_LINK = `\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-function-call-consolidation`
+const DETAIL_LINK = `\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-reduce-redundant-calls`
 
-ruleTester.run('best-practice-for-function-call-consolidation', rule, {
+ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
   valid: [
     // 関数が異なる
     {

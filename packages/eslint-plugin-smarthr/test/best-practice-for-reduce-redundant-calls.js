@@ -158,6 +158,33 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // switch: defaultなし + 全caseがreturn + switch後に非return文
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return notify('admin')
+            case 'user':
+              return notify('user')
+          }
+          console.log('No match')
+        }
+      `,
+    },
+    // switch: defaultなし + 全caseがreturn + IIFE（後続なし）
+    {
+      code: `
+        const titleMain = (() => {
+          switch (dialogType) {
+            case MODE.OF_MINE:
+              return intl.formatMessage({ id: 'ApplyForMyself' })
+            case MODE.OF_OTHERS:
+              return intl.formatMessage({ id: 'RequestEmployeeToApply' })
+          }
+        })()
+      `,
+    },
     // early return: if-else if（最後にreturnなし）+ 次にステートメント
     {
       code: `
@@ -193,6 +220,18 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           }
           return notify('user')
         }
+      `,
+    },
+    // early return: if-else if（全branchがreturn）+ IIFE（後続なし）
+    {
+      code: `
+        const result = (() => {
+          if (role === 'admin') {
+            return notify('admin')
+          } else if (role === 'moderator') {
+            return notify('moderator')
+          }
+        })()
       `,
     },
     // メソッドチェーン: 最初のメソッド名が異なる

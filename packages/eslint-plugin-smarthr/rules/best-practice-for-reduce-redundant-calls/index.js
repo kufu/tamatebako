@@ -52,6 +52,13 @@ module.exports = {
     }
 
     /**
+     * JSXElementが子要素を持つか判定
+     */
+    function hasChildren(node) {
+      return node.children && node.children.length > 0
+    }
+
+    /**
      * JSXElementから属性を抽出（spread含む全属性をテキスト化）
      */
     function extractJSXAttributes(node) {
@@ -72,10 +79,51 @@ module.exports = {
     }
 
     /**
+     * JSX要素の配列を検証し、必要に応じてレポート
+     */
+    function checkJSXElements(jsxElements, node) {
+      const componentNames = jsxElements.map(getJSXElementName)
+      const firstComponentName = componentNames[0]
+
+      if (!firstComponentName || !componentNames.every((name) => name === firstComponentName)) {
+        return
+      }
+
+      // 子要素の有無を確認
+      const firstHasChildren = hasChildren(jsxElements[0])
+
+      if (!firstHasChildren) {
+        // 子要素がない場合：すべての要素が子要素を持たない場合のみ検出
+        if (jsxElements.every((el) => !hasChildren(el))) {
+          context.report({
+            node,
+            messageId: 'consolidateJSXElement',
+            data: { componentName: firstComponentName },
+          })
+        }
+      } else {
+        // 子要素がある場合：属性も比較（既存の挙動）
+        const attributes = jsxElements.map(extractJSXAttributes)
+        const firstAttrs = attributes[0]
+        if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
+          context.report({
+            node,
+            messageId: 'consolidateJSXElement',
+            data: { componentName: firstComponentName },
+          })
+        }
+      }
+    }
+
+    /**
      * ExpressionStatementまたはReturnStatementからCallExpressionを取得
      */
     function getCallExpression(statement) {
       if (!statement) return null
+      // 三項演算子の場合、直接CallExpressionが渡される
+      if (statement.type === 'CallExpression') {
+        return statement
+      }
       if (statement.type === 'ExpressionStatement' && statement.expression.type === 'CallExpression') {
         return statement.expression
       }
@@ -90,6 +138,10 @@ module.exports = {
      */
     function getJSXElement(statement) {
       if (!statement) return null
+      // 三項演算子の場合、直接JSXElementが渡される
+      if (statement.type === 'JSXElement') {
+        return statement
+      }
       if (statement.type === 'ReturnStatement' && statement.argument?.type === 'JSXElement') {
         return statement.argument
       }
@@ -235,21 +287,7 @@ module.exports = {
       // すべての分岐からJSXElementを取得
       const jsxElements = branches.map(getJSXElement).filter(Boolean)
       if (jsxElements.length === branches.length) {
-        // すべてJSX要素
-        const componentNames = jsxElements.map(getJSXElementName)
-        const firstComponentName = componentNames[0]
-        if (firstComponentName && componentNames.every((name) => name === firstComponentName)) {
-          // コンポーネント名が同じ場合、属性も比較
-          const attributes = jsxElements.map(extractJSXAttributes)
-          const firstAttrs = attributes[0]
-          if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
-            context.report({
-              node,
-              messageId: 'consolidateJSXElement',
-              data: { componentName: firstComponentName },
-            })
-          }
-        }
+        checkJSXElements(jsxElements, node)
       }
     }
 
@@ -314,21 +352,7 @@ module.exports = {
       // すべての分岐からJSXElementを取得
       const jsxElements = branches.map(getJSXElement).filter(Boolean)
       if (jsxElements.length === branches.length) {
-        // すべてJSX要素
-        const componentNames = jsxElements.map(getJSXElementName)
-        const firstComponentName = componentNames[0]
-        if (firstComponentName && componentNames.every((name) => name === firstComponentName)) {
-          // コンポーネント名が同じ場合、属性も比較
-          const attributes = jsxElements.map(extractJSXAttributes)
-          const firstAttrs = attributes[0]
-          if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
-            context.report({
-              node,
-              messageId: 'consolidateJSXElement',
-              data: { componentName: firstComponentName },
-            })
-          }
-        }
+        checkJSXElements(jsxElements, node)
       }
     }
 
@@ -371,20 +395,7 @@ module.exports = {
       // すべての分岐がJSXElementか確認
       const jsxElements = branches.filter((b) => b.type === 'JSXElement')
       if (jsxElements.length === branches.length) {
-        const componentNames = jsxElements.map(getJSXElementName)
-        const firstComponentName = componentNames[0]
-        if (firstComponentName && componentNames.every((name) => name === firstComponentName)) {
-          // コンポーネント名が同じ場合、属性も比較
-          const attributes = jsxElements.map(extractJSXAttributes)
-          const firstAttrs = attributes[0]
-          if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
-            context.report({
-              node,
-              messageId: 'consolidateJSXElement',
-              data: { componentName: firstComponentName },
-            })
-          }
-        }
+        checkJSXElements(jsxElements, node)
       }
     }
 

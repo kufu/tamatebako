@@ -61,10 +61,32 @@ const result = condition ? func(a) : func(b)
 const result = isAdmin ? notify('admin') : isModerator ? notify('moderator') : notify('user')
 ```
 
-### パターン4: JSX/TSX（同じコンポーネント、同じ属性、異なる子要素）
+### パターン4: JSX/TSX
+
+**子要素なし（セルフクロージングタグ）の場合:**
+同じコンポーネント名なら、属性が異なっても検出されます。
 
 ```jsx
-// if-else
+// 子要素なし、属性が異なる（検出される）
+function Component() {
+  if (isAdmin) {
+    return <UserCard name="Admin" role="admin" />
+  } else {
+    return <UserCard name="User" role="user" />
+  }
+}
+
+// 三項演算子
+const element = isAdmin
+  ? <UserCard name="Admin" role="admin" />
+  : <UserCard name="User" role="user" />
+```
+
+**子要素あり の場合:**
+同じコンポーネント名、同じ属性で、子要素が異なる場合に検出されます。
+
+```jsx
+// 同じコンポーネント、同じ属性、異なる子要素
 function Component() {
   if (isAdmin) {
     return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
@@ -190,14 +212,14 @@ if (condition) {
 }
 ```
 
-### JSX: 属性が異なる場合
+### JSX: 子要素あり、属性が異なる場合
 
 ```jsx
-// UserCardコンポーネントの属性が異なるため、許容される
+// 子要素がある場合、属性が異なれば許容される
 if (isAdmin) {
-  return <UserCard name="Admin" role="admin" />
+  return <UserCard name="Admin" role="admin"><div>Admin</div></UserCard>
 } else {
-  return <UserCard name="User" role="user" />
+  return <UserCard name="User" role="user"><div>User</div></UserCard>
 }
 ```
 
@@ -368,7 +390,9 @@ return (
 ## 注意点
 
 - メソッドチェーンは完全一致で検出します。例えば、`api.post('/endpoint1').send(dataA)` と `api.post('/endpoint2').send(dataB)` は検出されません（エンドポイントが異なるため）。
-- JSXの場合、コンポーネント名と属性（値を含む）が完全に一致する場合のみ検出します。子要素の違いは検出対象です。
+- **JSXの検出条件:**
+  - **子要素なし（self-closing）の場合:** 同じコンポーネント名なら、属性が異なっても検出します。
+  - **子要素ありの場合:** 同じコンポーネント名、同じ属性（値を含む）で、子要素が異なる場合に検出します。
 - JSXのspread attributes（`{...props}`）も含めて全属性を比較します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）は検出されません。
 - **if文/switch文のearly returnパターン:** すべてのブランチが`return`で終わっている場合のみ、次のステートメントも検出対象に含まれます。`break`を使う場合は含まれません。
 - **switch文のfall-through:** 空のcaseは次のcaseにfall-throughし、最初に見つかった処理を実行するものとして扱います。

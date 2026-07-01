@@ -46,14 +46,14 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
-    // JSX: 属性が異なる
+    // JSX: 子要素あり、属性が異なる
     {
       code: `
         function Component() {
           if (isAdmin) {
-            return <UserCard name="Admin" role="admin" />
+            return <UserCard name="Admin" role="admin"><div>Admin</div></UserCard>
           } else {
-            return <UserCard name="User" role="user" />
+            return <UserCard name="User" role="user"><div>User</div></UserCard>
           }
         }
       `,
@@ -402,6 +402,24 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
     // ========================================
     // JSX
     // ========================================
+    // JSX: 子要素なし、属性が異なる
+    {
+      code: `
+        function Component() {
+          if (isAdmin) {
+            return <UserCard name="Admin" role="admin" />
+          } else {
+            return <UserCard name="User" role="user" />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
     // 基本的なJSX（同じコンポーネント、同じ属性、異なる子要素）
     {
       code: `
@@ -447,6 +465,18 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Container', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: 三項演算子、子要素なし、属性が異なる
+    {
+      code: `
+        const element = isAdmin ? <UserCard name="Admin" role="admin" /> : <UserCard name="User" role="user" />
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -524,6 +554,27 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Layout', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: switch、子要素なし、属性が異なる
+    {
+      code: `
+        function Component() {
+          switch (type) {
+            case 'admin':
+              return <UserCard name="Admin" role="admin" />
+            case 'user':
+              return <UserCard name="User" role="user" />
+            default:
+              return <UserCard name="Guest" role="guest" />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },

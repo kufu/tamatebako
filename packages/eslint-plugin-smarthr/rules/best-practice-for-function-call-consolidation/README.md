@@ -77,6 +77,24 @@ function Component() {
 const element = isAdmin
   ? <Container size="large"><AdminPanel /></Container>
   : <Container size="large"><UserPanel /></Container>
+
+// spread attributes
+function Component() {
+  if (condition) {
+    return <Hoge {...props}><Fuga></Fuga></Hoge>
+  } else {
+    return <Hoge {...props}><Piyo></Piyo></Hoge>
+  }
+}
+
+// spread + 通常の属性
+function Component() {
+  if (condition) {
+    return <Hoge {...props} name="test"><Fuga></Fuga></Hoge>
+  } else {
+    return <Hoge {...props} name="test"><Piyo></Piyo></Hoge>
+  }
+}
 ```
 
 ## ✅ Valid
@@ -128,6 +146,28 @@ if (condition) {
   return <ComponentA>{children}</ComponentA>
 } else {
   return <ComponentB>{children}</ComponentB>
+}
+```
+
+### JSX: spread attributesの内容が異なる場合
+
+```jsx
+// spreadの変数が異なるため、許容される
+if (condition) {
+  return <Hoge {...propsA}><Fuga></Fuga></Hoge>
+} else {
+  return <Hoge {...propsB}><Piyo></Piyo></Hoge>
+}
+```
+
+### JSX: spreadがある/ない場合
+
+```jsx
+// 属性の形式が異なるため、許容される
+if (condition) {
+  return <Hoge name="test"><Fuga></Fuga></Hoge>
+} else {
+  return <Hoge {...props}><Piyo></Piyo></Hoge>
 }
 ```
 
@@ -192,3 +232,4 @@ return (
 
 - メソッドチェーンは完全一致で検出します。例えば、`api.post('/endpoint1').send(dataA)` と `api.post('/endpoint2').send(dataB)` は検出されません（エンドポイントが異なるため）。
 - JSXの場合、コンポーネント名と属性（値を含む）が完全に一致する場合のみ検出します。子要素の違いは検出対象です。
+- JSXのspread attributes（`{...props}`）も含めて全属性を比較します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）は検出されません。

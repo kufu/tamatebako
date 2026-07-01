@@ -70,6 +70,30 @@ ruleTester.run('best-practice-for-function-call-consolidation', rule, {
         }
       `,
     },
+    // JSX: spread attributesの内容が異なる
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Hoge {...propsA}><Fuga></Fuga></Hoge>
+          } else {
+            return <Hoge {...propsB}><Piyo></Piyo></Hoge>
+          }
+        }
+      `,
+    },
+    // JSX: spreadがある/ない
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Hoge name="test"><Fuga></Fuga></Hoge>
+          } else {
+            return <Hoge {...props}><Piyo></Piyo></Hoge>
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     // ========================================
@@ -235,6 +259,42 @@ ruleTester.run('best-practice-for-function-call-consolidation', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Container', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: spread attributesが同じ
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Hoge {...props}><Fuga></Fuga></Hoge>
+          } else {
+            return <Hoge {...props}><Piyo></Piyo></Hoge>
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Hoge', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: spread + 通常の属性が同じ
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Hoge {...props} name="test"><Fuga></Fuga></Hoge>
+          } else {
+            return <Hoge {...props} name="test"><Piyo></Piyo></Hoge>
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Hoge', detailLink: DETAIL_LINK },
         },
       ],
     },

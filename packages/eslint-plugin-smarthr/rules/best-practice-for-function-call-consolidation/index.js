@@ -52,17 +52,10 @@ module.exports = {
     }
 
     /**
-     * JSXElementから属性を抽出（スプレッド以外）
+     * JSXElementから属性を抽出（spread含む全属性をテキスト化）
      */
     function extractJSXAttributes(node) {
-      const attrs = node.openingElement.attributes
-        .filter((attr) => attr.type === 'JSXAttribute')
-        .map((attr) => ({
-          name: attr.name.name,
-          value: sourceCode.getText(attr.value || attr), // valueがない場合はattr全体
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name))
-      return attrs
+      return node.openingElement.attributes.map((attr) => sourceCode.getText(attr))
     }
 
     /**
@@ -71,7 +64,7 @@ module.exports = {
     function areAttributesEqual(attrs1, attrs2) {
       if (attrs1.length !== attrs2.length) return false
       for (let i = 0; i < attrs1.length; i++) {
-        if (attrs1[i].name !== attrs2[i].name || attrs1[i].value !== attrs2[i].value) {
+        if (attrs1[i] !== attrs2[i]) {
           return false
         }
       }

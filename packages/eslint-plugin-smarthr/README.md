@@ -25,6 +25,7 @@
 - [best-practice-for-data-test-attribute](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-data-test-attribute)
 - [best-practice-for-date](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-date)
 - [best-practice-for-default-props](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-default-props)
+- [best-practice-for-function-call-consolidation](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-function-call-consolidation)
 - [best-practice-for-interactive-element](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element)
 - [best-practice-for-lazy-variable](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-lazy-variable)
 - [best-practice-for-no-unnecessary-variable](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-no-unnecessary-variable)

@@ -1144,5 +1144,52 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // AwaitExpression: if-else early return
+    {
+      code: `
+        async function handler(c, a, b) {
+          if (c) return await f(a)
+          return await f(b)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'f', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // AwaitExpression: 三項演算子
+    {
+      code: `
+        async function handler(c, a, b) {
+          return c ? await f(a) : await f(b)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'f', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // AwaitExpression: switch (default あり)
+    {
+      code: `
+        async function handler(t) {
+          switch (t) {
+            case 'A': return await f('a')
+            case 'B': return await f('b')
+            default:  return await f('c')
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'f', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
   ],
 })

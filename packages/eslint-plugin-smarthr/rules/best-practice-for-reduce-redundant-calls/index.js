@@ -106,10 +106,25 @@ module.exports = {
         case 'CallExpression':
           // 三項演算子の場合、直接CallExpressionが渡される
           return statement
-        case 'ExpressionStatement':
-          return statement.expression.type === 'CallExpression' ? statement.expression : null
-        case 'ReturnStatement':
+        case 'AwaitExpression':
+          // 三項演算子でawaitが使われる場合、直接AwaitExpressionが渡される
           return statement.argument?.type === 'CallExpression' ? statement.argument : null
+        case 'ExpressionStatement': {
+          let expr = statement.expression
+          // AwaitExpressionをアンラップ
+          if (expr.type === 'AwaitExpression') {
+            expr = expr.argument
+          }
+          return expr?.type === 'CallExpression' ? expr : null
+        }
+        case 'ReturnStatement': {
+          let arg = statement.argument
+          // AwaitExpressionをアンラップ
+          if (arg?.type === 'AwaitExpression') {
+            arg = arg.argument
+          }
+          return arg?.type === 'CallExpression' ? arg : null
+        }
       }
 
       return null
@@ -123,8 +138,14 @@ module.exports = {
         case 'JSXElement':
           // 三項演算子の場合、直接JSXElementが渡される
           return statement
-        case 'ReturnStatement':
-          return statement.argument?.type === 'JSXElement' ? statement.argument : null
+        case 'ReturnStatement': {
+          let arg = statement.argument
+          // AwaitExpressionをアンラップ（通常JSXではawaitしないが念のため）
+          if (arg?.type === 'AwaitExpression') {
+            arg = arg.argument
+          }
+          return arg?.type === 'JSXElement' ? arg : null
+        }
       }
 
       return null

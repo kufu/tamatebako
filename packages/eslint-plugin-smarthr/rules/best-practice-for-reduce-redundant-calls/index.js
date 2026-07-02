@@ -69,12 +69,13 @@ module.exports = {
       const componentNames = jsxElements.map(getJSXElementName)
       const firstComponentName = componentNames[0]
 
-      if (!firstComponentName || !componentNames.every((name) => name === firstComponentName)) {
-        return
-      }
-
-      // React.FragmentまたはFragmentは除外
-      if (firstComponentName === 'Fragment' || firstComponentName === 'React.Fragment') {
+      // React.FragmentまたはFragmentは除外、everyは最後に評価して効率化
+      if (
+        !firstComponentName ||
+        firstComponentName === 'Fragment' ||
+        firstComponentName === 'React.Fragment' ||
+        !componentNames.every((name) => name === firstComponentName)
+      ) {
         return
       }
 

@@ -23,8 +23,6 @@ module.exports = {
      * CallExpressionから関数名を取得
      */
     function getFunctionName(node) {
-      if (node.type !== 'CallExpression') return null
-
       const { callee } = node
       switch (callee.type) {
         case 'Identifier':
@@ -104,7 +102,6 @@ module.exports = {
      * ExpressionStatementまたはReturnStatementからCallExpressionを取得
      */
     function getCallExpression(statement) {
-      if (!statement) return null
       switch (statement.type) {
         case 'CallExpression':
           // 三項演算子の場合、直接CallExpressionが渡される
@@ -128,7 +125,6 @@ module.exports = {
      * ExpressionStatementまたはReturnStatementからJSXElementを取得
      */
     function getJSXElement(statement) {
-      if (!statement) return null
       switch (statement.type) {
         case 'JSXElement':
           // 三項演算子の場合、直接JSXElementが渡される
@@ -147,7 +143,6 @@ module.exports = {
      * BlockStatementから実行される単一のステートメントを取得
      */
     function getSingleStatement(block) {
-      if (!block) return null
       if (block.type === 'BlockStatement') {
         // ブロック内に1つのステートメントのみ
         if (block.body.length === 1) {

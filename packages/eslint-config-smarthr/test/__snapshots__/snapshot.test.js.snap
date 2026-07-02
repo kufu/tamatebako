@@ -3075,6 +3075,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-prohibit-import-smarthr-ui-local": [
       2,
     ],
+    "smarthr/best-practice-for-reduce-redundant-calls": [
+      1,
+    ],
     "smarthr/best-practice-for-remote-trigger-dialog": [
       2,
     ],

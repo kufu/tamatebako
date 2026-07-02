@@ -158,6 +158,20 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // switch: defaultなし + switch後にreturnだが値が異なる（文字列）
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'A':
+              return func('a')
+            case 'B':
+              return func('b')
+          }
+          return ''
+        }
+      `,
+    },
     // switch: defaultなし + 全caseがreturn + switch後に非return文
     {
       code: `
@@ -1076,6 +1090,33 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // switch: case内にconsecutive if + switch後に異なる値を返すreturn
+    // case内のconsecutive ifパターンは検出されるべき（hanicaの実際のパターン）
+    {
+      code: `
+        function handler() {
+          switch (status) {
+            case 'INPUT_REQUESTED':
+              return func('a')
+            case 'REVIEW_REQUESTED':
+              if (condition1) {
+                return func('b')
+              }
+              if (condition2) {
+                return func('c')
+              }
+              return func('d')
+          }
+          return ''
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'func', detailLink: DETAIL_LINK },
         },
       ],
     },

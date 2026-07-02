@@ -177,7 +177,8 @@ module.exports = {
       }
 
       // 連続するif文 + 最後のreturnパターンをチェック
-      checkConsecutiveIfs(consequent, switchNode)
+      // reportNodeはnullにして、case内の最初のif文をエラー位置にする
+      checkConsecutiveIfs(consequent, null)
 
       const lastStmt = consequent[consequent.length - 1]
 

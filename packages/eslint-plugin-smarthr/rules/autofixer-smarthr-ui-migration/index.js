@@ -20,6 +20,8 @@ const v91ToV92 = require('./versions/v91-to-v92/index')
 const v92ToV93 = require('./versions/v92-to-v93/index')
 const v93ToV94 = require('./versions/v93-to-v94/index')
 const v94ToV95 = require('./versions/v94-to-v95/index')
+const v95ToV96 = require('./versions/v95-to-v96/index')
+const v96ToV97 = require('./versions/v96-to-v97/index')
 
 // サポートしているバージョン間の移行モジュール
 const VERSION_MODULES = {
@@ -28,6 +30,8 @@ const VERSION_MODULES = {
   'v92-v93': v92ToV93,
   'v93-v94': v93ToV94,
   'v94-v95': v94ToV95,
+  'v95-v96': v95ToV96,
+  'v96-v97': v96ToV97,
 }
 
 module.exports = {
@@ -64,6 +68,8 @@ module.exports = {
       ...v92ToV93.messages,
       ...v93ToV94.messages,
       ...v94ToV95.messages,
+      ...v95ToV96.messages,
+      ...v96ToV97.messages,
     },
   },
   create(context) {
@@ -196,6 +202,21 @@ function getMigrationPath(from, to) {
         from,
         to,
         middle: '91',
+      },
+    }
+  }
+
+  // v96→v97は検出のみのルール（手動対応必須）のため、他のバージョンとの一気実行を禁止
+  // v95→v96（自動修正）とv96→v97（検出のみ）を混在させると、エラーが消えず混乱する
+  if (path.includes('v95-v96') && path.includes('v96-v97')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '96',
       },
     }
   }

@@ -29,7 +29,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "eslint-plugin-smarthr": "6.21.2"
+    "eslint-plugin-smarthr": "6.22.0"
   },
   "peerDependencies": {
     "oxlint": ">=1.0.0"

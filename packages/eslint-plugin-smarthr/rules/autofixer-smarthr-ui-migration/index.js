@@ -206,6 +206,21 @@ function getMigrationPath(from, to) {
     }
   }
 
+  // v96→v97は検出のみのルール（手動対応必須）のため、他のバージョンとの一気実行を禁止
+  // v95→v96（自動修正）とv96→v97（検出のみ）を混在させると、エラーが消えず混乱する
+  if (path.includes('v95-v96') && path.includes('v96-v97')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '96',
+      },
+    }
+  }
+
   return { path, skipped }
 }
 

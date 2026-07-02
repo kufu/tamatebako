@@ -49,9 +49,8 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     {
       code: `import { Chip } from 'smarthr-ui'`,
       options: [{ from: '95', to: '98' }],
-      errors: [
-        { messageId: 'skippedVersion', data: { version: 'v98' } },
-      ],
+      // v95-v96とv96-v97の両方が含まれるため、競合エラーになる
+      errors: [{ messageId: 'conflictingMigration', data: { from: '95', to: '98', middle: '96' } }],
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
@@ -66,6 +65,15 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
       code: `import { ActionDialog } from 'smarthr-ui'`,
       options: [{ from: '90', to: '92' }],
       errors: [{ messageId: 'conflictingMigration', data: { from: '90', to: '92', middle: '91' } }],
+    },
+
+    // ============================================================
+    // v95→v97 競合テスト（v97が検出のみのルールのため禁止）
+    // ============================================================
+    {
+      code: `import { Chip } from 'smarthr-ui'`,
+      options: [{ from: '95', to: '97' }],
+      errors: [{ messageId: 'conflictingMigration', data: { from: '95', to: '97', middle: '96' } }],
     },
 
     // ============================================================

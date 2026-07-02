@@ -204,12 +204,8 @@ module.exports = {
         // consequent が空なら次のcaseにfall-through
         if (consequent.length === 0) continue
 
-        // 最後のcaseかどうか
-        const isLastCase = i === cases.length - 1
-
         // 実行可能なステートメントを抽出
-        const stmt = getExecutableStatementFromCase(consequent, isLastCase, switchNode)
-        return stmt
+        return getExecutableStatementFromCase(consequent, i === cases.length - 1, switchNode)
       }
 
       // 最後まで見つからなければnull
@@ -229,18 +225,18 @@ module.exports = {
       // alternateがなく、親がBlockStatementの場合、連続するif文パターンをチェック
       if (!node.alternate && consequentStmt.type === 'ReturnStatement') {
         const parent = node.parent
+
         if (parent && parent.type === 'BlockStatement') {
           const ifIndex = parent.body.indexOf(node)
+
           if (ifIndex !== -1) {
             // 前のステートメントがif文（alternateなし、returnで終わる）の場合、
             // 連続するif文パターンの一部なのでスキップ
             if (ifIndex > 0) {
               const prevStmt = parent.body[ifIndex - 1]
-              if (prevStmt.type === 'IfStatement' && !prevStmt.alternate) {
-                const prevConsequent = getSingleStatement(prevStmt.consequent)
-                if (prevConsequent && prevConsequent.type === 'ReturnStatement') {
-                  return
-                }
+
+              if (prevStmt.type === 'IfStatement' && !prevStmt.alternate && getSingleStatement(prevStmt.consequent)?.type === 'ReturnStatement') {
+                return
               }
             }
 
@@ -248,11 +244,9 @@ module.exports = {
             // 連続するif文パターンに該当する可能性があるのでスキップ
             if (ifIndex + 1 < parent.body.length) {
               const nextStmt = parent.body[ifIndex + 1]
-              if (nextStmt.type === 'IfStatement' && !nextStmt.alternate) {
-                const nextConsequent = getSingleStatement(nextStmt.consequent)
-                if (nextConsequent && nextConsequent.type === 'ReturnStatement') {
-                  return
-                }
+
+              if (nextStmt.type === 'IfStatement' && !nextStmt.alternate && getSingleStatement(nextStmt.consequent)?.type === 'ReturnStatement') {
+                return
               }
             }
           }

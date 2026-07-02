@@ -110,15 +110,17 @@ module.exports = {
           if (statement.expression.type === 'CallExpression') {
             return statement.expression
           }
-          return null
+
+          break
         case 'ReturnStatement':
           if (statement.argument?.type === 'CallExpression') {
             return statement.argument
           }
-          return null
-        default:
-          return null
+
+          break
       }
+
+      return null
     }
 
     /**
@@ -133,10 +135,11 @@ module.exports = {
           if (statement.argument?.type === 'JSXElement') {
             return statement.argument
           }
-          return null
-        default:
-          return null
+
+          break
       }
+
+      return null
     }
 
     /**
@@ -148,8 +151,10 @@ module.exports = {
         if (block.body.length === 1) {
           return block.body[0]
         }
+
         return null
       }
+
       // BlockStatementでない場合はそのまま返す
       return block
     }

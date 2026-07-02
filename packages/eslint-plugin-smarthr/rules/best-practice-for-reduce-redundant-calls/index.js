@@ -75,13 +75,11 @@ module.exports = {
 
       // 1つのループで全チェック（早期終了可能）
       for (let i = 1; i < jsxElements.length; i++) {
-        // selfClosingチェック
-        if (jsxElements[i].openingElement.selfClosing !== firstSelfClosing) {
-          return
-        }
-
-        // コンポーネント名チェック
-        if (getJSXElementName(jsxElements[i]) !== firstComponentName) {
+        // selfClosingとコンポーネント名をチェック
+        if (
+          jsxElements[i].openingElement.selfClosing !== firstSelfClosing ||
+          getJSXElementName(jsxElements[i]) !== firstComponentName
+        ) {
           return
         }
 

@@ -30,9 +30,9 @@ module.exports = {
         case 'MemberExpression':
           // メソッドチェーン全体のテキストを返す
           return sourceCode.getText(callee)
-        default:
-          return null
       }
+
+      return null
     }
 
     /**
@@ -148,11 +148,7 @@ module.exports = {
     function getSingleStatement(block) {
       if (block.type === 'BlockStatement') {
         // ブロック内に1つのステートメントのみ
-        if (block.body.length === 1) {
-          return block.body[0]
-        }
-
-        return null
+        return block.body.length === 1 ? block.body[0] : null
       }
 
       // BlockStatementでない場合はそのまま返す
@@ -179,14 +175,12 @@ module.exports = {
 
       // return/throwの場合：それが唯一のステートメント
       if (lastStmt.type === 'ReturnStatement' || lastStmt.type === 'ThrowStatement') {
-        if (consequent.length !== 1) return null
-        return lastStmt
+        return consequent.length === 1 ? lastStmt : null
       }
 
       // break/continueの場合：その前のステートメントが1つのみ
       if (lastStmt.type === 'BreakStatement' || lastStmt.type === 'ContinueStatement') {
-        if (consequent.length !== 2) return null
-        return consequent[0]
+        return consequent.length === 2 ? consequent[0] : null
       }
 
       // 最後のcase（defaultなど）で、breakがない場合

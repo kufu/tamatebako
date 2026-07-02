@@ -71,10 +71,7 @@ module.exports = {
       }
 
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
-      let firstOpeningTag
-      if (!firstSelfClosing) {
-        firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
-      }
+      let firstOpeningTag = undefined
 
       // 1つのループで全チェック（早期終了可能）
       for (let i = 1; i < jsxElements.length; i++) {
@@ -90,6 +87,10 @@ module.exports = {
 
         // selfClosingでない場合は開始タグ全体を比較（属性含む）
         if (!firstSelfClosing) {
+          if (firstOpeningTag === undefined) {
+            firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
+          }
+
           if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
             return
           }

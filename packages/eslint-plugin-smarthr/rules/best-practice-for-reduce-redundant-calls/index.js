@@ -56,13 +56,6 @@ module.exports = {
     }
 
     /**
-     * JSXElementが子要素を持つか判定
-     */
-    function hasChildren(node) {
-      return node.children && node.children.length > 0
-    }
-
-    /**
      * JSX要素の配列を検証し、必要に応じてレポート
      */
     function checkJSXElements(jsxElements, node) {
@@ -78,16 +71,16 @@ module.exports = {
         return
       }
 
-      // 子要素の有無を確認
-      const firstHasChildren = hasChildren(jsxElements[0])
+      // selfClosingで子要素の有無を判定（実行速度優先）
+      const firstSelfClosing = jsxElements[0].openingElement.selfClosing
 
-      if (!firstHasChildren) {
-        // 子要素がない場合：すべての要素が子要素を持たない場合のみ検出
-        if (!jsxElements.every((el) => !hasChildren(el))) {
+      if (firstSelfClosing) {
+        // selfClosingの場合：すべての要素がselfClosingの場合のみ検出
+        if (!jsxElements.every((el) => el.openingElement.selfClosing)) {
           return
         }
       } else {
-        // 子要素がある場合：属性も比較
+        // selfClosingでない場合：属性も比較
         const attributes = jsxElements.map((el) =>
           el.openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' '),
         )

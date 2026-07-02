@@ -185,6 +185,21 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         })()
       `,
     },
+    // switch: 波括弧あり + return（defaultなし、後続なし）
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin': {
+              return sendNotification('admin', user)
+            }
+            case 'user': {
+              return sendNotification('user', user)
+            }
+          }
+        }
+      `,
+    },
     // early return: if-else if（最後にreturnなし）+ 次にステートメント
     {
       code: `
@@ -834,6 +849,47 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'user':
             sendNotification('user', user)
             break
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // switch: 波括弧あり + break
+    {
+      code: `
+        switch (role) {
+          case 'admin': {
+            sendNotification('admin', user)
+            break
+          }
+          case 'user': {
+            sendNotification('user', user)
+            break
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // switch: 波括弧あり + default
+    {
+      code: `
+        switch (role) {
+          case 'admin': {
+            sendNotification('admin', user)
+            break
+          }
+          default: {
+            sendNotification('user', user)
+          }
         }
       `,
       errors: [

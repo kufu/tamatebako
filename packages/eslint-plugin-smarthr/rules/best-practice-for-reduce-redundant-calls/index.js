@@ -67,7 +67,7 @@ module.exports = {
       }
 
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
-      let firstOpeningTag = undefined
+      const firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
 
       // 1つのループで全チェック（早期終了可能）
       for (let i = 1; i < jsxElements.length; i++) {
@@ -79,15 +79,10 @@ module.exports = {
           return
         }
 
-        // selfClosingでない場合は開始タグ全体を比較（属性含む）
-        if (!firstSelfClosing) {
-          if (firstOpeningTag === undefined) {
-            firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
-          }
-
-          if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
-            return
-          }
+        // 開始タグ全体を比較（属性含む）
+        // 属性が異なる場合は意図的に分けている可能性が高いため検出しない
+        if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
+          return
         }
       }
 

@@ -367,6 +367,68 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         const element = condition ? <ComponentA>{child}</ComponentA> : <ComponentB>{child}</ComponentB>
       `,
     },
+    // JSX: selfClosing、属性が異なる（意図的に分けている）
+    {
+      code: `
+        function Component() {
+          if (isAdmin) {
+            return <UserCard name="Admin" role="admin" />
+          } else {
+            return <UserCard name="User" role="user" />
+          }
+        }
+      `,
+    },
+    // JSX: 三項演算子、selfClosing、属性が異なる
+    {
+      code: `
+        const element = isAdmin ? <UserCard name="Admin" role="admin" /> : <UserCard name="User" role="user" />
+      `,
+    },
+    // JSX: switch、selfClosing、属性が異なる
+    {
+      code: `
+        function Component() {
+          switch (type) {
+            case 'admin':
+              return <UserCard name="Admin" role="admin" />
+            case 'user':
+              return <UserCard name="User" role="user" />
+            default:
+              return <UserCard name="Guest" role="guest" />
+          }
+        }
+      `,
+    },
+    // JSX: selfClosing、FormattedMessage（属性が異なる）
+    {
+      code: `
+        function Component({ searchKeyword }) {
+          return searchKeyword === '' ? (
+            <FormattedMessage id="userRoles/addDialog/noUser" defaultMessage="追加できるアカウントがありません" />
+          ) : (
+            <FormattedMessage id="userRoles/addDialog/noResult" defaultMessage="該当するアカウントがありません" />
+          )
+        }
+      `,
+    },
+    // JSX: early return、selfClosing、属性が異なる
+    {
+      code: `
+        function Component() {
+          if (isAdmin) {
+            return <UserCard name="Admin" role="admin" />
+          }
+          return <UserCard name="User" role="user" />
+        }
+      `,
+    },
+    // JSX: ネストした三項演算子、selfClosing、属性が異なる
+    {
+      code: `
+        const element = isAdmin ? <UserCard role="admin" /> : isModerator ? <UserCard role="moderator" /> : <UserCard role="user" />
+      `,
+    },
   ],
   invalid: [
     // ========================================
@@ -474,23 +536,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
-    // early return: JSX
-    {
-      code: `
-        function Component() {
-          if (isAdmin) {
-            return <UserCard name="Admin" role="admin" />
-          }
-          return <UserCard name="User" role="user" />
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateJSXElement',
-          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
     // early return: メソッドチェーン
     {
       code: `
@@ -589,18 +634,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Layout', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // ネストした三項演算子でJSX（子要素なし）
-    {
-      code: `
-        const element = isAdmin ? <UserCard role="admin" /> : isModerator ? <UserCard role="moderator" /> : <UserCard role="user" />
-      `,
-      errors: [
-        {
-          messageId: 'consolidateJSXElement',
-          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -941,24 +974,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
     // ========================================
     // JSX
     // ========================================
-    // JSX: 子要素なし、属性が異なる
-    {
-      code: `
-        function Component() {
-          if (isAdmin) {
-            return <UserCard name="Admin" role="admin" />
-          } else {
-            return <UserCard name="User" role="user" />
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateJSXElement',
-          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
     // 基本的なJSX（同じコンポーネント、同じ属性、異なる子要素）
     {
       code: `
@@ -1004,18 +1019,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Container', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // JSX: 三項演算子、子要素なし、属性が異なる
-    {
-      code: `
-        const element = isAdmin ? <UserCard name="Admin" role="admin" /> : <UserCard name="User" role="user" />
-      `,
-      errors: [
-        {
-          messageId: 'consolidateJSXElement',
-          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -1093,27 +1096,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Layout', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // JSX: switch、子要素なし、属性が異なる
-    {
-      code: `
-        function Component() {
-          switch (type) {
-            case 'admin':
-              return <UserCard name="Admin" role="admin" />
-            case 'user':
-              return <UserCard name="User" role="user" />
-            default:
-              return <UserCard name="Guest" role="guest" />
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateJSXElement',
-          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },

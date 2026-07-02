@@ -59,8 +59,7 @@ module.exports = {
      * JSX要素の配列を検証し、必要に応じてレポート
      */
     function checkJSXElements(jsxElements, node) {
-      const componentNames = jsxElements.map(getJSXElementName)
-      const firstComponentName = componentNames[0]
+      const firstComponentName = getJSXElementName(jsxElements[0])
 
       // React.FragmentまたはFragmentは除外
       if (
@@ -71,30 +70,26 @@ module.exports = {
         return
       }
 
-      // 最初の要素の情報を取得
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
-      const firstAttrs = firstSelfClosing
+      const firstOpeningTag = firstSelfClosing
         ? null
-        : jsxElements[0].openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' ')
+        : sourceCode.getText(jsxElements[0].openingElement)
 
       // 1つのループで全チェック（早期終了可能）
       for (let i = 1; i < jsxElements.length; i++) {
-        // コンポーネント名チェック
-        if (componentNames[i] !== firstComponentName) {
-          return
-        }
-
         // selfClosingチェック
         if (jsxElements[i].openingElement.selfClosing !== firstSelfClosing) {
           return
         }
 
-        // selfClosingでない場合は属性もチェック
+        // コンポーネント名チェック
+        if (getJSXElementName(jsxElements[i]) !== firstComponentName) {
+          return
+        }
+
+        // selfClosingでない場合は開始タグ全体を比較（属性含む）
         if (!firstSelfClosing) {
-          const attrs = jsxElements[i].openingElement.attributes
-            .map((attr) => sourceCode.getText(attr))
-            .join(' ')
-          if (attrs !== firstAttrs) {
+          if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
             return
           }
         }

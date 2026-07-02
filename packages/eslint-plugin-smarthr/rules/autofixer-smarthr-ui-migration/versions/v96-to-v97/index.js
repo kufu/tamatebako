@@ -29,7 +29,7 @@ const README_URL =
 module.exports = {
   messages: {
     migrateTabItemOnClick:
-      'smarthr-ui {{to}} では TabItem の onClick の型が変更されました。引数を (tabId: string) から (e: MouseEvent<HTMLButtonElement>) に変更し、tabId の使用箇所を e.currentTarget.value に置き換えてください。詳細: {{readmeUrl}}',
+      'smarthr-ui {{to}} では TabItem の onClick の型が変更されました。引数を (tabId: string) から (e: MouseEvent<HTMLButtonElement>) に変更し、tabId の使用箇所を e.currentTarget.value に置き換えてください。注意: このエラーは手動修正後も消えません。対応完了後は { from: "96", to: "97" } 設定を削除してください。詳細: {{readmeUrl}}',
   },
 
   createCheckers(context, sourceCode, options = {}) {

@@ -71,29 +71,32 @@ module.exports = {
         return
       }
 
-      // selfClosingで子要素の有無を判定（実行速度優先）
+      // 最初の要素の情報を取得
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
+      const firstAttrs = firstSelfClosing
+        ? null
+        : jsxElements[0].openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' ')
 
-      if (firstSelfClosing) {
-        // selfClosingの場合：すべての要素がselfClosingの場合のみ検出
-        if (!jsxElements.every((el) => el.openingElement.selfClosing)) {
-          return
-        }
-      } else {
-        // selfClosingでない場合：属性も比較
-        const attributes = jsxElements.map((el) =>
-          el.openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' '),
-        )
-        const firstAttrs = attributes[0]
-        if (!attributes.every((attrs) => attrs === firstAttrs)) {
-          return
-        }
-      }
-
-      // 最後にコンポーネント名の全チェック（for文で早期終了）
-      for (let i = 1; i < componentNames.length; i++) {
+      // 1つのループで全チェック（早期終了可能）
+      for (let i = 1; i < jsxElements.length; i++) {
+        // コンポーネント名チェック
         if (componentNames[i] !== firstComponentName) {
           return
+        }
+
+        // selfClosingチェック
+        if (jsxElements[i].openingElement.selfClosing !== firstSelfClosing) {
+          return
+        }
+
+        // selfClosingでない場合は属性もチェック
+        if (!firstSelfClosing) {
+          const attrs = jsxElements[i].openingElement.attributes
+            .map((attr) => sourceCode.getText(attr))
+            .join(' ')
+          if (attrs !== firstAttrs) {
+            return
+          }
         }
       }
 

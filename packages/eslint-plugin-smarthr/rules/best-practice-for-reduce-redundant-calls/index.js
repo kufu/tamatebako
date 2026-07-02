@@ -71,9 +71,10 @@ module.exports = {
       }
 
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
-      const firstOpeningTag = firstSelfClosing
-        ? null
-        : sourceCode.getText(jsxElements[0].openingElement)
+      let firstOpeningTag
+      if (!firstSelfClosing) {
+        firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
+      }
 
       // 1つのループで全チェック（早期終了可能）
       for (let i = 1; i < jsxElements.length; i++) {

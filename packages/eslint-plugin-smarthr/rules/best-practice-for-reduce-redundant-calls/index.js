@@ -1,5 +1,3 @@
-const isReturnStatement = (stmt) => stmt.type === 'ReturnStatement'
-
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -238,12 +236,16 @@ module.exports = {
       }
 
       // alternateを再帰的に収集
+      let allCasesReturn = true
       let current = node
       while (current) {
         const consequent = getSingleStatement(current.consequent)
         if (!consequent) return
 
         branches.push(consequent)
+        if (allCasesReturn && consequent.type !== 'ReturnStatement') {
+          allCasesReturn = false
+        }
 
         if (current.alternate) {
           if (current.alternate.type === 'IfStatement') {
@@ -254,12 +256,15 @@ module.exports = {
             const alternate = getSingleStatement(current.alternate)
             if (!alternate) return
             branches.push(alternate)
+            if (allCasesReturn && alternate.type !== 'ReturnStatement') {
+              allCasesReturn = false
+            }
             break
           }
         } else {
           // alternateがない場合、early returnパターンをチェック
           // すべてのbranchesがreturnで終わっている場合のみ、次のreturn文を追加
-          if (branches.every(isReturnStatement)) {
+          if (allCasesReturn) {
             const parent = node.parent
             // BlockStatement内にない場合は検証対象外
             if (!parent || parent.type !== 'BlockStatement') {
@@ -347,6 +352,7 @@ module.exports = {
       }
 
       // 前から順にdefaultチェックとbranches構築
+      let allCasesReturn = true
       for (let i = 0; i < node.cases.length; i++) {
         if (node.cases[i].test === null) {
           hasDefault = true
@@ -355,12 +361,15 @@ module.exports = {
         const stmt = caseStatements[i]
         if (!stmt) return
         branches.push(stmt)
+
+        if (allCasesReturn && stmt.type !== 'ReturnStatement') {
+          allCasesReturn = false
+        }
       }
 
       // defaultがない場合、early returnパターンをチェック
       // すべてのcaseがreturnで終わっている場合のみ、次のreturn文を追加
       if (!hasDefault) {
-        const allCasesReturn = branches.every(isReturnStatement)
 
         if (allCasesReturn) {
           const parent = node.parent

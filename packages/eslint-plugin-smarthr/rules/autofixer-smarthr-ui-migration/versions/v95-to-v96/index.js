@@ -35,22 +35,14 @@ module.exports = {
       // 1. Chip の size 属性: "s" → "S"
       // ============================================================
 
-      'JSXOpeningElement[name.name="Chip"] > JSXAttribute[name.name="size"]'(node) {
-        // size属性の値を取得
-        const value = node.value
-
-        // 文字列リテラル "s" のみを対象
-        if (!value || value.type !== 'Literal' || value.value !== 's') {
-          return
-        }
-
+      'JSXOpeningElement[name.name="Chip"] > JSXAttribute[name.name="size"][value.type="Literal"][value.value="s"]'(node) {
         context.report({
           node,
           messageId: 'migrateChipSize',
           data: { to: TARGET_VERSION },
           fix(fixer) {
             // "s" → "S" に置換
-            return fixer.replaceText(value, '"S"')
+            return fixer.replaceText(node.value, '"S"')
           },
         })
       },

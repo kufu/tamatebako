@@ -107,17 +107,9 @@ module.exports = {
           // 三項演算子の場合、直接CallExpressionが渡される
           return statement
         case 'ExpressionStatement':
-          if (statement.expression.type === 'CallExpression') {
-            return statement.expression
-          }
-
-          break
+          return statement.expression.type === 'CallExpression' ? statement.expression : null
         case 'ReturnStatement':
-          if (statement.argument?.type === 'CallExpression') {
-            return statement.argument
-          }
-
-          break
+          return statement.argument?.type === 'CallExpression' ? statement.argument : null
       }
 
       return null
@@ -132,11 +124,7 @@ module.exports = {
           // 三項演算子の場合、直接JSXElementが渡される
           return statement
         case 'ReturnStatement':
-          if (statement.argument?.type === 'JSXElement') {
-            return statement.argument
-          }
-
-          break
+          return statement.argument?.type === 'JSXElement' ? statement.argument : null
       }
 
       return null
@@ -173,24 +161,24 @@ module.exports = {
 
       const lastStmt = consequent[consequent.length - 1]
 
-      // return/throwの場合：それが唯一のステートメント
-      if (lastStmt.type === 'ReturnStatement' || lastStmt.type === 'ThrowStatement') {
-        return consequent.length === 1 ? lastStmt : null
+      switch (lastStmt.type) {
+        case 'ReturnStatement':
+        case 'ThrowStatement':
+          // それが唯一のステートメント
+          return consequent.length === 1 ? lastStmt : null
+        case 'BreakStatement':
+        case 'ContinueStatement':
+          // その前のステートメントが1つのみ
+          return consequent.length === 2 ? consequent[0] : null
+        default:
+          // 最後のcase（defaultなど）で、breakがない場合
+          // ステートメントが1つのみならそれを返す
+          if (isLastCase && consequent.length === 1) {
+            return lastStmt
+          }
+          // 上記以外（fall-throughなど）は対象外
+          return null
       }
-
-      // break/continueの場合：その前のステートメントが1つのみ
-      if (lastStmt.type === 'BreakStatement' || lastStmt.type === 'ContinueStatement') {
-        return consequent.length === 2 ? consequent[0] : null
-      }
-
-      // 最後のcase（defaultなど）で、breakがない場合
-      // ステートメントが1つのみならそれを返す
-      if (isLastCase && consequent.length === 1) {
-        return lastStmt
-      }
-
-      // 上記以外（fall-throughなど）は対象外
-      return null
     }
 
 

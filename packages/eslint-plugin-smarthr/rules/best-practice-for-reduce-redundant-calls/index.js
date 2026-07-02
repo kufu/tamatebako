@@ -1,3 +1,5 @@
+const isReturnStatement = (stmt) => stmt.type === 'ReturnStatement'
+
 module.exports = {
   meta: {
     type: 'suggestion',
@@ -275,29 +277,28 @@ module.exports = {
         } else {
           // alternateがない場合、early returnパターンをチェック
           // すべてのbranchesがreturnで終わっている場合のみ、次のreturn文を追加
-          const allBranchesReturn = branches.every((stmt) => stmt.type === 'ReturnStatement')
+          const allBranchesReturn = branches.every(isReturnStatement)
 
           if (allBranchesReturn) {
             const parent = node.parent
-            if (parent && parent.type === 'BlockStatement') {
-              const ifIndex = parent.body.indexOf(node)
-              if (ifIndex !== -1 && ifIndex + 1 < parent.body.length) {
-                const nextStmt = parent.body[ifIndex + 1]
-                // 次のステートメントがReturnStatementの場合のみ追加
-                if (nextStmt.type === 'ReturnStatement') {
-                  branches.push(nextStmt)
-                } else {
-                  // 次のreturn文がない場合は検証対象外
-                  return
-                }
-              } else {
-                // 次のステートメントがない場合も検証対象外
-                return
-              }
-            } else {
-              // BlockStatement内にない場合も検証対象外
+            // BlockStatement内にない場合は検証対象外
+            if (!parent || parent.type !== 'BlockStatement') {
               return
             }
+
+            const ifIndex = parent.body.indexOf(node)
+            // 次のステートメントがない場合は検証対象外
+            if (ifIndex === -1 || ifIndex + 1 >= parent.body.length) {
+              return
+            }
+
+            const nextStmt = parent.body[ifIndex + 1]
+            // 次のreturn文がない場合は検証対象外
+            if (nextStmt.type !== 'ReturnStatement') {
+              return
+            }
+
+            branches.push(nextStmt)
           }
           break
         }
@@ -354,29 +355,28 @@ module.exports = {
       // defaultがない場合、early returnパターンをチェック
       // すべてのcaseがreturnで終わっている場合のみ、次のreturn文を追加
       if (!hasDefault) {
-        const allCasesReturn = branches.every((stmt) => stmt.type === 'ReturnStatement')
+        const allCasesReturn = branches.every(isReturnStatement)
 
         if (allCasesReturn) {
           const parent = node.parent
-          if (parent && parent.type === 'BlockStatement') {
-            const switchIndex = parent.body.indexOf(node)
-            if (switchIndex !== -1 && switchIndex + 1 < parent.body.length) {
-              const nextStmt = parent.body[switchIndex + 1]
-              // 次のステートメントがReturnStatementの場合のみ追加
-              if (nextStmt.type === 'ReturnStatement') {
-                branches.push(nextStmt)
-              } else {
-                // 次のreturn文がない場合は検証対象外
-                return
-              }
-            } else {
-              // 次のステートメントがない場合も検証対象外
-              return
-            }
-          } else {
-            // BlockStatement内にない場合も検証対象外
+          // BlockStatement内にない場合は検証対象外
+          if (!parent || parent.type !== 'BlockStatement') {
             return
           }
+
+          const switchIndex = parent.body.indexOf(node)
+          // 次のステートメントがない場合は検証対象外
+          if (switchIndex === -1 || switchIndex + 1 >= parent.body.length) {
+            return
+          }
+
+          const nextStmt = parent.body[switchIndex + 1]
+          // 次のreturn文がない場合は検証対象外
+          if (nextStmt.type !== 'ReturnStatement') {
+            return
+          }
+
+          branches.push(nextStmt)
         }
       }
 

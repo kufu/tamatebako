@@ -447,24 +447,40 @@ module.exports = {
       // 分岐が2つ未満の場合は検証不要
       if (branches.length < 2) return
 
-      // すべての分岐がCallExpressionか確認
-      const callExpressions = branches.filter((b) => b.type === 'CallExpression')
-      if (callExpressions.length === branches.length) {
-        const functionNames = callExpressions.map(getFunctionName)
-        const firstFunctionName = functionNames[0]
-        if (firstFunctionName && functionNames.every((name) => name === firstFunctionName)) {
-          context.report({
-            node,
-            messageId: 'consolidateFunctionCall',
-            data: { functionName: firstFunctionName },
-          })
-          return
+      // 最初の要素で型を判定
+      const firstCallExpr = getCallExpression(branches[0])
+      if (firstCallExpr) {
+        const firstName = getFunctionName(firstCallExpr)
+        if (!firstName) return
+
+        // すべてが同じ関数名のCallExpressionかチェック
+        for (let i = 1; i < branches.length; i++) {
+          const callExpr = getCallExpression(branches[i])
+          if (!callExpr || getFunctionName(callExpr) !== firstName) {
+            return
+          }
         }
+
+        context.report({
+          node,
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: firstName },
+        })
+        return
       }
 
-      // すべての分岐がJSXElementか確認
-      const jsxElements = branches.filter((b) => b.type === 'JSXElement')
-      if (jsxElements.length === branches.length) {
+      // CallExpressionでない場合、JSXElementをチェック
+      const firstJsx = getJSXElement(branches[0])
+      if (firstJsx) {
+        const jsxElements = [firstJsx]
+
+        // すべてがJSXElementかチェック
+        for (let i = 1; i < branches.length; i++) {
+          const jsx = getJSXElement(branches[i])
+          if (!jsx) return
+          jsxElements.push(jsx)
+        }
+
         checkJSXElements(jsxElements, node)
       }
     }

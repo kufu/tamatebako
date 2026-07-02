@@ -332,24 +332,28 @@ module.exports = {
       const branches = []
       let hasDefault = false
 
-      // 各caseについて、実際に実行されるステートメントを解決
-      for (let i = 0; i < node.cases.length; i++) {
-        const switchCase = node.cases[i]
+      // 後ろから前に処理して各caseのステートメントを解決（O(N)）
+      const caseStatements = new Array(node.cases.length)
+      let lastStmt = null
 
-        if (switchCase.test === null) {
+      for (let i = node.cases.length - 1; i >= 0; i--) {
+        const consequent = node.cases[i].consequent
+
+        if (consequent.length > 0) {
+          lastStmt = getExecutableStatementFromCase(consequent, i === node.cases.length - 1, node)
+        }
+        // 空のconsequentはfall-throughなので、前のステートメントを継承
+        caseStatements[i] = lastStmt
+      }
+
+      // 前から順にdefaultチェックとbranches構築
+      for (let i = 0; i < node.cases.length; i++) {
+        if (node.cases[i].test === null) {
           hasDefault = true
         }
 
-        // fall-throughを考慮して実行ステートメントを解決
-        let stmt = null
-        for (let j = i; j < node.cases.length; j++) {
-          const consequent = node.cases[j].consequent
-          if (consequent.length === 0) continue
-          stmt = getExecutableStatementFromCase(consequent, j === node.cases.length - 1, node)
-          break
-        }
-        if (!stmt) return // 解決できない = 対象外
-
+        const stmt = caseStatements[i]
+        if (!stmt) return
         branches.push(stmt)
       }
 

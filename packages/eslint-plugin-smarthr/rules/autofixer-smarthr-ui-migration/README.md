@@ -197,6 +197,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 | `93` → `94` | [移行ガイド](./versions/v93-to-v94/README.md) |
 | `94` → `95` | [移行ガイド](./versions/v94-to-v95/README.md) |
 | `95` → `96` | [移行ガイド](./versions/v95-to-v96/README.md) |
+| `96` → `97` | [移行ガイド](./versions/v96-to-v97/README.md)（検出のみ） |
 
 ## 使用方法
 

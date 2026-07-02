@@ -195,24 +195,6 @@ module.exports = {
       return null
     }
 
-    /**
-     * switch文のfall-throughを考慮して実行ステートメントを解決
-     */
-    function resolveExecutableStatement(cases, startIndex, switchNode) {
-      // startIndexから順に探して、最初に見つかった実行可能なステートメントを返す
-      for (let i = startIndex; i < cases.length; i++) {
-        const consequent = cases[i].consequent
-
-        // consequent が空なら次のcaseにfall-through
-        if (consequent.length === 0) continue
-
-        // 実行可能なステートメントを抽出
-        return getExecutableStatementFromCase(consequent, i === cases.length - 1, switchNode)
-      }
-
-      // 最後まで見つからなければnull
-      return null
-    }
 
     /**
      * if-else文を検証（early returnパターンも含む）
@@ -359,7 +341,13 @@ module.exports = {
         }
 
         // fall-throughを考慮して実行ステートメントを解決
-        const stmt = resolveExecutableStatement(node.cases, i, node)
+        let stmt = null
+        for (let j = i; j < node.cases.length; j++) {
+          const consequent = node.cases[j].consequent
+          if (consequent.length === 0) continue
+          stmt = getExecutableStatementFromCase(consequent, j === node.cases.length - 1, node)
+          break
+        }
         if (!stmt) return // 解決できない = 対象外
 
         branches.push(stmt)

@@ -41,8 +41,6 @@ module.exports = {
      * JSXElementからコンポーネント名を取得
      */
     function getJSXElementName(node) {
-      if (node.type !== 'JSXElement') return null
-
       const openingElement = node.openingElement
 
       switch (openingElement.name.type) {

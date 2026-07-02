@@ -570,9 +570,7 @@ module.exports = {
           checkIfStatement(node)
         }
       },
-      SwitchStatement(node) {
-        checkSwitchStatement(node)
-      },
+      SwitchStatement: checkSwitchStatement,
       ConditionalExpression(node) {
         // 最上位の三項演算子のみ検証（ネストした三項演算子は親で処理される）
         if (

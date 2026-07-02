@@ -20,9 +20,12 @@ const SCHEMA = [
   },
 ]
 
-const EARLY_EXIT_STATEMENT_TYPES = new Set([
-  'ReturnStatement',
-  'ThrowStatement',
+const LOOP_STATEMENT_TYPES = new Set([
+  'ForStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+  'ForInStatement',
+  'ForOfStatement',
 ])
 
 /**
@@ -443,13 +446,6 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
 }
 
 /**
- * ノードがreturn/throw文かどうか判定
- */
-function isEarlyExitStatement(node) {
-  return EARLY_EXIT_STATEMENT_TYPES.has(node.type)
-}
-
-/**
  * ノード内にthrow文が含まれているかチェック
  */
 function containsThrow(node) {
@@ -463,6 +459,9 @@ function findEarlyExits(declarationScope, variableDeclaration) {
   const statements = getStatements(declarationScope)
   const declarationIndex = statements.indexOf(variableDeclaration)
   const earlyExits = []
+
+  // declarationScopeがループのbody内かどうかを判定
+  const isInLoop = declarationScope.parent && LOOP_STATEMENT_TYPES.has(declarationScope.parent.type)
 
   // 宣言より後のstatementを探索
   for (let i = declarationIndex + 1; i < statements.length; i++) {
@@ -480,8 +479,8 @@ function findEarlyExits(declarationScope, variableDeclaration) {
       continue
     }
 
-    // 早期終了文を再帰的に検出
-    collectEarlyExitsFromNode(statement, earlyExits, i)
+    // 早期終了文を再帰的に検出（ループ内の場合はinLoopContext = true）
+    collectEarlyExitsFromNode(statement, earlyExits, i, isInLoop, false)
   }
 
   return earlyExits
@@ -490,18 +489,75 @@ function findEarlyExits(declarationScope, variableDeclaration) {
 /**
  * ノードから早期終了文を収集
  */
-function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
+function collectEarlyExitsFromNode(node, earlyExits, statementIndex, inLoopContext = false, inSwitchContext = false, parentIfStatement = null, loopDepth = 0) {
   // 関数スコープを超えない
   if (!node || typeof node !== 'object' || isFunctionScope(node)) return
 
-  // return/throw文を検出
-  if (isEarlyExitStatement(node)) {
-    earlyExits.push({
-      type: node.type === 'ReturnStatement' ? 'return' : 'throw',
-      node,
-      statementIndex,
-    })
-    return
+  // 早期終了文を検出
+  switch (node.type) {
+    case 'BreakStatement':
+      // ループ内 && switch外 && ネストしたループではない
+      // ラベル付きでも、少なくとも現在のループは抜けるため検出対象
+      if (inLoopContext && !inSwitchContext && loopDepth === 0) {
+        earlyExits.push({
+          type: 'break',
+          node,
+          statementIndex,
+          parentIfStatement,  // break/continueを含むif文
+        })
+        return
+      }
+      break
+    case 'ContinueStatement':
+      // ループ内 && ネストしたループではない
+      // ラベル付きでも、少なくとも現在のループの現在のイテレーションは終了するため検出対象
+      if (inLoopContext && loopDepth === 0) {
+        earlyExits.push({
+          type: 'continue',
+          node,
+          statementIndex,
+          parentIfStatement,  // break/continueを含むif文
+        })
+        return
+      }
+      break
+    case 'ReturnStatement':
+      earlyExits.push({
+        type: 'return',
+        node,
+        statementIndex,
+      })
+      return
+    case 'ThrowStatement':
+      earlyExits.push({
+        type: 'throw',
+        node,
+        statementIndex,
+      })
+      return
+  }
+
+  // コンテキスト更新
+  let newLoopContext = inLoopContext
+  let newSwitchContext = inSwitchContext
+  let newParentIfStatement = parentIfStatement
+  let newLoopDepth = loopDepth
+
+  switch (node.type) {
+    case 'SwitchStatement':
+      newSwitchContext = true
+      break
+    case 'IfStatement':
+      // if文の中のbreak/continueを検出するため、親if文を記録
+      newParentIfStatement = node
+      break
+    default:
+      if (LOOP_STATEMENT_TYPES.has(node.type)) {
+        newLoopContext = true
+        newSwitchContext = false  // ループに入るとswitchコンテキストはリセット
+        newLoopDepth = loopDepth + 1  // ネストしたループに入った
+      }
+      break
   }
 
   // 子ノードを再帰的に探索
@@ -510,9 +566,9 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
     const child = node[key]
     if (child) {
       if (Array.isArray(child)) {
-        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
+        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement, newLoopDepth))
       } else if (typeof child === 'object') {
-        collectEarlyExitsFromNode(child, earlyExits, statementIndex)
+        collectEarlyExitsFromNode(child, earlyExits, statementIndex, newLoopContext, newSwitchContext, newParentIfStatement, newLoopDepth)
       }
     }
   }
@@ -528,6 +584,23 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
 
   // 早期終了のインデックスを取得
   const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
+
+  // break/continueの場合、親if文のconsequent内での使用をチェック
+  if ((earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement) {
+    const ifConsequent = earlyExit.parentIfStatement.consequent
+    // break/continue文の前（if文のconsequent内）に使用があるかチェック
+    if (containsVariableUsageBeforeEarlyExit(ifConsequent, varName, declarationNode, earlyExit.node)) {
+      return true
+    }
+    // 宣言からif文までのstatementもチェック
+    for (let i = declarationIndex + 1; i < earlyExitIndex; i++) {
+      const statement = statements[i]
+      if (containsVariableUsage(statement, varName, declarationNode)) {
+        return true
+      }
+    }
+    return false
+  }
 
   // 宣言から早期終了までのstatementをチェック
   for (let i = declarationIndex + 1; i <= earlyExitIndex; i++) {
@@ -629,12 +702,18 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
         usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
       const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
 
+      // break/continueの場合、if文の直後に挿入（if文の次のstatementの前）
+      // それ以外の場合、最初の使用箇所の前に挿入
+      const insertIndex = (earlyExit.type === 'break' || earlyExit.type === 'continue') && earlyExit.parentIfStatement
+        ? earlyExitIndex + 1  // if文の次のstatement
+        : firstUsageIndex
+
       return {
         node,
         varName,
         variableDeclaration,
         targetBody: null,
-        insertBeforeStatement: statements[firstUsageIndex],
+        insertBeforeStatement: statements[insertIndex],
         moveType: 'after-early-exit',
       }
     }

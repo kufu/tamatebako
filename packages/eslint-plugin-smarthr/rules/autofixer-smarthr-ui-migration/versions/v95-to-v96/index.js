@@ -33,9 +33,10 @@ module.exports = {
     const checkers = {
       // ============================================================
       // 1. Chip の size 属性: "s" → "S"
+      // Chipで終わるコンポーネント（CustomChip等のラップコンポーネント）も対象
       // ============================================================
 
-      'JSXOpeningElement[name.name="Chip"] > JSXAttribute[name.name="size"][value.type="Literal"][value.value="s"]'(node) {
+      'JSXOpeningElement[name.name=/Chip$/] > JSXAttribute[name.name="size"][value.type="Literal"][value.value="s"]'(node) {
         context.report({
           node,
           messageId: 'migrateChipSize',

@@ -25,8 +25,9 @@ const valid = [
   // JSX式での "s"（文字列リテラルではない）
   { code: '<Chip size={"s"}>label</Chip>', options: v95ToV96Options },
 
-  // 対象外のコンポーネント
+  // 対象外のコンポーネント（Chipで終わらない）
   { code: '<OtherComponent size="s" />', options: v95ToV96Options },
+  { code: '<ChipContainer size="s" />', options: v95ToV96Options },
 ]
 
 // ============================================================
@@ -104,6 +105,30 @@ const invalid = [
 >
   label
 </Chip>`,
+    options: v95ToV96Options,
+    errors: [
+      {
+        messageId: 'migrateChipSize',
+        data: { to: 'v96' },
+      },
+    ],
+  },
+
+  // ラップコンポーネント（Chipで終わる名前）
+  {
+    code: '<CustomChip size="s">label</CustomChip>',
+    output: '<CustomChip size="S">label</CustomChip>',
+    options: v95ToV96Options,
+    errors: [
+      {
+        messageId: 'migrateChipSize',
+        data: { to: 'v96' },
+      },
+    ],
+  },
+  {
+    code: '<MyChip size="s" />',
+    output: '<MyChip size="S" />',
     options: v95ToV96Options,
     errors: [
       {

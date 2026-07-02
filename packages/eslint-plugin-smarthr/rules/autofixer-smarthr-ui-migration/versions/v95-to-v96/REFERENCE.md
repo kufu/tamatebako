@@ -10,29 +10,23 @@
 
 **実装例:**
 ```javascript
-'JSXOpeningElement[name.name="Chip"] > JSXAttribute[name.name="size"]'(node) {
-  const value = node.value
-
-  // 文字列リテラル "s" のみを対象
-  if (!value || value.type !== 'Literal' || value.value !== 's') {
-    return
-  }
-
+'JSXOpeningElement[name.name=/Chip$/] > JSXAttribute[name.name="size"][value.type="Literal"][value.value="s"]'(node) {
   context.report({
     node,
     messageId: 'migrateChipSize',
     data: { to: TARGET_VERSION },
     fix(fixer) {
       // "s" → "S" に置換
-      return fixer.replaceText(value, '"S"')
+      return fixer.replaceText(node.value, '"S"')
     },
   })
 }
 ```
 
 **ポイント:**
-- セレクタで特定のコンポーネントの特定の属性を絞り込む
-- `value.type === 'Literal'` で文字列リテラルのみを対象にする
+- セレクタで条件をすべて絞り込む（関数内チェック不要）
+- `name.name=/Chip$/`: Chipで終わるコンポーネント名（CustomChip等も対象）
+- `[value.type="Literal"][value.value="s"]`: 文字列リテラル "s" のみ
 - `fixer.replaceText()` で値全体を置換する
 
 **検出対象:**

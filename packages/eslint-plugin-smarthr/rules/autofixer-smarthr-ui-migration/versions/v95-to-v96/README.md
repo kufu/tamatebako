@@ -29,14 +29,17 @@ eslint --fix .
 **対象:**
 - 文字列リテラル `"s"` のみが対象です
 - 動的な値（変数など）は検出されません
+- `Chip` で終わるコンポーネント名（例: `CustomChip`, `MyChip`）も対象です
 
 ```jsx
 // 自動修正される
 <Chip size="s">label</Chip>
+<CustomChip size="s">label</CustomChip>  // ラップコンポーネントも対象
 
 // 検出されない（手動で対応が必要）
 <Chip size={dynamicSize}>label</Chip>
 <Chip size={SIZES.SMALL}>label</Chip>
+<ChipContainer size="s" />  // "Chip"で終わらない
 ```
 
 ## 参考リンク

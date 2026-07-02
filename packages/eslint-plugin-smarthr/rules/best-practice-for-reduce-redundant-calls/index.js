@@ -42,15 +42,17 @@ module.exports = {
      */
     function getJSXElementName(node) {
       if (node.type !== 'JSXElement') return null
-      const { name } = node.openingElement
-      switch (name?.type) {
+
+      const openingElement = node.openingElement
+
+      switch (openingElement.name.type) {
         case 'JSXIdentifier':
-          return name.name
+          return openingElement.name.name
         case 'JSXMemberExpression':
-          return sourceCode.getText(name)
-        default:
-          return null
+          return sourceCode.getText(openingElement.name)
       }
+
+      return null
     }
 
     /**

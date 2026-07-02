@@ -69,12 +69,11 @@ module.exports = {
       const componentNames = jsxElements.map(getJSXElementName)
       const firstComponentName = componentNames[0]
 
-      // React.FragmentまたはFragmentは除外、everyは最後に評価して効率化
+      // React.FragmentまたはFragmentは除外
       if (
         !firstComponentName ||
         firstComponentName === 'Fragment' ||
-        firstComponentName === 'React.Fragment' ||
-        !componentNames.every((name) => name === firstComponentName)
+        firstComponentName === 'React.Fragment'
       ) {
         return
       }
@@ -84,27 +83,32 @@ module.exports = {
 
       if (!firstHasChildren) {
         // 子要素がない場合：すべての要素が子要素を持たない場合のみ検出
-        if (jsxElements.every((el) => !hasChildren(el))) {
-          context.report({
-            node,
-            messageId: 'consolidateJSXElement',
-            data: { componentName: firstComponentName },
-          })
+        if (!jsxElements.every((el) => !hasChildren(el))) {
+          return
         }
       } else {
-        // 子要素がある場合：属性も比較（既存の挙動）
+        // 子要素がある場合：属性も比較
         const attributes = jsxElements.map((el) =>
           el.openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' '),
         )
         const firstAttrs = attributes[0]
-        if (attributes.every((attrs) => attrs === firstAttrs)) {
-          context.report({
-            node,
-            messageId: 'consolidateJSXElement',
-            data: { componentName: firstComponentName },
-          })
+        if (!attributes.every((attrs) => attrs === firstAttrs)) {
+          return
         }
       }
+
+      // 最後にコンポーネント名の全チェック（for文で早期終了）
+      for (let i = 1; i < componentNames.length; i++) {
+        if (componentNames[i] !== firstComponentName) {
+          return
+        }
+      }
+
+      context.report({
+        node,
+        messageId: 'consolidateJSXElement',
+        data: { componentName: firstComponentName },
+      })
     }
 
     /**

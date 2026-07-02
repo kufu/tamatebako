@@ -1,21 +1,30 @@
-# Change Log
+# Changelog
+
+## [1.3.1](https://github.com/kufu/tamatebako/compare/wareki-v1.3.0...wareki-v1.3.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* **wareki:** warekiToDateで「元年」を解釈できるようにする ([#1428](https://github.com/kufu/tamatebako/issues/1428)) ([0d2f137](https://github.com/kufu/tamatebako/commit/0d2f137a2ff1670ae4e430dac812cca362f586ca))
+
+## Change Log
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.3.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.3.0) (2024-11-29)
+## [1.3.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.3.0) (2024-11-29)
 
 ### Features
 
 - warekiの各メソッドのfallbackを書きやすくするため半角変換された日付テキストを常に返す ([4b8b1c8](https://github.com/kufu/tamatebako/commit/4b8b1c83bd71088bc3132ad679a6d51cf3591842))
 
-# [1.2.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.2.0) (2023-01-19)
+## [1.2.0](https://github.com/kufu/tamatebako/compare/@smarthr/wareki@1.1.0...@smarthr/wareki@1.2.0) (2023-01-19)
 
 ### Features
 
 - wareki の各メソッドの fallback を書きやすくするため半角変換された日付テキストを常に返す ([4b8b1c8](https://github.com/kufu/tamatebako/commit/4b8b1c83bd71088bc3132ad679a6d51cf3591842))
 
-# 1.1.0 (2022-08-24)
+## 1.1.0 (2022-08-24)
 
 ### Bug Fixes
 

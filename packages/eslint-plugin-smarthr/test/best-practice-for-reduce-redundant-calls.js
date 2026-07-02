@@ -94,6 +94,30 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // JSX: React.Fragment（同じ属性、異なる子要素）
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <React.Fragment><ComponentA /></React.Fragment>
+          } else {
+            return <React.Fragment><ComponentB /></React.Fragment>
+          }
+        }
+      `,
+    },
+    // JSX: Fragment（同じ属性、異なる子要素）
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Fragment><ComponentA /></Fragment>
+          } else {
+            return <Fragment><ComponentB /></Fragment>
+          }
+        }
+      `,
+    },
     // switch: 関数が異なる
     {
       code: `

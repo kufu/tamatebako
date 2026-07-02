@@ -297,6 +297,24 @@ if (condition) {
 }
 ```
 
+### JSX: React.FragmentまたはFragmentの場合
+
+```jsx
+// React.FragmentとFragmentは除外される
+if (condition) {
+  return <React.Fragment><ComponentA /></React.Fragment>
+} else {
+  return <React.Fragment><ComponentB /></React.Fragment>
+}
+
+// Fragmentも同様
+if (condition) {
+  return <Fragment><ComponentA /></Fragment>
+} else {
+  return <Fragment><ComponentB /></Fragment>
+}
+```
+
 ### switch: 関数が異なる場合
 
 ```javascript
@@ -435,6 +453,7 @@ return (
 - **JSXの検出条件:**
   - **子要素なし（self-closing）の場合:** 同じコンポーネント名なら、属性が異なっても検出します。
   - **子要素ありの場合:** 同じコンポーネント名、同じ属性（値を含む）で、子要素が異なる場合に検出します。
+  - **React.FragmentとFragmentは除外されます。** これらは単なるグループ化のためのものなので、検出対象外です。
 - JSXのspread attributes（`{...props}`）も含めて全属性を比較します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）は検出されません。
 - **if文/switch文のearly returnパターン:** すべてのブランチが`return`で終わっている場合のみ、次のステートメントも検出対象に含まれます。`break`を使う場合は含まれません。
 - **switch文のfall-through:** 空のcaseは次のcaseにfall-throughし、最初に見つかった処理を実行するものとして扱います。

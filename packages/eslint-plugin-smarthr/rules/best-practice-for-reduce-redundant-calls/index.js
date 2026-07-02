@@ -89,6 +89,11 @@ module.exports = {
         return
       }
 
+      // React.FragmentまたはFragmentは除外
+      if (firstComponentName === 'Fragment' || firstComponentName === 'React.Fragment') {
+        return
+      }
+
       // 子要素の有無を確認
       const firstHasChildren = hasChildren(jsxElements[0])
 

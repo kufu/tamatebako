@@ -26,14 +26,15 @@ module.exports = {
       if (node.type !== 'CallExpression') return null
 
       const { callee } = node
-      if (callee.type === 'Identifier') {
-        return callee.name
+      switch (callee.type) {
+        case 'Identifier':
+          return callee.name
+        case 'MemberExpression':
+          // メソッドチェーン全体のテキストを返す
+          return sourceCode.getText(callee)
+        default:
+          return null
       }
-      if (callee.type === 'MemberExpression') {
-        // メソッドチェーン全体のテキストを返す
-        return sourceCode.getText(callee)
-      }
-      return null
     }
 
     /**
@@ -42,13 +43,14 @@ module.exports = {
     function getJSXElementName(node) {
       if (node.type !== 'JSXElement') return null
       const openingElement = node.openingElement
-      if (openingElement.name.type === 'JSXIdentifier') {
-        return openingElement.name.name
+      switch (openingElement.name.type) {
+        case 'JSXIdentifier':
+          return openingElement.name.name
+        case 'JSXMemberExpression':
+          return sourceCode.getText(openingElement.name)
+        default:
+          return null
       }
-      if (openingElement.name.type === 'JSXMemberExpression') {
-        return sourceCode.getText(openingElement.name)
-      }
-      return null
     }
 
     /**
@@ -56,26 +58,6 @@ module.exports = {
      */
     function hasChildren(node) {
       return node.children && node.children.length > 0
-    }
-
-    /**
-     * JSXElementから属性を抽出（spread含む全属性をテキスト化）
-     */
-    function extractJSXAttributes(node) {
-      return node.openingElement.attributes.map((attr) => sourceCode.getText(attr))
-    }
-
-    /**
-     * 2つの属性配列が等しいか比較
-     */
-    function areAttributesEqual(attrs1, attrs2) {
-      if (attrs1.length !== attrs2.length) return false
-      for (let i = 0; i < attrs1.length; i++) {
-        if (attrs1[i] !== attrs2[i]) {
-          return false
-        }
-      }
-      return true
     }
 
     /**
@@ -108,9 +90,11 @@ module.exports = {
         }
       } else {
         // 子要素がある場合：属性も比較（既存の挙動）
-        const attributes = jsxElements.map(extractJSXAttributes)
+        const attributes = jsxElements.map((el) =>
+          el.openingElement.attributes.map((attr) => sourceCode.getText(attr)).join(' '),
+        )
         const firstAttrs = attributes[0]
-        if (attributes.every((attrs) => areAttributesEqual(attrs, firstAttrs))) {
+        if (attributes.every((attrs) => attrs === firstAttrs)) {
           context.report({
             node,
             messageId: 'consolidateJSXElement',
@@ -125,17 +109,23 @@ module.exports = {
      */
     function getCallExpression(statement) {
       if (!statement) return null
-      // 三項演算子の場合、直接CallExpressionが渡される
-      if (statement.type === 'CallExpression') {
-        return statement
+      switch (statement.type) {
+        case 'CallExpression':
+          // 三項演算子の場合、直接CallExpressionが渡される
+          return statement
+        case 'ExpressionStatement':
+          if (statement.expression.type === 'CallExpression') {
+            return statement.expression
+          }
+          return null
+        case 'ReturnStatement':
+          if (statement.argument?.type === 'CallExpression') {
+            return statement.argument
+          }
+          return null
+        default:
+          return null
       }
-      if (statement.type === 'ExpressionStatement' && statement.expression.type === 'CallExpression') {
-        return statement.expression
-      }
-      if (statement.type === 'ReturnStatement' && statement.argument?.type === 'CallExpression') {
-        return statement.argument
-      }
-      return null
     }
 
     /**
@@ -143,14 +133,18 @@ module.exports = {
      */
     function getJSXElement(statement) {
       if (!statement) return null
-      // 三項演算子の場合、直接JSXElementが渡される
-      if (statement.type === 'JSXElement') {
-        return statement
+      switch (statement.type) {
+        case 'JSXElement':
+          // 三項演算子の場合、直接JSXElementが渡される
+          return statement
+        case 'ReturnStatement':
+          if (statement.argument?.type === 'JSXElement') {
+            return statement.argument
+          }
+          return null
+        default:
+          return null
       }
-      if (statement.type === 'ReturnStatement' && statement.argument?.type === 'JSXElement') {
-        return statement.argument
-      }
-      return null
     }
 
     /**

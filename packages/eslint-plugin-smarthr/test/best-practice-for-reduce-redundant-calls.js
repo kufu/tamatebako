@@ -94,6 +94,42 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // JSX: selfClosing、spread attributesの内容が異なる
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Component {...propsA} />
+          } else {
+            return <Component {...propsB} />
+          }
+        }
+      `,
+    },
+    // JSX: selfClosing、spreadがある/ない
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Component name="test" />
+          } else {
+            return <Component {...props} />
+          }
+        }
+      `,
+    },
+    // JSX: selfClosing、spread + 通常属性でspreadが異なる
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Component {...propsA} name="test" />
+          } else {
+            return <Component {...propsB} name="test" />
+          }
+        }
+      `,
+    },
     // JSX: React.Fragment（同じ属性、異なる子要素）
     {
       code: `

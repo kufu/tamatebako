@@ -75,20 +75,13 @@ module.exports = {
         const firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
 
         for (let i = 1; i < jsxElements.length; i++) {
+          // Spreadがある場合は完全一致のみ許可、片方だけSpreadがある場合は除外
           if (
             jsxElements[i].openingElement.selfClosing !== firstSelfClosing ||
-            getJSXElementName(jsxElements[i]) !== firstComponentName
+            getJSXElementName(jsxElements[i]) !== firstComponentName ||
+            !jsxElements[i].openingElement.attributes.some((a) => a.type === 'JSXSpreadAttribute') ||
+            sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag
           ) {
-            return
-          }
-
-          // Spreadがある場合は完全一致のみ許可
-          if (jsxElements[i].openingElement.attributes.some((a) => a.type === 'JSXSpreadAttribute')) {
-            if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
-              return
-            }
-          } else {
-            // 片方だけSpreadがある場合は差分2以上として除外
             return
           }
         }

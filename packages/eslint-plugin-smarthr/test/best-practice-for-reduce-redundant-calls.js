@@ -423,12 +423,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
-    // JSX: ネストした三項演算子、selfClosing、属性が異なる
-    {
-      code: `
-        const element = isAdmin ? <UserCard role="admin" /> : isModerator ? <UserCard role="moderator" /> : <UserCard role="user" />
-      `,
-    },
   ],
   invalid: [
     // ========================================
@@ -1096,6 +1090,66 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateJSXElement',
           data: { componentName: 'Layout', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: ネストした三項演算子、selfClosing、属性の差分が1つ
+    {
+      code: `
+        const element = isAdmin ? <UserCard role="admin" /> : isModerator ? <UserCard role="moderator" /> : <UserCard role="user" />
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: selfClosing、属性の差分が1つ、他の属性は同じ
+    {
+      code: `
+        function Component({ data }) {
+          if (isModerator) {
+            return <UserCard role="moderator" hoge={data} />
+          } else {
+            return <UserCard role="user" hoge={data} />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: selfClosing、boolean属性の差分が1つ
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Component hoge={true} fuga={false} />
+          } else {
+            return <Component hoge={true} fuga={false} piyo />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Component', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: 三項演算子、属性の差分が1つ
+    {
+      code: `
+        const element = isModerator ? <UserCard role="moderator" hoge={data} /> : <UserCard role="user" hoge={data} />
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
         },
       ],
     },

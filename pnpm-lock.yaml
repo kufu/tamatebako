@@ -182,8 +182,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.22.0
-        version: 6.22.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.22.1
+        version: 6.22.1(eslint@9.39.4(jiti@2.4.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -3856,6 +3856,11 @@ packages:
     peerDependencies:
       eslint: ^9
 
+  eslint-plugin-smarthr@6.22.1:
+    resolution: {integrity: sha512-fegDh4SJ0wpS4Wz2ftHT09yVg6jWkjUWP7xXcD0zLcqkYUjQPI/En32gJFiwWIBzApc2YrzCEN0rHgoaX2nbjg==}
+    peerDependencies:
+      eslint: ^9
+
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
     engines: {node: '>=8.0.0'}
@@ -4013,9 +4018,6 @@ packages:
 
   flat-cache@6.1.22:
     resolution: {integrity: sha512-N2dnzVJIphnNsjHcrxGW7DePckJ6haPrSFqpsBUhHYgwtKGVq4JrBGielEGD2fCVnsGm1zlBVZ8wGhkyuetgug==}
-
-  flatted@3.3.3:
-    resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
@@ -7962,7 +7964,7 @@ snapshots:
 
   '@jest/pattern@30.4.0':
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       jest-regex-util: 30.4.0
 
   '@jest/reporters@30.4.1':
@@ -8063,7 +8065,7 @@ snapshots:
       '@jest/schemas': 30.4.1
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -10376,6 +10378,11 @@ snapshots:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
+  eslint-plugin-smarthr@6.22.1(eslint@9.39.4(jiti@2.4.2)):
+    dependencies:
+      eslint: 9.39.4(jiti@2.4.2)
+      json5: 2.2.3
+
   eslint-scope@5.1.1:
     dependencies:
       esrecurse: 4.3.0
@@ -10563,7 +10570,7 @@ snapshots:
 
   flat-cache@4.0.1:
     dependencies:
-      flatted: 3.3.3
+      flatted: 3.4.2
       keyv: 4.5.4
 
   flat-cache@6.1.22:
@@ -10571,8 +10578,6 @@ snapshots:
       cacheable: 2.3.4
       flatted: 3.4.2
       hookified: 1.15.1
-
-  flatted@3.3.3: {}
 
   flatted@3.4.2: {}
 
@@ -11410,7 +11415,7 @@ snapshots:
   jest-haste-map@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -11596,7 +11601,7 @@ snapshots:
   jest-util@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -11630,7 +11635,7 @@ snapshots:
 
   jest-worker@30.4.1:
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       '@ungap/structured-clone': 1.3.0
       jest-util: 30.4.1
       merge-stream: 2.0.0

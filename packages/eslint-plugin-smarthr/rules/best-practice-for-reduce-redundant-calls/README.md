@@ -106,22 +106,40 @@ const result = isAdmin ? notify('admin') : isModerator ? notify('moderator') : n
 ### パターン4: JSX/TSX
 
 **子要素なし（セルフクロージングタグ）の場合:**
-同じコンポーネント名なら、属性が異なっても検出されます。
+同じコンポーネント名で、属性の差分が**1つだけ**の場合に検出されます。
 
 ```jsx
-// 子要素なし、属性が異なる（検出される）
+// 属性の差分が1つ（role のみ異なる）→ 検出される
 function Component() {
-  if (isAdmin) {
-    return <UserCard name="Admin" role="admin" />
+  if (isModerator) {
+    return <UserCard role="moderator" />
   } else {
-    return <UserCard name="User" role="user" />
+    return <UserCard role="user" />
+  }
+}
+
+// 属性の差分が1つ（role のみ異なる、他は同じ）→ 検出される
+function Component({ data }) {
+  if (isModerator) {
+    return <UserCard role="moderator" hoge={data} />
+  } else {
+    return <UserCard role="user" hoge={data} />
+  }
+}
+
+// boolean属性の差分が1つ → 検出される
+function Component() {
+  if (condition) {
+    return <Component hoge={true} fuga={false} />
+  } else {
+    return <Component hoge={true} fuga={false} piyo />
   }
 }
 
 // 三項演算子
-const element = isAdmin
-  ? <UserCard name="Admin" role="admin" />
-  : <UserCard name="User" role="user" />
+const element = isModerator
+  ? <UserCard role="moderator" hoge={data} />
+  : <UserCard role="user" hoge={data} />
 ```
 
 **子要素あり の場合:**
@@ -251,6 +269,28 @@ if (condition) {
   func(a)
 } else {
   func(b)
+}
+```
+
+### JSX: 子要素なし、属性の差分が2つ以上の場合
+
+```jsx
+// 属性の差分が2つ以上（name と role が異なる）→ 意図的に分けていると判断
+function Component() {
+  if (isAdmin) {
+    return <UserCard name="Admin" role="admin" />
+  } else {
+    return <UserCard name="User" role="user" />
+  }
+}
+
+// FormattedMessage（id と defaultMessage が異なる = 差分2つ）
+function Component({ searchKeyword }) {
+  return searchKeyword === '' ? (
+    <FormattedMessage id="userRoles/addDialog/noUser" defaultMessage="追加できるアカウントがありません" />
+  ) : (
+    <FormattedMessage id="userRoles/addDialog/noResult" defaultMessage="該当するアカウントがありません" />
+  )
 }
 ```
 
@@ -451,10 +491,10 @@ return (
 
 - メソッドチェーンは完全一致で検出します。例えば、`api.post('/endpoint1').send(dataA)` と `api.post('/endpoint2').send(dataB)` は検出されません（エンドポイントが異なるため）。
 - **JSXの検出条件:**
-  - **子要素なし（self-closing）の場合:** 同じコンポーネント名なら、属性が異なっても検出します。
+  - **子要素なし（self-closing）の場合:** 同じコンポーネント名で、属性の差分が1つだけの場合に検出します。差分が2つ以上の場合は、意図的に分けていると判断して検出しません。
   - **子要素ありの場合:** 同じコンポーネント名、同じ属性（値を含む）で、子要素が異なる場合に検出します。
   - **React.FragmentとFragmentは除外されます。** これらは単なるグループ化のためのものなので、検出対象外です。
-- JSXのspread attributes（`{...props}`）も含めて全属性を比較します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）は検出されません。
+- JSXのspread attributes（`{...props}`）がある場合は、完全一致のみ検出します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）や、片方だけspreadがある場合は検出されません。
 - **if文/switch文のearly returnパターン:** すべてのブランチが`return`で終わっている場合のみ、次のステートメントも検出対象に含まれます。`break`を使う場合は含まれません。
 - **switch文のfall-through:** 空のcaseは次のcaseにfall-throughし、最初に見つかった処理を実行するものとして扱います。
 - **switch文のdefaultケース:** defaultケースは最後のcaseなので、breakがなくても許容されます。

@@ -67,11 +67,45 @@ module.exports = {
       }
 
       const firstSelfClosing = jsxElements[0].openingElement.selfClosing
-      let firstOpeningTag = undefined
+      const firstAttrs = jsxElements[0].openingElement.attributes
 
-      // 1つのループで全チェック（早期終了可能）
+      // Spread attributesがある場合は厳密比較のみ
+      const hasSpread = firstAttrs.some((a) => a.type === 'JSXSpreadAttribute')
+      if (hasSpread) {
+        const firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
+
+        for (let i = 1; i < jsxElements.length; i++) {
+          // Spreadがある場合は完全一致のみ許可、片方だけSpreadがある場合は除外
+          if (
+            jsxElements[i].openingElement.selfClosing !== firstSelfClosing ||
+            getJSXElementName(jsxElements[i]) !== firstComponentName ||
+            !jsxElements[i].openingElement.attributes.some((a) => a.type === 'JSXSpreadAttribute') ||
+            sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag
+          ) {
+            return
+          }
+        }
+
+        context.report({
+          node,
+          messageId: 'consolidateJSXElement',
+          data: { componentName: firstComponentName },
+        })
+        return
+      }
+
+      // 最初の要素の属性Mapを作成（1回のみ）
+      const firstAttrMap = new Map()
+      for (const attr of firstAttrs) {
+        if (attr.type === 'JSXAttribute') {
+          const name = attr.name.name
+          const value = attr.value ? sourceCode.getText(attr.value) : 'true'
+          firstAttrMap.set(name, value)
+        }
+      }
+
+      // 各要素と比較
       for (let i = 1; i < jsxElements.length; i++) {
-        // selfClosingとコンポーネント名をチェック
         if (
           jsxElements[i].openingElement.selfClosing !== firstSelfClosing ||
           getJSXElementName(jsxElements[i]) !== firstComponentName
@@ -79,14 +113,40 @@ module.exports = {
           return
         }
 
-        // selfClosingでない場合は開始タグ全体を比較（属性含む）
-        if (!firstSelfClosing) {
-          if (firstOpeningTag === undefined) {
-            firstOpeningTag = sourceCode.getText(jsxElements[0].openingElement)
-          }
+        const currentAttrs = jsxElements[i].openingElement.attributes
 
-          if (sourceCode.getText(jsxElements[i].openingElement) !== firstOpeningTag) {
-            return
+        // Spreadがある場合は除外
+        if (currentAttrs.some((a) => a.type === 'JSXSpreadAttribute')) {
+          return
+        }
+
+        // 差分カウント（2以上で早期リターン）
+        let diffCount = 0
+        const checkedKeys = new Set()
+
+        // 現在の要素の属性を走査
+        for (const attr of currentAttrs) {
+          if (attr.type === 'JSXAttribute') {
+            const name = attr.name.name
+            const value = attr.value ? sourceCode.getText(attr.value) : 'true'
+            checkedKeys.add(name)
+
+            if (!firstAttrMap.has(name) || firstAttrMap.get(name) !== value) {
+              diffCount++
+              if (diffCount >= 2) {
+                return // 差分2以上 → 意図的に分けている
+              }
+            }
+          }
+        }
+
+        // 最初の要素にしかない属性もカウント
+        for (const key of firstAttrMap.keys()) {
+          if (!checkedKeys.has(key)) {
+            diffCount++
+            if (diffCount >= 2) {
+              return
+            }
           }
         }
       }

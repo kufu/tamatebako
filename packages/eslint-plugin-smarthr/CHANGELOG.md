@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.22.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.0...eslint-plugin-smarthr-v6.22.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* best-practice-for-reduce-redundant-callsでJSX属性の差分数に基づいて検出するように改善 ([#1446](https://github.com/kufu/tamatebako/issues/1446)) ([b74f734](https://github.com/kufu/tamatebako/commit/b74f734dd1315f8bf6cd2ccab5f21f0571326c74))
+
 ## [6.22.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.2...eslint-plugin-smarthr-v6.22.0) (2026-07-02)
 
 

@@ -97,8 +97,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(eslint@9.39.4(jiti@2.4.2))
       eslint-plugin-smarthr:
-        specifier: 6.22.0
-        version: 6.22.0(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.22.1
+        version: 6.22.1(eslint@9.39.4(jiti@2.4.2))
       globals:
         specifier: ^17.6.0
         version: 17.6.0
@@ -3853,6 +3853,11 @@ packages:
 
   eslint-plugin-smarthr@6.22.0:
     resolution: {integrity: sha512-P+4K8vXJAhHBoPQ3NdDXVJJklHRxvFxa/3yS7GWlal3F/aA37GaKERhxbei2OOpe6ErK3dO7TLLFXdb0V2xRAA==}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@6.22.1:
+    resolution: {integrity: sha512-fegDh4SJ0wpS4Wz2ftHT09yVg6jWkjUWP7xXcD0zLcqkYUjQPI/En32gJFiwWIBzApc2YrzCEN0rHgoaX2nbjg==}
     peerDependencies:
       eslint: ^9
 
@@ -7962,7 +7967,7 @@ snapshots:
 
   '@jest/pattern@30.4.0':
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       jest-regex-util: 30.4.0
 
   '@jest/reporters@30.4.1':
@@ -8063,7 +8068,7 @@ snapshots:
       '@jest/schemas': 30.4.1
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -10376,6 +10381,11 @@ snapshots:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3
 
+  eslint-plugin-smarthr@6.22.1(eslint@9.39.4(jiti@2.4.2)):
+    dependencies:
+      eslint: 9.39.4(jiti@2.4.2)
+      json5: 2.2.3
+
   eslint-scope@5.1.1:
     dependencies:
       esrecurse: 4.3.0
@@ -11410,7 +11420,7 @@ snapshots:
   jest-haste-map@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -11596,7 +11606,7 @@ snapshots:
   jest-util@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -11630,7 +11640,7 @@ snapshots:
 
   jest-worker@30.4.1:
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       '@ungap/structured-clone': 1.3.0
       jest-util: 30.4.1
       merge-stream: 2.0.0

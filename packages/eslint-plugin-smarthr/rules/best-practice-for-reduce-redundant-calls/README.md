@@ -106,7 +106,7 @@ const result = isAdmin ? notify('admin') : isModerator ? notify('moderator') : n
 ### パターン4: JSX/TSX
 
 **子要素なし（セルフクロージングタグ）の場合:**
-同じコンポーネント名で、属性の差分が**1つだけ**の場合に検出されます。
+同じコンポーネント名で、属性の差分が**1つ以下**の場合に検出されます。
 
 ```jsx
 // 属性の差分が1つ（role のみ異なる）→ 検出される
@@ -136,6 +136,15 @@ function Component() {
   }
 }
 
+// 属性が完全一致 → 検出される
+function Component() {
+  if (condition) {
+    return <UserCard role="user" />
+  } else {
+    return <UserCard role="user" />
+  }
+}
+
 // 三項演算子
 const element = isModerator
   ? <UserCard role="moderator" hoge={data} />
@@ -143,15 +152,33 @@ const element = isModerator
 ```
 
 **子要素あり の場合:**
-同じコンポーネント名、同じ属性で、子要素が異なる場合に検出されます。
+同じコンポーネント名で、属性の差分が**1つ以下**の場合に検出されます（子要素が同じでも異なっていても検出対象）。
 
 ```jsx
-// 同じコンポーネント、同じ属性、異なる子要素
+// 同じコンポーネント、同じ属性、異なる子要素 → 検出される
 function Component() {
   if (isAdmin) {
     return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
   } else {
     return <Hoge name="Admin"><Piyo>{children}</Piyo></Hoge>
+  }
+}
+
+// 属性の差分が1つ、異なる子要素 → 検出される
+function Component() {
+  if (isAdmin) {
+    return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+  } else {
+    return <Hoge name="User"><Piyo>{children}</Piyo></Hoge>
+  }
+}
+
+// 同じ属性、同じ子要素 → 検出される
+function Component() {
+  if (condition) {
+    return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
+  } else {
+    return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
   }
 }
 
@@ -294,10 +321,10 @@ function Component({ searchKeyword }) {
 }
 ```
 
-### JSX: 子要素あり、属性が異なる場合
+### JSX: 子要素あり、属性の差分が2つ以上の場合
 
 ```jsx
-// 子要素がある場合、属性が異なれば許容される
+// 子要素がある場合でも、属性の差分が2つ以上なら許容される
 if (isAdmin) {
   return <UserCard name="Admin" role="admin"><div>Admin</div></UserCard>
 } else {
@@ -469,9 +496,24 @@ const roleMap = {
 sendNotification(roleMap[role] || 'user', user)
 ```
 
-### 方法3: JSXの子要素を条件分岐にする
+### 方法3: JSXの属性や子要素を条件分岐にする
 
 ```jsx
+// Before（属性差分が0または1の場合）
+if (isAdmin) {
+  return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+} else {
+  return <Hoge name="User"><Piyo>{children}</Piyo></Hoge>
+}
+
+// After（属性を条件分岐）
+return (
+  <Hoge name={isAdmin ? "Admin" : "User"}>
+    {isAdmin ? <Fuga>{children}</Fuga> : <Piyo>{children}</Piyo>}
+  </Hoge>
+)
+
+// または、属性が同じ場合は子要素のみ条件分岐
 // Before
 if (isAdmin) {
   return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
@@ -491,8 +533,8 @@ return (
 
 - メソッドチェーンは完全一致で検出します。例えば、`api.post('/endpoint1').send(dataA)` と `api.post('/endpoint2').send(dataB)` は検出されません（エンドポイントが異なるため）。
 - **JSXの検出条件:**
-  - **子要素なし（self-closing）の場合:** 同じコンポーネント名で、属性の差分が1つだけの場合に検出します。差分が2つ以上の場合は、意図的に分けていると判断して検出しません。
-  - **子要素ありの場合:** 同じコンポーネント名、同じ属性（値を含む）で、子要素が異なる場合に検出します。
+  - **子要素なし（self-closing）の場合:** 同じコンポーネント名で、属性の差分が1つ以下（0または1）の場合に検出します。差分が2つ以上の場合は、意図的に分けていると判断して検出しません。
+  - **子要素ありの場合:** 同じコンポーネント名で、属性の差分が1つ以下（0または1）の場合に検出します。子要素が同じか異なるかは関係ありません。差分が2つ以上の場合は、意図的に分けていると判断して検出しません。
   - **React.FragmentとFragmentは除外されます。** これらは単なるグループ化のためのものなので、検出対象外です。
 - JSXのspread attributes（`{...props}`）がある場合は、完全一致のみ検出します。spreadの変数名が異なる場合（`{...propsA}` vs `{...propsB}`）や、片方だけspreadがある場合は検出されません。
 - **if文/switch文のearly returnパターン:** すべてのブランチが`return`で終わっている場合のみ、次のステートメントも検出対象に含まれます。`break`を使う場合は含まれません。

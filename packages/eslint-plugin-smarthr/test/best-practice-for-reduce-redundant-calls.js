@@ -1189,6 +1189,78 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // JSX: 子要素あり、属性の差分が1つ、異なる子要素
+    {
+      code: `
+        function Component() {
+          if (isAdmin) {
+            return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+          } else {
+            return <Hoge name="User"><Piyo>{children}</Piyo></Hoge>
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Hoge', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: 子要素あり、属性が完全一致、同じ子要素
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
+          } else {
+            return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'Hoge', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: selfClosing、属性が完全一致
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <UserCard role="user" />
+          } else {
+            return <UserCard role="user" />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // JSX: selfClosing、属性が完全一致（複数属性）
+    {
+      code: `
+        function Component() {
+          if (condition) {
+            return <UserCard role="user" name="test" />
+          } else {
+            return <UserCard role="user" name="test" />
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateJSXElement',
+          data: { componentName: 'UserCard', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
     // switch: case内にconsecutive if + switch後に異なる値を返すreturn
     // case内のconsecutive ifパターンは検出されるべき（hanicaの実際のパターン）
     {

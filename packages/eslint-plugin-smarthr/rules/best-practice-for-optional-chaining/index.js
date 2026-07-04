@@ -1,9 +1,9 @@
 const SCHEMA = []
 
-const REPLACABLE_CALLEE = `[consequent.expression.callee.type='Identifier']`
-const WITHOUT_BODY_IF_ID = `[test.type='Identifier']${REPLACABLE_CALLEE}`
-const WITH_BODY_IF_ID = WITHOUT_BODY_IF_ID.replace(REPLACABLE_CALLEE, "[consequent.body.length=1][consequent.body.0.expression.callee.type='Identifier']")
-const SELECTOR = `IfStatement[alternate=null]:not([parent.type='IfStatement']):matches(${WITHOUT_BODY_IF_ID},${WITHOUT_BODY_IF_ID.replace(/'Identifier'/g, "'MemberExpression'")},${WITH_BODY_IF_ID},${WITH_BODY_IF_ID.replace(/'Identifier'/g, "'MemberExpression'")})`
+// IfStatement[alternate=null]: else句がないif文
+// :not([parent.type='IfStatement']): else ifではない
+// test.type: 条件部分がIdentifierまたはMemberExpression
+const SELECTOR = `IfStatement[alternate=null]:not([parent.type='IfStatement'])[test.type=/^(Identifier|MemberExpression)$/]`
 
 
 /**
@@ -18,18 +18,91 @@ module.exports = {
   create(context) {
     return {
       [SELECTOR]: (node) => {
-        const expression = node.consequent.expression || node.consequent.body[0].expression
-        const calleName = context.sourceCode.getText(expression.callee)
+        // consequentからexpressionを取得
+        let expression
+        if (node.consequent.type === 'BlockStatement') {
+          // if (x) { func() } の形式
+          if (node.consequent.body.length !== 1) {
+            return // 複数のステートメントがある場合は対象外
+          }
+          const stmt = node.consequent.body[0]
+          if (stmt.type === 'ReturnStatement') {
+            return // return文がある場合は対象外
+          }
+          if (stmt.type !== 'ExpressionStatement') {
+            return
+          }
+          expression = stmt.expression
+        } else if (node.consequent.type === 'ExpressionStatement') {
+          // if (x) func() の形式
+          expression = node.consequent.expression
+        } else {
+          return
+        }
 
-        if (context.sourceCode.getText(node.test) === calleName) {
+        // ChainExpressionの場合、その中のexpressionを取得
+        if (expression.type === 'ChainExpression') {
+          expression = expression.expression
+        }
+
+        // CallExpressionであることを確認
+        if (expression.type !== 'CallExpression') {
+          return
+        }
+
+        const testText = context.sourceCode.getText(node.test)
+
+        // expressionのテキストを取得
+        // node全体から抽出する
+        const fullText = context.sourceCode.getText(node)
+        // if (test) { expression } または if (test) expression の形式
+        // if (test) の後ろから expression を抽出
+        let expressionText
+        if (node.consequent.type === 'BlockStatement') {
+          // if (test) { expression } の形式
+          // { と } を除いた中身を取得
+          const bodyText = context.sourceCode.getText(node.consequent)
+          expressionText = bodyText.slice(1, -1).trim() // { } を削除
+        } else {
+          // if (test) expression の形式
+          expressionText = context.sourceCode.getText(node.consequent)
+        }
+
+        // calleeのテキストを取得
+        let calleName
+        if (expression.callee.type === 'ChainExpression') {
+          // optional chainingが含まれている場合
+          // ChainExpression全体ではなく、その中のexpressionのテキストを取得する必要はない
+          // 代わりに、expressionTextを使ってパターンマッチする
+          calleName = null
+        } else {
+          calleName = context.sourceCode.getText(expression.callee)
+        }
+
+        // パターン1: 条件部分と実行部分のcalleeが完全一致
+        if (calleName && testText === calleName) {
           context.report({
             node,
             message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
             fix: (fixer) => fixer.replaceText(
               node,
-              context.sourceCode.getText(expression).replace(new RegExp(`^${calleName}\\(`), `${calleName}\?\.(`),
+              expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), `${calleName}\?\.(`),
             ),
+          })
+          return
+        }
+
+        // パターン2: 条件部分が実行部分の中で既に `?.` 付きで使われている
+        // 例: if (A.B) { A.B?.C.d() } → A.B?.C.d()
+        const escapedTest = testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const pattern = new RegExp(`^${escapedTest}\\?\\.`)
+        if (pattern.test(expressionText)) {
+          context.report({
+            node,
+            message: `optional chaining(xxx?.yyyy記法)を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+            fix: (fixer) => fixer.replaceText(node, expressionText),
           })
         }
       },

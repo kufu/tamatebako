@@ -22,21 +22,21 @@ if (obj.action) {
 }
 ```
 
-### パターン2: 既にoptional chainingが使われている場合
+### パターン2: 条件部分が実行部分の先頭にマッチする場合
 
 ```jsx
-// NG: 既に?.が使われているのにif文で囲んでいる
-if (obj.hoge) {
-  obj.hoge?.fuga.action()
+// NG: A.Bのチェック後、A.B.C.d()を実行
+if (A.B) {
+  A.B.C.d()
 }
 
-// NG: A.Bのチェック後、A.B?.C.d()を実行
-if (A.B) {
-  A.B?.C.d()
+// NG: obj.hogeのチェック後、obj.hoge.fuga.action()を実行
+if (obj.hoge) {
+  obj.hoge.fuga.action()
 }
 ```
 
-このパターンでは、`obj.hoge?.fuga.action()` のように既にoptional chainingが使われているため、if文は不要です。
+このパターンでは、条件部分（`A.B`）が実行部分（`A.B.C.d()`）の先頭にマッチするため、`A.B?.C.d()` のようにoptional chainingを使うことができます。
 
 ただし、以下の場合は許容されます:
 
@@ -112,14 +112,14 @@ if (obj.action) {
 ```
 
 ```jsx
-// 既にoptional chainingが使われているのにif文で囲んでいる
-if (obj.hoge) {
-  obj.hoge?.fuga.action()
+// 条件部分が実行部分の先頭にマッチ
+if (A.B) {
+  A.B.C.d()
 }
 ```
 
 ```jsx
-if (A.B) A.B?.C.d()
+if (obj.hoge) obj.hoge.fuga.action()
 ```
 
 ## ✅ Correct
@@ -133,12 +133,12 @@ obj.action?.(hoge, fuga)
 ```
 
 ```jsx
-// optional chainingだけで済む
-obj.hoge?.fuga.action()
+// 条件部分の後にoptional chainingを使う
+A.B?.C.d()
 ```
 
 ```jsx
-A.B?.C.d()
+obj.hoge?.fuga.action()
 ```
 
 ```jsx

@@ -93,16 +93,17 @@ module.exports = {
           return
         }
 
-        // パターン2: 条件部分が実行部分の中で既に `?.` 付きで使われている
-        // 例: if (A.B) { A.B?.C.d() } → A.B?.C.d()
+        // パターン2: 条件部分が実行部分の先頭にマッチする場合
+        // 例: if (A.B) { A.B.C.d() } → A.B?.C.d()
         const escapedTest = testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        const pattern = new RegExp(`^${escapedTest}\\?\\.`)
+        const pattern = new RegExp(`^${escapedTest}\\.`)
         if (pattern.test(expressionText)) {
+          const fixedExpression = expressionText.replace(pattern, `${testText}?.`)
           context.report({
             node,
             message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-            fix: (fixer) => fixer.replaceText(node, expressionText),
+            fix: (fixer) => fixer.replaceText(node, fixedExpression),
           })
         }
       },

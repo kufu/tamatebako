@@ -22,13 +22,11 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     { code: `if (any) { action() }` },
     { code: `if (action && any) { action() }` },
     { code: `if (action) { action() } else { any() }` },
-    { code: `if (obj.hoge) obj.hoge.fuga.action()` },
     { code: `() => { if (action) return action() }` },
     { code: `if (any) {} else if (action) { action() }` },
-    // optional chainingが使われているが、条件部分とマッチしない
-    { code: `if (obj.hoge) { obj.fuga?.action() }` },
-    // 条件部分が実行部分の途中にあるが、先頭ではない
-    { code: `if (obj.hoge) { other.obj.hoge?.action() }` },
+    // 条件部分が実行部分とマッチしない
+    { code: `if (obj.hoge) { obj.fuga.action() }` },
+    { code: `if (obj.hoge) { other.obj.hoge.action() }` },
   ],
   invalid: [
     { code: `if (action) action()`, errors: [{ message: ERROR }], output: 'action?.()' },
@@ -49,11 +47,10 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
           c
         )
     ` },
-    // 途中でoptional chainingが使われている場合
-    { code: `if (obj.hoge) { obj.hoge?.fuga.action() }`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
-    { code: `if (A.B) { A.B?.C.d() }`, errors: [{ message: ERROR }], output: 'A.B?.C.d()' },
-    { code: `if (obj.hoge) obj.hoge?.fuga.action()`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
-    // プロパティアクセスが続く場合
-    { code: `if (obj.hoge.fuga) { obj.hoge.fuga?.action() }`, errors: [{ message: ERROR }], output: 'obj.hoge.fuga?.action()' },
+    // 条件部分が実行部分の先頭にマッチする場合
+    { code: `if (A.B) { A.B.C.d() }`, errors: [{ message: ERROR }], output: 'A.B?.C.d()' },
+    { code: `if (obj.hoge) { obj.hoge.fuga.action() }`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
+    { code: `if (obj.hoge) obj.hoge.fuga.action()`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
+    { code: `if (obj.hoge.fuga) { obj.hoge.fuga.method() }`, errors: [{ message: ERROR }], output: 'obj.hoge.fuga?.method()' },
   ],
 })

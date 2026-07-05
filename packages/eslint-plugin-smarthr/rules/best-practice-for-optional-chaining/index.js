@@ -18,93 +18,81 @@ module.exports = {
   create(context) {
     return {
       [SELECTOR]: (node) => {
-        // consequentからexpressionを取得
+        // consequentからexpressionとexpressionTextを取得
         let expression
-        if (node.consequent.type === 'BlockStatement') {
-          // if (x) { func() } の形式
-          if (node.consequent.body.length !== 1) {
-            return // 複数のステートメントがある場合は対象外
+        let expressionText
+
+        switch (node.consequent.type) {
+          case 'BlockStatement': {
+            // if (x) { func() } の形式
+            if (
+              // 複数のステートメントがある場合は対象外
+              node.consequent.body.length !== 1 ||
+              // ExpressionStatement以外は対象外
+              node.consequent.body[0].type !== 'ExpressionStatement'
+            ) {
+              return
+            }
+
+            const bodyText = context.sourceCode.getText(node.consequent)
+            expressionText = bodyText.slice(1, -1).trim() // { } を削除
+            expression = node.consequent.body[0].expression
+
+            break
           }
-          const stmt = node.consequent.body[0]
-          if (stmt.type === 'ReturnStatement') {
-            return // return文がある場合は対象外
-          }
-          if (stmt.type !== 'ExpressionStatement') {
+          case 'ExpressionStatement':
+            // if (x) func() の形式
+            expressionText = context.sourceCode.getText(node.consequent)
+            expression = node.consequent.expression
+            break
+          default:
             return
-          }
-          expression = stmt.expression
-        } else if (node.consequent.type === 'ExpressionStatement') {
-          // if (x) func() の形式
-          expression = node.consequent.expression
-        } else {
-          return
         }
 
-        // ChainExpressionの場合、その中のexpressionを取得
-        if (expression.type === 'ChainExpression') {
-          expression = expression.expression
-        }
-
-        // CallExpressionであることを確認
-        if (expression.type !== 'CallExpression') {
-          return
+        switch (expression.type) {
+          case 'ChainExpression':
+            // ChainExpressionの場合、その中のexpressionを取得
+            expression = expression.expression
+            break
+          case 'CallExpression':
+            break
+          default:
+            return
         }
 
         const testText = context.sourceCode.getText(node.test)
 
-        // expressionのテキストを取得
-        // node全体から抽出する
-        const fullText = context.sourceCode.getText(node)
-        // if (test) { expression } または if (test) expression の形式
-        // if (test) の後ろから expression を抽出
-        let expressionText
-        if (node.consequent.type === 'BlockStatement') {
-          // if (test) { expression } の形式
-          // { と } を除いた中身を取得
-          const bodyText = context.sourceCode.getText(node.consequent)
-          expressionText = bodyText.slice(1, -1).trim() // { } を削除
-        } else {
-          // if (test) expression の形式
-          expressionText = context.sourceCode.getText(node.consequent)
-        }
-
-        // calleeのテキストを取得
-        let calleName
-        if (expression.callee.type === 'ChainExpression') {
-          // optional chainingが含まれている場合
-          // ChainExpression全体ではなく、その中のexpressionのテキストを取得する必要はない
-          // 代わりに、expressionTextを使ってパターンマッチする
-          calleName = null
-        } else {
-          calleName = context.sourceCode.getText(expression.callee)
-        }
-
-        // パターン1: 条件部分と実行部分のcalleeが完全一致
-        if (calleName && testText === calleName) {
-          context.report({
-            node,
-            message: `optional chaining(xxx?.yyyy記法)を利用してください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-            fix: (fixer) => fixer.replaceText(
-              node,
-              expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), `${calleName}\?\.(`),
-            ),
-          })
-          return
-        }
-
-        // パターン2: 条件部分が実行部分の先頭にマッチする場合
+        // 条件部分が実行部分の先頭にマッチするパターン
         // 例: if (A.B) { A.B.C.d() } → A.B?.C.d()
-        const escapedTest = testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        const pattern = new RegExp(`^${escapedTest}\\.`)
+        const pattern = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.`)
+
         if (pattern.test(expressionText)) {
-          const fixedExpression = expressionText.replace(pattern, `${testText}?.`)
           context.report({
             node,
             message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-            fix: (fixer) => fixer.replaceText(node, fixedExpression),
+            fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern, `${testText}?.`)),
           })
+        }
+        // calleeのテキストを取得
+        // optional chainingが含まれている場合
+        // ChainExpression全体ではなく、その中のexpressionのテキストを取得する必要はない
+        // 代わりに、expressionTextを使ってパターンマッチする
+        else if (expression.callee.type !== 'ChainExpression') {
+          const calleName = context.sourceCode.getText(expression.callee)
+
+          // 条件部分と実行部分のcalleeが完全一致のパターン
+          if (testText === calleName) {
+            context.report({
+              node,
+              message: `optional chaining(xxx?.yyyy記法)を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+              fix: (fixer) => fixer.replaceText(
+                node,
+                expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), `${calleName}\?\.(`),
+              ),
+            })
+          }
         }
       },
     }

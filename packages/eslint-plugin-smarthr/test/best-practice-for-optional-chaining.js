@@ -27,6 +27,19 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     // 条件部分が実行部分とマッチしない
     { code: `if (obj.hoge) { obj.fuga.action() }` },
     { code: `if (obj.hoge) { other.obj.hoge.action() }` },
+    // パターン2: 複数条件がある場合は検出しない
+    { code: `if (A.B && any) { A.B.C.d() }` },
+    { code: `if (A.B || any) { A.B.C.d() }` },
+    { code: `if (obj.hoge && condition) { obj.hoge.fuga.action() }` },
+    // 否定されている場合
+    { code: `if (!A.B) { A.B.C.d() }` },
+    { code: `if (!obj.hoge) { obj.hoge.fuga.action() }` },
+    // 条件部分が実行部分より長い場合
+    { code: `if (A.B.C) { A.B.d() }` },
+    { code: `if (obj.hoge.fuga) { obj.hoge.action() }` },
+    // 条件部分が実行部分の途中にある場合
+    { code: `if (B) { A.B.C.d() }` },
+    { code: `if (hoge) { obj.hoge.action() }` },
   ],
   invalid: [
     { code: `if (action) action()`, errors: [{ message: ERROR }], output: 'action?.()' },
@@ -52,5 +65,8 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     { code: `if (obj.hoge) { obj.hoge.fuga.action() }`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
     { code: `if (obj.hoge) obj.hoge.fuga.action()`, errors: [{ message: ERROR }], output: 'obj.hoge?.fuga.action()' },
     { code: `if (obj.hoge.fuga) { obj.hoge.fuga.method() }`, errors: [{ message: ERROR }], output: 'obj.hoge.fuga?.method()' },
+    // 深いネスト
+    { code: `if (a.b.c.d) { a.b.c.d.e.f() }`, errors: [{ message: ERROR }], output: 'a.b.c.d?.e.f()' },
+    { code: `if (obj.a.b.c) obj.a.b.c.d.e()`, errors: [{ message: ERROR }], output: 'obj.a.b.c?.d.e()' },
   ],
 })

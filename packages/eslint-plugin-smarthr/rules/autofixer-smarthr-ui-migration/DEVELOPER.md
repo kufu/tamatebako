@@ -66,10 +66,10 @@ autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[Y
 ## 参考にするファイル
 
 必ず以下のファイルを読んで、実装パターンを踏襲してください（最新のversionディレクトリを参照）：
-- rules/autofixer-smarthr-ui-migration/versions/v95-to-v96/REFERENCE.md（実装パターンの詳細説明）
-- rules/autofixer-smarthr-ui-migration/versions/v95-to-v96/index.js（実装例）
-- rules/autofixer-smarthr-ui-migration/versions/v95-to-v96/README.md（ユーザー向け移行ガイド）
-- rules/autofixer-smarthr-ui-migration/versions/v95-to-v96/test.js（テストケース）
+- rules/autofixer-smarthr-ui-migration/versions/v97-to-v98/REFERENCE.md（実装パターンの詳細説明）
+- rules/autofixer-smarthr-ui-migration/versions/v97-to-v98/index.js（実装例）
+- rules/autofixer-smarthr-ui-migration/versions/v97-to-v98/README.md（ユーザー向け移行ガイド）
+- rules/autofixer-smarthr-ui-migration/versions/v97-to-v98/test.js（テストケース）
 - test/autofixer-smarthr-ui-migration.js（メインテスト）
 - libs/common.js（rootPathの取得、tsconfig.jsonのpaths設定読み込み）
 
@@ -588,7 +588,7 @@ https://github.com/kufu/smarthr-ui/releases
 
 各versionディレクトリに`REFERENCE.md`があり、実装パターンや注意点が記載されています。
 
-**最新version:** [v94-to-v95/REFERENCE.md](./versions/v94-to-v95/REFERENCE.md)
+**最新version:** [v97-to-v98/REFERENCE.md](./versions/v97-to-v98/REFERENCE.md)
 
 このドキュメントには以下が含まれます：
 - ファイル構造と各セクションの説明

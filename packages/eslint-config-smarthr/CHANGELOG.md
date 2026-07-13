@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.9.1](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.9.0...eslint-config-smarthr-v14.9.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* update eslint-plugin-smarthr to v6.22.1 in eslint-config-smarthr ([#1448](https://github.com/kufu/tamatebako/issues/1448)) ([3996dd6](https://github.com/kufu/tamatebako/commit/3996dd619736e00f067f5a296218bd97be657d1e))
+
+## [14.9.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.8.2...eslint-config-smarthr-v14.9.0) (2026-07-02)
+
+
+### Features
+
+* eslint-plugin-smarthrをv6.22.0に更新してbest-practice-for-reduce-redundant-callsを導入 ([#1443](https://github.com/kufu/tamatebako/issues/1443)) ([db68985](https://github.com/kufu/tamatebako/commit/db689859de1c2582e3f670665c778e048f3d1336))
+
+## [14.8.2](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.8.1...eslint-config-smarthr-v14.8.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* eslint-config-smarthrのeslint-plugin-smarthrをv6.21.2に更新 ([#1431](https://github.com/kufu/tamatebako/issues/1431)) ([9382893](https://github.com/kufu/tamatebako/commit/93828931f5de888b72353ff493c2eaf09914d94d))
+
 ## [14.8.1](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.8.0...eslint-config-smarthr-v14.8.1) (2026-06-22)
 
 

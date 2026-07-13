@@ -18,11 +18,11 @@
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@commitlint/cli": "^21.1.0",
+    "@commitlint/config-conventional": "^21.1.0",
     "@types/jest": "^30.0.0",
     "eslint": "9.39.4",
-    "eslint-config-smarthr": "14.5.0",
+    "eslint-config-smarthr": "14.8.1",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
     "prettier": "^3.8.4",
@@ -32,5 +32,5 @@
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@11.6.0"
+  "packageManager": "pnpm@11.7.0"
 }

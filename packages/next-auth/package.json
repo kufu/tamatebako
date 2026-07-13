@@ -30,7 +30,7 @@
     "test": "__tests__"
   },
   "dependencies": {
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",

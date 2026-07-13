@@ -1,9 +1,9 @@
 const SCHEMA = []
 
-const REPLACABLE_CALLEE = `[consequent.expression.callee.type='Identifier']`
-const WITHOUT_BODY_IF_ID = `[test.type='Identifier']${REPLACABLE_CALLEE}`
-const WITH_BODY_IF_ID = WITHOUT_BODY_IF_ID.replace(REPLACABLE_CALLEE, "[consequent.body.length=1][consequent.body.0.expression.callee.type='Identifier']")
-const SELECTOR = `IfStatement[alternate=null]:not([parent.type='IfStatement']):matches(${WITHOUT_BODY_IF_ID},${WITHOUT_BODY_IF_ID.replace(/'Identifier'/g, "'MemberExpression'")},${WITH_BODY_IF_ID},${WITH_BODY_IF_ID.replace(/'Identifier'/g, "'MemberExpression'")})`
+// IfStatement[alternate=null]: else句がないif文
+// :not([parent.type='IfStatement']): else ifではない
+// test.type: 条件部分がIdentifierまたはMemberExpression
+const SELECTOR = `IfStatement[alternate=null]:not([parent.type='IfStatement'])[test.type=/^(Identifier|MemberExpression)$/]`
 
 
 /**
@@ -18,19 +18,110 @@ module.exports = {
   create(context) {
     return {
       [SELECTOR]: (node) => {
-        const expression = node.consequent.expression || node.consequent.body[0].expression
-        const calleName = context.sourceCode.getText(expression.callee)
+        // consequentからexpressionとexpressionTextを取得
+        let expression
+        let expressionText
 
-        if (context.sourceCode.getText(node.test) === calleName) {
+        switch (node.consequent.type) {
+          case 'BlockStatement': {
+            // if (x) { func() } の形式
+            if (
+              // 複数のステートメントがある場合は対象外
+              node.consequent.body.length !== 1 ||
+              // ExpressionStatement以外は対象外
+              node.consequent.body[0].type !== 'ExpressionStatement'
+            ) {
+              return
+            }
+
+            const bodyText = context.sourceCode.getText(node.consequent)
+            expressionText = bodyText.slice(1, -1).trim() // { } を削除
+            expression = node.consequent.body[0].expression
+
+            break
+          }
+          case 'ExpressionStatement':
+            // if (x) func() の形式
+            expressionText = context.sourceCode.getText(node.consequent)
+            expression = node.consequent.expression
+            break
+          default:
+            return
+        }
+
+        const testText = context.sourceCode.getText(node.test)
+
+        switch (expression.type) {
+          case 'ChainExpression':
+            // optional chainingを使っている場合、不要かどうかをチェック
+
+            // パターン1: if (action) { action?.() }
+            // testText?.( で始まる場合
+            const pattern1 = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?\\.\\\(`)
+            if (pattern1.test(expressionText)) {
+              const replacement = `${testText}(`.replace(/\$/g, '$$$$')
+              context.report({
+                node,
+                message: `条件文で既に存在チェックしているため、optional chainingは不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern1, replacement))
+              })
+              return
+            }
+
+            // パターン2: if (a.b) { a.b?.c() } または if (a.b) { a.b?.c }
+            // testText?\. で始まる場合
+            const pattern2 = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?\\.`)
+            if (pattern2.test(expressionText)) {
+              const replacement = `${testText}.`.replace(/\$/g, '$$$$')
+              context.report({
+                node,
+                message: `条件文で既に存在チェックしているため、optional chainingは不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern2, replacement))
+              })
+              return
+            }
+
+            return
+          case 'CallExpression':
+            break
+          default:
+            return
+        }
+
+        // 条件部分が実行部分の先頭にマッチするパターン
+        // 例: if (A.B) { A.B.C.d() } → A.B?.C.d()
+        const pattern = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.`)
+
+        if (pattern.test(expressionText)) {
+          // replace第2引数の$をエスケープ（$$は特殊文字として扱われるため）
+          const replacement = `${testText}?.`.replace(/\$/g, '$$$$')
           context.report({
             node,
             message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-            fix: (fixer) => fixer.replaceText(
-              node,
-              context.sourceCode.getText(expression).replace(new RegExp(`^${calleName}\\(`), `${calleName}\?\.(`),
-            ),
+            fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern, replacement)),
           })
+        }
+        // CallExpressionの場合のみcalleeにアクセス
+        else if (expression.type === 'CallExpression') {
+          const calleName = context.sourceCode.getText(expression.callee)
+
+          // 条件部分と実行部分のcalleeが完全一致のパターン
+          if (testText === calleName) {
+            // replace第2引数の$をエスケープ
+            const replacement = `${calleName}?.(`.replace(/\$/g, '$$$$')
+            context.report({
+              node,
+              message: `optional chaining(xxx?.yyyy記法)を利用してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+              fix: (fixer) => fixer.replaceText(
+                node,
+                expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), replacement),
+              ),
+            })
+          }
         }
       },
     }

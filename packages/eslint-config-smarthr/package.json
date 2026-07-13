@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-smarthr",
-  "version": "14.8.1",
+  "version": "14.9.1",
   "description": "A sharable ESLint config for SmartHR",
   "type": "module",
   "exports": {
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "eslint": "^9.0.0",
@@ -47,7 +47,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-smarthr": "6.21.0",
+    "eslint-plugin-smarthr": "6.22.1",
     "globals": "^17.7.0",
     "typescript-eslint": "^8.56.1"
   }

@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.22.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.0...eslint-plugin-smarthr-v6.22.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* best-practice-for-reduce-redundant-callsでJSX属性の差分数に基づいて検出するように改善 ([#1446](https://github.com/kufu/tamatebako/issues/1446)) ([b74f734](https://github.com/kufu/tamatebako/commit/b74f734dd1315f8bf6cd2ccab5f21f0571326c74))
+
+## [6.22.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.2...eslint-plugin-smarthr-v6.22.0) (2026-07-02)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration v95-to-v96, v96-to-v97 対応 ([#1442](https://github.com/kufu/tamatebako/issues/1442)) ([d70787b](https://github.com/kufu/tamatebako/commit/d70787bc6961b0f65b6cc78506fab92707ce3f90))
+* best-practice-for-reduce-redundant-calls ルールを追加 ([#1440](https://github.com/kufu/tamatebako/issues/1440)) ([0564d24](https://github.com/kufu/tamatebako/commit/0564d24fa5de3b9f812d23c7396411e064604234))
+* best-practice-for-unstable-dependenciesに正規表現パターンとカスタムメッセージを追加 ([#1424](https://github.com/kufu/tamatebako/issues/1424)) ([9ed3f1f](https://github.com/kufu/tamatebako/commit/9ed3f1fac878b7f0f37c5a1f3db1b66d30d507c9))
+
+## [6.21.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.1...eslint-plugin-smarthr-v6.21.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* require-i18n-translation-syncでsatisfies演算子に対応 ([#1415](https://github.com/kufu/tamatebako/issues/1415)) ([d0eb87a](https://github.com/kufu/tamatebako/commit/d0eb87a1616c63145499b8adc9fc20d5f6f8c5b9))
+
 ## [6.21.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.0...eslint-plugin-smarthr-v6.21.1) (2026-06-22)
 
 

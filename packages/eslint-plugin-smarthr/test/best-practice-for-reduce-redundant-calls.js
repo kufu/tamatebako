@@ -223,6 +223,45 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // switch: defaultなし（すべてのケースをカバーしていない）
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendNotification('admin', user)
+            break
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+    },
+    {
+      code: `
+        switch (type) {
+          case 'A':
+            api.post('/endpoint').send(dataA)
+            break
+          case 'B':
+            api.post('/endpoint').send(dataB)
+            break
+        }
+      `,
+    },
+    {
+      code: `
+        switch (role) {
+          case 'admin': {
+            sendNotification('admin', user)
+            break
+          }
+          case 'user': {
+            sendNotification('user', user)
+            break
+          }
+        }
+      `,
+    },
     // switch: defaultなし + switch後に関数が異なる
     {
       code: `
@@ -722,6 +761,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'user':
             sendNotification('user', user)
             break
+          default:
+            sendNotification('guest', user)
         }
       `,
       errors: [
@@ -772,25 +813,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
-    // メソッドチェーン
-    {
-      code: `
-        switch (type) {
-          case 'A':
-            api.post('/endpoint').send(dataA)
-            break
-          case 'B':
-            api.post('/endpoint').send(dataB)
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
     // メソッドチェーン: 3段階（if-else）
     {
       code: `
@@ -817,6 +839,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'B':
             api.post('/endpoint').retry(3).send(dataB)
             break
+          default:
+            api.post('/endpoint').retry(3).send(dataC)
         }
       `,
       errors: [
@@ -883,6 +907,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'C':
             api.post('/endpoint').send(dataC)
             break
+          default:
+            api.post('/endpoint').send(dataD)
         }
       `,
       errors: [
@@ -956,46 +982,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateFunctionCall',
           data: { functionName: 'func', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // defaultなし + caseが2つ以上（break使用）
-    {
-      code: `
-        switch (role) {
-          case 'admin':
-            sendNotification('admin', user)
-            break
-          case 'user':
-            sendNotification('user', user)
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateFunctionCall',
-          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // switch: 波括弧あり + break
-    {
-      code: `
-        switch (role) {
-          case 'admin': {
-            sendNotification('admin', user)
-            break
-          }
-          case 'user': {
-            sendNotification('user', user)
-            break
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateFunctionCall',
-          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
         },
       ],
     },

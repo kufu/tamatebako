@@ -446,6 +446,7 @@ module.exports = {
       // defaultがない場合、early returnパターンをチェック
       // すべてのcaseがreturnで終わっている場合のみ、次のreturn文を追加
       if (!hasDefault) {
+        let hasEarlyReturn = false
 
         if (allCasesReturn) {
           const parent = node.parent
@@ -461,12 +462,17 @@ module.exports = {
           }
 
           const nextStmt = parent.body[switchIndex + 1]
-          // 次のreturn文がない場合は検証対象外
-          if (nextStmt.type !== 'ReturnStatement') {
-            return
+          // 次のreturn文がある場合のみ、early returnパターンとして扱う
+          if (nextStmt.type === 'ReturnStatement') {
+            branches.push(nextStmt)
+            hasEarlyReturn = true
           }
+        }
 
-          branches.push(nextStmt)
+        // defaultがない（かつearly returnパターンでもない）場合は検証対象外
+        // すべてのケースをカバーしていないため
+        if (!hasEarlyReturn) {
+          return
         }
       }
 

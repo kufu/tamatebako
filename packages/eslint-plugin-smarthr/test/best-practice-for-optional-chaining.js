@@ -46,6 +46,9 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     // optional chainingが条件でカバーされていない範囲で使われている場合
     { code: `if (action) { action()?.bar() }` },
     { code: `if (obj.hoge) { obj.hoge.fuga?.action() }` },
+    // return文の場合は対象外（ExpressionStatementではないため）
+    { code: `() => { if (action) { return action?.() } }` },
+    { code: `function test() { if (obj.hoge) { return obj.hoge?.fuga.action() } }` },
   ],
   invalid: [
     { code: `if (action) action()`, errors: [{ message: ERROR_ADD }], output: 'action?.()' },

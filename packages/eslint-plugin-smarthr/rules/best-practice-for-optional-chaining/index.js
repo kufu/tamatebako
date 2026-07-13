@@ -51,9 +51,8 @@ module.exports = {
 
         switch (expression.type) {
           case 'ChainExpression':
-            // ChainExpressionの場合、その中のexpressionを取得
-            expression = expression.expression
-            break
+            // 既にoptional chainingを使っている場合は対象外
+            return
           case 'CallExpression':
             break
           default:
@@ -67,29 +66,30 @@ module.exports = {
         const pattern = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.`)
 
         if (pattern.test(expressionText)) {
+          // replace第2引数の$をエスケープ（$$は特殊文字として扱われるため）
+          const replacement = `${testText}?.`.replace(/\$/g, '$$$$')
           context.report({
             node,
             message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-            fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern, `${testText}?.`)),
+            fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern, replacement)),
           })
         }
-        // calleeのテキストを取得
-        // optional chainingが含まれている場合
-        // ChainExpression全体ではなく、その中のexpressionのテキストを取得する必要はない
-        // 代わりに、expressionTextを使ってパターンマッチする
-        else if (expression.callee.type !== 'ChainExpression') {
+        // CallExpressionの場合のみcalleeにアクセス
+        else if (expression.type === 'CallExpression') {
           const calleName = context.sourceCode.getText(expression.callee)
 
           // 条件部分と実行部分のcalleeが完全一致のパターン
           if (testText === calleName) {
+            // replace第2引数の$をエスケープ
+            const replacement = `${calleName}?.(`.replace(/\$/g, '$$$$')
             context.report({
               node,
               message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
               fix: (fixer) => fixer.replaceText(
                 node,
-                expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), `${calleName}\?\.(`),
+                expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), replacement),
               ),
             })
           }

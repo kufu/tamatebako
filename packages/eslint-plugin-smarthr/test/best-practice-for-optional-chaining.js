@@ -40,6 +40,12 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     // 条件部分が実行部分の途中にある場合
     { code: `if (B) { A.B.C.d() }` },
     { code: `if (hoge) { obj.hoge.action() }` },
+    // 既にoptional chainingを使っている場合（誤検知しない）
+    { code: `if (action) { action?.() }` },
+    { code: `if (obj.hoge) { obj.hoge?.fuga.action() }` },
+    // MemberExpressionの場合（クラッシュしない）
+    { code: `if (a) { a?.b }` },
+    { code: `if (obj.hoge) { obj.hoge?.fuga }` },
   ],
   invalid: [
     { code: `if (action) action()`, errors: [{ message: ERROR }], output: 'action?.()' },
@@ -68,5 +74,8 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
     // 深いネスト
     { code: `if (a.b.c.d) { a.b.c.d.e.f() }`, errors: [{ message: ERROR }], output: 'a.b.c.d?.e.f()' },
     { code: `if (obj.a.b.c) obj.a.b.c.d.e()`, errors: [{ message: ERROR }], output: 'obj.a.b.c?.d.e()' },
+    // $を含む変数名（エスケープが正しく機能すること）
+    { code: `if ($$) { $$.foo() }`, errors: [{ message: ERROR }], output: '$$?.foo()' },
+    { code: `if ($var) { $var.method() }`, errors: [{ message: ERROR }], output: '$var?.method()' },
   ],
 })

@@ -1,14 +1,17 @@
 # smarthr/best-practice-for-optional-chaining
 
-optional chaining（`xxx?.yyy`記法）を使うことを促すルールです。
+optional chaining（`xxx?.yyy`記法）の適切な使用を促すルールです。
 
-## なぜoptional chainingを使うべきなのか
+## ルールの目的
 
-関数の存在確認をif文で行ってから実行する、というパターンは optional chaining を使うことで簡潔に書けます。ただし、else句がある場合や複数の条件がある場合など、optional chainingでは表現できないパターンもあるため、それらは許容されます。
+このルールは以下の2つの目的を持っています：
+
+1. **optional chainingを使える場所で使う**: if文で存在確認してから実行するパターンは、optional chainingで簡潔に書ける
+2. **不要なoptional chainingを削除する**: if文で既に存在チェックしている場合、その中でのoptional chainingは冗長
 
 ## チェックする内容
 
-以下のパターンで、optional chainingが使えるのに使っていない場合、またはif文が不要な場合にエラーになります:
+以下のパターンをチェックします:
 
 ### パターン1: 単純な存在確認 → 実行
 
@@ -37,6 +40,22 @@ if (obj.hoge) {
 ```
 
 このパターンでは、条件部分（`A.B`）が実行部分（`A.B.C.d()`）の先頭にマッチするため、`A.B?.C.d()` のようにoptional chainingを使うことができます。
+
+### パターン3: 不要なoptional chainingの削除
+
+```jsx
+// NG: 条件文で既に存在チェックしているため、optional chainingは不要
+if (action) {
+  action?.()
+}
+
+// NG: obj.hogeの存在は既にチェック済み
+if (obj.hoge) {
+  obj.hoge?.fuga.action()
+}
+```
+
+if文で既に存在をチェックしている場合、その中でoptional chainingを使うのは冗長です。条件文でカバーされている範囲のoptional chainingは削除されます。
 
 ただし、以下の場合は許容されます:
 
@@ -89,6 +108,20 @@ if (any) {
 }
 ```
 
+### 条件でカバーされていない範囲のoptional chaining
+
+```jsx
+// OK: actionの存在はチェックしているが、action()の戻り値はチェックしていない
+if (action) {
+  action()?.bar()
+}
+
+// OK: obj.hogeの存在はチェックしているが、fugaの存在はチェックしていない
+if (obj.hoge) {
+  obj.hoge.fuga?.action()
+}
+```
+
 ## rules
 
 ```js
@@ -122,6 +155,19 @@ if (A.B) {
 if (obj.hoge) obj.hoge.fuga.action()
 ```
 
+```jsx
+// 不要なoptional chaining
+if (action) {
+  action?.()
+}
+```
+
+```jsx
+if (obj.hoge) {
+  obj.hoge?.fuga.action()
+}
+```
+
 ## ✅ Correct
 
 ```jsx
@@ -139,6 +185,19 @@ A.B?.C.d()
 
 ```jsx
 obj.hoge?.fuga.action()
+```
+
+```jsx
+// 不要なoptional chainingを削除
+if (action) {
+  action()
+}
+```
+
+```jsx
+if (obj.hoge) {
+  obj.hoge.fuga.action()
+}
 ```
 
 ```jsx
@@ -177,5 +236,18 @@ if (any) {
   ...
 } else if (action) {
   action()
+}
+```
+
+```jsx
+// 条件でカバーされていない範囲のoptional chainingは許容
+if (action) {
+  action()?.bar()
+}
+```
+
+```jsx
+if (obj.hoge) {
+  obj.hoge.fuga?.action()
 }
 ```

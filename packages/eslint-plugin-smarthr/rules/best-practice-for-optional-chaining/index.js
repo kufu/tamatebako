@@ -49,17 +49,46 @@ module.exports = {
             return
         }
 
+        const testText = context.sourceCode.getText(node.test)
+
         switch (expression.type) {
           case 'ChainExpression':
-            // 既にoptional chainingを使っている場合は対象外
+            // optional chainingを使っている場合、不要かどうかをチェック
+
+            // パターン1: if (action) { action?.() }
+            // testText?.( で始まる場合
+            const pattern1 = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?\\.\\\(`)
+            if (pattern1.test(expressionText)) {
+              const replacement = `${testText}(`.replace(/\$/g, '$$$$')
+              context.report({
+                node,
+                message: `条件文で既に存在チェックしているため、optional chainingは不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern1, replacement))
+              })
+              return
+            }
+
+            // パターン2: if (a.b) { a.b?.c() } または if (a.b) { a.b?.c }
+            // testText?\. で始まる場合
+            const pattern2 = new RegExp(`^${testText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?\\.`)
+            if (pattern2.test(expressionText)) {
+              const replacement = `${testText}.`.replace(/\$/g, '$$$$')
+              context.report({
+                node,
+                message: `条件文で既に存在チェックしているため、optional chainingは不要です
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern2, replacement))
+              })
+              return
+            }
+
             return
           case 'CallExpression':
             break
           default:
             return
         }
-
-        const testText = context.sourceCode.getText(node.test)
 
         // 条件部分が実行部分の先頭にマッチするパターン
         // 例: if (A.B) { A.B.C.d() } → A.B?.C.d()

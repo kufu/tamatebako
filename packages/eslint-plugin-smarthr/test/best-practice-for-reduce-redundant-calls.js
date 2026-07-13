@@ -668,6 +668,25 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // if-else（elseあり、同じ関数）+ 次にreturn（同じ関数だが見られない）
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          } else {
+            return notify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
     // early return: 複数のif（すべてreturn）+ 次にreturn
     {
       code: `
@@ -837,6 +856,26 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateFunctionCall',
           data: { functionName: 'formatMessage', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // switch（defaultあり、同じ関数）+ 次にreturn（同じ関数だが見られない）
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return notify('admin')
+            default:
+              return notify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
         },
       ],
     },

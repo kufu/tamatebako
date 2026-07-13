@@ -381,6 +381,33 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         })()
       `,
     },
+    // early return: if-else（elseあり）+ 次にreturn（次のreturnは見られない）
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          } else {
+            return otherNotify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+    },
+    // early return: switch（defaultあり）+ 次にreturn（次のreturnは見られない）
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return notify('admin')
+            default:
+              return otherNotify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+    },
     // メソッドチェーン: 最初のメソッド名が異なる
     {
       code: `

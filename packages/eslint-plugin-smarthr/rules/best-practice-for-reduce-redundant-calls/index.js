@@ -306,6 +306,7 @@ module.exports = {
 
       // alternateを再帰的に収集
       let allCasesReturn = true
+      let hasElse = false
       let current = node
       while (current) {
         const consequent = getSingleStatement(current.consequent)
@@ -322,6 +323,7 @@ module.exports = {
             current = current.alternate
           } else {
             // else
+            hasElse = true
             const alternate = getSingleStatement(current.alternate)
             if (!alternate) return
             branches.push(alternate)
@@ -347,15 +349,20 @@ module.exports = {
             }
 
             const nextStmt = parent.body[ifIndex + 1]
-            // 次のreturn文がない場合は検証対象外
-            if (nextStmt.type !== 'ReturnStatement') {
-              return
+            // 次のreturn文がある場合のみ、early returnパターンとして扱う
+            if (nextStmt.type === 'ReturnStatement') {
+              branches.push(nextStmt)
+              hasElse = true // early returnパターンはelse句と同等に扱う
             }
-
-            branches.push(nextStmt)
           }
           break
         }
+      }
+
+      // else句がない（かつearly returnパターンでもない）場合は検証対象外
+      // すべてのケースをカバーしていないため
+      if (!hasElse) {
+        return
       }
 
       // 分岐が2つ未満の場合は検証不要

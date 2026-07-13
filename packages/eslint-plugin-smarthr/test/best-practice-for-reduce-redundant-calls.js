@@ -35,6 +35,25 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // else句がない（すべてのケースをカバーしていない）
+    {
+      code: `
+        if (mode !== 'search') {
+          setMode('search')
+        } else if (q === '') {
+          setMode('default')
+        }
+      `,
+    },
+    {
+      code: `
+        if (a) {
+          func('a')
+        } else if (b) {
+          func('b')
+        }
+      `,
+    },
     // ブロック内に複数のステートメント
     {
       code: `

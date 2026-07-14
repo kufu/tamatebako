@@ -51,9 +51,9 @@ contentBgColorが未指定、または"WHITE"が指定されている場合:
 
 以下の場合はエラーになりません:
 
-### BaseColumn内にある場合
+### BaseColumnまたはGroupbox内にある場合
 
-BaseColumnは背景色を持つため、その中にInformationPanelを配置することは問題ありません:
+BaseColumnまたはGroupboxは背景色を持つため、その中にInformationPanelを配置することは問題ありません:
 
 ```tsx
 // ✅ Good
@@ -61,6 +61,12 @@ BaseColumnは背景色を持つため、その中にInformationPanelを配置す
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
+</Base>
+
+<Base>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
 </Base>
 ```
 
@@ -89,11 +95,17 @@ BaseColumnは背景色を持つため、その中にInformationPanelを配置す
   <InformationPanel>情報</InformationPanel>
 </Cluster>
 
-// ✅ Good: BaseColumnを使用
+// ✅ Good: BaseColumnまたはGroupboxを使用
 <Base>
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
+</Base>
+
+<Base>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
 </Base>
 
 // ✅ Good: DialogでcontentBgColorを指定
@@ -146,7 +158,7 @@ DialogContents（Dialog内部のコンテンツ領域）はデフォルトで白
 
 **解決方法:**
 1. contentBgColorを指定する（推奨）
-2. BaseColumnで包む
+2. BaseColumnまたはGroupboxで包む
 
 ```tsx
 // ✅ Good: contentBgColorを指定
@@ -159,5 +171,12 @@ DialogContents（Dialog内部のコンテンツ領域）はデフォルトで白
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
+</ActionDialog>
+
+// ✅ Good: Groupboxで包む
+<ActionDialog>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
 </ActionDialog>
 ```

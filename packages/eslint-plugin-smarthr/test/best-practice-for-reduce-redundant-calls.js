@@ -35,6 +35,25 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // else句がない（すべてのケースをカバーしていない）
+    {
+      code: `
+        if (mode !== 'search') {
+          setMode('search')
+        } else if (q === '') {
+          setMode('default')
+        }
+      `,
+    },
+    {
+      code: `
+        if (a) {
+          func('a')
+        } else if (b) {
+          func('b')
+        }
+      `,
+    },
     // ブロック内に複数のステートメント
     {
       code: `
@@ -204,6 +223,45 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         }
       `,
     },
+    // switch: defaultなし（すべてのケースをカバーしていない）
+    {
+      code: `
+        switch (role) {
+          case 'admin':
+            sendNotification('admin', user)
+            break
+          case 'user':
+            sendNotification('user', user)
+            break
+        }
+      `,
+    },
+    {
+      code: `
+        switch (type) {
+          case 'A':
+            api.post('/endpoint').send(dataA)
+            break
+          case 'B':
+            api.post('/endpoint').send(dataB)
+            break
+        }
+      `,
+    },
+    {
+      code: `
+        switch (role) {
+          case 'admin': {
+            sendNotification('admin', user)
+            break
+          }
+          case 'user': {
+            sendNotification('user', user)
+            break
+          }
+        }
+      `,
+    },
     // switch: defaultなし + switch後に関数が異なる
     {
       code: `
@@ -321,6 +379,33 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
             return notify('moderator')
           }
         })()
+      `,
+    },
+    // early return: if-else（elseあり）+ 次にreturn（次のreturnは見られない）
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          } else {
+            return otherNotify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+    },
+    // early return: switch（defaultあり）+ 次にreturn（次のreturnは見られない）
+    {
+      code: `
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return notify('admin')
+            default:
+              return otherNotify('moderator')
+          }
+          return notify('user')
+        }
       `,
     },
     // メソッドチェーン: 最初のメソッド名が異なる
@@ -583,6 +668,25 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
+    // if-else（elseあり、同じ関数）+ 次にreturn（同じ関数だが見られない）
+    {
+      code: `
+        function handler() {
+          if (role === 'admin') {
+            return notify('admin')
+          } else {
+            return notify('moderator')
+          }
+          return notify('user')
+        }
+      `,
+      errors: [
+        {
+          messageId: 'consolidateFunctionCall',
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
     // early return: 複数のif（すべてreturn）+ 次にreturn
     {
       code: `
@@ -703,6 +807,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'user':
             sendNotification('user', user)
             break
+          default:
+            sendNotification('guest', user)
         }
       `,
       errors: [
@@ -753,22 +859,23 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         },
       ],
     },
-    // メソッドチェーン
+    // switch（defaultあり、同じ関数）+ 次にreturn（同じ関数だが見られない）
     {
       code: `
-        switch (type) {
-          case 'A':
-            api.post('/endpoint').send(dataA)
-            break
-          case 'B':
-            api.post('/endpoint').send(dataB)
-            break
+        function handler() {
+          switch (role) {
+            case 'admin':
+              return notify('admin')
+            default:
+              return notify('moderator')
+          }
+          return notify('user')
         }
       `,
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: 'notify', detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -798,6 +905,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'B':
             api.post('/endpoint').retry(3).send(dataB)
             break
+          default:
+            api.post('/endpoint').retry(3).send(dataC)
         }
       `,
       errors: [
@@ -864,6 +973,8 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
           case 'C':
             api.post('/endpoint').send(dataC)
             break
+          default:
+            api.post('/endpoint').send(dataD)
         }
       `,
       errors: [
@@ -937,46 +1048,6 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
         {
           messageId: 'consolidateFunctionCall',
           data: { functionName: 'func', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // defaultなし + caseが2つ以上（break使用）
-    {
-      code: `
-        switch (role) {
-          case 'admin':
-            sendNotification('admin', user)
-            break
-          case 'user':
-            sendNotification('user', user)
-            break
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateFunctionCall',
-          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
-        },
-      ],
-    },
-    // switch: 波括弧あり + break
-    {
-      code: `
-        switch (role) {
-          case 'admin': {
-            sendNotification('admin', user)
-            break
-          }
-          case 'user': {
-            sendNotification('user', user)
-            break
-          }
-        }
-      `,
-      errors: [
-        {
-          messageId: 'consolidateFunctionCall',
-          data: { functionName: 'sendNotification', detailLink: DETAIL_LINK },
         },
       ],
     },

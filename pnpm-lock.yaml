@@ -182,8 +182,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.22.1
-        version: 6.22.1(eslint@9.39.4(jiti@2.4.2))
+        specifier: 6.23.0
+        version: 6.23.0(eslint@9.39.4(jiti@2.4.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -3848,11 +3848,6 @@ packages:
 
   eslint-plugin-smarthr@6.21.0:
     resolution: {integrity: sha512-Awj4j34hE6xyfLYXRbfUWoKG0xQdzc7UGiPwAg7awa3SHouG1wgU8x2Oc63P9bYTos6X1trKPv5x5TLKXPElyQ==}
-    peerDependencies:
-      eslint: ^9
-
-  eslint-plugin-smarthr@6.22.1:
-    resolution: {integrity: sha512-fegDh4SJ0wpS4Wz2ftHT09yVg6jWkjUWP7xXcD0zLcqkYUjQPI/En32gJFiwWIBzApc2YrzCEN0rHgoaX2nbjg==}
     peerDependencies:
       eslint: ^9
 
@@ -10373,11 +10368,6 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-smarthr@6.21.0(eslint@9.39.4(jiti@2.4.2)):
-    dependencies:
-      eslint: 9.39.4(jiti@2.4.2)
-      json5: 2.2.3
-
-  eslint-plugin-smarthr@6.22.1(eslint@9.39.4(jiti@2.4.2)):
     dependencies:
       eslint: 9.39.4(jiti@2.4.2)
       json5: 2.2.3

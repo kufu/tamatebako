@@ -56,6 +56,7 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<HogeScroller forwardedAs="section"><div><Heading>hoge</Heading></div></HogeScroller>' },
     { code: '<HogeBase as="aside"><Heading>hoge</Heading></HogeBase>' },
     { code: '<HogeBaseColumn forwardedAs="nav"><Heading>hoge</Heading></HogeBaseColumn>' },
+    { code: '<HogeGroupbox forwardedAs="nav"><Heading>hoge</Heading></HogeGroupbox>' },
     { code: '<HogeNav aria-label="any"><Any /></HogeNav>' },
     { code: '<HogeNav aria-labelledby="any"><Any /></HogeNav>' },
   ],

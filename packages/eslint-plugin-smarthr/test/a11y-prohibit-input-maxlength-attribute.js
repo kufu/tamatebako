@@ -25,14 +25,14 @@ ruleTester.run('a11y-prohibit-input-maxlength-attribute', rule, {
     { code: `<textarea>hoge</textarea>` },
     { code: `<Textarea type="text" />` },
     { code: `<HogeTextarea value="hoge" />` },
-    { code: `<><input /></>`}
+    { code: `<><input /></>` },
   ],
   invalid: [
     { code: `<input maxLength={30} />`, errors: [{ message: expectedErrorMessage('input') }] },
     { code: `<Input type="text" maxLength={40} />`, errors: [{ message: expectedErrorMessage('Input') }] },
     { code: `<HogeInput maxLength value="hoge" />`, errors: [{ message: expectedErrorMessage('HogeInput') }] },
-    { code: `<textarea maxLength={50}>hoge</textarea>`, errors: [{ message: expectedErrorMessage('textarea') }]},
-    { code: `<Textarea type="text" maxLength={60} />`, errors: [{ message: expectedErrorMessage('Textarea') }]},
-    { code: `<HogeTextarea maxLength={70} value="hoge" />`, errors: [{ message: expectedErrorMessage('HogeTextarea') }]}
-  ]
+    { code: `<textarea maxLength={50}>hoge</textarea>`, errors: [{ message: expectedErrorMessage('textarea') }] },
+    { code: `<Textarea type="text" maxLength={60} />`, errors: [{ message: expectedErrorMessage('Textarea') }] },
+    { code: `<HogeTextarea maxLength={70} value="hoge" />`, errors: [{ message: expectedErrorMessage('HogeTextarea') }] },
+  ],
 })

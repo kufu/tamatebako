@@ -60,5 +60,5 @@ ruleTester.run('a11y-prohibit-overflow-hidden', rule, {
     { code: `<Any className="foo" overflow={'hidden'} id="bar" />`, errors: [{ message: ERROR_MESSAGE }] },
     // ネストしたコンポーネント
     { code: `<Parent><Child overflow="hidden" /></Parent>`, errors: [{ message: ERROR_MESSAGE }] },
-  ]
+  ],
 })

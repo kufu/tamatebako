@@ -10,11 +10,13 @@
 `Chip` コンポーネントの `size` 属性の値が小文字の `"s"` から大文字の `"S"` に変更されました。
 
 **Before (v95):**
+
 ```jsx
 <Chip size="s">label</Chip>
 ```
 
 **After (v96):**
+
 ```jsx
 <Chip size="S">label</Chip>
 ```
@@ -27,6 +29,7 @@ eslint --fix .
 ```
 
 **対象:**
+
 - 文字列リテラル `"s"` のみが対象です
 - 動的な値（変数など）は検出されません
 - `Chip` で終わるコンポーネント名（例: `CustomChip`, `MyChip`）も対象です

@@ -56,7 +56,7 @@ function cleanupFixtures() {
 // テスト開始時にフィクスチャを作成
 beforeAll(() => {
   createFixture({
-    'components': {
+    components: {
       'Page.tsx': '',
       'Header.tsx': '',
       'Header.presentational.tsx': '',
@@ -66,36 +66,36 @@ beforeAll(() => {
       'List.container.ts': '',
       'Button.stories.tsx': '',
     },
-    'modules': {
-      'utils': {
+    modules: {
+      utils: {
         'helper.ts': '',
         'validator.ts': '',
       },
     },
-    'crews': {
-      'modules': {
-        'utils': {
+    crews: {
+      modules: {
+        utils: {
           'common.ts': '',
         },
       },
-      'index': {
-        'adapters': {
+      index: {
+        adapters: {
           'index.ts': '',
           'api.ts': '',
         },
-        'slices': {
+        slices: {
           'slice.ts': '',
         },
-        'views': {
+        views: {
           'index.ts': '',
-          'parts': {
+          parts: {
             'Abc.tsx': '',
           },
         },
       },
-      'show': {
-        'views': {
-          'parts': {
+      show: {
+        views: {
+          parts: {
             'ShowPart.tsx': '',
           },
         },
@@ -167,10 +167,12 @@ ruleTester.run('format-import-path', rule, {
     {
       code: `import { helper } from '@/format-import-path/modules/utils/helper'`,
       filename: createFilePath('crews/index/views/index.ts'),
-      options: [{
-        ...DOMAIN_RULE_ARGS,
-        format: { all: 'absolute' },
-      }],
+      options: [
+        {
+          ...DOMAIN_RULE_ARGS,
+          format: { all: 'absolute' },
+        },
+      ],
     },
   ],
 
@@ -185,7 +187,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Header } from './Header'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './Header に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './Header に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // .ts は除去される
@@ -194,7 +201,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { utils } from './utils'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './utils に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './utils に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // .jsx は除去される
@@ -203,7 +215,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Button } from './Button'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './Button に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './Button に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // .js は除去される
@@ -212,7 +229,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { helper } from './helper'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // ============================================================
@@ -225,7 +247,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Header } from './Header.presentational'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './Header.presentational に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './Header.presentational に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // .container.ts → .container (.tsのみ除去)
@@ -234,7 +261,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { List } from './List.container'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './List.container に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './List.container に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // .stories.tsx → .stories (.tsxのみ除去)
@@ -243,7 +275,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { meta } from './Button.stories'`,
       filename: createFilePath('components/Page.tsx'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './Button.stories に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './Button.stories に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // ============================================================
@@ -256,7 +293,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // 同じディレクトリ内のimport
@@ -265,7 +307,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { api } from './api'`,
       filename: createFilePath('crews/index/adapters/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './api に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './api に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // 親ディレクトリへのimport
@@ -274,7 +321,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { slice } from '../slices/slice'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: '../slices/slice に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            '../slices/slice に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // ============================================================
@@ -286,11 +338,18 @@ ruleTester.run('format-import-path', rule, {
       code: `import { Abc } from './parts/Abc'`,
       output: `import { Abc } from '@/format-import-path/crews/index/views/parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
-      options: [{
-        ...DOMAIN_RULE_ARGS,
-        format: { all: 'absolute' },
-      }],
-      errors: [{ message: '@/format-import-path/crews/index/views/parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      options: [
+        {
+          ...DOMAIN_RULE_ARGS,
+          format: { all: 'absolute' },
+        },
+      ],
+      errors: [
+        {
+          message:
+            '@/format-import-path/crews/index/views/parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // ============================================================
@@ -303,7 +362,12 @@ ruleTester.run('format-import-path', rule, {
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
       options: [DOMAIN_RULE_ARGS],
-      errors: [{ message: './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      errors: [
+        {
+          message:
+            './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // ============================================================
@@ -315,11 +379,18 @@ ruleTester.run('format-import-path', rule, {
       code: `import { Abc } from '@/format-import-path/crews/index/views/parts/Abc'`,
       output: `import { Abc } from './parts/Abc'`,
       filename: createFilePath('crews/index/views/index.ts'),
-      options: [{
-        ...DOMAIN_RULE_ARGS,
-        format: { all: 'auto' },
-      }],
-      errors: [{ message: './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      options: [
+        {
+          ...DOMAIN_RULE_ARGS,
+          format: { all: 'auto' },
+        },
+      ],
+      errors: [
+        {
+          message:
+            './parts/Abc に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
 
     // autoモード: 遠いファイルは絶対パスが選択される
@@ -327,11 +398,18 @@ ruleTester.run('format-import-path', rule, {
       code: `import { helper } from '../../../modules/utils/helper'`,
       output: `import { helper } from '@/format-import-path/modules/utils/helper'`,
       filename: createFilePath('crews/index/views/index.ts'),
-      options: [{
-        ...DOMAIN_RULE_ARGS,
-        format: { all: 'auto' },
-      }],
-      errors: [{ message: '@/format-import-path/modules/utils/helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path' }],
+      options: [
+        {
+          ...DOMAIN_RULE_ARGS,
+          format: { all: 'auto' },
+        },
+      ],
+      errors: [
+        {
+          message:
+            '@/format-import-path/modules/utils/helper に修正してください\n - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path',
+        },
+      ],
     },
   ],
 })

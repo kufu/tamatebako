@@ -71,7 +71,6 @@ const ComponentB = ({ a, b, ...rest }) => {
 
 ## ✅ Correct
 
-
 ```js
 // 残余引数にrestという名称が設定されておりOK
 const hoge = (a, b, ...rest) => {

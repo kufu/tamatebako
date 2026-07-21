@@ -71,6 +71,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 このオプションを指定すると、以下の3つが置換対象になります：
 
 1. **`smarthr-ui` からの直接 import**（`smarthrUiAlias` 指定に関わらず常に置換）
+
    ```typescript
    // Before
    import { ActionDialog } from 'smarthr-ui'
@@ -79,6 +80,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
    ```
 
 2. **alias パスからの import**
+
    ```typescript
    // Before
    import { ActionDialog } from '@/components/parts/smarthr-ui'
@@ -87,6 +89,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
    ```
 
 3. **alias ファイル内の export 変数名**（smarthr-ui のコンポーネント名と同じ場合のみ）
+
    ```typescript
    // @/components/parts/smarthr-ui/ActionDialog.tsx（aliasファイル）
 
@@ -108,6 +111,7 @@ smarthr-ui のバージョン間の移行を支援する自動修正ルールで
 `smarthrUiAlias` で指定されたパス配下のすべてのファイルが置換対象になります。
 
 **ディレクトリ形式:**
+
 ```
 @/components/parts/smarthr-ui/
 ├── index.tsx               # ✅ 置換対象
@@ -133,6 +137,7 @@ export const ActionDialog = (props) => <ShrActionDialog {...props} />
 ```
 
 **単一ファイル形式:**
+
 ```
 @/components/parts/smarthr-ui.tsx   # ✅ 置換対象
 ```
@@ -146,12 +151,14 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 #### 制限事項
 
 - **対象ファイルの範囲:** `smarthrUiAlias` で指定されたパス配下のファイルのみ。他のディレクトリにある同名の export は変更されません
+
   ```typescript
   // src/components/parts/smarthr-ui/index.tsx → 置換される ✅
   // src/features/custom/ActionDialog.tsx → 置換されない ✅
   ```
 
 - **変数名の判定:** smarthr-ui が提供するコンポーネント名と完全一致する export 変数名のみ置換
+
   ```typescript
   export const ActionDialog = ...  // ✅ 置換される
   export const MyActionDialog = ... // ❌ 置換されない
@@ -159,6 +166,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
   ```
 
 - **export 形式:** 現在は `export const` 形式のみサポート
+
   ```typescript
   export const ActionDialog = ... // ✅ サポート
   export function ActionDialog()  // ❌ 未サポート
@@ -166,6 +174,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
   ```
 
 - **ファイル名の変更:** ファイル名が変更対象のコンポーネント名と一致する場合、ファイル名の変更を促すエラーが表示されます（自動修正不可）
+
   ```
   // エラー例
   smarthr-ui v91 では ActionDialog が ControlledActionDialog にリネームされました。
@@ -177,6 +186,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
   **対応手順:**
   1. ファイル名を変更: `git mv ActionDialog.tsx ControlledActionDialog.tsx`
   2. このファイルをimportしている箇所を手動で更新:
+
      ```typescript
      // Before
      import { FormDialog } from '@/components/parts/smarthr-ui/FormDialog'
@@ -189,14 +199,14 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 
 各バージョンの破壊的変更の詳細と対応内容については、リンク先の移行ガイドを参照してください。
 
-| バージョン | 詳細 |
-|-----------|------|
-| `90` → `91` | [移行ガイド](./versions/v90-to-v91/README.md) |
-| `91` → `92` | [移行ガイド](./versions/v91-to-v92/README.md) |
-| `92` → `93` | [移行ガイド](./versions/v92-to-v93/README.md) |
-| `93` → `94` | [移行ガイド](./versions/v93-to-v94/README.md) |
-| `94` → `95` | [移行ガイド](./versions/v94-to-v95/README.md) |
-| `95` → `96` | [移行ガイド](./versions/v95-to-v96/README.md) |
+| バージョン  | 詳細                                                      |
+| ----------- | --------------------------------------------------------- |
+| `90` → `91` | [移行ガイド](./versions/v90-to-v91/README.md)             |
+| `91` → `92` | [移行ガイド](./versions/v91-to-v92/README.md)             |
+| `92` → `93` | [移行ガイド](./versions/v92-to-v93/README.md)             |
+| `93` → `94` | [移行ガイド](./versions/v93-to-v94/README.md)             |
+| `94` → `95` | [移行ガイド](./versions/v94-to-v95/README.md)             |
+| `95` → `96` | [移行ガイド](./versions/v95-to-v96/README.md)             |
 | `96` → `97` | [移行ガイド](./versions/v96-to-v97/README.md)（検出のみ） |
 | `97` → `98` | [移行ガイド](./versions/v97-to-v98/README.md)（検出のみ） |
 
@@ -246,7 +256,6 @@ module.exports = {
   rules: {
     // v91 への移行完了後はコメントアウトまたは削除
     // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '90', to: '91' }],
-
     // v92 への移行時は新しいオプションを設定
     // 'smarthr/autofixer-smarthr-ui-migration': ['error', { from: '91', to: '92' }],
   },
@@ -273,17 +282,19 @@ module.exports = {
 - 結果として、変更後のコンポーネント名が未定義エラーになる可能性があります
 
 **例:**
+
 ```tsx
 // 独自ラッパー: @/components/parts/smarthr-ui/index.tsx
 export * from 'smarthr-ui'
-export { FormDialog } from './FormDialog'  // 独自のFormDialogラッパー
+export { FormDialog } from './FormDialog' // 独自のFormDialogラッパー
 
 // 使用側
 import { FormDialog } from '@/components/parts/smarthr-ui'
-<FormDialog>...</FormDialog>
+;<FormDialog>...</FormDialog>
 ```
 
 このようなコードで自動移行を実行すると：
+
 ```tsx
 // 自動修正後
 <ControlledFormDialog>...</ControlledFormDialog>

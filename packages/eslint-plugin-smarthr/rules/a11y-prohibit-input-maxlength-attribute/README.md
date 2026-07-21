@@ -25,7 +25,6 @@ title属性を併用することで**submit時にpattern属性に設定した条
 
 注意点として、pattern属性はform要素でラップされている&submitイベントが発生しなければvalidationを実行しないため注意してください。
 
-
 ## rules
 
 ```js

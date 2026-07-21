@@ -315,7 +315,16 @@ const handleAction: ComponentPropsWithoutRef<typeof ControlledFormDialog>['onCli
       filename: '/Users/test/src/components/parts/smarthr-ui/ActionDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [
-        { messageId: 'renameAliasFile', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91', oldFile: 'ActionDialog.tsx', newFile: 'ControlledActionDialog.tsx' } },
+        {
+          messageId: 'renameAliasFile',
+          data: {
+            old: 'ActionDialog',
+            new: 'ControlledActionDialog',
+            to: 'v91',
+            oldFile: 'ActionDialog.tsx',
+            newFile: 'ControlledActionDialog.tsx',
+          },
+        },
         { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
         { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
       ],
@@ -327,7 +336,16 @@ const handleAction: ComponentPropsWithoutRef<typeof ControlledFormDialog>['onCli
       filename: '/Users/test/src/components/parts/smarthr-ui/dialogs/MessageDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [
-        { messageId: 'renameAliasFile', data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91', oldFile: 'MessageDialog.tsx', newFile: 'ControlledMessageDialog.tsx' } },
+        {
+          messageId: 'renameAliasFile',
+          data: {
+            old: 'MessageDialog',
+            new: 'ControlledMessageDialog',
+            to: 'v91',
+            oldFile: 'MessageDialog.tsx',
+            newFile: 'ControlledMessageDialog.tsx',
+          },
+        },
         { messageId: 'renameDialog', data: { old: 'MessageDialog', new: 'ControlledMessageDialog', to: 'v91' } },
       ],
     },
@@ -350,7 +368,16 @@ const handleAction: ComponentPropsWithoutRef<typeof ControlledFormDialog>['onCli
       filename: '/Users/test/src/components/parts/smarthr-ui/ActionDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [
-        { messageId: 'renameAliasFile', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91', oldFile: 'ActionDialog.tsx', newFile: 'ControlledActionDialog.tsx' } },
+        {
+          messageId: 'renameAliasFile',
+          data: {
+            old: 'ActionDialog',
+            new: 'ControlledActionDialog',
+            to: 'v91',
+            oldFile: 'ActionDialog.tsx',
+            newFile: 'ControlledActionDialog.tsx',
+          },
+        },
         { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
       ],
     },
@@ -360,9 +387,17 @@ const handleAction: ComponentPropsWithoutRef<typeof ControlledFormDialog>['onCli
       filename: '/Users/test/src/components/parts/smarthr-ui/FormDialog.tsx',
       options: [{ from: '90', to: '91', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [
-        { messageId: 'renameAliasFile', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91', oldFile: 'FormDialog.tsx', newFile: 'ControlledFormDialog.tsx' } },
+        {
+          messageId: 'renameAliasFile',
+          data: {
+            old: 'FormDialog',
+            new: 'ControlledFormDialog',
+            to: 'v91',
+            oldFile: 'FormDialog.tsx',
+            newFile: 'ControlledFormDialog.tsx',
+          },
+        },
       ],
     },
-
   ],
 }

@@ -19,11 +19,11 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
+        },
       ],
     },
     {
@@ -32,11 +32,11 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^fuga.js$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
+        },
       ],
     },
     {
@@ -45,12 +45,12 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: true,
-              reportMessage: '{{module}} を絶対使ってください'
+              reportMessage: '{{module}} を絶対使ってください',
             },
           },
-        }
+        },
       ],
     },
     {
@@ -59,15 +59,19 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: ['isEqual'],
-              reportMessage: '{{module}}/{{export}} を絶対使ってください'
+              reportMessage: '{{module}}/{{export}} を絶対使ってください',
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash/isEqual を絶対使ってください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: `import { chunk } from 'lodash'`,
@@ -75,11 +79,11 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
+        },
       ],
     },
     {
@@ -92,7 +96,7 @@ ruleTester.run('require-import', rule, {
               imported: ['isEqual'],
             },
           },
-        }
+        },
       ],
     },
   ],
@@ -103,14 +107,18 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash をimportしてください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash をimportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: ``,
@@ -118,14 +126,18 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash をimportしてください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash をimportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: ``,
@@ -133,15 +145,19 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: true,
-              reportMessage: '{{module}} を絶対使ってください'
+              reportMessage: '{{module}} を絶対使ってください',
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash を絶対使ってください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: ``,
@@ -149,15 +165,19 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: ['isEqual'],
-              reportMessage: '{{module}}/{{export}} を絶対使ってください'
+              reportMessage: '{{module}}/{{export}} を絶対使ってください',
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash/isEqual を絶対使ってください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: `import { chunk } from 'lodash'`,
@@ -165,15 +185,19 @@ ruleTester.run('require-import', rule, {
       options: [
         {
           '^hoge.js$': {
-            'lodash': {
+            lodash: {
               imported: ['isEqual'],
-              reportMessage: '{{module}}/{{export}} を絶対使ってください'
+              reportMessage: '{{module}}/{{export}} を絶対使ってください',
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `lodash/isEqual を絶対使ってください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import` }],
+      errors: [
+        {
+          message: `lodash/isEqual を絶対使ってください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
+        },
+      ],
     },
     {
       code: `import { isEqual } from './module/validator'`,
@@ -185,9 +209,9 @@ ruleTester.run('require-import', rule, {
               imported: ['isEqual'],
             },
           },
-        }
+        },
       ],
       errors: [{ message: /module\/validator\/isEqual をimportしてください/ }],
     },
-  ]
+  ],
 })

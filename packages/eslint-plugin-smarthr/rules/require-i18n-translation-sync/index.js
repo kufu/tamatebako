@@ -131,8 +131,10 @@ function findExportedObject(program) {
                 // satisfies Type
                 objectExportCount++
                 exportedObject = decl.init.expression
-              } else if (decl.init.expression.type === 'TSAsExpression' &&
-                         decl.init.expression.expression.type === 'ObjectExpression') {
+              } else if (
+                decl.init.expression.type === 'TSAsExpression' &&
+                decl.init.expression.expression.type === 'ObjectExpression'
+              ) {
                 // as const satisfies Type のパターン
                 objectExportCount++
                 exportedObject = decl.init.expression.expression
@@ -161,8 +163,10 @@ function findExportedObject(program) {
             // satisfies Type
             objectExportCount++
             exportedObject = node.declaration.expression
-          } else if (node.declaration.expression.type === 'TSAsExpression' &&
-                     node.declaration.expression.expression.type === 'ObjectExpression') {
+          } else if (
+            node.declaration.expression.type === 'TSAsExpression' &&
+            node.declaration.expression.expression.type === 'ObjectExpression'
+          ) {
             // as const satisfies Type のパターン
             objectExportCount++
             exportedObject = node.declaration.expression.expression
@@ -184,7 +188,8 @@ module.exports = {
     fixable: 'code',
     schema: SCHEMA,
     messages: {
-      multipleExports: '翻訳ファイルはオブジェクトリテラルを1つのみexportする必要があります。現在{{count}}個のオブジェクトがexportされています。',
+      multipleExports:
+        '翻訳ファイルはオブジェクトリテラルを1つのみexportする必要があります。現在{{count}}個のオブジェクトがexportされています。',
       noExport: '翻訳ファイルはオブジェクトリテラルをexportする必要があります。',
       notObject: 'exportする値はオブジェクトリテラルである必要があります。',
       invalidValue: '{{message}}',

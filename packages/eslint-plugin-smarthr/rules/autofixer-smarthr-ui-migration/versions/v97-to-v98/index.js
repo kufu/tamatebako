@@ -46,9 +46,7 @@ module.exports = {
       // 1. useDevice の削除（検出のみ、自動修正なし）
       // ============================================================
 
-      "ImportDeclaration[source.value='smarthr-ui'] > ImportSpecifier[imported.name='useDevice']"(
-        node,
-      ) {
+      "ImportDeclaration[source.value='smarthr-ui'] > ImportSpecifier[imported.name='useDevice']"(node) {
         if (!validSources.includes(node.parent.source.value) && !isAliasFile) {
           return
         }
@@ -76,9 +74,7 @@ module.exports = {
       // 3. useDecorator の削除（検出のみ、自動修正なし）
       // ============================================================
 
-      "ImportDeclaration[source.value='smarthr-ui'] > ImportSpecifier[imported.name='useDecorator']"(
-        node,
-      ) {
+      "ImportDeclaration[source.value='smarthr-ui'] > ImportSpecifier[imported.name='useDecorator']"(node) {
         if (!validSources.includes(node.parent.source.value) && !isAliasFile) {
           return
         }

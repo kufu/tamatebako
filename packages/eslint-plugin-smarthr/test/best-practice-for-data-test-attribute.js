@@ -19,17 +19,12 @@ const ERROR_MESSAGE = `テストしたい要素を指定するためにテスト
    - 画像の場合、alt属性が利用できます
    - id, class属性は基本的にユーザーが認識出来ないため利用しないでください`
 
-
 ruleTester.run('best-practice-for-data-test-attribute', rule, {
-  valid: [
-    { code: '<Any>ほげ</Any>'},
-    { code: '<Any name="hoge">ほげ</Any>'},
-    { code: '<Any data-any="fuga">ほげ</Any>'},
-  ],
+  valid: [{ code: '<Any>ほげ</Any>' }, { code: '<Any name="hoge">ほげ</Any>' }, { code: '<Any data-any="fuga">ほげ</Any>' }],
   invalid: [
-    { code: '<Any data-spec="hijklmn">ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
-    { code: '<Any data-spec>ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
-    { code: '<Any data-testid="abcdefg">ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
-    { code: '<Any data-testid>ほげ</Any>', errors: [{message: ERROR_MESSAGE}] },
-  ]
+    { code: '<Any data-spec="hijklmn">ほげ</Any>', errors: [{ message: ERROR_MESSAGE }] },
+    { code: '<Any data-spec>ほげ</Any>', errors: [{ message: ERROR_MESSAGE }] },
+    { code: '<Any data-testid="abcdefg">ほげ</Any>', errors: [{ message: ERROR_MESSAGE }] },
+    { code: '<Any data-testid>ほげ</Any>', errors: [{ message: ERROR_MESSAGE }] },
+  ],
 })

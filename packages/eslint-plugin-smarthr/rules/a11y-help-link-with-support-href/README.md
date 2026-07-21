@@ -3,6 +3,7 @@
 [ヘルプページ](https://support.smarthr.jp/)へのリンクは[smarthr-ui/HelpLink](https://smarthr.design/products/components/text-link/help-link/)を使うことを促すルールです
 
 ## なぜ[ヘルプページ](https://support.smarthr.jp/)へのリンクはsmarthr-ui/HelpLinkを使う必要があるのか
+
 ヘルプページへのリンクは、通常のテキストリンクと設定するべき属性が異なるため、専用のコンポーネントとして[smarthr-ui/HelpLink](https://smarthr.design/products/components/text-link/help-link/)が定義されています。<br />
 例えば `rel="help"` は `現在のページとリンク先の関係を表す` ものであり `ヘルプページへのリンク` であることが明確になります。
 
@@ -64,7 +65,6 @@ hrefに設定されたURLがsupport関連であると判定される条件は以
 <AnchorButton href={supportURL}>any</AnchorButton>
 <AnchorButton href={xxxSupportYyyHref}>any</AnchorButton>
 ```
-
 
 ## ✅ Correct
 

@@ -12,7 +12,7 @@ import { getLocale } from './getLocale'
 // 基本的な使用
 const locale = getLocale({
   locale: 'en-US',
-  locales: ['ja-JP', 'en-US', 'ko-KR']
+  locales: ['ja-JP', 'en-US', 'ko-KR'],
 })
 // 結果: 'en-US'
 ```
@@ -32,34 +32,24 @@ const locale = getLocale({
 4. ブラウザの言語設定を優先度順に確認し、locales配列に含まれていればそれを返す
 5. 上記すべてに該当しない場合デフォルト言語（`ja-JP`）を返す
 
-
 ## 🌐 対応言語
 
-| 言語コード | 言語名 |
-|-----------|--------|
-| `ja-JP` | 日本語 |
-| `en-US` | 英語 |
-| `ko-KR` | 韓国語 |
-| `zh-Hant-TW` | 繁体中文 |
-| `zh-Hans-CN` | 簡体中文 |
-| `vi-VN` | ベトナム語 |
-| `pt-BR` | ポルトガル語 |
+| 言語コード     | 言語名         |
+| -------------- | -------------- |
+| `ja-JP`        | 日本語         |
+| `en-US`        | 英語           |
+| `ko-KR`        | 韓国語         |
+| `zh-Hant-TW`   | 繁体中文       |
+| `zh-Hans-CN`   | 簡体中文       |
+| `vi-VN`        | ベトナム語     |
+| `pt-BR`        | ポルトガル語   |
 | `ja-JP-x-easy` | やさしい日本語 |
-| `id-ID` | インドネシア語 |
+| `id-ID`        | インドネシア語 |
 
 ## 📝 型定義
 
 ```typescript
-export type Locale = 
-  | 'ja-JP' 
-  | 'en-US' 
-  | 'ko-KR' 
-  | 'zh-Hant-TW' 
-  | 'zh-Hans-CN' 
-  | 'vi-VN' 
-  | 'pt-BR' 
-  | 'ja-JP-x-easy' 
-  | 'id-ID'
+export type Locale = 'ja-JP' | 'en-US' | 'ko-KR' | 'zh-Hant-TW' | 'zh-Hans-CN' | 'vi-VN' | 'pt-BR' | 'ja-JP-x-easy' | 'id-ID'
 ```
 
 ## ⚠️ 注意事項

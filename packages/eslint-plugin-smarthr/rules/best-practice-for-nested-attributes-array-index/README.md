@@ -54,9 +54,9 @@ a: {
 この問題は、name属性に必ずindexを含めることで回避できます。
 
 ```js
-a[xxx][0][value]='hoge'
-a[xxx][1][id]='2'
-a[xxx][1][value]='fuga'
+a[xxx][0][value] = 'hoge'
+a[xxx][1][id] = '2'
+a[xxx][1][value] = 'fuga'
 
 /* 送信される値の概念モデル
 a: {
@@ -74,7 +74,7 @@ a: {
 
 ```jsx
 // NG: name属性に[][] が含まれている
-<Input name="a[xxxx][][yyy]" />
+;<Input name="a[xxxx][][yyy]" />
 
 // NG: 文字列変数でも[][]はほぼname属性として利用される可能性が高い
 const namePrefix = 'a[xxx][][yyy]'

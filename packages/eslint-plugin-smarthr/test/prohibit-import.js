@@ -19,12 +19,12 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
+            lodash: {
               imported: true,
             },
           },
-        }
-      ]
+        },
+      ],
     },
     {
       code: `import { isEqual } from 'lodash-es'`,
@@ -32,12 +32,12 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
-              imported: ['isEqual']
+            lodash: {
+              imported: ['isEqual'],
             },
           },
-        }
-      ]
+        },
+      ],
     },
     {
       code: `import { isEqaul } from 'lodash'`,
@@ -45,12 +45,12 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
-              imported: ['isEqual']
+            lodash: {
+              imported: ['isEqual'],
             },
           },
-        }
-      ]
+        },
+      ],
     },
     {
       code: `import _ from 'lodash'`,
@@ -58,12 +58,12 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
-              imported: ['isEqual']
+            lodash: {
+              imported: ['isEqual'],
             },
           },
-        }
-      ]
+        },
+      ],
     },
     {
       code: `import _ from 'lodash'`,
@@ -71,11 +71,11 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^fuga.js$': {
-            'lodash': {
-              imported: true
+            lodash: {
+              imported: true,
             },
           },
-        }
+        },
       ],
     },
     {
@@ -88,7 +88,7 @@ ruleTester.run('prohibit-import', rule, {
               imported: ['isEqual'],
             },
           },
-        }
+        },
       ],
     },
   ],
@@ -99,79 +99,99 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '^.+$': {
-            'lodash': {
-              imported: true
-            },
-          },
-        }
-      ],
-      errors: [{ message: `lodash は利用しないでください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
-    },
-    {
-      code: `import { isEqual } from 'lodash'`,
-      filename: '/a/hoge.js',
-      options: [
-        {
-          '^.+$': {
-            'lodash': {
-              imported: true
-            },
-          },
-        }
-      ],
-      errors: [{ message: `lodash は利用しないでください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
-    },
-    {
-      code: `import { isEqual } from 'lodash'`,
-      filename: '/a/hoge.js',
-      options: [
-        {
-          '^.+$': {
-            'lodash': {
-              imported: ['isEqual']
-            },
-          },
-        }
-      ],
-      errors: [{message: `lodash/isEqual は利用しないでください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
-    },
-    {
-      code: `import { isEqual } from 'lodash'`,
-      filename: '/a/hoge.js',
-      options: [
-        {
-          '^.+$': {
-            'lodash': {
-              imported: ['isEqual'],
-              "reportMessage": "must not use {{module}}/{{export}}"
-            },
-          },
-        }
-      ],
-      errors: [{message: `must not use lodash/isEqual
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
-    },
-    {
-      code: `import { isEqual } from 'lodash'`,
-      filename: '/a/hoge.js',
-      options: [
-        {
-          '^.+$': {
-            'example': {
+            lodash: {
               imported: true,
             },
-            'lodash': {
-              imported: ['isEqual'],
-              reportMessage: "must not use {{module}}/{{export}}",
+          },
+        },
+      ],
+      errors: [
+        {
+          message: `lodash は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
+    },
+    {
+      code: `import { isEqual } from 'lodash'`,
+      filename: '/a/hoge.js',
+      options: [
+        {
+          '^.+$': {
+            lodash: {
+              imported: true,
             },
           },
-        }
+        },
       ],
-      errors: [{message: `must not use lodash/isEqual
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
+      errors: [
+        {
+          message: `lodash は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
+    },
+    {
+      code: `import { isEqual } from 'lodash'`,
+      filename: '/a/hoge.js',
+      options: [
+        {
+          '^.+$': {
+            lodash: {
+              imported: ['isEqual'],
+            },
+          },
+        },
+      ],
+      errors: [
+        {
+          message: `lodash/isEqual は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
+    },
+    {
+      code: `import { isEqual } from 'lodash'`,
+      filename: '/a/hoge.js',
+      options: [
+        {
+          '^.+$': {
+            lodash: {
+              imported: ['isEqual'],
+              reportMessage: 'must not use {{module}}/{{export}}',
+            },
+          },
+        },
+      ],
+      errors: [
+        {
+          message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
+    },
+    {
+      code: `import { isEqual } from 'lodash'`,
+      filename: '/a/hoge.js',
+      options: [
+        {
+          '^.+$': {
+            example: {
+              imported: true,
+            },
+            lodash: {
+              imported: ['isEqual'],
+              reportMessage: 'must not use {{module}}/{{export}}',
+            },
+          },
+        },
+      ],
+      errors: [
+        {
+          message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
     },
     {
       code: `import { isEqual } from 'lodash'`,
@@ -179,18 +199,22 @@ ruleTester.run('prohibit-import', rule, {
       options: [
         {
           '/hoge.js$': {
-            'example': {
+            example: {
               imported: true,
             },
-            'lodash': {
+            lodash: {
               imported: ['isEqual'],
-              reportMessage: "must not use {{module}}/{{export}}",
+              reportMessage: 'must not use {{module}}/{{export}}',
             },
           },
-        }
+        },
       ],
-      errors: [{message: `must not use lodash/isEqual
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
+      errors: [
+        {
+          message: `must not use lodash/isEqual
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
     },
     {
       code: `import { isEqual } from './module/validator'`,
@@ -202,10 +226,14 @@ ruleTester.run('prohibit-import', rule, {
               imported: ['isEqual'],
             },
           },
-        }
+        },
       ],
-      errors: [{ message: `./module/validator/isEqual は利用しないでください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` }]
+      errors: [
+        {
+          message: `./module/validator/isEqual は利用しないでください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`,
+        },
+      ],
     },
-  ]
+  ],
 })

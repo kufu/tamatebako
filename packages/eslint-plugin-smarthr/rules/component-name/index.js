@@ -15,7 +15,7 @@ const checkImportStyledComponents = (node, context) => {
       node: invalidNameNode,
       message: `${STYLED_COMPONENTS} をimportする際は、名称が"${STYLED_COMPONENTS_METHOD}" となるようにしてください。例: "import ${STYLED_COMPONENTS_METHOD} from '${STYLED_COMPONENTS}'"
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name`,
-    });
+    })
   }
 }
 
@@ -73,57 +73,57 @@ const EXPECTED_NAMES = {
   '(S|^s)ection$': 'Section$',
   '(S|^s)elect$': 'Select$',
   '(T|^t)extarea$': 'Textarea$',
-  'AccordionPanel$': 'AccordionPanel$',
-  'ActionDialogWithTrigger$': 'ActionDialogWithTrigger$',
-  'Anchor$': 'Anchor$',
-  'AnchorButton$': 'AnchorButton$',
-  'Base$': 'Base$',
-  'BaseColumn$': 'BaseColumn$',
-  'Center$': 'Center$',
+  AccordionPanel$: 'AccordionPanel$',
+  ActionDialogWithTrigger$: 'ActionDialogWithTrigger$',
+  Anchor$: 'Anchor$',
+  AnchorButton$: 'AnchorButton$',
+  Base$: 'Base$',
+  BaseColumn$: 'BaseColumn$',
+  Center$: 'Center$',
   'Check(B|b)ox$': 'Checkbox$',
   'Check(B|b)ox(e)?s$': 'Checkboxes$',
-  'Cluster$': 'Cluster$',
+  Cluster$: 'Cluster$',
   'Combo(B|b)ox$': 'Combobox$',
-  'Dialog$': 'Dialog$',
-  'DialogTrigger$': 'DialogTrigger$',
-  'DisclosureTrigger$': 'DisclosureTrigger$',
-  'DropZone$': 'DropZone$',
-  'DropdownTrigger$': 'DropdownTrigger$',
-  'Fieldsets$': 'Fieldsets$',
-  'FilterDropdown$': 'FilterDropdown$',
-  'FormControl$': 'FormControl$',
-  'FormControls$': 'FormControls$',
-  'FormDialog$': 'FormDialog$',
-  'FormGroup$': 'FormGroup$',
-  'HelpLink$': 'HelpLink$',
-  'Icon$': 'Icon$',
-  'Image$': 'Image$',
-  'Img$': 'Img$',
-  'IndexNav$': 'IndexNav$',
-  'InputFile$': 'InputFile$',
-  'Link$': 'Link$',
-  'Message$': 'Message$',
-  'ModelessDialog$': 'ModelessDialog$',
-  'Pagination$': 'Pagination$',
-  'RadioButton$': 'RadioButton$',
-  'RadioButtonPanel$': 'RadioButtonPanel$',
-  'RadioButtonPanels$': 'RadioButtonPanels$',
-  'RadioButtons$': 'RadioButtons$',
-  'Reel$': 'Reel$',
-  'RemoteDialogTrigger$': 'RemoteDialogTrigger$',
+  Dialog$: 'Dialog$',
+  DialogTrigger$: 'DialogTrigger$',
+  DisclosureTrigger$: 'DisclosureTrigger$',
+  DropZone$: 'DropZone$',
+  DropdownTrigger$: 'DropdownTrigger$',
+  Fieldsets$: 'Fieldsets$',
+  FilterDropdown$: 'FilterDropdown$',
+  FormControl$: 'FormControl$',
+  FormControls$: 'FormControls$',
+  FormDialog$: 'FormDialog$',
+  FormGroup$: 'FormGroup$',
+  HelpLink$: 'HelpLink$',
+  Icon$: 'Icon$',
+  Image$: 'Image$',
+  Img$: 'Img$',
+  IndexNav$: 'IndexNav$',
+  InputFile$: 'InputFile$',
+  Link$: 'Link$',
+  Message$: 'Message$',
+  ModelessDialog$: 'ModelessDialog$',
+  Pagination$: 'Pagination$',
+  RadioButton$: 'RadioButton$',
+  RadioButtonPanel$: 'RadioButtonPanel$',
+  RadioButtonPanels$: 'RadioButtonPanels$',
+  RadioButtons$: 'RadioButtons$',
+  Reel$: 'Reel$',
+  RemoteDialogTrigger$: 'RemoteDialogTrigger$',
   'RemoteTrigger(.*)FormDialog$': 'RemoteTrigger(.*)FormDialog$',
   'RemoteTrigger(.+)Dialog$': 'RemoteTrigger(.+)Dialog$',
-  'RightFixedNote$': 'RightFixedNote$',
-  'Scroller$': 'Scroller$',
-  'SearchInput$': 'SearchInput$',
-  'SegmentedControl$': 'SegmentedControl$',
-  'SideNav$': 'SideNav$',
-  'Sidebar$': 'Sidebar$',
-  'SmartHRLogo$': 'SmartHRLogo$',
-  'Stack$': 'Stack$',
-  'Switch$': 'Switch$',
-  'TabItem$': 'TabItem$',
-  'Text$': 'Text$',
+  RightFixedNote$: 'RightFixedNote$',
+  Scroller$: 'Scroller$',
+  SearchInput$: 'SearchInput$',
+  SegmentedControl$: 'SegmentedControl$',
+  SideNav$: 'SideNav$',
+  Sidebar$: 'Sidebar$',
+  SmartHRLogo$: 'SmartHRLogo$',
+  Stack$: 'Stack$',
+  Switch$: 'Switch$',
+  TabItem$: 'TabItem$',
+  Text$: 'Text$',
   '^(img|svg)$': '(Img|Image|Icon)$',
   '^a$': '(Anchor|Link)$',
 }
@@ -135,11 +135,11 @@ const unexpectedMessageTemplate = `{{extended}} は smarthr-ui/{{expected}} をe
    - "styled(Xxxx)" 形式の場合、拡張元であるXxxxコンポーネントの名称の末尾に"{{expected}}"を設定し、そのコンポーネント内でsmarthr-ui/{{expected}}を利用してください`
 const UNEXPECTED_NAMES = {
   '(Anchor|^a)$': '(Anchor)$',
-  '(A|^a)rticle$': ['(Article)$', unexpectedMessageTemplate ],
-  '(A|^a)side$': ['(Aside)$', unexpectedMessageTemplate ],
+  '(A|^a)rticle$': ['(Article)$', unexpectedMessageTemplate],
+  '(A|^a)side$': ['(Aside)$', unexpectedMessageTemplate],
   '(B|^b)utton$': '(Button)$',
   '(Date(timeLocal)?|Time|Month|Wareki)Picker$': '((Date(timeLocal)?|Time|Month|Wareki)Picker)$',
-  'Dialog$': '(Dialog)$',
+  Dialog$: '(Dialog)$',
   '(F|^f)ieldset$': '(Fieldset)$',
   '(F|^f)orm$': '(Form)$',
   '(Heading|^h(1|2|3|4|5|6))$': '(Heading)$',
@@ -149,47 +149,47 @@ const UNEXPECTED_NAMES = {
   '(I|^i)nput$': '(Input)$',
   '(Link|^a)$': '(Link)$',
   '(L|^l)abel$': '(Label)$',
-  '(N|^n)av$': ['(Nav)$', unexpectedMessageTemplate ],
+  '(N|^n)av$': ['(Nav)$', unexpectedMessageTemplate],
   '(Ordered(.*)List|^ol)$': '(Ordered(.*)List)$',
-  '(S|^s)ection$': ['(Section)$', unexpectedMessageTemplate ],
+  '(S|^s)ection$': ['(Section)$', unexpectedMessageTemplate],
   '(S|^s)elect$': '(Select)$',
   '(T|^t)extarea$': '(Textarea)$',
-  'Base$': '(Base)$',
-  'BaseColumn$': '(BaseColumn)$',
-  'Center$': '(Center)$',
+  Base$: '(Base)$',
+  BaseColumn$: '(BaseColumn)$',
+  Center$: '(Center)$',
   'Check(B|b)ox$': '(Checkbox)$',
   'Check(B|b)ox(e)?s$': '(Checkboxes)$',
-  'Cluster$': '(Cluster)$',
+  Cluster$: '(Cluster)$',
   'Combo(B|b)ox$': '(Combobox)$',
-  'DisclosureTrigger$': '(DisclosureTrigger)$',
-  'Fieldsets$': '(Fieldsets)$',
-  'FilterDropdown$': '(FilterDropdown)$',
-  'FormControl$': '(FormControl)$',
-  'FormControls$': '(FormControls)$',
-  'FormDialog$': '(FormDialog)$',
-  'FormGroup$': '(FormGroup)$',
-  'IndexNav$': '(IndexNav)$',
-  'InputFile$': '(InputFile)$',
-  'RadioButton$': '(RadioButton)$',
-  'RadioButtonPanel$': '(RadioButtonPanel)$',
-  'RadioButtonPanels$': '(RadioButtonPanels)$',
-  'RadioButtons$': '(RadioButtons)$',
-  'Reel$': '(Reel)$',
+  DisclosureTrigger$: '(DisclosureTrigger)$',
+  Fieldsets$: '(Fieldsets)$',
+  FilterDropdown$: '(FilterDropdown)$',
+  FormControl$: '(FormControl)$',
+  FormControls$: '(FormControls)$',
+  FormDialog$: '(FormDialog)$',
+  FormGroup$: '(FormGroup)$',
+  IndexNav$: '(IndexNav)$',
+  InputFile$: '(InputFile)$',
+  RadioButton$: '(RadioButton)$',
+  RadioButtonPanel$: '(RadioButtonPanel)$',
+  RadioButtonPanels$: '(RadioButtonPanels)$',
+  RadioButtons$: '(RadioButtons)$',
+  Reel$: '(Reel)$',
   'RemoteTrigger(.*)FormDialog$': '(RemoteTrigger(.*)FormDialog)$',
-  'Scroller$': '(Scroller)$',
-  'SearchInput$': '(SearchInput)$',
-  'SideNav$': '(SideNav)$',
-  'Sidebar$': '(Sidebar)$',
-  'Stack$': '(Stack)$',
+  Scroller$: '(Scroller)$',
+  SearchInput$: '(SearchInput)$',
+  SideNav$: '(SideNav)$',
+  Sidebar$: '(Sidebar)$',
+  Stack$: '(Stack)$',
 }
 
 const SCHEMA = []
 
-const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [ new RegExp(b), new RegExp(e) ])
+const entriesesTagNames = Object.entries(EXPECTED_NAMES).map(([b, e]) => [new RegExp(b), new RegExp(e)])
 const entriesesUnTagNames = Object.entries(UNEXPECTED_NAMES).map(([b, e]) => {
-  const [ auctualE, messageTemplate ] = Array.isArray(e) ? e : [e, '']
+  const [auctualE, messageTemplate] = Array.isArray(e) ? e : [e, '']
 
-  return [ new RegExp(b), new RegExp(auctualE), messageTemplate ]
+  return [new RegExp(b), new RegExp(auctualE), messageTemplate]
 })
 
 /**
@@ -207,9 +207,13 @@ module.exports = {
           context.report({
             node,
             message: `${extended}を正規表現 "${e.toString()}" がmatchする名称に変更してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name${isImport ? `
- - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります` : ''}`,
-          });
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name${
+   isImport
+     ? `
+ - ${base}が型の場合、'import type { ${base} as ${extended} }' もしくは 'import { type ${base} as ${extended} }' のように明示的に型であることを宣言してください。名称変更が不要になります`
+     : ''
+ }`,
+          })
         }
       }
     }
@@ -244,13 +248,15 @@ module.exports = {
 
               context.report({
                 node,
-                message: m ? m.replace(/\{\{extended\}\}/g, extended).replace(/\{\{expected\}\}/g, expected) : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
+                message: m
+                  ? m.replace(/\{\{extended\}\}/g, extended).replace(/\{\{expected\}\}/g, expected)
+                  : `${extended} は ${b.toString()} にmatchする名前のコンポーネントを拡張することを期待している名称になっています
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - ${extended} の名称の末尾が"${expected}" という文字列ではない状態にしつつ、"${base}"を継承していることをわかる名称に変更してください
  - もしくは"${base}"を"${extended}"の継承元であることがわかるような${isBareTag ? '適切なタグや別コンポーネントに差し替えてください' : '名称に変更するか、適切な別コンポーネントに差し替えてください'}
    - 修正例1: const ${extended.replace(expected, '')}Xxxx = ${sampleFixBase}
    - 修正例2: const ${extended}Xxxx = ${sampleFixBase}
-   - 修正例3: const ${extended} = styled(Xxxx${expected})`
+   - 修正例3: const ${extended} = styled(Xxxx${expected})`,
               })
             }
           }
@@ -263,7 +269,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name
  - Modalとは形容詞であり、かつ"現在の操作から切り離して専用の操作を行わせる" という意味合いを持ちます
    - そのためDialogでなければ正しくない場合がありえます(smarthr-ui/ModelessDialogのように元々の操作も行えるDialogなどが該当)
-   - DialogはModalなダイアログ、Modelessなダイアログすべてを含有した名称のため、統一することを推奨しています`
+   - DialogはModalなダイアログ、Modelessなダイアログすべてを含有した名称のため、統一することを推奨しています`,
         })
       },
     }

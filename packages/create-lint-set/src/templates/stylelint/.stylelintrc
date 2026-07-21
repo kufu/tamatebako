@@ -1,5 +1,3 @@
 {
-  "extends": [
-    "stylelint-config-smarthr"
-  ]
+  "extends": ["stylelint-config-smarthr"]
 }

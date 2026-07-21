@@ -86,7 +86,6 @@ type Actions = {
 }
 ```
 
-
 ## ✅ Correct
 
 ```jsx

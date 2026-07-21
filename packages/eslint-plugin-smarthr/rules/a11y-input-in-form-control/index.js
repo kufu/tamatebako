@@ -1,6 +1,8 @@
 const LABELED_INPUTS_REGEX_STR = 'RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?'
 const LABELED_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR})$`)
-const FORM_CONTROL_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR}|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$`)
+const FORM_CONTROL_INPUTS_REGEX = new RegExp(
+  `(${LABELED_INPUTS_REGEX_STR}|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$`,
+)
 const SEARCH_INPUT_REGEX = /SearchInput$/
 const INPUT_REGEX = /(i|I)nput$/
 const RADIO_BUTTONS_REGEX = /RadioButton(Panel)?(s)?$/
@@ -30,7 +32,7 @@ const SCHEMA = [
       additionalMultiInputComponents: { type: 'array', items: { type: 'string' }, default: [] },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 /**
@@ -43,11 +45,16 @@ module.exports = {
   },
   create(context) {
     const option = context.options[0] || {}
-    const additionalInputComponents = option.additionalInputComponents?.length > 0 ? new RegExp(`(${option.additionalInputComponents.join('|')})`) : null
-    const additionalMultiInputComponents = option.additionalMultiInputComponents?.length > 0 ? new RegExp(`(${option.additionalMultiInputComponents.join('|')})`) : null
+    const additionalInputComponents =
+      option.additionalInputComponents?.length > 0 ? new RegExp(`(${option.additionalInputComponents.join('|')})`) : null
+    const additionalMultiInputComponents =
+      option.additionalMultiInputComponents?.length > 0
+        ? new RegExp(`(${option.additionalMultiInputComponents.join('|')})`)
+        : null
 
     const checkAdditionalInputComponents = (name) => additionalInputComponents && additionalInputComponents.test(name)
-    const checkAdditionalMultiInputComponents = (name) => additionalMultiInputComponents && additionalMultiInputComponents.test(name)
+    const checkAdditionalMultiInputComponents = (name) =>
+      additionalMultiInputComponents && additionalMultiInputComponents.test(name)
 
     let formControls = []
     let conditionalformControls = []
@@ -55,7 +62,7 @@ module.exports = {
 
     return {
       JSXOpeningElement: (node) => {
-        const nodeName = node.name.name || '';
+        const nodeName = node.name.name || ''
         const isFormControlInput = FORM_CONTROL_INPUTS_REGEX.test(nodeName)
         const isAdditionalMultiInput = checkAdditionalMultiInputComponents(nodeName)
         let conditionalExpressions = []
@@ -103,9 +110,9 @@ module.exports = {
             }
           }
 
-          const isPreMultiple = isAdditionalMultiInput || isFormControlInput && SUFFIX_S_REGEX.test(nodeName)
+          const isPreMultiple = isAdditionalMultiInput || (isFormControlInput && SUFFIX_S_REGEX.test(nodeName))
           const isRadio = (isPureInput && isTypeRadio) || RADIO_BUTTONS_REGEX.test(nodeName)
-          const isCheckbox = !isRadio && (isPureInput && isTypeCheck || CHECKBOX_REGEX.test(nodeName))
+          const isCheckbox = !isRadio && ((isPureInput && isTypeCheck) || CHECKBOX_REGEX.test(nodeName))
 
           const wrapComponentName = isRadio ? 'Fieldset' : 'FormControl'
           const search = (n) => {
@@ -121,7 +128,6 @@ module.exports = {
 
                     if (!hit) {
                       formControls.push(n)
-
 
                       if (isCheckbox) {
                         checkboxFormControls.push(n)
@@ -140,16 +146,26 @@ module.exports = {
                     const matcherFormControl = name.match(FORM_CONTROL_REGEX)
 
                     if (matcherFormControl) {
-                      if (isRadio || isCheckbox && (isInMap || hit && checkboxFormControls.includes(n))) {
-                        const convertComp = isRadio ? 'smarthr-ui/RadioButton、smarthr-ui/RadioButtonPanel' : 'smarthr-ui/Checkbox'
+                      if (isRadio || (isCheckbox && (isInMap || (hit && checkboxFormControls.includes(n))))) {
+                        const convertComp = isRadio
+                          ? 'smarthr-ui/RadioButton、smarthr-ui/RadioButtonPanel'
+                          : 'smarthr-ui/Checkbox'
 
                         context.report({
                           node: n,
                           message: `${name} が ${nodeName} を含んでいます。smarthr-ui/${matcherFormControl[1]} を smarthr-ui/Fieldset に変更し、正しくグルーピングされるように修正してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control${isRadio ? `
- - Fieldsetで同じname属性のラジオボタン全てを囲むことで正しくグループ化され、適切なタイトル・説明を追加出来ます` : ''}${isPureInput ? `
- - 可能なら${nodeName}は${convertComp}への変更を検討してください。難しい場合は ${nodeName} と結びつくlabel要素が必ず存在するよう、マークアップする必要があることに注意してください。` : ''}`,
-                        });
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control${
+   isRadio
+     ? `
+ - Fieldsetで同じname属性のラジオボタン全てを囲むことで正しくグループ化され、適切なタイトル・説明を追加出来ます`
+     : ''
+ }${
+   isPureInput
+     ? `
+ - 可能なら${nodeName}は${convertComp}への変更を検討してください。難しい場合は ${nodeName} と結びつくlabel要素が必ず存在するよう、マークアップする必要があることに注意してください。`
+     : ''
+ }`,
+                        })
                       } else if (isMultiInput && !conditionalHit) {
                         context.report({
                           node: n,
@@ -161,9 +177,9 @@ module.exports = {
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
      - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
  - 方法3: ${name} が smarthr-ui/${matcherFormControl[1]}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`,
-                        });
+                        })
                       }
-                    // HINT: 何らかの方法でラベルが設定されている場合、無視する
+                      // HINT: 何らかの方法でラベルが設定されている場合、無視する
                     } else if (!isRadio && !isCheckbox && !isPseudoLabel) {
                       const isSelect = nodeName.match(SELECT_REGEX)
 
@@ -180,19 +196,22 @@ module.exports = {
    - smarthr-ui/RadioButton、smarthr-ui/RadioButtonPanel、smarthr-ui/Checkbox はlabel要素を内包しています
  - 方法4: ${name} が smarthr-ui/Fieldset、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FIELDSET_REGEX} にマッチしないものに変更してください
  - 方法5: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります`,
-                      });
+                      })
                     }
 
                     return
                   } else {
                     const isSection = SECTIONING_REGEX.test(name)
-                    const layoutSectionAttribute = !isSection && LAYOUT_COMPONENT_REGEX.test(name) && openingElement.attributes.find(findAsSectioning)
+                    const layoutSectionAttribute =
+                      !isSection && LAYOUT_COMPONENT_REGEX.test(name) && openingElement.attributes.find(findAsSectioning)
 
                     if (isSection || layoutSectionAttribute) {
                       // HINT: smarthr-ui/Checkboxはlabelを単独で持つため、FormControl系でラップをする必要はない
                       // HINT: 擬似的にラベルが設定されている場合、無視する
                       if (!isCheckbox && !isPseudoLabel) {
-                        const actualName = isSection ? name : `<${name} ${layoutSectionAttribute.name.name}="${layoutSectionAttribute.value.value}">`
+                        const actualName = isSection
+                          ? name
+                          : `<${name} ${layoutSectionAttribute.name.name}="${layoutSectionAttribute.value.value}">`
                         const isSelect = !isRadio && SELECT_REGEX.test(nodeName)
 
                         context.report({
@@ -203,9 +222,13 @@ module.exports = {
    - ${actualName} 内のHeading要素は${wrapComponentName}のtitle属性に変更してください
  - 方法2: ${actualName} と ${nodeName} の間に ${wrapComponentName} が存在するようにマークアップを変更してください
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
-     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)${isRadio ? '' : `
- - 方法3: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります`}`,
-                        });
+     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)${
+       isRadio
+         ? ''
+         : `
+ - 方法3: 別途label要素が存在し、それらと紐づけたい場合はlabel要素のhtmlFor属性、${nodeName}のid属性に同じ文字列を指定してください。この文字列はhtml内で一意である必要があります`
+     }`,
+                        })
                       }
 
                       return
@@ -224,7 +247,11 @@ module.exports = {
                   const name = n.id.name
 
                   // 入力要素系コンポーネントの拡張なので対象外
-                  if (FORM_CONTROL_INPUTS_REGEX.test(name) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
+                  if (
+                    FORM_CONTROL_INPUTS_REGEX.test(name) ||
+                    checkAdditionalMultiInputComponents(name) ||
+                    checkAdditionalInputComponents(name)
+                  ) {
                     return
                   }
                 }
@@ -236,7 +263,11 @@ module.exports = {
                   const name = n.id.name
 
                   // 入力要素系コンポーネントの拡張なので対象外
-                  if (FORM_CONTROL_INPUTS_REGEX.test(name) || checkAdditionalMultiInputComponents(name) || checkAdditionalInputComponents(name)) {
+                  if (
+                    FORM_CONTROL_INPUTS_REGEX.test(name) ||
+                    checkAdditionalMultiInputComponents(name) ||
+                    checkAdditionalInputComponents(name)
+                  ) {
                     return
                   }
                 }
@@ -251,13 +282,17 @@ module.exports = {
                     node,
                     message: `${nodeName} を、smarthr-ui/${wrapComponentName} もしくはそれを拡張したコンポーネントが囲むようマークアップを変更してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
- - ${wrapComponentName}で入力要素を囲むことでラベルと入力要素が適切に紐づき、操作性が高まります${isRadio ? `
- - FieldsetでRadioButtonを囲むことでグループ化された入力要素に対して適切なタイトル・説明を追加出来ます` : `
+ - ${wrapComponentName}で入力要素を囲むことでラベルと入力要素が適切に紐づき、操作性が高まります${
+   isRadio
+     ? `
+ - FieldsetでRadioButtonを囲むことでグループ化された入力要素に対して適切なタイトル・説明を追加出来ます`
+     : `
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
-     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)`}
+     - この場合、${wrapComponentName}のdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)`
+ }
  - ${nodeName}が入力要素とラベル・タイトル・説明など含む概念を表示するコンポーネントの場合、コンポーネント名を${FROM_CONTROLS_REGEX}とマッチするように修正してください
  - ${nodeName}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を${FORM_CONTROL_INPUTS_REGEX}とマッチするように修正してください`,
-                  });
+                  })
                 }
 
                 return
@@ -290,7 +325,7 @@ module.exports = {
               message: `${nodeName}に 'role="group" が設定されています。${actualComponent} をつかってマークアップする場合、'role="group"' は不要です
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - ${nodeName} が ${actualComponent}、もしくはそれを拡張しているコンポーネントではない場合、名称を ${FROM_CONTROLS_REGEX} にマッチしないものに変更してください`,
-            });
+            })
 
             return
           }
@@ -317,7 +352,7 @@ module.exports = {
  - 方法1: 親要素である${name}をsmarthr-ui/${matcher[1]}、もしくはそれを拡張していないコンポーネントでマークアップしてください
    - ${matcher[1]}ではなく、smarthr-ui/Fieldset、もしくはsmarthr-ui/Section + smarthr-ui/Heading などでのマークアップを検討してください
  - 方法2: 親要素である${name}がsmarthr-ui/${matcher[1]}を拡張したコンポーネントではない場合、コンポーネント名を${FORM_CONTROL_REGEX}と一致しない名称に変更してください`,
-                    });
+                    })
                   }
 
                   return
@@ -440,7 +475,7 @@ module.exports = {
                 message: `${nodeName}内に入力要素が2個以上存在しないため、'role="group"'を削除してください。'role="group"'は複数の入力要素を一つのグループとして扱うための属性です。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - ${nodeName}内に2つ以上の入力要素が存在する場合、入力要素を含むコンポーネント名全てを${FORM_CONTROL_INPUTS_REGEX}、もしくは${FROM_CONTROLS_REGEX}にマッチする名称に変更してください`,
-              });
+              })
             }
           }
         }

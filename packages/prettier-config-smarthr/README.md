@@ -4,7 +4,7 @@ A sharable prettier config for SmartHR.
 
 ## Installation
 
-prettier-config-smarthr is available as an  [npm package](https://www.npmjs.com/package/prettier-config-smarthr).
+prettier-config-smarthr is available as an [npm package](https://www.npmjs.com/package/prettier-config-smarthr).
 
 ```sh
 // with npm
@@ -39,7 +39,7 @@ Create `.prettierrc.js` , import the file in a `.prettierrc.js` file and export 
 
 ```js
 module.exports = {
-  ...require("prettier-config-smarthr"),
-  "arrowParens": "avoid",
-};
+  ...require('prettier-config-smarthr'),
+  arrowParens: 'avoid',
+}
 ```

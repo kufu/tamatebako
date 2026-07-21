@@ -20,13 +20,13 @@ ruleTester.run('best-practice-for-nested-attributes-array-index', rule, {
   valid: [
     { code: `<Input name="a[xxxx][0][yyy]" />` },
     { code: '`<Input name="a[xxxx][${index}][yyy]" />`' },
-    { code: `const hoge = 'a[xxxx][0][id]'`},
-    { code: 'const hoge = `${prefix}[${index}][id]`'},
+    { code: `const hoge = 'a[xxxx][0][id]'` },
+    { code: 'const hoge = `${prefix}[${index}][id]`' },
   ],
   invalid: [
-    { code: `<Input name="a[xxxx][][yyy]" />`, errors: [ { message: ERROR_MESSAGE } ] },
-    { code: '<Input name={`${any}[][yyy]`} />', errors: [ { message: ERROR_MESSAGE } ] },
-    { code: `const hoge = 'a[xxxx][][id]'`, errors: [ { message: ERROR_MESSAGE } ] },
-    { code: 'const hoge = `${prefix}[][id]`', errors: [ { message: ERROR_MESSAGE } ] },
-  ]
+    { code: `<Input name="a[xxxx][][yyy]" />`, errors: [{ message: ERROR_MESSAGE }] },
+    { code: '<Input name={`${any}[][yyy]`} />', errors: [{ message: ERROR_MESSAGE }] },
+    { code: `const hoge = 'a[xxxx][][id]'`, errors: [{ message: ERROR_MESSAGE }] },
+    { code: 'const hoge = `${prefix}[][id]`', errors: [{ message: ERROR_MESSAGE }] },
+  ],
 })

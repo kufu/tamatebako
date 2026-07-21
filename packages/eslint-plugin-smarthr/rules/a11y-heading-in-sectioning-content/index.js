@@ -42,7 +42,7 @@ const VariableDeclaratorBareToSHR = (context, node) => {
       context.report({
         node,
         message,
-      });
+      })
     }
   }
 }
@@ -60,20 +60,25 @@ const reportMessageBareToSHR = (tagName, visibleExample) => {
 const searchBubbleUp = (node) => {
   if (
     node.type === 'Program' ||
-    node.type === 'JSXElement' && node.openingElement.name.name && (
-      sectioningRegex.test(node.openingElement.name.name) ||
-      layoutComponentRegex.test(node.openingElement.name.name) && node.openingElement.attributes.some(includeSectioningAsAttr)
-    )
+    (node.type === 'JSXElement' &&
+      node.openingElement.name.name &&
+      (sectioningRegex.test(node.openingElement.name.name) ||
+        (layoutComponentRegex.test(node.openingElement.name.name) &&
+          node.openingElement.attributes.some(includeSectioningAsAttr))))
   ) {
     return node
   }
 
   if (
     // Headingコンポーネントの拡張なので対象外
-    node.type === 'VariableDeclarator' && ignoreHeadingCheckParentTypeRegex.test(node.parent.parent?.type) && declaratorHeadingRegex.test(node.id.name) ||
-    node.type === 'FunctionDeclaration' && ignoreHeadingCheckParentTypeRegex.test(node.parent.type) && declaratorHeadingRegex.test(node.id.name) ||
+    (node.type === 'VariableDeclarator' &&
+      ignoreHeadingCheckParentTypeRegex.test(node.parent.parent?.type) &&
+      declaratorHeadingRegex.test(node.id.name)) ||
+    (node.type === 'FunctionDeclaration' &&
+      ignoreHeadingCheckParentTypeRegex.test(node.parent.type) &&
+      declaratorHeadingRegex.test(node.id.name)) ||
     // ModelessDialogのheaderにHeadingを設定している場合も対象外
-    node.type === 'JSXAttribute' && node.name.name === 'header' && modelessDialogRegex.test(node.parent.name.name)
+    (node.type === 'JSXAttribute' && node.name.name === 'header' && modelessDialogRegex.test(node.parent.name.name))
   ) {
     return null
   }
@@ -144,14 +149,11 @@ const searchChildren = (n) => {
 
       if (
         sectioningRegex.test(name) ||
-        layoutComponentRegex.test(name) && n.openingElement.attributes.some(includeSectioningAsAttr)
+        (layoutComponentRegex.test(name) && n.openingElement.attributes.some(includeSectioningAsAttr))
       ) {
         return false
       } else if (
-        (
-          headingRegex.test(name) &&
-          !noHeadingTagNamesRegex.test(n.openingElement.attributes.find(findTagAttr)?.value.value)
-        ) ||
+        (headingRegex.test(name) && !noHeadingTagNamesRegex.test(n.openingElement.attributes.find(findTagAttr)?.value.value)) ||
         forInSearchChildren(n.openingElement.attributes)
       ) {
         return true
@@ -205,7 +207,7 @@ module.exports = {
             node,
             message,
           })
-        // Headingに明示的にtag属性が設定されており、それらが span or legend の場合はHeading扱いしない
+          // Headingに明示的にtag属性が設定されており、それらが span or legend の場合はHeading扱いしない
         } else if (headingRegex.test(elementName)) {
           const tagAttr = node.attributes.find(findTagAttr)
 
@@ -269,14 +271,15 @@ module.exports = {
                 // 対象属性を持っている場合はcorrectとして扱う
                 headingAttributeRegex.test(attrName) ||
                 // HINT: Navかつaria-labelを持っている場合も許容する
-                isNav && ariaLabelRegex.test(attrName)
+                (isNav && ariaLabelRegex.test(attrName))
               ) {
                 return
               }
             }
           }
 
-          const layoutSectionAsAttr = !isSection && layoutComponentRegex.test(elementName) ? node.attributes.find(includeSectioningAsAttr) : null
+          const layoutSectionAsAttr =
+            !isSection && layoutComponentRegex.test(elementName) ? node.attributes.find(includeSectioningAsAttr) : null
 
           if (
             (isSection || layoutSectionAsAttr) &&
@@ -289,8 +292,12 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content
  - SectioningContentはHeadingを含むようにマークアップする必要があります
  - ${elementName}に設定しているいずれかの属性がHeading，もしくはHeadingのテキストに該当する場合、その属性の名称を ${headingAttributeRegex.toString()} にマッチする名称に変更してください
- - Headingにするべき適切な文字列が存在しない場合、 ${isSection ? `${elementName} は削除するか、SectioningContentではない要素に差し替えてください` : `${layoutSectionAsAttr.name.name}="${layoutSectionAsAttr.value.value}"を削除、もしくは別の要素に変更してください`}${isNav ? `
- - nav要素の場合、aria-label、もしくはaria-labelledby属性を設定し、どんなナビゲーションなのかがわかる名称を設定してください` : ''}`,
+ - Headingにするべき適切な文字列が存在しない場合、 ${isSection ? `${elementName} は削除するか、SectioningContentではない要素に差し替えてください` : `${layoutSectionAsAttr.name.name}="${layoutSectionAsAttr.value.value}"を削除、もしくは別の要素に変更してください`}${
+   isNav
+     ? `
+ - nav要素の場合、aria-label、もしくはaria-labelledby属性を設定し、どんなナビゲーションなのかがわかる名称を設定してください`
+     : ''
+ }`,
             })
           }
         }

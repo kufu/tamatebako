@@ -3,7 +3,6 @@
 HeadingコンポーネントをSectioningContent(Article, Aside, Nav, Section) のいずれかで囲むことを促すルールです。<br />
 同時にSectioningContentはHeadingを内包しているか、もチェックします
 
-
 ## なぜHeadingとSectioningContentはセットで記述する必要があるのか？
 
 詳細は[SmartHR Tech Blog](https://tech.smarthr.jp/entry/2025/06/19/094801)を参照してください。<br />
@@ -72,13 +71,7 @@ PageHeadingをSectioningContentで囲まない場合、html全体の見出しと
 このチェックは条件分岐によって結果としては一つしかPageHeadingが出力されない場合でもエラーになるため注意が必要です。
 
 ```jsx
-<>
-  {hoge ? (
-    <PageHeading>{hoge}</PageHeading>
-  ) : (
-    <PageHeading>{fuga}</PageHeading>
-  )}
-</>
+<>{hoge ? <PageHeading>{hoge}</PageHeading> : <PageHeading>{fuga}</PageHeading>}</>
 ```
 
 下記の様にPageHeadingは単一の記述になるようにまとめることを推奨します。
@@ -88,9 +81,6 @@ PageHeadingをSectioningContentで囲まない場合、html全体の見出しと
   <PageHeading>{hoge || fuga}</PageHeading>
 </>
 ```
-
-
-
 
 ## rules
 
@@ -107,9 +97,7 @@ PageHeadingをSectioningContentで囲まない場合、html全体の見出しと
 ```jsx
 // Headingがsmarthr-ui/SectioningContent(Article, Aside, Nav, Section)のいずれかで囲まれていないためNG
 <div>
-  <Heading>
-    hoge
-  </Heading>
+  <Heading>hoge</Heading>
 </div>
 ```
 
@@ -124,34 +112,20 @@ PageHeadingをSectioningContentで囲まない場合、html全体の見出しと
 // buildinのSectioningContentではなくsmarthr-ui/SectioningContentで囲まなければ
 // Headingレベルの自動計算が有効にならないためNG
 <section>
-  <Heading>
-    hoge
-  </Heading>
+  <Heading>hoge</Heading>
 </section>
 ```
 
 ```jsx
 // PageHeadingはSectiongContentでラップするとoutlineが乱れる可能性があるためNG
 <Section>
-  <PageHeading>
-    hoge
-  </PageHeading>
+  <PageHeading>hoge</PageHeading>
 </Section>
 ```
 
 ```jsx
 // 同じファイル内に複数のPageHeadingが存在するとNG
-<>
-  {hoge ? (
-    <PageHeading>
-      hoge
-    </PageHeading>
-  ) : (
-    <PageHeading>
-      fuga
-    </PageHeading>
-  )}
-</>
+<>{hoge ? <PageHeading>hoge</PageHeading> : <PageHeading>fuga</PageHeading>}</>
 ```
 
 ## ✅ Correct

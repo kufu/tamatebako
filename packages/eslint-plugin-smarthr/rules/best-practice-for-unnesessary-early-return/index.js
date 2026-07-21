@@ -5,7 +5,7 @@ const NULL_RETURN_STATEMENT = 'ReturnStatement[argument=null]'
 
 const FUNCTION_REGEX = /^(Arrow)?Function(Expression|Declaration)$/
 
-const searchFunction = (node) => FUNCTION_REGEX.test(node.type) ? node : searchFunction(node.parent)
+const searchFunction = (node) => (FUNCTION_REGEX.test(node.type) ? node : searchFunction(node.parent))
 
 const getEarlyReturn = (b) => {
   let ret = null

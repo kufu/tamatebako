@@ -18,8 +18,15 @@ ruleTester.run('best-practice-for-remote-trigger-dialog', rule, {
     { code: '<RemoteTriggerHogeDialog {...args} id="hoge">content.</RemoteTriggerHogeDialog>' },
   ],
   invalid: [
-    { code: '<RemoteDialogTrigger targetId={hoge}>open.</RemoteDialogTrigger>', errors: [ { message: `RemoteDialogTriggerのtargetId属性には直接文字列を指定してください。
+    {
+      code: '<RemoteDialogTrigger targetId={hoge}>open.</RemoteDialogTrigger>',
+      errors: [
+        {
+          message: `RemoteDialogTriggerのtargetId属性には直接文字列を指定してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-remote-trigger-dialog
- - 変数などは利用できません（これは関連するTriggerとDialogを検索しやすくするためです）` } ] },
-  ]
+ - 変数などは利用できません（これは関連するTriggerとDialogを検索しやすくするためです）`,
+        },
+      ],
+    },
+  ],
 })

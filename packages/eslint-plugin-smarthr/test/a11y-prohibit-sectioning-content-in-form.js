@@ -36,32 +36,32 @@ ruleTester.run('a11y-prohibit-sectioning-content-in-form', rule, {
     {
       code: `<form><article>content</article></form>`,
       filename: '/app/page.tsx',
-      errors: [{ message: `article${ERROR_MESSAGE}` }]
+      errors: [{ message: `article${ERROR_MESSAGE}` }],
     },
     {
       code: `<FormControl><section>content</section></FormControl>`,
       filename: '/app/Form/page.tsx',
-      errors: [{ message: `section${ERROR_MESSAGE}` }]
+      errors: [{ message: `section${ERROR_MESSAGE}` }],
     },
     {
       code: `<Fieldset><aside>content</aside></Fieldset>`,
       filename: '/app/FormDialog/page.tsx',
-      errors: [{ message: `aside${ERROR_MESSAGE}` }]
+      errors: [{ message: `aside${ERROR_MESSAGE}` }],
     },
     {
       code: `<fieldset><nav>content</nav></fieldset>`,
       filename: '/app/Form/page.tsx',
-      errors: [{ message: `nav${ERROR_MESSAGE}` }]
+      errors: [{ message: `nav${ERROR_MESSAGE}` }],
     },
     {
       code: `<article><FormControl><Input /></FormControl></article>`,
       filename: '/app/page.tsx',
-      errors: [{ message: `article${ERROR_MESSAGE}` }]
+      errors: [{ message: `article${ERROR_MESSAGE}` }],
     },
     {
       code: `<section><Fieldset>content</Fieldset></section>`,
       filename: '/app/page.tsx',
-      errors: [{ message: `section${ERROR_MESSAGE}` }]
+      errors: [{ message: `section${ERROR_MESSAGE}` }],
     },
-  ]
+  ],
 })

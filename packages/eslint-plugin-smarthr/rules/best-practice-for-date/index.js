@@ -10,7 +10,7 @@ const fixAction = (fixer, node, replacedSuffix = '') => {
     if (parsedArgs) {
       return fixer.replaceText(
         node,
-        `new Date(${parsedArgs[1] * 1}, ${parsedArgs[3] * 1} - 1, ${parsedArgs[5] * 1})${replacedSuffix}`
+        `new Date(${parsedArgs[1] * 1}, ${parsedArgs[3] * 1} - 1, ${parsedArgs[5] * 1})${replacedSuffix}`,
       )
     }
   }
@@ -37,7 +37,7 @@ module.exports = {
  - 'new Date(2022, 12 - 1, 31)' のように数値を個別に指定する
  - dayjsなど、日付系ライブラリを利用する (例:  'dayjs(arg).toDate()')`,
           fix: (fixer) => fixAction(fixer, node),
-        });
+        })
       },
       'CallExpression[callee.object.name="Date"][callee.property.name="parse"]': (node) => {
         context.report({
@@ -47,7 +47,7 @@ module.exports = {
  - 'new Date(2022, 12 - 1, 31).getTime()' のように数値を個別に指定する
  - dayjsなど、日付系ライブラリを利用する (例: 'dayjs(arg).valueOf()')`,
           fix: (fixer) => fixAction(fixer, node, '.getTime()'),
-        });
+        })
       },
     }
   },

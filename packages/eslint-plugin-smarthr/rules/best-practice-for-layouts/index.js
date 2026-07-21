@@ -16,18 +16,10 @@ const ICON_ELEMENT_WITH_TEXT = `JSXOpeningElement[name.name=/Icon$/]:has(JSXAttr
 const TEXT_ELEMENT_WITH_PREFIX = 'JSXOpeningElement[name.name=/Text$/]:has(JSXAttribute[name.name=/^(prefixIcon|icon)$/])'
 
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
-const checkFalsyJSXText = (c) => (
-  !(
-    c.type === 'JSXText' && REGEX_NLSP.test(c.value) ||
-    c.type === 'JSXEmptyExpression'
-  )
-)
+const checkFalsyJSXText = (c) => !((c.type === 'JSXText' && REGEX_NLSP.test(c.value)) || c.type === 'JSXEmptyExpression')
 
 const searchChildren = (node) => {
-  if (
-    node.type === 'JSXFragment' ||
-    node.type === 'JSXElement' && node.openingElement.name?.name === 'SectioningFragment'
-  ) {
+  if (node.type === 'JSXFragment' || (node.type === 'JSXElement' && node.openingElement.name?.name === 'SectioningFragment')) {
     const children = node.children.filter(checkFalsyJSXText)
 
     if (children.length > 1) {
@@ -35,7 +27,7 @@ const searchChildren = (node) => {
     }
   }
 
-  switch(node.type) {
+  switch (node.type) {
     case 'MemberExpression':
       return searchChildren(node.object)
     // {hoge} や {hoge.fuga} の場合、許容する
@@ -71,7 +63,7 @@ module.exports = {
   create(context) {
     return {
       [`JSXOpeningElement[selfClosing=false][name.name=${MULTI_CHILDREN_REGEX}]`]: (node) => {
-        const nodeName = node.name.name;
+        const nodeName = node.name.name
         const matcher = nodeName.match(MULTI_CHILDREN_REGEX)
         const layoutType = matcher[1]
         let justifyAttr = null
@@ -105,7 +97,7 @@ module.exports = {
    - 子要素が個別に持っているmarginなどのstyleを${nodeName}のgap属性で共通化できないか確認してください
  - 方法3: 別要素でマークアップし直すか、${nodeName}を削除してください
    - 親要素に smarthr-ui/Cluster, smarthr-ui/Stack などが存在している場合、div・spanなどで1要素にまとめる必要がある場合があります
-   - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
+   - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`,
             })
           }
         }
@@ -121,11 +113,11 @@ module.exports = {
             context.report({
               node,
               message:
-                (justifyAttr?.value.value === 'center' || alignAttr?.value.value === 'center')
+                justifyAttr?.value.value === 'center' || alignAttr?.value.value === 'center'
                   ? `${nodeName} は smarthr-ui/${layoutType} ではなく smarthr-ui/Center でマークアップしてください${DETAIL_LINK_MESSAGE}`
                   : `${nodeName}には子要素が一つしか無いため、${layoutType}でマークアップする意味がありません。${DETAIL_LINK_MESSAGE}
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${nodeName}を削除してください
- - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
+ - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`,
             })
           }
         }
@@ -135,7 +127,7 @@ module.exports = {
 
         context.report({
           node,
-          message: `Headingの子孫に${component}を置くことはできません。Headingの外で${component}を使用するようにマークアップを修正してください。${DETAIL_LINK_MESSAGE}`
+          message: `Headingの子孫に${component}を置くことはできません。Headingの外で${component}を使用するようにマークアップを修正してください。${DETAIL_LINK_MESSAGE}`,
         })
       },
       [`${HEADING_ELEMENT} ${STACK_ELEMENT_NOT_SPAN}`]: (node) => {

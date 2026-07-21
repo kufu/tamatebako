@@ -43,7 +43,7 @@ const DETAIL_LINK = `
  * @returns {Array<{pattern: string, message: string | null}>}
  */
 function parseUnstableNames(names) {
-  return names.map(name => {
+  return names.map((name) => {
     if (typeof name === 'string') {
       return { pattern: name, message: null }
     }
@@ -58,9 +58,10 @@ function parseUnstableNames(names) {
  */
 function buildPatternMatchers(parsedNames) {
   return parsedNames.map(({ pattern, message }) => {
-    const regexPattern = pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
-      ? pattern.slice(1, -1)  // 正規表現パターン: /pattern/ → pattern
-      : `^${pattern.replace(DOLLAR_SIGN_REGEX, '\\$')}$`  // 完全一致パターン: name → ^name$
+    const regexPattern =
+      pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2
+        ? pattern.slice(1, -1) // 正規表現パターン: /pattern/ → pattern
+        : `^${pattern.replace(DOLLAR_SIGN_REGEX, '\\$')}$` // 完全一致パターン: name → ^name$
 
     const regex = new RegExp(regexPattern)
 
@@ -74,8 +75,7 @@ function buildPatternMatchers(parsedNames) {
  * @returns {RegExp} 生成された正規表現
  */
 function buildRegex(names) {
-  const pattern = names.reduce((acc, name, i) =>
-    acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
+  const pattern = names.reduce((acc, name, i) => acc + (i > 0 ? '|' : '') + name.replace(DOLLAR_SIGN_REGEX, '\\$'), '')
   return new RegExp(`^(${pattern})$`)
 }
 
@@ -110,7 +110,8 @@ module.exports = {
     type: 'problem',
     schema: SCHEMA,
     messages: {
-      unstableDependency: '依存配列に不安定な参照と予想される"{{name}}"が含まれています。オブジェクトやReactNodeなどの参照は頻繁に変わるため、不要な再実行や無限ループの原因となります。{{detailLink}}',
+      unstableDependency:
+        '依存配列に不安定な参照と予想される"{{name}}"が含まれています。オブジェクトやReactNodeなどの参照は頻繁に変わるため、不要な再実行や無限ループの原因となります。{{detailLink}}',
       customUnstableDependency: '依存配列に不安定な参照と予想される"{{name}}"が含まれています。{{message}}{{detailLink}}',
     },
   },
@@ -127,10 +128,7 @@ module.exports = {
     return {
       CallExpression(node) {
         // 対象のHooksかチェック
-        if (
-          node.callee.type !== 'Identifier' ||
-          !targetHooksRegex.test(node.callee.name)
-        ) {
+        if (node.callee.type !== 'Identifier' || !targetHooksRegex.test(node.callee.name)) {
           return
         }
 

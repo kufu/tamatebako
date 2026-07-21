@@ -2,7 +2,7 @@ const path = require('path')
 const { replacePaths } = require('../../libs/common')
 const { BASE_SCHEMA_PROPERTIES, calculateDomainContext, calculateDomainNode } = require('../../libs/common_domain')
 
-const SCHEMA_FORMAT_PROPERTY = { type: 'string', pattern: '^(none|absolute|relative|auto)$', default: 'none'}
+const SCHEMA_FORMAT_PROPERTY = { type: 'string', pattern: '^(none|absolute|relative|auto)$', default: 'none' }
 const SCHEMA = [
   {
     type: 'object',
@@ -18,14 +18,14 @@ const SCHEMA = [
       },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 const CWD = process.cwd()
 const REPLACE_PATH_ENTRIES = Object.entries(replacePaths)
 const REPLACE_PATH_KEY_REGEX = new RegExp(`^(${Object.keys(replacePaths).join('|')})`)
 const DIR_SEPARATE_REGEX = /\//g
-const MULTIPLE_DIR_SEPARATE_REGEX =/(\/)+/g
+const MULTIPLE_DIR_SEPARATE_REGEX = /(\/)+/g
 const TRAILING_SLASH_REGEX = /^(.+?)\/$/
 
 const dirCount = (dir) => {
@@ -35,7 +35,11 @@ const dirCount = (dir) => {
 }
 
 const convertType = (calcContext, calcDomainNode) => {
-  const { option: { format: { all, outside, globalModule, module, domain, lower } } } = calcContext
+  const {
+    option: {
+      format: { all, outside, globalModule, module, domain, lower },
+    },
+  } = calcContext
   const { isGlobalModuleImport, isModuleImport, isDomainImport, isLowerImport } = calcDomainNode
 
   if (lower && lower !== 'none' && isLowerImport) {
@@ -82,14 +86,14 @@ const calculateAbsoluteImportPath = ({ importPath, resolvedImportPath }) => {
 }
 const calculateRelativeImportPath = ({ importPath, filteredDirs, filteredPaths }) => {
   // HINT: 相対パスの場合でも、余計にさかのぼっていたりする場合もあるので修正対象とする
-  if (
-    importPath[0] !== '.' &&
-    !REPLACE_PATH_KEY_REGEX.test(importPath)
-  ) {
+  if (importPath[0] !== '.' && !REPLACE_PATH_KEY_REGEX.test(importPath)) {
     return importPath
   }
 
-  return `${filteredDirs.length === 0 ? './' : '../'.repeat(filteredDirs.length)}${filteredPaths.join('/')}`.replace(TRAILING_SLASH_REGEX, '$1')
+  return `${filteredDirs.length === 0 ? './' : '../'.repeat(filteredDirs.length)}${filteredPaths.join('/')}`.replace(
+    TRAILING_SLASH_REGEX,
+    '$1',
+  )
 }
 
 /**
@@ -126,7 +130,7 @@ module.exports = {
 
               // HINT: 記述するdirの数でより近い方を選択する。
               // 相対・絶対記法が同一の場合、おそらくimport元から距離はあるため、たどりやすくするために絶対記法を選択する
-              return (dirCount(absoluted) <= dirCount(relatived)) ? absoluted : relatived
+              return dirCount(absoluted) <= dirCount(relatived) ? absoluted : relatived
           }
 
           return importPath
@@ -137,14 +141,15 @@ module.exports = {
             node,
             message: `${fixedImportPath} に修正してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path`,
-            fix: (fixer) => fixer.replaceText(
-              node,
-              context.sourceCode.getText(node).replace(new RegExp(`from '${importPath}'$`), `from '${fixedImportPath}'`)
-            ),
+            fix: (fixer) =>
+              fixer.replaceText(
+                node,
+                context.sourceCode.getText(node).replace(new RegExp(`from '${importPath}'$`), `from '${fixedImportPath}'`),
+              ),
           })
         }
       },
-    };
+    }
   },
 }
 module.exports.schema = SCHEMA

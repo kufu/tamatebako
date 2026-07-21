@@ -42,7 +42,8 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
   '^option',
   '^summary',
 ].join('|')})$`
-const INTERACTIVE_ON_REGEX = /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
+const INTERACTIVE_ON_REGEX =
+  /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
 
 const interactiveError = (name) => `${name}にrole属性は指定しないでください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`
@@ -61,7 +62,10 @@ const uninteractiveError = (name) => `${name}にデフォルトで用意され�
 ruleTester.run('best-practice-for-interactive-element', rule, {
   valid: [
     { code: `<button>...</button>` },
-    { code: `<InteractiveComponent>...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^InteractiveComponent%'] }] },
+    {
+      code: `<InteractiveComponent>...</InteractiveComponent>`,
+      options: [{ additionalInteractiveComponentRegex: ['^InteractiveComponent%'] }],
+    },
     { code: `<CrewDetail onChangeName={onChange} />` },
     { code: `<Stack as="form" onSubmit={onSubmit} />` },
     { code: `<Stack any={<Button onClick={onClick} />} />` },
@@ -76,16 +80,26 @@ ruleTester.run('best-practice-for-interactive-element', rule, {
   ],
   invalid: [
     { code: `<button role="presentation">...</button>`, errors: [{ message: interactiveError('button') }] },
-    { code: `<Hoge as="form" role="menu" />`, errors: [{ message: `<Hoge as="form">にrole属性は指定しないでください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element` }] },
+    {
+      code: `<Hoge as="form" role="menu" />`,
+      errors: [
+        {
+          message: `<Hoge as="form">にrole属性は指定しないでください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
+        },
+      ],
+    },
     { code: `<FormControl role="menu" />`, errors: [{ message: interactiveError('FormControl') }] },
-    { code: `<InteractiveComponent role="group">...</InteractiveComponent>`, options: [{ additionalInteractiveComponentRegex: ['^Interactive'] }], errors: [{ message: interactiveError('InteractiveComponent') }] },
+    {
+      code: `<InteractiveComponent role="group">...</InteractiveComponent>`,
+      options: [{ additionalInteractiveComponentRegex: ['^Interactive'] }],
+      errors: [{ message: interactiveError('InteractiveComponent') }],
+    },
     { code: `<CrewDetail onChange={onChange} />`, errors: [{ message: uninteractiveError('CrewDetail') }] },
     { code: `<Stack onSubmit={onSubmit} />`, errors: [{ message: uninteractiveError('Stack') }] },
     { code: `<HogeCheckbox role="any" />`, errors: [{ message: interactiveError('HogeCheckbox') }] },
     { code: `<HogeInput role="any" />`, errors: [{ message: interactiveError('HogeInput') }] },
     { code: `<input role="any" />`, errors: [{ message: interactiveError('input') }] },
     { code: `<FugaButton role="any" />`, errors: [{ message: interactiveError('FugaButton') }] },
-  ]
+  ],
 })
-

@@ -63,8 +63,10 @@ module.exports = {
     messages: {
       missingOptions: 'オプションで from と to を指定してください。例: { "from": "90", "to": "91" }',
       unsupportedVersion: 'サポートされていないバージョンです: {{from}} to {{to}}',
-      conflictingMigration: 'v{{from}}→v{{to}}の一気実行はコンポーネント名の衝突により正しく動作しません。段階的に実行してください: 1. { "from": "{{from}}", "to": "{{middle}}" } を実行 2. { "from": "{{middle}}", "to": "{{to}}" } を実行',
-      skippedVersion: 'v{{version}} の自動修正ルールが実装されていません。変更内容は https://github.com/kufu/smarthr-ui/releases から対応するversionの情報を確認してください',
+      conflictingMigration:
+        'v{{from}}→v{{to}}の一気実行はコンポーネント名の衝突により正しく動作しません。段階的に実行してください: 1. { "from": "{{from}}", "to": "{{middle}}" } を実行 2. { "from": "{{middle}}", "to": "{{to}}" } を実行',
+      skippedVersion:
+        'v{{version}} の自動修正ルールが実装されていません。変更内容は https://github.com/kufu/smarthr-ui/releases から対応するversionの情報を確認してください',
       ...v90ToV91.messages,
       ...v91ToV92.messages,
       ...v92ToV93.messages,

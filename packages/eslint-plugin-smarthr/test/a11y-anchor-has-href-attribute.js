@@ -45,6 +45,10 @@ ruleTester.run('a11y-anchor-has-href-attribute', rule, {
     { code: `<HogeLink href="">hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
     { code: `<HogeLink href="#">hoge</HogeLink>`, errors: [{ message: generateErrorText('HogeLink') }] },
     { code: '<AnyAnchor {...args1} />', errors: [{ message: generateErrorText('AnyAnchor') }] },
-    { code: '<AnyAnchor {...args1} />', options: [{ checkType: 'always' }], errors: [{ message: generateErrorText('AnyAnchor') }] },
-  ]
+    {
+      code: '<AnyAnchor {...args1} />',
+      options: [{ checkType: 'always' }],
+      errors: [{ message: generateErrorText('AnyAnchor') }],
+    },
+  ],
 })

@@ -18,7 +18,7 @@ export default [
   {
     name: 'eslint-config-smarthr/index',
     plugins: {
-      smarthr
+      smarthr,
     },
     rules: {
       '@typescript-eslint/no-shadow': ['error'],
@@ -27,7 +27,7 @@ export default [
         'error',
         {
           fixStyle: 'inline-type-imports',
-        }
+        },
       ],
       '@typescript-eslint/no-import-type-side-effects': 'error',
 
@@ -70,7 +70,7 @@ export default [
       'smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
-      'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
+      'smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],
       'smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
       'smarthr/best-practice-for-tailwind-variants': 'off',
       'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
@@ -94,7 +94,6 @@ export default [
       'smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
-    }
-
-  }
+    },
+  },
 ]

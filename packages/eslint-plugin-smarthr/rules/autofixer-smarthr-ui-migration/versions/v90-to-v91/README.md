@@ -25,12 +25,14 @@ type Props = ComponentProps<typeof ControlledActionDialog>
 ```
 
 **対応コンポーネント:**
+
 - `ActionDialog` → `ControlledActionDialog`
 - `FormDialog` → `ControlledFormDialog`
 - `MessageDialog` → `ControlledMessageDialog`
 - `StepFormDialog` → `ControlledStepFormDialog`
 
 **自動修正される箇所:**
+
 - import文
 - JSX要素（開始タグ・終了タグ）
 - export文（re-export）

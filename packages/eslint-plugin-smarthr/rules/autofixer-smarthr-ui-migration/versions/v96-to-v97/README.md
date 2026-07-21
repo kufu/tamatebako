@@ -10,16 +10,19 @@
 `TabItem` コンポーネントの `onClick` プロパティの型が、カスタムハンドラから標準的なイベントハンドラに変更されました。
 
 **Before (v96):**
+
 ```tsx
 <TabItem onClick={(tabId: string) => console.log(tabId)} />
 ```
 
 **After (v97):**
+
 ```tsx
 <TabItem onClick={(e: MouseEvent<HTMLButtonElement>) => console.log(e.currentTarget.value)} />
 ```
 
 **変更の理由:**
+
 - より標準的なイベントハンドラの型に統一
 - ESLint ルール `smarthr/best-practice-for-unstable-dependencies` との互換性向上
 - `useCallback` の依存配列を安定化
@@ -34,6 +37,7 @@
 **手動対応の手順:**
 
 1. **引数を `e` に変更**
+
    ```tsx
    // Before
    onClick={(tabId) => handleClick(tabId)}
@@ -43,6 +47,7 @@
    ```
 
 2. **引数の使用箇所を `e.currentTarget.value` に置き換え**
+
    ```tsx
    // Before
    onClick={(id) => {
@@ -76,6 +81,7 @@ eslint .
 ```
 
 **重要な注意事項:**
+
 - `--fix` オプションを使用しても自動修正されません。エラーメッセージに従って手動で修正してください。
 - **このエラーは手動で修正しても消えません**。`TabItem` に `onClick` がある限り検出され続けます。
 - すべての対応が完了したら、ESLint設定から `{ from: "96", to: "97" }` の設定を削除してください。

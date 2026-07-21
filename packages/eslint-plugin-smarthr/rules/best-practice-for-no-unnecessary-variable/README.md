@@ -58,6 +58,7 @@ return obj.property
 #### 複雑さの計算方法
 
 **複雑さ +1:**
+
 - 関数呼び出し (`CallExpression`) ※引数がある場合のみ
 - プロパティアクセス (`MemberExpression`)
 - 二項演算子 (`BinaryExpression`)
@@ -68,9 +69,11 @@ return obj.property
 - 型注釈 (TypeScript: `const x: Type = ...`)
 
 **複雑さ +0:**
+
 - 引数なし関数呼び出し (`getValue()`, `Date.now()` など)
 
 **複雑さ +2:**
+
 - 三項演算子 (`ConditionalExpression`)
 - オブジェクトリテラル (`ObjectExpression`)
 - 配列リテラル (`ArrayExpression`)
@@ -100,12 +103,12 @@ return obj.property
 
 ```js
 // Before（副作用を持つ関数の場合）
-const result = sideEffect1()  // ← 先に実行される
+const result = sideEffect1() // ← 先に実行される
 sideEffect2()
 console.log(result)
 
 // After（自動修正後）
-sideEffect2()  // ← 先に実行される
+sideEffect2() // ← 先に実行される
 console.log(sideEffect1())
 ```
 
@@ -133,21 +136,22 @@ console.log(result)
 ```
 
 **return文の特別扱い:**
+
 - `return x` の形式（単一変数を返す場合）のみ、変数の式の複雑さチェックをスキップ
 - 使用箇所の複雑さのみでチェック
 
 ```js
 // return文で単一変数を返す場合
 function foo() {
-  const result = obj.method().another().property  // 複雑さ 3 (MemberExpression x3、引数なしCallExpression x2は0)
-  return result  // 使用箇所の複雑さ 0
+  const result = obj.method().another().property // 複雑さ 3 (MemberExpression x3、引数なしCallExpression x2は0)
+  return result // 使用箇所の複雑さ 0
 }
 // → 総合複雑さ 0 なのでインライン化される
 
 // return文で式を含む場合（特別扱いされない）
 function bar() {
-  const result = obj.method()  // 複雑さ 1 (MemberExpression、引数なしCallExpressionは0)
-  return result.property  // 使用箇所の複雑さ 1
+  const result = obj.method() // 複雑さ 1 (MemberExpression、引数なしCallExpressionは0)
+  return result.property // 使用箇所の複雑さ 1
 }
 // → 総合複雑さ 2 なのでインライン化される（maxComplexity: 5）
 ```
@@ -176,14 +180,14 @@ process(data)
 
 ```js
 // 複雑さが低い式（総合複雑さ 4 ≤ maxComplexity: 5）
-const obj = { a: 1, b: 2 }  // ObjectExpression: 2
-console.log(obj)  // console.log: 2
+const obj = { a: 1, b: 2 } // ObjectExpression: 2
+console.log(obj) // console.log: 2
 ```
 
 ```js
 // JSX要素（総合複雑さ 4 ≤ maxComplexity: 5）
-const element = <div>Hello</div>  // JSXOpeningElement: 2
-render(element)  // render: 1 + CallExpression: 1
+const element = <div>Hello</div> // JSXOpeningElement: 2
+render(element) // render: 1 + CallExpression: 1
 ```
 
 ## ✅ Correct
@@ -340,7 +344,7 @@ const result = condition ? value1 : value2
 doSomething(result)
 
 // After
-doSomething((condition ? value1 : value2))
+doSomething(condition ? value1 : value2)
 ```
 
 ```js
@@ -358,7 +362,7 @@ const obj = { a: 1, b: 2 }
 console.log(obj.property)
 
 // After
-console.log(({ a: 1, b: 2 }).property)
+console.log({ a: 1, b: 2 }.property)
 ```
 
 ```js
@@ -380,7 +384,7 @@ input.setSelectionRange(0, 0)
 
 // After
 inputs[0].focus()
-;inputs[0].setSelectionRange(0, 0)
+inputs[0].setSelectionRange(0, 0)
 ```
 
 **注意:** セミコロンの前置は、前の文とのメソッドチェーンを防ぐために行われます。
@@ -395,7 +399,7 @@ const value: string = getValue()
 console.log(value)
 
 // After
-console.log((getValue() as string))
+console.log(getValue() as string)
 ```
 
 ```ts
@@ -407,7 +411,7 @@ function getUser() {
 
 // After
 function getUser() {
-  return (fetchUser() as User | null)
+  return fetchUser() as User | null
 }
 ```
 
@@ -419,11 +423,14 @@ function getUser() {
 
 ```js
 // Before
-const x = 1, y = getValue(), z = 3
+const x = 1,
+  y = getValue(),
+  z = 3
 console.log(y)
 
 // After
-const x = 1, z = 3
+const x = 1,
+  z = 3
 console.log(getValue())
 ```
 

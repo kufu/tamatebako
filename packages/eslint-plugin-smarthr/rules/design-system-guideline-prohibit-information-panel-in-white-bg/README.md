@@ -7,6 +7,7 @@ InformationPanelを白背景に配置することを禁止します。
 SmartHR Design Systemのガイドラインに基づき、InformationPanelは白背景に直接配置すべきではありません。
 
 **理由:**
+
 - InformationPanelのレイヤー順序は3です
 - Baseのレイヤー順序は1です
 - 視覚的に適切な階層関係を保つため、白背景の上に直接配置することは避けるべきです
@@ -145,6 +146,7 @@ DialogContents（Dialog内部のコンテンツ領域）はデフォルトで白
 ```
 
 **解決方法:**
+
 1. contentBgColorを指定する（推奨）
 2. BaseColumnで包む
 

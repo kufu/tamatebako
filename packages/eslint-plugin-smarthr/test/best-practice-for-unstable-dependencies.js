@@ -378,7 +378,14 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
           console.log(icon, onClick)
         }, [icon, onClick])
       `,
-      options: [{ additionalUnstableNames: ['icon', { pattern: '/^on[A-Z]/', message: 'イベントハンドラーは依存配列に含めないでください。' }] }],
+      options: [
+        {
+          additionalUnstableNames: [
+            'icon',
+            { pattern: '/^on[A-Z]/', message: 'イベントハンドラーは依存配列に含めないでください。' },
+          ],
+        },
+      ],
       errors: [
         {
           messageId: 'unstableDependency',

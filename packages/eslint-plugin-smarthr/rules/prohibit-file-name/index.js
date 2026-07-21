@@ -1,13 +1,14 @@
-const SCHEMA = [{
-  type: 'object',
-  patternProperties: {
-    '.+': {
-      type: 'string',
+const SCHEMA = [
+  {
+    type: 'object',
+    patternProperties: {
+      '.+': {
+        type: 'string',
+      },
     },
+    additionalProperties: true,
   },
-  additionalProperties: true,
-}]
-
+]
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -26,7 +27,6 @@ module.exports = {
         targetPaths.push([regex, regexObj])
       }
     }
-
 
     if (targetPaths.length === 0) {
       return {}

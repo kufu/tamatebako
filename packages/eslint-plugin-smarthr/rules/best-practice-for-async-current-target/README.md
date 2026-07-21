@@ -2,7 +2,6 @@
 
 jsで発生したイベントのcurrentTargetは状況によって値が空になる場合があるため、参照するタイミングをチェックするルールです
 
-
 ## currentTargetが空になる状況とは
 
 currentTarget属性はイベントの実行中のみ参照可能な値であり、それ以外のタイミングで参照するとエラーになる可能性があります。<br />
@@ -25,7 +24,7 @@ const onChange = async (e) => {
 // setItemはReactのuseStateのset関数
 // useStateのset関数の引数を関数にした場合、非同期で呼び出されるためcurrentTargetがnullの可能性がある
 const onSelect = (e) => {
-  setItem((item) => ({ ...item, value : e.currentTarget.value }))
+  setItem((item) => ({ ...item, value: e.currentTarget.value }))
 }
 ```
 
@@ -82,7 +81,7 @@ const onChange = async (e) => {
 // setItemはReactのuseStateのset関数
 // useStateのset関数は非同期のためcurrentTargetがnullの可能性がある
 const onSelect = (e) => {
-  setItem((item) => ({ ...item, value : e.currentTarget.value }))
+  setItem((item) => ({ ...item, value: e.currentTarget.value }))
 }
 ```
 

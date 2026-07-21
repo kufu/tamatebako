@@ -59,7 +59,6 @@ export const slice = { method: () => 'any action' }
 
 ## ✅ Correct
 
-
 ```js
 // adapter/index.ts
 export type Props = { abc: string }

@@ -1,14 +1,16 @@
-const SCHEMA = [{
-  type: 'object',
-  patternProperties: {
-    '.+': {
-      type: 'array',
-      items: { type: 'string' },
-      additionalProperties: true,
+const SCHEMA = [
+  {
+    type: 'object',
+    patternProperties: {
+      '.+': {
+        type: 'array',
+        items: { type: 'string' },
+        additionalProperties: true,
+      },
     },
+    additionalProperties: true,
   },
-  additionalProperties: true,
-}]
+]
 
 const fetchEdgeDeclaration = (node) => {
   const { declaration } = node
@@ -28,7 +30,7 @@ module.exports = {
     const options = context.options[0]
     const targetRequires = []
     for (const regex in options) {
-      if ((new RegExp(regex)).test(context.filename)) {
+      if (new RegExp(regex).test(context.filename)) {
         targetRequires.push(regex)
       }
     }
@@ -78,7 +80,9 @@ module.exports = {
           }
 
           const exportsRegex = new RegExp(`^(default|${exports.join('|')})$`)
-          const notExistsExports = (!existDefault && option.includes('default') ? ['default'] : []).concat(option.filter((o) => !exportsRegex.test(o)))
+          const notExistsExports = (!existDefault && option.includes('default') ? ['default'] : []).concat(
+            option.filter((o) => !exportsRegex.test(o)),
+          )
 
           if (notExistsExports.length) {
             context.report({

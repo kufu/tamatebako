@@ -8,7 +8,7 @@ Frontend packages for projects at SmartHR
 ## Package Index
 
 | Package                  | Version                                                                                                                                  | Description                                              |
-|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | use-bulk-check           | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-bulk-check)         | React hooks for managing the values in the checkbox list |
 | use-virtual-scroll       | [![npm version](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll.svg)](https://badge.fury.io/js/%40smarthr%2Fuse-virtual-scroll) | React hooks for virtual scroll                           |
 | wareki                   | [![npm version](https://badge.fury.io/js/%40smarthr%2Fwareki.svg)](https://badge.fury.io/js/%40smarthr%2Fwareki)                         | Japanese 'wareki' formatter                              |
@@ -65,11 +65,14 @@ $ pnpm release
    - 新しいパッケージの `package.json` に `"publishConfig": { "access": "public" }` を追加します。
    - 新しいパッケージの `package.json` から `private: true` を削除します。
    - release-please がリリース用のプルリクエストを作るように `release-please-config.json` に下記のような行を追加します。 (もし `0.1.0` などのマイナーバージョンでリリースしたい場合は [`initial-version`](https://github.com/googleapis/release-please/blob/a9b82178ce8040af09e55be509911fa36e0c20e7/schemas/config.json#L245-L247) を指定し、該当パッケージの `package.json` の `version` も合わせてください。)
+
 ```
 "packages/new-package-name": {},
 ```
+
 2. プルリクエストをマージすると、リリース用のプルリクエストが作成されます。`.release-please-manifest.json` の差分に表示されているリリースバージョンが正しいことを確認してください。
 3. リリース用のプルリクエストに含まれる `CHANGELOG.md` には、リリースまでのすべてのプルリクエストの内容が記載されています。それらの記載が不要な場合はリリース用プルリクエストに直接コミットする形で `CHANGELOG.md` を修正します。([例](https://github.com/kufu/tamatebako/pull/765/commits/1ae223cc77d8022c499b2ccdf92b4d600c599146))
 4. リリース用のプルリクエストをマージして、Github Actions のリリースのワークフローを見守ります。
 5. リリースが完了したら、npm のパッケージのページで Trusted Publisher と Publishing Access の設定をします。
-  - https://github.com/kufu/tamatebako/pull/793 に貼ってあるキャプチャと内容と同じ設定にしてください。
+
+- https://github.com/kufu/tamatebako/pull/793 に貼ってあるキャプチャと内容と同じ設定にしてください。

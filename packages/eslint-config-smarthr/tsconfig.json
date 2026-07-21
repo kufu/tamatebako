@@ -4,6 +4,6 @@
     "module": "es2015",
     "jsx": "react",
     "baseUrl": "./",
-    "paths": { "@/*": ["client/src/*"] },
+    "paths": { "@/*": ["client/src/*"] }
   }
 }

@@ -5,7 +5,6 @@ const SCHEMA = []
 // test.type: 条件部分がIdentifierまたはMemberExpression
 const SELECTOR = `IfStatement[alternate=null]:not([parent.type='IfStatement'])[test.type=/^(Identifier|MemberExpression)$/]`
 
-
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -64,7 +63,7 @@ module.exports = {
                 node,
                 message: `条件文で既に存在チェックしているため、optional chainingは不要です
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern1, replacement))
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern1, replacement)),
               })
               return
             }
@@ -78,7 +77,7 @@ module.exports = {
                 node,
                 message: `条件文で既に存在チェックしているため、optional chainingは不要です
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern2, replacement))
+                fix: (fixer) => fixer.replaceText(node, expressionText.replace(pattern2, replacement)),
               })
               return
             }
@@ -116,10 +115,11 @@ module.exports = {
               node,
               message: `optional chaining(xxx?.yyyy記法)を利用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining`,
-              fix: (fixer) => fixer.replaceText(
-                node,
-                expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), replacement),
-              ),
+              fix: (fixer) =>
+                fixer.replaceText(
+                  node,
+                  expressionText.replace(new RegExp(`^${calleName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\(`), replacement),
+                ),
             })
           }
         }
@@ -128,4 +128,3 @@ module.exports = {
   },
 }
 module.exports.schema = SCHEMA
-

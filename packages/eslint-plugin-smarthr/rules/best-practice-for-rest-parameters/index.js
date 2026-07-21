@@ -41,7 +41,7 @@ module.exports = {
         return actionMemberExpressionName(node.parent)
       }
 
-      if (MEMBER_EXPRESSION_REST_REGEX.test(context.sourceCode.getText(node))){
+      if (MEMBER_EXPRESSION_REST_REGEX.test(context.sourceCode.getText(node))) {
         actionUseRestVioration(node)
       }
     }

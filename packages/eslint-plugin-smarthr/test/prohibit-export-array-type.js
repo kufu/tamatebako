@@ -28,11 +28,11 @@ ruleTester.run('prohibit-export-array-type', rule, {
   invalid: [
     {
       code: `export type Users = User[]`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `export type Items = Array<Item>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
-  ]
+  ],
 })

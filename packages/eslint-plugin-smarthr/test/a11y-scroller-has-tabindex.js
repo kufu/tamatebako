@@ -80,12 +80,18 @@ ruleTester.run('a11y-scroller-has-tabindex', rule, {
     { code: `<Any className="foo overflow-auto bar" />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
     // テンプレートリテラルで変数結合
     { code: `<Any className={\`\${hoge} overflow-auto\`} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
-    { code: `<Any className={\`overflow-scroll \${fuga}\`} tabIndex={-1} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
+    {
+      code: `<Any className={\`overflow-scroll \${fuga}\`} tabIndex={-1} />`,
+      errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }],
+    },
     { code: `<Any className={\`\${hoge} overflow-x-auto \${fuga}\`} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
-    { code: `<Any className={\`foo \${bar} overflow-y-scroll \${baz} qux\`} tabIndex="-1" />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
+    {
+      code: `<Any className={\`foo \${bar} overflow-y-scroll \${baz} qux\`} tabIndex="-1" />`,
+      errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }],
+    },
     // インタラクティブでない要素のtabIndex
     { code: `<div tabIndex={0} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('div') }] },
     { code: `<Stack tabIndex={0} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('Stack') }] },
     { code: `<span tabIndex={-1} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('span') }] },
-  ]
+  ],
 })

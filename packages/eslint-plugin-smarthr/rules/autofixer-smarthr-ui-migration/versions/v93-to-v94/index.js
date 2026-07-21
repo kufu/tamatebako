@@ -25,7 +25,8 @@ const TARGET_VERSION = 'v94'
 
 module.exports = {
   messages: {
-    removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。翻訳はsmarthr-ui内で自動的に行われます',
+    removeDecorators:
+      'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。翻訳はsmarthr-ui内で自動的に行われます',
   },
 
   createCheckers(context, sourceCode, options = {}) {

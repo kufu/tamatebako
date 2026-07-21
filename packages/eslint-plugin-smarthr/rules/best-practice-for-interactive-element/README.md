@@ -163,7 +163,6 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 
 上記のように修正することで **delegateを目的としたイベントハンドラであることが明確** になり、コードの可読性が向上します
 
-
 ## rules
 
 ```js

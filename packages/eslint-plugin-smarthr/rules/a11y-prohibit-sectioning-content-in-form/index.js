@@ -6,7 +6,7 @@ const asSectioningContentRegex = /^(article|aside|nav|section)$/
 
 const includeAsAttrFormOrFieldset = (a) => asRegex.test(a.name?.name) && asFormRegex.test(a.value.value)
 const includeAsAttrSectioningContent = (a) => asRegex.test(a.name?.name) && asSectioningContentRegex.test(a.value.value)
-const includeWrapper =  (fn) => wrapperRegex.test(fn)
+const includeWrapper = (fn) => wrapperRegex.test(fn)
 
 const sectioningContentRegex = /((A|^a)(rticle|side)|(N|^n)av|(S|^s)ection)$/
 
@@ -32,7 +32,10 @@ const searchBubbleUpForSectioningContent = (node) => {
         // formかFieldsetでラップされていればNG
         if (wrapperRegex.test(elementName) || openingElement.attributes.some(includeAsAttrFormOrFieldset)) {
           return node
-        } else if ((sectioningContentRegex.test(elementName) && !ignoreNavRegex.test(elementName)) || openingElement.attributes.some(includeAsAttrSectioningContent)) {
+        } else if (
+          (sectioningContentRegex.test(elementName) && !ignoreNavRegex.test(elementName)) ||
+          openingElement.attributes.some(includeAsAttrSectioningContent)
+        ) {
           // 他のSectioningContentに到達した場合、同じチェックを繰り返すことになるため終了する
           return null
         }
@@ -70,12 +73,12 @@ const searchBubbleUpForFormControl = (node) => {
       if (elementName) {
         // SectioningContentでラップされていればNG
         if (sectioningContentRegex.test(elementName) && !ignoreNavRegex.test(elementName)) {
-          return  { node: openingElement, elementName }
-        } else  {
+          return { node: openingElement, elementName }
+        } else {
           const attr = openingElement.attributes.find(includeAsAttrSectioningContent)
 
           if (attr) {
-            return  { node: openingElement, elementName: `${attr.name.name}="${attr.value.value}"` }
+            return { node: openingElement, elementName: `${attr.name.name}="${attr.value.value}"` }
           } else if (wrapperRegex.test(elementName) || openingElement.attributes.some(includeAsAttrFormOrFieldset)) {
             // 他のFormControl か Fieldsetに到達した場合、同じチェックを繰り返すことになるため終了する
             return null
@@ -127,7 +130,7 @@ module.exports = {
           const isSection = sectioningContentRegex.test(elementName)
           const asAttr = isSection ? false : node.attributes.find(includeAsAttrSectioningContent)
 
-          if ((isSection || asAttr)) {
+          if (isSection || asAttr) {
             if (isInnerForm || searchBubbleUpForSectioningContent(node.parent.parent)) {
               if (!notified.includes(node)) {
                 notified.push(node)

@@ -1,39 +1,42 @@
 const path = require('path')
 const { getParentDir } = require('../../libs/util')
 
-const SCHEMA = [{
-  type: 'object',
-  patternProperties: {
-    '.+': {
-      type: 'object',
-      patternProperties: {
-        '.+': {
-          type: 'object',
-          required: [
-            'imported',
-          ],
-          properties: {
-            imported: {
-              type: ['boolean', 'array'],
-              items: {
+const SCHEMA = [
+  {
+    type: 'object',
+    patternProperties: {
+      '.+': {
+        type: 'object',
+        patternProperties: {
+          '.+': {
+            type: 'object',
+            required: ['imported'],
+            properties: {
+              imported: {
+                type: ['boolean', 'array'],
+                items: {
+                  type: 'string',
+                },
+              },
+              reportMessage: {
                 type: 'string',
               },
             },
-            reportMessage: {
-              type: 'string',
-            },
+            additionalProperties: false,
           },
-          additionalProperties: false
-        }
-      }
+        },
+      },
     },
+    additionalProperties: true,
   },
-  additionalProperties: true,
-}]
+]
 
 const CWD = process.cwd()
 
-const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} は利用しないでください
+const defaultReportMessage = (
+  moduleName,
+  exportName,
+) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}` : ''} は利用しないでください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`
 
 /**
@@ -49,7 +52,7 @@ module.exports = {
     const parentDir = getParentDir(context.filename)
     const targetProhibits = []
     for (const regex in options) {
-      if ((new RegExp(regex)).test(context.filename)) {
+      if (new RegExp(regex).test(context.filename)) {
         targetProhibits.push(regex)
       }
     }
@@ -73,7 +76,7 @@ module.exports = {
 
             if (actualTarget === sourceValue) {
               const moduleOption = option[targetModule]
-              const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
+              const { imported, reportMessage } = Object.assign({ imported: true }, moduleOption)
               let useImported = false
 
               if (!Array.isArray(imported)) {
@@ -89,9 +92,11 @@ module.exports = {
               if (useImported) {
                 context.report({
                   node,
-                  message: reportMessage ? `${reportMessage.replace(/\{\{module\}\}/g, node.source.value).replace(/\{\{export\}\}/g, useImported)}
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import` : defaultReportMessage(node.source.value, useImported)
-                });
+                  message: reportMessage
+                    ? `${reportMessage.replace(/\{\{module\}\}/g, node.source.value).replace(/\{\{export\}\}/g, useImported)}
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-import`
+                    : defaultReportMessage(node.source.value, useImported),
+                })
               }
             }
           }

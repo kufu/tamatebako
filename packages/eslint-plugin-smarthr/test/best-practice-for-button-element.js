@@ -29,7 +29,7 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: 'const HogeButton = styled(HogeButton)``' },
   ],
   invalid: [
-    { code: `<button>ほげ</button>`, errors: [ { message: ERRORMESSAGE_REQUIRED_TYPE_ATTR } ] },
-    { code: 'const HogeButton = styled.button``', errors: [ { message: ERRORMESSAGE_PROHIBIT_STYLED } ] },
-  ]
+    { code: `<button>ほげ</button>`, errors: [{ message: ERRORMESSAGE_REQUIRED_TYPE_ATTR }] },
+    { code: 'const HogeButton = styled.button``', errors: [{ message: ERRORMESSAGE_PROHIBIT_STYLED }] },
+  ],
 })

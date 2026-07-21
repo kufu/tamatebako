@@ -19,7 +19,7 @@ const SCHEMA = [
       checkType: { type: 'string', enum: ['always', 'allow-spread-attributes'], default: 'always' },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 /**
@@ -39,13 +39,13 @@ module.exports = {
         context.report({
           node,
           message: MESSAGE_NOT_EXIST_ALT,
-        });
+        })
       },
       [`${IMG_ELEMENT}:has(${ALT_LIKE_ATTRIBUTE}:matches([value.value=""],[value=null]))${notHasSpreadAttr}`]: (node) => {
         context.report({
           node,
           message: MESSAGE_NULL_ALT,
-        });
+        })
       },
     }
   },

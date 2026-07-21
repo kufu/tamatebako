@@ -20,7 +20,7 @@ ol要素でマークアップすることで連番テキストをもつ要素同
 
 - ol
 - OrderedListが名称のsuffixにつくコンポーネント
-  - 例: 
+  - 例:
     - OrderedList
     - XxxOrderedList
     - XxxOrderedYyyList

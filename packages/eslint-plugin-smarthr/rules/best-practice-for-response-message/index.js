@@ -47,9 +47,7 @@ function getAttributeValue(attr, sourceCode) {
       case 'Literal':
         return attr.value.value
       case 'JSXExpressionContainer':
-        return attr.value.expression.type === 'Literal'
-          ? attr.value.expression.value
-          : sourceCode.getText(attr.value.expression)
+        return attr.value.expression.type === 'Literal' ? attr.value.expression.value : sourceCode.getText(attr.value.expression)
     }
   }
   return null
@@ -68,12 +66,14 @@ function getJSXElementChildren(element, sourceCode) {
  */
 function getHeadingChildrenWithResponseMessageReplaced(headingElement, responseMessageElement, sourceCode) {
   if (!headingElement.children?.length) return ''
-  return headingElement.children.reduce((acc, child) => {
-    // ResponseMessage要素の場合は、その子要素のテキストに置き換え
-    return child === responseMessageElement
-      ? acc + getJSXElementChildren(responseMessageElement, sourceCode)
-      : acc + sourceCode.getText(child)
-  }, '').trim()
+  return headingElement.children
+    .reduce((acc, child) => {
+      // ResponseMessage要素の場合は、その子要素のテキストに置き換え
+      return child === responseMessageElement
+        ? acc + getJSXElementChildren(responseMessageElement, sourceCode)
+        : acc + sourceCode.getText(child)
+    }, '')
+    .trim()
 }
 
 /**
@@ -99,9 +99,7 @@ function findParentComponent(current) {
   if (HEADING_COMPONENT_REGEX.test(name)) {
     return {
       ...base,
-      iconAttr: current.openingElement.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-      ),
+      iconAttr: current.openingElement.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'icon'),
     }
   }
 
@@ -110,9 +108,7 @@ function findParentComponent(current) {
     case 'FormControl':
     case 'Fieldset':
       const attrName = name === 'FormControl' ? 'label' : 'legend'
-      const attr = current.openingElement.attributes.find(
-        (a) => a.type === 'JSXAttribute' && a.name.name === attrName
-      )
+      const attr = current.openingElement.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === attrName)
       if (attr) {
         return {
           ...base,
@@ -139,9 +135,7 @@ function fixResponseMessage(fixer, parent, responseMessageElement, children, ico
   }
 
   // iconGapが0.25（デフォルト値）の場合は省略
-  const iconTemplate = iconGap === 0.25
-    ? `{ prefix: <${iconName} /> }`
-    : `{ prefix: <${iconName} />, gap: ${iconGap} }`
+  const iconTemplate = iconGap === 0.25 ? `{ prefix: <${iconName} /> }` : `{ prefix: <${iconName} />, gap: ${iconGap} }`
 
   if (parent.attr) {
     // FormControl/Fieldset の場合
@@ -196,9 +190,10 @@ module.exports = {
 
             // Heading要素の場合は、Heading全体の子要素を取得してResponseMessageを置き換え
             // それ以外の場合は、ResponseMessageの子要素のみを取得
-            const children = 'iconAttr' in parent && !parent.attr
-              ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
-              : getJSXElementChildren(responseMessageElement, sourceCode)
+            const children =
+              'iconAttr' in parent && !parent.attr
+                ? getHeadingChildrenWithResponseMessageReplaced(parent.element, responseMessageElement, sourceCode)
+                : getJSXElementChildren(responseMessageElement, sourceCode)
 
             // status/type属性とiconGap属性を取得（速度最適化）
             let statusAttr = null
@@ -218,14 +213,7 @@ module.exports = {
             // ResponseMessageのiconGapのデフォルト値は0.25
             const iconGapValue = iconGapAttr ? getAttributeValue(iconGapAttr, sourceCode) : 0.25
 
-            return fixResponseMessage(
-              fixer,
-              parent,
-              responseMessageElement,
-              children,
-              iconName,
-              iconGapValue
-            )
+            return fixResponseMessage(fixer, parent, responseMessageElement, children, iconName, iconGapValue)
           },
         })
       },

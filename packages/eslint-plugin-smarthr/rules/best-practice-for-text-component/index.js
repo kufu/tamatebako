@@ -45,7 +45,8 @@ const LITERAL_TYPE = '[value.type="Literal"]'
 
 const TEXT_OPENING = 'JSXOpeningElement[name.name="Text"]'
 const HAS_ANY_ATTR = ':has(JSXAttribute)'
-const HAS_TEXT_PROPS = ':has(JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/])'
+const HAS_TEXT_PROPS =
+  ':has(JSXAttribute[name.name=/^(size|weight|color|leading|italic|whiteSpace|maxLines|styleType|icon|prefixIcon|suffixIcon|iconGap)$/])'
 const CHILD_CLASSNAME_LITERAL = `> ${ATTR_CLASSNAME}${LITERAL_TYPE}`
 const HAS_CONVERTIBLE_SHR_CLASS = `[value.value=/${CONVERTIBLE_SHR_PATTERN}/]`
 const HAS_SPREAD = ':has(JSXSpreadAttribute)'
@@ -121,9 +122,7 @@ function categorizeClassNames(classNameAttrNode) {
  * 属性の文字列リテラル値を取得
  */
 function getAttributeLiteralValue(openingElement, attrName) {
-  const attr = openingElement.attributes.find(
-    attr => attr.type === 'JSXAttribute' && attr.name.name === attrName
-  )
+  const attr = openingElement.attributes.find((attr) => attr.type === 'JSXAttribute' && attr.name.name === attrName)
   return attr?.value?.value ?? null
 }
 
@@ -131,9 +130,7 @@ function getAttributeLiteralValue(openingElement, attrName) {
  * 属性ノードを取得
  */
 function getAttributeNode(openingElement, attrName) {
-  return openingElement.attributes.find(
-    attr => attr.type === 'JSXAttribute' && attr.name.name === attrName
-  )
+  return openingElement.attributes.find((attr) => attr.type === 'JSXAttribute' && attr.name.name === attrName)
 }
 
 /**

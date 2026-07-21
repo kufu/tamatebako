@@ -93,7 +93,6 @@ import { SecondaryButtonAnchor } from 'smarthr-ui'
 
 ## ✅ Correct
 
-
 ```js
 // src/pages/views/Page.tsx
 import { PrimaryButton, SecondaryButton } from 'smarthr-ui'

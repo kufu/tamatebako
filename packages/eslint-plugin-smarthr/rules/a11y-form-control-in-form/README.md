@@ -50,9 +50,7 @@ const SampleFieldset = (props) => (
 const SampleFieldset = () => (
   <>
     <Hoge />
-    {condition && (
-      <AnyFieldset  />
-    )}
+    {condition && <AnyFieldset />}
     <Fuga name="field3" />
   </>
 )
@@ -64,17 +62,13 @@ const SampleFieldset = () => (
 ### Fieldsetを含まず、FormControlを単一で含む場合 -> `XxxFormControl`
 
 ```jsx
-const SampleFormControl = (props) => (
-  <FormControl {...props} title="Sample" />
-)
+const SampleFormControl = (props) => <FormControl {...props} title="Sample" />
 ```
 
 ### FormControlを含まず、Fieldsetを単一で含む場合 -> `XxxFieldset`
 
 ```jsx
-const SampleFieldset = (props) => (
-  <Fieldset {...props} title="Sample" />
-)
+const SampleFieldset = (props) => <Fieldset {...props} title="Sample" />
 ```
 
 ### Fieldsetを含まず、FormControlを複数含む可能性がある場合 -> `XxxFormControls`

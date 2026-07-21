@@ -19,7 +19,6 @@ const config = {
     es2016: true,
   },
   rules: {
-
     // === ESLint recommended ===
     'constructor-super': 'error',
     'for-direction': 'error',

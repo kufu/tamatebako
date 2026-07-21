@@ -46,10 +46,16 @@ ruleTester.run('best-practice-for-async-current-target', rule, {
     { code: `const action = async function(e) { const value = e.currentTarget.value; await any(); action(value) }` },
   ],
   invalid: [
-    { code: `(e) => { setItem(() => { e.currentTarget }) }`, errors: [ { message: ERRORMESSAGE_NORMAL } ] },
-    { code: `(function(e) { setItem(() => { e.currentTarget }) })`, errors: [ { message: ERRORMESSAGE_NORMAL } ] },
-    { code: `async (e) => { await any();const value = e.currentTarget.value; action(value) }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
-    { code: `const action = async function(e) { await any();const value = e.currentTarget.value;action(value) }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
-    { code: `async (e) => { await any(e.currentTarget.value); }`, errors: [ { message: ERRORMESSAGE_AWAIT } ] },
-  ]
+    { code: `(e) => { setItem(() => { e.currentTarget }) }`, errors: [{ message: ERRORMESSAGE_NORMAL }] },
+    { code: `(function(e) { setItem(() => { e.currentTarget }) })`, errors: [{ message: ERRORMESSAGE_NORMAL }] },
+    {
+      code: `async (e) => { await any();const value = e.currentTarget.value; action(value) }`,
+      errors: [{ message: ERRORMESSAGE_AWAIT }],
+    },
+    {
+      code: `const action = async function(e) { await any();const value = e.currentTarget.value;action(value) }`,
+      errors: [{ message: ERRORMESSAGE_AWAIT }],
+    },
+    { code: `async (e) => { await any(e.currentTarget.value); }`, errors: [{ message: ERRORMESSAGE_AWAIT }] },
+  ],
 })

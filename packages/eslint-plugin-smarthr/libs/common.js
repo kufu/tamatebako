@@ -28,7 +28,9 @@ const replacePaths = (() => {
   const { compilerOptions } = JSON5.parse(fs.readFileSync(tsconfigFile))
 
   if (!compilerOptions || !compilerOptions.paths) {
-    throw new Error('tsconfig.json の compilerOptions.paths に `"@/*": ["any_path/*"]` 形式でフロントエンドのroot dir を指定してください')
+    throw new Error(
+      'tsconfig.json の compilerOptions.paths に `"@/*": ["any_path/*"]` 形式でフロントエンドのroot dir を指定してください',
+    )
   }
 
   const regexp = /\*$/

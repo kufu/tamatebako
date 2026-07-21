@@ -1,38 +1,39 @@
 const path = require('path')
 const { getParentDir } = require('../../libs/util')
 
-const SCHEMA = [{
-  type: 'object',
-  patternProperties: {
-    '.+': {
-      type: 'object',
-      patternProperties: {
-        '.+': {
-          type: 'object',
-          required: [
-            'imported',
-          ],
-          properties: {
-            imported: {
-              type: ['boolean', 'array'],
-              items: {
+const SCHEMA = [
+  {
+    type: 'object',
+    patternProperties: {
+      '.+': {
+        type: 'object',
+        patternProperties: {
+          '.+': {
+            type: 'object',
+            required: ['imported'],
+            properties: {
+              imported: {
+                type: ['boolean', 'array'],
+                items: {
+                  type: 'string',
+                },
+              },
+              reportMessage: {
                 type: 'string',
-              }
+              },
             },
-            reportMessage: {
-              type: 'string',
-            },
+            additionalProperties: false,
           },
-          additionalProperties: false,
-        }
+        },
+        additionalProperties: true,
       },
-      additionalProperties: true,
     },
+    additionalProperties: true,
   },
-  additionalProperties: true,
-}]
+]
 
-const defaultReportMessage = (moduleName, exportName) => `${moduleName}${typeof exportName == 'string' ? `/${exportName}`: ''} をimportしてください`
+const defaultReportMessage = (moduleName, exportName) =>
+  `${moduleName}${typeof exportName == 'string' ? `/${exportName}` : ''} をimportしてください`
 const filterImportDeclaration = (item) => item.type === 'ImportDeclaration'
 
 /**
@@ -47,7 +48,7 @@ module.exports = {
     const options = context.options[0]
     const targetRequires = []
     for (const regex in options) {
-      if ((new RegExp(regex)).test(context.filename)) {
+      if (new RegExp(regex).test(context.filename)) {
         targetRequires.push(regex)
       }
     }
@@ -70,24 +71,22 @@ module.exports = {
             const moduleOption = option[targetModule]
             const targetRegex = moduleOption.targetRegex
 
-            if (targetRegex && !(new RegExp(targetRegex)).test(context.filename)) {
+            if (targetRegex && !new RegExp(targetRegex).test(context.filename)) {
               continue
             }
 
-            const { imported, reportMessage } = Object.assign({imported: true}, moduleOption)
+            const { imported, reportMessage } = Object.assign({ imported: true }, moduleOption)
             const actualTarget = targetModule[0] !== '.' ? targetModule : path.resolve(`${CWD}/${targetModule}`)
             const importDeclaration = importDeclarations.find(
-              actualTarget[0] !== '/' ? (
-                (id) => id.source.value === actualTarget
-              ) : (
-                (id) => path.resolve(`${parentDir}/${id.source.value}`) === actualTarget
-              )
+              actualTarget[0] !== '/'
+                ? (id) => id.source.value === actualTarget
+                : (id) => path.resolve(`${parentDir}/${id.source.value}`) === actualTarget,
             )
             const reporter = (item) => {
               context.report({
                 node,
                 message: `${reportMessage ? reportMessage.replace(/\{\{module\}\}/g, actualTarget).replace(/\{\{export\}\}/g, item) : defaultReportMessage(actualTarget, item)}
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import`,
               })
             }
 

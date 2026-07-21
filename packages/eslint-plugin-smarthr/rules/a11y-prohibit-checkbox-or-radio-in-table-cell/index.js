@@ -13,7 +13,9 @@ module.exports = {
   },
   create(context) {
     return {
-      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (
+        node,
+      ) => {
         context.report({
           node,
           messageId: 'default',
@@ -24,7 +26,9 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/RadioButton$/][children.length=0]': (node) => {
+      'JSXElement[openingElement.name.name=/Td$/] JSXElement[openingElement.name.name=/RadioButton$/][children.length=0]': (
+        node,
+      ) => {
         context.report({
           node,
           messageId: 'default',
@@ -35,7 +39,9 @@ module.exports = {
           },
         })
       },
-      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (node) => {
+      'JSXElement[openingElement.name.name=/Th$/] JSXElement[openingElement.name.name=/Check(b|B)ox$/][children.length=0]': (
+        node,
+      ) => {
         context.report({
           node,
           messageId: 'default',

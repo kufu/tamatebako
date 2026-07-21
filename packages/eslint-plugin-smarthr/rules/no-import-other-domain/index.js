@@ -15,13 +15,13 @@ const SCHEMA = [
             type: 'object',
             patternProperties: {
               '.+': {
-                type: ['boolean', 'array' ],
+                type: ['boolean', 'array'],
                 items: {
                   type: 'string',
                 },
-                additionalProperties: false
-              }
-            }
+                additionalProperties: false,
+              },
+            },
           },
         },
         additionalProperties: true,
@@ -30,7 +30,7 @@ const SCHEMA = [
       analyticsMode: { type: 'string', default: 'none' }, // 'none' | 'all' | 'same-domain' | 'another-domain'
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 /**
@@ -46,19 +46,19 @@ module.exports = {
     const calcContext = calculateDomainContext(context)
 
     // 対象外ファイル
-    if (!calcContext.isTarget || calcContext.option.ignores && calcContext.option.ignores.some((i) => (new RegExp(i)).test(calcContext.filename))) {
+    if (
+      !calcContext.isTarget ||
+      (calcContext.option.ignores && calcContext.option.ignores.some((i) => new RegExp(i).test(calcContext.filename)))
+    ) {
       return {}
     }
 
-    const {
-      option,
-      humanizeParentDir,
-    } = calcContext
+    const { option, humanizeParentDir } = calcContext
 
     const targetAllowedImports = []
     if (option?.allowedImports) {
       for (const regex in option.allowedImports) {
-        if ((new RegExp(regex)).test(calcContext.filename)) {
+        if (new RegExp(regex).test(calcContext.filename)) {
           targetAllowedImports.push(regex)
         }
       }
@@ -86,12 +86,11 @@ module.exports = {
 
             let allowedModules = allowedOption[targetModule] || true
 
-
             if (!Array.isArray(allowedModules)) {
               isDenyPath = true
               deniedModules.push(true)
             } else {
-              deniedModules.push(node.specifiers.map((s) => s.imported?.name).filter(i => allowedModules.indexOf(i) == -1))
+              deniedModules.push(node.specifiers.map((s) => s.imported?.name).filter((i) => allowedModules.indexOf(i) == -1))
             }
           }
         }
@@ -104,13 +103,14 @@ module.exports = {
           return
         }
 
-        const { importPath, dirs, paths, humanizeImportPath, isGlobalModuleImport, isModuleImport, isDomainImport } = calculateDomainNode(calcContext, node)
+        const { importPath, dirs, paths, humanizeImportPath, isGlobalModuleImport, isModuleImport, isDomainImport } =
+          calculateDomainNode(calcContext, node)
         const hit = !isGlobalModuleImport && !isModuleImport && !isDomainImport
 
         if (
           option.analyticsMode === 'all' ||
-          option.analyticsMode === 'same-domain' && !hit ||
-          option.analyticsMode === 'another-domain' && hit
+          (option.analyticsMode === 'same-domain' && !hit) ||
+          (option.analyticsMode === 'another-domain' && hit)
         ) {
           console.log('対象ディレクトリ', humanizeParentDir)
           console.log('importファイル', humanizeImportPath)

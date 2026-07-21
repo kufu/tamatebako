@@ -611,7 +611,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -664,7 +664,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -755,7 +755,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -891,7 +891,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').retry(3).send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').retry(3).send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -912,7 +912,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').retry(3).send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').retry(3).send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -928,7 +928,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').retry(3).timeout(1000).send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').retry(3).timeout(1000).send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -940,7 +940,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -958,7 +958,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },
@@ -980,7 +980,7 @@ ruleTester.run('best-practice-for-reduce-redundant-calls', rule, {
       errors: [
         {
           messageId: 'consolidateFunctionCall',
-          data: { functionName: 'api.post(\'/endpoint\').send', detailLink: DETAIL_LINK },
+          data: { functionName: "api.post('/endpoint').send", detailLink: DETAIL_LINK },
         },
       ],
     },

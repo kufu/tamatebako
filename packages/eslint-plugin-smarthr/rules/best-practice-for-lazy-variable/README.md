@@ -246,14 +246,14 @@ for (const item of items) {
 
 ```js
 // Before（副作用を持つ関数の場合）
-const value = sideEffect1()  // ← 先に実行される
+const value = sideEffect1() // ← 先に実行される
 sideEffect2()
 if (condition) {
   console.log(value)
 }
 
 // After（自動修正後）
-sideEffect2()  // ← 先に実行される
+sideEffect2() // ← 先に実行される
 if (condition) {
   const value = sideEffect1()
   console.log(value)

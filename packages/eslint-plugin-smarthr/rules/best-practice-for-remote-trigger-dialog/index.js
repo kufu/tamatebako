@@ -17,8 +17,10 @@ module.exports = {
     }
 
     return {
-      'JSXOpeningElement[name.name=/RemoteTrigger(Action|Form|Message|Modeless)Dialog$/] JSXAttribute[name.name="id"]:not([value.type="Literal"])': checker,
-      'JSXOpeningElement[name.name=/RemoteDialogTrigger$/] JSXAttribute[name.name="targetId"]:not([value.type="Literal"])': checker,
+      'JSXOpeningElement[name.name=/RemoteTrigger(Action|Form|Message|Modeless)Dialog$/] JSXAttribute[name.name="id"]:not([value.type="Literal"])':
+        checker,
+      'JSXOpeningElement[name.name=/RemoteDialogTrigger$/] JSXAttribute[name.name="targetId"]:not([value.type="Literal"])':
+        checker,
     }
   },
 }

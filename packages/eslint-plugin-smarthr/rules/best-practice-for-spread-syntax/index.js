@@ -6,7 +6,7 @@ const SCHEMA = [
       checkType: { type: 'string', enum: ['always', 'only-jsx', 'only-object'], default: 'always' },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 const CHECK_REGEX = {
@@ -61,34 +61,37 @@ module.exports = {
               node,
               message: `"${code}" は意図しない上書きを防ぐため、spread syntaxでない属性より先に記述してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-spread-syntax`,
-              fix: fixAction ? (fixer) => {
-                const elementNode = node.parent
-                const normals = []
-                const spreads = []
+              fix: fixAction
+                ? (fixer) => {
+                    const elementNode = node.parent
+                    const normals = []
+                    const spreads = []
 
-                elementNode[attributesKey].forEach((a, i) => {
-                  if (a !== node) {
-                    if (insertIndex === i) {
-                      spreads.push(code)
-                    }
+                    elementNode[attributesKey].forEach((a, i) => {
+                      if (a !== node) {
+                        if (insertIndex === i) {
+                          spreads.push(code)
+                        }
 
-                    (a.type === type ? spreads : normals).push(context.sourceCode.getText(a))
+                        ;(a.type === type ? spreads : normals).push(context.sourceCode.getText(a))
+                      }
+                    })
+
+                    return fixer.replaceText(elementNode, fixAction(spreads.concat(normals), elementNode))
                   }
-                })
-
-                return fixer.replaceText(
-                  elementNode,
-                  fixAction(spreads.concat(normals), elementNode),
-                )
-              } : null
-            });
+                : null,
+            })
           }
         }
       }
     }
 
-    generateAction('JSXSpreadAttribute', 'attributes', (option.fix) && ((attributes, e) => `<${e.name.name} ${attributes.join(' ')}${e.selfClosing ? ' /' : ''}>`))
-    generateAction('SpreadElement', 'properties', (option.fix) && ((attributes) => `{ ${attributes.join(', ')} }`))
+    generateAction(
+      'JSXSpreadAttribute',
+      'attributes',
+      option.fix && ((attributes, e) => `<${e.name.name} ${attributes.join(' ')}${e.selfClosing ? ' /' : ''}>`),
+    )
+    generateAction('SpreadElement', 'properties', option.fix && ((attributes) => `{ ${attributes.join(', ')} }`))
 
     return result
   },

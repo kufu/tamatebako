@@ -27,10 +27,16 @@ ruleTester.run('design-system-guideline-prohibit-double-icons', rule, {
     { code: `<Input prefix={PREFIX} suffix={SUFFIX} />` },
   ],
   invalid: [
-    { code: `<Button suffix={SUFFIX} prefix={PREFIX}>hoge</Button>`, errors: [{message: generateErrorText('Button')}]},
-    { code: `<Button suffix prefix>hoge</Button>`, errors: [{message: generateErrorText('Button')}]},
-    { code: `<StyledButton suffix={undefined} prefix={null}>hoge</StyledButton>`, errors: [{message: generateErrorText('StyledButton')}]},
-    { code: `<Link prefix="PREFIX" suffix="SUFFIX">hoge</Link>`, errors: [{message: generateErrorText('Link')}]},
-    { code: `<StyledLink prefix="PREFIX" suffix="SUFFIX">hoge</StyledLink>`, errors: [{message: generateErrorText('StyledLink')}]},
-  ]
+    { code: `<Button suffix={SUFFIX} prefix={PREFIX}>hoge</Button>`, errors: [{ message: generateErrorText('Button') }] },
+    { code: `<Button suffix prefix>hoge</Button>`, errors: [{ message: generateErrorText('Button') }] },
+    {
+      code: `<StyledButton suffix={undefined} prefix={null}>hoge</StyledButton>`,
+      errors: [{ message: generateErrorText('StyledButton') }],
+    },
+    { code: `<Link prefix="PREFIX" suffix="SUFFIX">hoge</Link>`, errors: [{ message: generateErrorText('Link') }] },
+    {
+      code: `<StyledLink prefix="PREFIX" suffix="SUFFIX">hoge</StyledLink>`,
+      errors: [{ message: generateErrorText('StyledLink') }],
+    },
+  ],
 })

@@ -52,5 +52,5 @@ ruleTester.run('v90-to-v91-unknown-attributes', rule, {
       options: [{ from: '90', to: '91' }],
       errors: [{ messageId: 'removeIconGap' }],
     },
-  ]
+  ],
 })

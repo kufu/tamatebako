@@ -20,10 +20,7 @@ const SCHEMA = [
   },
 ]
 
-const EARLY_EXIT_STATEMENT_TYPES = new Set([
-  'ReturnStatement',
-  'ThrowStatement',
-])
+const EARLY_EXIT_STATEMENT_TYPES = new Set(['ReturnStatement', 'ThrowStatement'])
 
 /**
  * Identifierが変数参照かどうかを判定
@@ -94,9 +91,7 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
       }
       case 'VariableDeclarator': {
         // 同名変数の再宣言がある場合はその先を探索しない
-        if (node !== declarationNode &&
-            node.id.type === 'Identifier' &&
-            node.id.name === varName) {
+        if (node !== declarationNode && node.id.type === 'Identifier' && node.id.name === varName) {
           return
         }
         break
@@ -109,7 +104,7 @@ function getVariableUsages(sourceCode, varName, declarationNode) {
       const child = node[key]
       if (child) {
         if (Array.isArray(child)) {
-          child.forEach(c => traverse(c))
+          child.forEach((c) => traverse(c))
         } else if (typeof child === 'object' && child.type) {
           traverse(child)
         }
@@ -138,9 +133,7 @@ function findIfBodyForUsage(ifStatement, usageNode, crossedBarrier) {
   }
 
   // alternate (else節) に含まれているか
-  if (ifStatement.alternate &&
-      ifStatement.alternate.type !== 'IfStatement' &&
-      containsNode(ifStatement.alternate, usageNode)) {
+  if (ifStatement.alternate && ifStatement.alternate.type !== 'IfStatement' && containsNode(ifStatement.alternate, usageNode)) {
     return { type: 'if-body', body: ifStatement.alternate, conditional: ifStatement, crossedBarrier }
   }
 
@@ -230,9 +223,7 @@ function buildAncestorChain(conditional) {
       case 'SwitchStatement': {
         for (const caseNode of current.cases) {
           if (caseNode.consequent.length > 0) {
-            const body = caseNode.consequent[0].type === 'BlockStatement'
-              ? caseNode.consequent[0]
-              : caseNode.consequent
+            const body = caseNode.consequent[0].type === 'BlockStatement' ? caseNode.consequent[0] : caseNode.consequent
             ancestors.push({ type: 'case-body', body, conditional: current })
           }
         }
@@ -253,15 +244,15 @@ function findCommonAncestorBody(bodyInfos) {
   if (bodyInfos.length === 1) return bodyInfos[0]
 
   const firstBody = bodyInfos[0].body
-  if (bodyInfos.every(info => info.body === firstBody)) {
+  if (bodyInfos.every((info) => info.body === firstBody)) {
     return bodyInfos[0]
   }
 
   const ancestors = buildAncestorChain(bodyInfos[0].conditional)
 
   for (const ancestorInfo of ancestors) {
-    const allContained = bodyInfos.every(info =>
-      containsNode(ancestorInfo.body, info.body) || containsNode(ancestorInfo.body, info.conditional)
+    const allContained = bodyInfos.every(
+      (info) => containsNode(ancestorInfo.body, info.body) || containsNode(ancestorInfo.body, info.conditional),
     )
     if (allContained) {
       return ancestorInfo
@@ -359,7 +350,7 @@ function getCaseInfo(sourceCode, firstStatement) {
 
   return {
     colonPos,
-    caseIndent: text.substring(caseLineStart, caseKeywordStart)
+    caseIndent: text.substring(caseLineStart, caseKeywordStart),
   }
 }
 
@@ -395,13 +386,13 @@ function fixBlockStatement(fixer, sourceCode, declarationText, targetBody, remov
     const targetIndent = getIndent(sourceCode, insertTarget)
     return [
       fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
-      fixer.insertTextBefore(insertTarget, declarationText + '\n' + targetIndent)
+      fixer.insertTextBefore(insertTarget, declarationText + '\n' + targetIndent),
     ]
   } else {
     const openBrace = sourceCode.getFirstToken(targetBody)
     return [
       fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
-      fixer.insertTextAfter(openBrace, '\n' + declarationText)
+      fixer.insertTextAfter(openBrace, '\n' + declarationText),
     ]
   }
 }
@@ -410,7 +401,7 @@ function fixBlockStatement(fixer, sourceCode, declarationText, targetBody, remov
  * 変数宣言を移動するfixer関数を生成
  */
 function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBeforeStatement, firstUsageStatement) {
-  return function(fixer) {
+  return function (fixer) {
     const declarationText = sourceCode.getText(variableDeclaration)
     const removalRange = getRemovalRange(sourceCode, variableDeclaration)
 
@@ -419,7 +410,7 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
       const targetIndent = getIndent(sourceCode, insertBeforeStatement)
       return [
         fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
-        fixer.insertTextBefore(insertBeforeStatement, declarationText + '\n' + targetIndent)
+        fixer.insertTextBefore(insertBeforeStatement, declarationText + '\n' + targetIndent),
       ]
     }
 
@@ -437,7 +428,7 @@ function createMoveFixer(sourceCode, variableDeclaration, targetBody, insertBefo
     const statementText = sourceCode.getText(targetBody)
     return [
       fixer.removeRange([removalRange.lineStart, removalRange.removeEnd]),
-      fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`)
+      fixer.replaceText(targetBody, `{\n${declarationText}\n${statementText}\n}`),
     ]
   }
 }
@@ -469,9 +460,10 @@ function findEarlyExits(declarationScope, variableDeclaration) {
     const statement = statements[i]
 
     // try-catchブロック（throw含む）を検出
-    if (statement.type === 'TryStatement' &&
-        (containsThrow(statement.block) ||
-         (statement.handler && containsThrow(statement.handler.body)))) {
+    if (
+      statement.type === 'TryStatement' &&
+      (containsThrow(statement.block) || (statement.handler && containsThrow(statement.handler.body)))
+    ) {
       earlyExits.push({
         type: 'try-catch',
         node: statement,
@@ -510,7 +502,7 @@ function collectEarlyExitsFromNode(node, earlyExits, statementIndex) {
     const child = node[key]
     if (child) {
       if (Array.isArray(child)) {
-        child.forEach(c => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
+        child.forEach((c) => collectEarlyExitsFromNode(c, earlyExits, statementIndex))
       } else if (typeof child === 'object') {
         collectEarlyExitsFromNode(child, earlyExits, statementIndex)
       }
@@ -538,10 +530,12 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
       if (containsVariableUsageBeforeEarlyExit(statement, varName, declarationNode, earlyExit.node)) {
         return true
       }
-    } else if (statement === earlyExit.node &&
-               (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
-                (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
-                (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode)))) {
+    } else if (
+      statement === earlyExit.node &&
+      (containsVariableUsage(earlyExit.node.block, varName, declarationNode) ||
+        (earlyExit.node.handler && containsVariableUsage(earlyExit.node.handler.body, varName, declarationNode)) ||
+        (earlyExit.node.finalizer && containsVariableUsage(earlyExit.node.finalizer, varName, declarationNode)))
+    ) {
       // try-catchブロック内での使用をチェック
       return true
     }
@@ -565,10 +559,12 @@ function containsVariableUsage(node, varName, declarationNode, excludeNode = nul
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (child && (
-      (Array.isArray(child) && child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) ||
-      (typeof child === 'object' && containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope))
-    )) {
+    if (
+      child &&
+      ((Array.isArray(child) &&
+        child.some((c) => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) ||
+        (typeof child === 'object' && containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)))
+    ) {
       return true
     }
   }
@@ -588,7 +584,7 @@ function findFirstUsageStatement(targetBody, usages) {
   if (!Array.isArray(statements)) return null
 
   for (const statement of statements) {
-    if (usages.some(usage => containsNode(statement, usage))) {
+    if (usages.some((usage) => containsNode(statement, usage))) {
       return statement
     }
   }
@@ -625,9 +621,8 @@ function checkEarlyExitMove(sourceCode, node, varName, usages, variableDeclarati
     const earlyExitIndex = earlyExit.type === 'try-catch' ? earlyExit.index : earlyExit.statementIndex
 
     // すべての使用箇所が早期終了の後にあるかチェック
-    if (usages.length > 0 &&
-        usages.every(usage => getStatementIndex(statements, usage) > earlyExitIndex)) {
-      const firstUsageIndex = Math.min(...usages.map(usage => getStatementIndex(statements, usage)))
+    if (usages.length > 0 && usages.every((usage) => getStatementIndex(statements, usage) > earlyExitIndex)) {
+      const firstUsageIndex = Math.min(...usages.map((usage) => getStatementIndex(statements, usage)))
 
       return {
         node,
@@ -657,7 +652,10 @@ function shouldSkipVariable(node) {
     // ループ変数は対象外（for-in, for-of, for文のinit部分）
     (varDecl.parent && isLoopStatement(varDecl.parent)) ||
     // React Hooks（useXxxで始まる関数）で初期化される変数は対象外
-    (node.init && node.init.type === 'CallExpression' && node.init.callee.type === 'Identifier' && node.init.callee.name.startsWith('use')) ||
+    (node.init &&
+      node.init.type === 'CallExpression' &&
+      node.init.callee.type === 'Identifier' &&
+      node.init.callee.name.startsWith('use')) ||
     // await式を含む変数は対象外（非同期処理の実行タイミングが変わるため）
     (node.init && containsAwait(node.init))
   ) {
@@ -784,7 +782,7 @@ module.exports = {
     const fix = options.fix
 
     return {
-      'VariableDeclarator': (node) => {
+      VariableDeclarator: (node) => {
         const analysis = analyzeVariable(sourceCode, node)
         if (!analysis) return
 
@@ -792,13 +790,15 @@ module.exports = {
           node: analysis.node,
           messageId: 'moveToLazy',
           data: { name: analysis.varName },
-          fix: fix ? createMoveFixer(
-            sourceCode,
-            analysis.variableDeclaration,
-            analysis.targetBody,
-            analysis.insertBeforeStatement,
-            analysis.firstUsageStatement
-          ) : null,
+          fix: fix
+            ? createMoveFixer(
+                sourceCode,
+                analysis.variableDeclaration,
+                analysis.targetBody,
+                analysis.insertBeforeStatement,
+                analysis.firstUsageStatement,
+              )
+            : null,
         })
       },
     }

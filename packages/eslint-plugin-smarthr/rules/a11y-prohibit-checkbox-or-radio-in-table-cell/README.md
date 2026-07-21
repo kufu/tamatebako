@@ -12,17 +12,23 @@ SmartHR UI には、デフォルトでアクセシブルネームを設定する
 <Table>
   <thead>
     <tr>
-      <Th><Checkbox /></Th>
+      <Th>
+        <Checkbox />
+      </Th>
       <Th>名前</Th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <Td><Checkbox /></Td>
+      <Td>
+        <Checkbox />
+      </Td>
       <Td>労務 太郎</Td>
     </tr>
     <tr>
-      <Td><Checkbox /></Td>
+      <Td>
+        <Checkbox />
+      </Td>
       <Td>労務 次郎</Td>
     </tr>
   </tbody>
@@ -46,17 +52,23 @@ SmartHR UI には、デフォルトでアクセシブルネームを設定する
 <Table>
   <thead>
     <tr>
-      <Th><Checkbox aria-label="すべての項目を選択/解除" /></Th>
+      <Th>
+        <Checkbox aria-label="すべての項目を選択/解除" />
+      </Th>
       <Th>名前</Th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <Td><Checkbox aria-labelledby="name-1" /></Td>
+      <Td>
+        <Checkbox aria-labelledby="name-1" />
+      </Td>
       <Td id="name-1">労務 太郎</Td>
     </tr>
     <tr>
-      <Td><Checkbox aria-labelledby="name-2" /></Td>
+      <Td>
+        <Checkbox aria-labelledby="name-2" />
+      </Td>
       <Td id="name-2">労務 次郎</Td>
     </tr>
   </tbody>
@@ -111,7 +123,9 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
       <Th id="id-1">smarthr-001</Th>
       <Td id="name-1">労務 太郎</Td>
       <Td>労務 太郎は......</Td>
-      <Td><Button>編集</Button></Td>
+      <Td>
+        <Button>編集</Button>
+      </Td>
     </tr>
     <tr>
       {/* accessible nameは smarthr-002 労務 次郎 */}
@@ -119,7 +133,9 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
       <Th id="id-2">smarthr-002</Th>
       <Td id="name-2">労務 次郎</Td>
       <Td>労務 次郎は......</Td>
-      <Td><Button>編集</Button></Td>
+      <Td>
+        <Button>編集</Button>
+      </Td>
     </tr>
   </tbody>
 </Table>

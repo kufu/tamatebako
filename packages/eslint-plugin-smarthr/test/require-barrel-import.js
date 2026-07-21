@@ -83,10 +83,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useMenu } from './hooks/useMenu'`,
       filename: (() => {
         createFixture('same-level-import', {
-          'Menu': {
+          Menu: {
             'MenuItem.tsx': '',
             'index.tsx': 'export {}',
-            'hooks': {
+            hooks: {
               'useMenu.ts': '',
             },
           },
@@ -100,9 +100,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/client'`,
       filename: (() => {
         createFixture('barrel-file-names-valid', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'client.ts': 'export {}',
               'user.ts': '',
             },
@@ -122,9 +122,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api'`,
       filename: (() => {
         createFixture('barrel-file-names-both-index', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'index.ts': 'export {}',
               'client.ts': 'export {}',
               'user.ts': '',
@@ -145,9 +145,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/client'`,
       filename: (() => {
         createFixture('barrel-file-names-both-client', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'index.ts': 'export {}',
               'client.ts': 'export {}',
               'user.ts': '',
@@ -168,7 +168,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { ButtonProps } from './types'`,
       filename: (() => {
         createFixture('same-dir-non-barrel', {
-          'Button': {
+          Button: {
             'index.tsx': 'export {}',
             'Button.tsx': '',
             'types.ts': '',
@@ -183,16 +183,16 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useUsers } from './hooks/useUsers'`,
       filename: (() => {
         createFixture('nextjs-special-chars', {
-          'app': {
+          app: {
             '(private)': {
-              'settings': {
-                'user_roles': {
-                  '_components': {
+              settings: {
+                user_roles: {
+                  _components: {
                     'index.tsx': 'export {}',
-                    'AddUserRoleDialog': {
+                    AddUserRoleDialog: {
                       'index.tsx': 'export {}',
                       'AddUserRoleDialog.tsx': '',
-                      'hooks': {
+                      hooks: {
                         'useUsers.ts': '',
                       },
                     },
@@ -211,12 +211,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useDetail } from './hooks/useDetail'`,
       filename: (() => {
         createFixture('nextjs-dynamic-route', {
-          'app': {
-            'items': {
+          app: {
+            items: {
               '[id]': {
                 'index.tsx': 'export {}',
                 'DetailPage.tsx': '',
-                'hooks': {
+                hooks: {
                   'useDetail.ts': '',
                 },
               },
@@ -232,10 +232,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { helper } from './utils/helper'`,
       filename: (() => {
         createFixture('no-barrel', {
-          'components': {
-            'Button': {
+          components: {
+            Button: {
               'Button.tsx': '',
-              'utils': {
+              utils: {
                 'helper.ts': '',
               },
             },
@@ -251,10 +251,10 @@ ruleTester.run('require-barrel-import', rule, {
       filename: (() => {
         createFixture('parent-import-no-barrel', {
           // index.tsx なし（barrelなし）
-          'Button': {
+          Button: {
             'Button.tsx': '',
           },
-          'utils': {
+          utils: {
             'helper.ts': '',
           },
         })
@@ -268,10 +268,10 @@ ruleTester.run('require-barrel-import', rule, {
       filename: (() => {
         createFixture('nextjs-parent-no-barrel', {
           // index.tsx なし（barrelなし）
-          'AddUserRoleDialog': {
+          AddUserRoleDialog: {
             'AddUserRoleDialog.tsx': '',
           },
-          'hooks': {
+          hooks: {
             'createUserRoleAction.ts': '',
           },
         })
@@ -288,7 +288,7 @@ ruleTester.run('require-barrel-import', rule, {
           '[id]': {
             'DetailPage.tsx': '',
           },
-          'api': {
+          api: {
             'client.ts': '',
           },
         })
@@ -303,10 +303,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useMenu } from '~/path-alias-same-level/Menu/hooks/useMenu'`,
       filename: (() => {
         createFixture('path-alias-same-level', {
-          'Menu': {
+          Menu: {
             'MenuItem.tsx': '',
             'index.tsx': 'export {}',
-            'hooks': {
+            hooks: {
               'useMenu.ts': '',
             },
           },
@@ -320,10 +320,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { helper } from '~/path-alias-no-barrel/components/Button/utils/helper'`,
       filename: (() => {
         createFixture('path-alias-no-barrel', {
-          'components': {
-            'Button': {
+          components: {
+            Button: {
               'Button.tsx': '',
-              'utils': {
+              utils: {
                 'helper.ts': '',
               },
             },
@@ -339,10 +339,10 @@ ruleTester.run('require-barrel-import', rule, {
       filename: (() => {
         createFixture('path-alias-parent-no-barrel', {
           // index.tsx なし（barrelなし）
-          'Button': {
+          Button: {
             'Button.tsx': '',
           },
-          'utils': {
+          utils: {
             'helper.ts': '',
           },
         })
@@ -355,12 +355,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { createUserRole } from '../hooks/createUserRoleAction'`,
       filename: (() => {
         createFixture('parent-import-common-parent-barrel', {
-          'components': {
-            'index.tsx': 'export {}',  // commonParentのbarrelは除外される
-            'AddDialog': {
+          components: {
+            'index.tsx': 'export {}', // commonParentのbarrelは除外される
+            AddDialog: {
               'AddDialog.tsx': '',
             },
-            'hooks': {
+            hooks: {
               'createUserRoleAction.ts': '',
             },
           },
@@ -374,17 +374,17 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import type { RequestStepActionNotSkipped } from '../utils/withSkipped'`,
       filename: (() => {
         createFixture('nested-common-parent-barrel', {
-          'Nodes': {
-            'index.tsx': 'export {}',  // commonParentより上のbarrel（除外される）
-            'StepNodeRequestView': {
-              'index.tsx': 'export {}',  // commonParent（除外される）
-              'Approvers': {
-                'ApproverRow': {
+          Nodes: {
+            'index.tsx': 'export {}', // commonParentより上のbarrel（除外される）
+            StepNodeRequestView: {
+              'index.tsx': 'export {}', // commonParent（除外される）
+              Approvers: {
+                ApproverRow: {
                   'buildUserRowsProps.ts': '',
                 },
-                'utils': {
-                  'withSkipped': {
-                    'index.ts': 'export {}',  // import先のbarrel（valid）
+                utils: {
+                  withSkipped: {
+                    'index.ts': 'export {}', // import先のbarrel（valid）
                   },
                 },
               },
@@ -407,7 +407,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-valid-export-named', {
-          'components': {
+          components: {
             'index.tsx': '',
             'Button.tsx': '',
           },
@@ -421,7 +421,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export * from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-valid-export-all', {
-          'components': {
+          components: {
             'index.tsx': '',
             'Button.tsx': '',
           },
@@ -439,11 +439,11 @@ ruleTester.run('require-barrel-import', rule, {
       `,
       filename: (() => {
         createFixture('barrel-purity-valid-multiple', {
-          'components': {
+          components: {
             'index.tsx': '',
             'Button.tsx': '',
             'Input.tsx': '',
-            'utils': {
+            utils: {
               'index.ts': '',
             },
           },
@@ -457,7 +457,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { api } from './api'`,
       filename: (() => {
         createFixture('barrel-purity-valid-client', {
-          'services': {
+          services: {
             'client.ts': '',
             'api.ts': '',
           },
@@ -472,7 +472,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export type { ButtonProps } from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-valid-type-reexport', {
-          'components': {
+          components: {
             'index.tsx': '',
             'Button.tsx': '',
           },
@@ -489,7 +489,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { default } from './Component'`,
       filename: (() => {
         createFixture('barrel-purity-valid-default-reexport', {
-          'components': {
+          components: {
             'index.ts': '',
             'Component.tsx': '',
           },
@@ -503,7 +503,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { default as Button } from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-valid-default-as-reexport', {
-          'components': {
+          components: {
             'index.ts': '',
             'Button.tsx': '',
           },
@@ -517,7 +517,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button as default } from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-valid-named-as-default', {
-          'components': {
+          components: {
             'index.ts': '',
             'Button.tsx': '',
           },
@@ -535,7 +535,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { ServerComponent } from './ServerComponent'`,
       filename: (() => {
         createFixture('valid-different-exports-index-client', {
-          'components': {
+          components: {
             'index.ts': 'export { ClientComponent } from "./ClientComponent"',
             'client.ts': '',
             'ClientComponent.tsx': 'export const ClientComponent = () => null',
@@ -556,7 +556,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { serverApi } from './serverApi'`,
       filename: (() => {
         createFixture('valid-different-exports-client-server', {
-          'api': {
+          api: {
             'client.ts': 'export { clientApi } from "./clientApi"',
             'server.ts': '',
             'clientApi.ts': 'export const clientApi = {}',
@@ -577,7 +577,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './Button'`,
       filename: (() => {
         createFixture('valid-single-barrel', {
-          'components': {
+          components: {
             'index.ts': '',
             'Button.tsx': 'export const Button = () => null',
           },
@@ -591,7 +591,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export * from './components'`,
       filename: (() => {
         createFixture('valid-export-all-no-duplicate-check', {
-          'ui': {
+          ui: {
             'index.ts': 'export { Button } from "./Button"',
             'client.ts': '',
             'Button.tsx': 'export const Button = () => null',
@@ -612,7 +612,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { default } from './Component'`,
       filename: (() => {
         createFixture('valid-single-default-export', {
-          'components': {
+          components: {
             'index.ts': '',
             'client.ts': 'export { Button } from "./Button"',
             'Component.tsx': 'export default function Component() { return null }',
@@ -633,7 +633,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './ComponentA'`,
       filename: (() => {
         createFixture('valid-different-files-same-name', {
-          'components': {
+          components: {
             'index.ts': 'export { Button } from "./ComponentB"',
             'client.ts': '',
             'ComponentA.tsx': 'export const Button = () => null',
@@ -656,12 +656,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { api } from '../api/client'`,
       filename: (() => {
         createFixture('parent-import-with-barrel', {
-          'components': {
-            'AddDialog': {
+          components: {
+            AddDialog: {
               'AddDialog.tsx': '',
             },
-            'api': {
-              'index.tsx': 'export {}',  // import先の親にbarrel
+            api: {
+              'index.tsx': 'export {}', // import先の親にbarrel
               'client.ts': '',
             },
           },
@@ -680,16 +680,16 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { api } from '../api/client'`,
       filename: (() => {
         createFixture('nextjs-import-parent-barrel', {
-          'app': {
+          app: {
             '(private)': {
-              'settings': {
-                'user_roles': {
-                  '_components': {
-                    'AddUserRoleDialog': {
+              settings: {
+                user_roles: {
+                  _components: {
+                    AddUserRoleDialog: {
                       'AddUserRoleDialog.tsx': '',
                     },
-                    'api': {
-                      'index.tsx': 'export {}',  // import先の親にbarrel
+                    api: {
+                      'index.tsx': 'export {}', // import先の親にbarrel
                       'client.ts': '',
                     },
                   },
@@ -712,12 +712,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { api } from '@/path-alias-import-parent-barrel/components/api/client'`,
       filename: (() => {
         createFixture('path-alias-import-parent-barrel', {
-          'components': {
-            'AddDialog': {
+          components: {
+            AddDialog: {
               'AddDialog.tsx': '',
             },
-            'api': {
-              'index.tsx': 'export {}',  // import先の親にbarrel
+            api: {
+              'index.tsx': 'export {}', // import先の親にbarrel
               'client.ts': '',
             },
           },
@@ -736,9 +736,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
         createFixture('barrel-file-names-multiple-options', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'index.ts': 'export {}',
               'client.ts': 'export {}',
               'user.ts': '',
@@ -764,9 +764,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
         createFixture('barrel-file-names-with-missing-client', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'index.ts': 'export {}',
               'user.ts': '',
             },
@@ -781,7 +781,8 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /推奨されるimport（以下のいずれか）[\s\S]*index\.ts[\s\S]*client\.ts \(作成が必要\)[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
+          message:
+            /推奨されるimport（以下のいずれか）[\s\S]*index\.ts[\s\S]*client\.ts \(作成が必要\)[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
         },
       ],
     },
@@ -791,9 +792,9 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
         createFixture('barrel-file-names-with-missing-index', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
+            api: {
               'client.ts': 'export {}',
               'user.ts': '',
             },
@@ -808,7 +809,8 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /推奨されるimport（以下のいずれか）[\s\S]*index\.ts \(作成が必要\)[\s\S]*client\.ts[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
+          message:
+            /推奨されるimport（以下のいずれか）[\s\S]*index\.ts \(作成が必要\)[\s\S]*client\.ts[\s\S]*※ 存在しないバレルファイルは必要に応じて作成してください。/,
         },
       ],
     },
@@ -818,10 +820,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
         createFixture('barrel-file-names-client', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
-              'client.ts': 'export {}',  // client.tsがbarrel
+            api: {
+              'client.ts': 'export {}', // client.tsがbarrel
               'user.ts': '',
             },
           },
@@ -845,10 +847,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { getServerData } from './server-api/data'`,
       filename: (() => {
         createFixture('barrel-file-names-server', {
-          'lib': {
+          lib: {
             'App.tsx': '',
             'server-api': {
-              'server.ts': 'export {}',  // server.tsがbarrel
+              'server.ts': 'export {}', // server.tsがbarrel
               'data.ts': '',
             },
           },
@@ -872,10 +874,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { fetchUser } from './api/user'`,
       filename: (() => {
         createFixture('barrel-file-names-priority', {
-          'components': {
+          components: {
             'Page.tsx': '',
-            'api': {
-              'client.ts': 'export {}',  // client.tsが優先
+            api: {
+              'client.ts': 'export {}', // client.tsが優先
               'index.ts': 'export {}',
               'user.ts': '',
             },
@@ -890,7 +892,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /client\.ts/,  // client.tsが検出される
+          message: /client\.ts/, // client.tsが検出される
         },
       ],
     },
@@ -900,12 +902,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
       filename: (() => {
         createFixture('barrel-file-names-nearest-priority', {
-          'Page.tsx': '',  // importer
-          'route': {
-            'client.ts': 'export {}',  // 親のclient.ts
-            'edit': {
-              'index.ts': 'export {}',  // より近いindex.tsが優先される
-              '_hooks': {
+          'Page.tsx': '', // importer
+          route: {
+            'client.ts': 'export {}', // 親のclient.ts
+            edit: {
+              'index.ts': 'export {}', // より近いindex.tsが優先される
+              _hooks: {
                 'useFormContext.ts': '',
               },
             },
@@ -920,7 +922,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/edit/,  // 最も近いindex.ts（route/edit）が検出される
+          message: /route\/edit/, // 最も近いindex.ts（route/edit）が検出される
         },
       ],
     },
@@ -930,12 +932,12 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
       filename: (() => {
         createFixture('barrel-file-names-parent-priority', {
-          'Page.tsx': '',  // importer
-          'route': {
-            'client.ts': 'export {}',  // 親のclient.tsが優先される
-            'edit': {
-              'client.ts': 'export {}',  // こちらではなく親が検出される
-              '_hooks': {
+          'Page.tsx': '', // importer
+          route: {
+            'client.ts': 'export {}', // 親のclient.tsが優先される
+            edit: {
+              'client.ts': 'export {}', // こちらではなく親が検出される
+              _hooks: {
                 'useFormContext.ts': '',
               },
             },
@@ -950,7 +952,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/client\.ts/,  // より親のclient.tsが検出される
+          message: /route\/client\.ts/, // より親のclient.tsが検出される
         },
       ],
     },
@@ -960,13 +962,13 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { useFormContext } from './route/edit/_hooks/useFormContext'`,
       filename: (() => {
         createFixture('barrel-file-names-missing-client', {
-          'Page.tsx': '',  // importer
-          'route': {
-            'index.ts': 'export {}',  // index.tsのみ
+          'Page.tsx': '', // importer
+          route: {
+            'index.ts': 'export {}', // index.tsのみ
             // client.ts なし
-            'edit': {
-              'client.ts': 'export {}',  // 子にはclient.tsがある
-              '_hooks': {
+            edit: {
+              'client.ts': 'export {}', // 子にはclient.tsがある
+              _hooks: {
                 'useFormContext.ts': '',
               },
             },
@@ -991,13 +993,13 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Component } from './route/edit/components/Component'`,
       filename: (() => {
         createFixture('barrel-file-names-nested-mixed', {
-          'Page.tsx': '',  // importer
-          'route': {
-            'index.ts': 'export {}',  // 親 (index)
-            'edit': {
-              'client.ts': 'export {}',  // 中間 (client)
-              'components': {
-                'index.ts': 'export {}',  // 子 (index) - 最も近い
+          'Page.tsx': '', // importer
+          route: {
+            'index.ts': 'export {}', // 親 (index)
+            edit: {
+              'client.ts': 'export {}', // 中間 (client)
+              components: {
+                'index.ts': 'export {}', // 子 (index) - 最も近い
                 'Component.tsx': '',
               },
             },
@@ -1012,7 +1014,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/edit\/components/,  // 最も近いindex.ts（components）が検出される
+          message: /route\/edit\/components/, // 最も近いindex.ts（components）が検出される
         },
       ],
     },
@@ -1022,13 +1024,13 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Component } from './route/edit/components/Component'`,
       filename: (() => {
         createFixture('barrel-file-names-nested-all-client', {
-          'Page.tsx': '',  // importer
-          'route': {
-            'client.ts': 'export {}',  // 親 (client)
-            'edit': {
-              'client.ts': 'export {}',  // 中間 (client)
-              'components': {
-                'client.ts': 'export {}',  // 子 (client) - 同名なので探索を続ける
+          'Page.tsx': '', // importer
+          route: {
+            'client.ts': 'export {}', // 親 (client)
+            edit: {
+              'client.ts': 'export {}', // 中間 (client)
+              components: {
+                'client.ts': 'export {}', // 子 (client) - 同名なので探索を続ける
                 'Component.tsx': '',
               },
             },
@@ -1043,7 +1045,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/client/,  // より親のclient.tsが検出される
+          message: /route\/client/, // より親のclient.tsが検出される
         },
       ],
     },
@@ -1053,13 +1055,13 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Component } from './route/edit/components/Component'`,
       filename: (() => {
         createFixture('barrel-file-names-nested-reverse', {
-          'Page.tsx': '',  // importer
-          'route': {
+          'Page.tsx': '', // importer
+          route: {
             // barrelなし
-            'edit': {
-              'index.ts': 'export {}',  // 中間 (index)
-              'components': {
-                'client.ts': 'export {}',  // 子 (client) - 最も近い
+            edit: {
+              'index.ts': 'export {}', // 中間 (index)
+              components: {
+                'client.ts': 'export {}', // 子 (client) - 最も近い
                 'Component.tsx': '',
               },
             },
@@ -1074,7 +1076,7 @@ ruleTester.run('require-barrel-import', rule, {
       ],
       errors: [
         {
-          message: /route\/edit\/components\/client/,  // 最も近いclient.tsが検出される
+          message: /route\/edit\/components\/client/, // 最も近いclient.tsが検出される
         },
       ],
     },
@@ -1088,7 +1090,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '.'`,
       filename: (() => {
         createFixture('same-dir-barrel-dot', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
           },
@@ -1107,7 +1109,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from './index'`,
       filename: (() => {
         createFixture('same-dir-barrel-index', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
           },
@@ -1126,7 +1128,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { ButtonPresentation } from './client'`,
       filename: (() => {
         createFixture('same-dir-barrel-client', {
-          'Button': {
+          Button: {
             'Button.container.tsx': '',
             'Button.presentation.tsx': '',
             'client.ts': 'export { ButtonPresentation } from "./Button.presentation"',
@@ -1151,10 +1153,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '..'`,
       filename: (() => {
         createFixture('child-dir-parent-barrel-dot', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
-            '_utils': {
+            _utils: {
               'helper.ts': '',
             },
           },
@@ -1173,10 +1175,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '../index'`,
       filename: (() => {
         createFixture('child-dir-parent-barrel-index', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
-            '_utils': {
+            _utils: {
               'helper.ts': '',
             },
           },
@@ -1195,7 +1197,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '@/same-dir-path-alias-barrel/Button'`,
       filename: (() => {
         createFixture('same-dir-path-alias-barrel', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
           },
@@ -1214,10 +1216,10 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '@/child-dir-path-alias-barrel/Button'`,
       filename: (() => {
         createFixture('child-dir-path-alias-barrel', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
-            '_utils': {
+            _utils: {
               'helper.ts': '',
             },
           },
@@ -1236,11 +1238,11 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from '../../index'`,
       filename: (() => {
         createFixture('grandchild-dir-barrel', {
-          'Button': {
+          Button: {
             'index.tsx': 'export { Button } from "./Button"',
             'Button.tsx': '',
-            '_utils': {
-              '_helpers': {
+            _utils: {
+              _helpers: {
                 'deep.ts': '',
               },
             },
@@ -1264,7 +1266,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './client'`,
       filename: (() => {
         createFixture('cross-barrel-index-to-client', {
-          'Button': {
+          Button: {
             'index.ts': '',
             'client.ts': 'export { Button } from "./Button"',
             'Button.tsx': '',
@@ -1289,7 +1291,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from '.'`,
       filename: (() => {
         createFixture('cross-barrel-client-to-index-dot', {
-          'Button': {
+          Button: {
             'index.ts': 'export { Button } from "./Button"',
             'client.ts': '',
             'Button.tsx': '',
@@ -1314,7 +1316,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './index'`,
       filename: (() => {
         createFixture('cross-barrel-client-to-index-explicit', {
-          'Button': {
+          Button: {
             'index.ts': 'export { Button } from "./Button"',
             'client.ts': '',
             'Button.tsx': '',
@@ -1339,7 +1341,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { api } from './server'`,
       filename: (() => {
         createFixture('cross-barrel-client-to-server', {
-          'services': {
+          services: {
             'client.ts': '',
             'server.ts': 'export { api } from "./api"',
             'api.ts': '',
@@ -1368,7 +1370,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { Button } from './Button'`,
       filename: (() => {
         createFixture('barrel-purity-import', {
-          'components': {
+          components: {
             'index.tsx': '',
             'Button.tsx': '',
           },
@@ -1387,7 +1389,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `const foo = 'bar'`,
       filename: (() => {
         createFixture('barrel-purity-const', {
-          'components': {
+          components: {
             'index.tsx': '',
           },
         })
@@ -1405,7 +1407,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `function helper() { return 'test' }`,
       filename: (() => {
         createFixture('barrel-purity-function', {
-          'utils': {
+          utils: {
             'index.ts': '',
           },
         })
@@ -1423,7 +1425,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export function helper() { return 'test' }`,
       filename: (() => {
         createFixture('barrel-purity-export-function', {
-          'utils': {
+          utils: {
             'index.ts': '',
           },
         })
@@ -1441,7 +1443,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `class MyClass {}`,
       filename: (() => {
         createFixture('barrel-purity-class', {
-          'models': {
+          models: {
             'index.ts': '',
           },
         })
@@ -1459,7 +1461,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export class MyClass {}`,
       filename: (() => {
         createFixture('barrel-purity-export-class', {
-          'models': {
+          models: {
             'index.ts': '',
           },
         })
@@ -1478,7 +1480,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `const foo = 'bar'`,
       filename: (() => {
         createFixture('barrel-purity-export-local', {
-          'utils': {
+          utils: {
             'index.ts': '',
           },
         })
@@ -1496,7 +1498,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `import { api } from './api'`,
       filename: (() => {
         createFixture('barrel-purity-client', {
-          'services': {
+          services: {
             'client.ts': '',
             'api.ts': '',
           },
@@ -1516,7 +1518,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export type Size = 'small' | 'medium' | 'large'`,
       filename: (() => {
         createFixture('barrel-purity-type-alias', {
-          'components': {
+          components: {
             'index.ts': '',
           },
         })
@@ -1537,7 +1539,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export interface ComponentAPI { render: () => void }`,
       filename: (() => {
         createFixture('barrel-purity-interface', {
-          'components': {
+          components: {
             'index.ts': '',
           },
         })
@@ -1558,7 +1560,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export default function Page() { return null }`,
       filename: (() => {
         createFixture('barrel-purity-export-default-function', {
-          'components': {
+          components: {
             'index.tsx': '',
           },
         })
@@ -1576,7 +1578,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export default class MyComponent {}`,
       filename: (() => {
         createFixture('barrel-purity-export-default-class', {
-          'components': {
+          components: {
             'index.tsx': '',
           },
         })
@@ -1598,7 +1600,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button } from './Button'`,
       filename: (() => {
         createFixture('duplicate-export-index-client', {
-          'components': {
+          components: {
             'index.ts': 'export { Button } from "./Button"',
             'client.ts': '',
             'Button.tsx': 'export const Button = () => null',
@@ -1623,7 +1625,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { api } from './api'`,
       filename: (() => {
         createFixture('duplicate-export-client-server', {
-          'services': {
+          services: {
             'client.ts': '',
             'server.ts': 'export { api } from "./api"',
             'api.ts': 'export const api = {}',
@@ -1648,7 +1650,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button, Input } from './components'`,
       filename: (() => {
         createFixture('duplicate-export-multiple', {
-          'ui': {
+          ui: {
             'index.ts': 'export { Button, Input } from "./components"',
             'client.ts': '',
             'components.tsx': 'export const Button = () => null; export const Input = () => null',
@@ -1676,7 +1678,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button as MyButton } from './Button'`,
       filename: (() => {
         createFixture('duplicate-export-alias', {
-          'components': {
+          components: {
             'index.ts': 'export { Button } from "./Button"',
             'client.ts': '',
             'Button.tsx': 'export const Button = () => null',
@@ -1701,7 +1703,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { default } from './Component'`,
       filename: (() => {
         createFixture('duplicate-export-default', {
-          'components': {
+          components: {
             'index.ts': 'export { default } from "./Component"',
             'client.ts': '',
             'Component.tsx': 'export default function Component() { return null }',
@@ -1726,7 +1728,7 @@ ruleTester.run('require-barrel-import', rule, {
       code: `export { Button as default } from './Button'`,
       filename: (() => {
         createFixture('duplicate-export-as-default', {
-          'components': {
+          components: {
             'index.ts': 'export { Button as default } from "./Button"',
             'client.ts': '',
             'Button.tsx': 'export const Button = () => null',

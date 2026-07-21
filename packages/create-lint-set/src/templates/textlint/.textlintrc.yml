@@ -3,4 +3,4 @@ rules:
 plugins:
   jsx:
     extensions: # .jsx and .tsx are supported by default
-      - ".ts"
+      - '.ts'

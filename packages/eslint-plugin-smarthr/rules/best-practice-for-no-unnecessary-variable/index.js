@@ -71,10 +71,12 @@ function shouldSkipVariableExceptComplexity(node) {
  * React Hooksで初期化されているかを判定
  */
 function isReactHookCall(node) {
-  return node.init &&
-         node.init.type === 'CallExpression' &&
-         node.init.callee.type === 'Identifier' &&
-         node.init.callee.name.startsWith('use')
+  return (
+    node.init &&
+    node.init.type === 'CallExpression' &&
+    node.init.callee.type === 'Identifier' &&
+    node.init.callee.name.startsWith('use')
+  )
 }
 
 /**
@@ -85,8 +87,8 @@ function isReactHookCall(node) {
  */
 function getTypeAnnotationText(sourceCode, node) {
   return node.id.typeAnnotation
-    // `: Type` の形式から `: ` を除去
-    ? sourceCode.getText(node.id.typeAnnotation).replace(/^:\s*/, '')
+    ? // `: Type` の形式から `: ` を除去
+      sourceCode.getText(node.id.typeAnnotation).replace(/^:\s*/, '')
     : null
 }
 
@@ -173,20 +175,21 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
    * 変数の使用箇所として収集すべきIdentifierかチェック
    */
   function isTargetIdentifier(node) {
-    return (node.type === 'Identifier' || node.type === 'JSXIdentifier') &&
-           node.name === varName &&
-           node !== declarationNode.id &&
-           !isInsideInit(node)
+    return (
+      (node.type === 'Identifier' || node.type === 'JSXIdentifier') &&
+      node.name === varName &&
+      node !== declarationNode.id &&
+      !isInsideInit(node)
+    )
   }
 
   /**
    * 同名変数の再宣言かチェック
    */
   function isRedeclaration(node) {
-    return node.type === 'VariableDeclarator' &&
-           node !== declarationNode &&
-           node.id.type === 'Identifier' &&
-           node.id.name === varName
+    return (
+      node.type === 'VariableDeclarator' && node !== declarationNode && node.id.type === 'Identifier' && node.id.name === varName
+    )
   }
 
   /**
@@ -222,7 +225,7 @@ function getVariableUsagesInScope(sourceCode, varName, declarationNode) {
         const child = node[key]
         if (child) {
           if (Array.isArray(child)) {
-            child.forEach(c => traverse(c))
+            child.forEach((c) => traverse(c))
           } else if (typeof child === 'object' && child.type) {
             traverse(child)
           }
@@ -298,7 +301,7 @@ function prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation) {
   } else if (
     needsParentheses(declarationNode.init) ||
     // 使用箇所が単項演算子の引数の場合は括弧が必要
-    usage.parent && usage.parent.type === 'UnaryExpression' && usage.parent.argument === usage
+    (usage.parent && usage.parent.type === 'UnaryExpression' && usage.parent.argument === usage)
   ) {
     // 括弧が必要な式の場合は括弧で囲む
     initText = `(${initText})`
@@ -316,14 +319,14 @@ function prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation) {
  * インライン化のfixer関数を生成
  */
 function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
-  return function(fixer) {
+  return function (fixer) {
     const variableDeclaration = declarationNode.parent
 
     // 単一declaratorの場合は行全体を削除
     if (variableDeclaration.declarations.length === 1) {
       return [
         fixer.removeRange(getLineRemovalRange(sourceCode, variableDeclaration)),
-        fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation))
+        fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation)),
       ]
     }
 
@@ -333,7 +336,7 @@ function createInlineFixer(sourceCode, declarationNode, usage, typeAnnotation) {
     return range
       ? [
           fixer.removeRange(range),
-          fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation))
+          fixer.replaceText(usage, prepareInlineText(sourceCode, declarationNode, usage, typeAnnotation)),
         ]
       : []
   }
@@ -482,7 +485,8 @@ module.exports = {
     schema: SCHEMA,
     messages: {
       inlineVariable: '変数"{{name}}"は一度しか使用されていません。直接使用してください。',
-      exportDirectly: '変数"{{name}}"は一度しか使用されていません。export const {{exportedName}} = ... の形式で直接エクスポートしてください。',
+      exportDirectly:
+        '変数"{{name}}"は一度しか使用されていません。export const {{exportedName}} = ... の形式で直接エクスポートしてください。',
     },
   },
   create(context) {
@@ -491,7 +495,7 @@ module.exports = {
     const fix = options.fix
 
     return {
-      'VariableDeclarator': (node) => {
+      VariableDeclarator: (node) => {
         const analysis = analyzeVariable(sourceCode, node, options)
 
         if (analysis) {

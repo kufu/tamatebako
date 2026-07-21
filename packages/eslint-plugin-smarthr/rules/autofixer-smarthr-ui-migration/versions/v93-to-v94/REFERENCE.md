@@ -34,6 +34,7 @@ v94では ThCheckbox コンポーネントから `decorators` 属性が削除さ
 ```
 
 **ポイント:**
+
 - **v92-to-v93のDropZoneとの違い**:
   - DropZone: `decorators.selectButtonLabel` → `selectButtonLabel`属性への移行
   - ThCheckbox: `decorators` 完全削除（IntlProviderのみ使用）
@@ -54,6 +55,7 @@ return fixer.remove(node)
 ```
 
 **重要:**
+
 - `getTokenBefore`で前のトークン（他の属性やコンポーネント名）を取得
 - 前のトークンの終了位置とdecorators属性の開始位置の間に空白があれば、空白も含めて削除
 - これにより `<ThCheckbox decorators={{}}` → `<ThCheckbox` のように余分な空白が残らない
@@ -94,7 +96,7 @@ context.report({
       return fixer.removeRange([tokenBefore.range[1], node.range[1]])
     }
     return fixer.remove(node)
-  }
+  },
 })
 ```
 
@@ -107,11 +109,13 @@ const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(conte
 ```
 
 **目的:**
+
 - `smarthrUiAlias`オプションに対応
 - aliasファイル（`@/components/parts/smarthr-ui`等）の検出
 - export変数名の置換（コンポーネント名変更時のみ必要）
 
 **v93-to-v94では:**
+
 - ThCheckboxはリネームされないため、export変数名の置換は不要
 - ただし`setupSmarthrUiAliasOptions`は他のversionとの一貫性のため呼び出す
 
@@ -195,6 +199,7 @@ const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(conte
 **原因**: `fixer.remove(node)`のみだと、前の空白が残る
 
 **解決策**:
+
 ```javascript
 const tokenBefore = sourceCode.getTokenBefore(node)
 if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
@@ -207,6 +212,7 @@ if (tokenBefore && tokenBefore.range[1] < node.range[0]) {
 **原因**: `smarthrUiAlias`オプションが設定されていない
 
 **解決策**:
+
 - `setupSmarthrUiAliasOptions`を呼び出す
 - テストで`smarthrUiAlias`オプションを指定したケースを追加
 

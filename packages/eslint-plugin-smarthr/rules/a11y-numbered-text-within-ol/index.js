@@ -14,10 +14,7 @@ const searchOrderedList = (node) => {
       // HINT: select要素の場合、optionのラベルに連番がついている場合がありえるのでignoreする
       // 通常と処理を分けるためnullではなく0を返す
       return 0
-    } else if (
-      ORDERED_LIST_REGEX.test(name) ||
-      node.openingElement.attributes.find(findAsOlAttr)
-    ) {
+    } else if (ORDERED_LIST_REGEX.test(name) || node.openingElement.attributes.find(findAsOlAttr)) {
       return node.openingElement
     }
   }
@@ -42,7 +39,7 @@ const checkNumberedTextInOl = (result, node, context) => {
 }
 
 const renderTag = (node) => `\`${node.name.name}="${node.value.value}"\``
-const renderNode = (node, matcher) => node.type === 'JSXText' ? `\`${matcher[1]}\`` : renderTag(node)
+const renderNode = (node, matcher) => (node.type === 'JSXText' ? `\`${matcher[1]}\`` : renderTag(node))
 
 const SCHEMA = []
 

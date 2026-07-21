@@ -101,9 +101,11 @@ ruleTester.run('a11y-clickable-element-has-text', rule, {
     },
     {
       code: `<a><AnyComponent /></a>`,
-      options: [{
-        componentsWithText: ['AnyComponent']
-      }],
+      options: [
+        {
+          componentsWithText: ['AnyComponent'],
+        },
+      ],
     },
     {
       code: `<button><Hoge text={'any'} /></button>`,
@@ -125,50 +127,52 @@ ruleTester.run('a11y-clickable-element-has-text', rule, {
   invalid: [
     {
       code: `<a><img src="hoge.jpg" /></a>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<a><Any /></a>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<a><span><Any /></span></a>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<a><img src="hoge.jpg" alt="" /></a>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<button><img src="hoge.jpg" /></button>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<button><Any /></button>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<button><span><Any /></span></button>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<button><img src="hoge.jpg" alt="" /></button>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<button><SmartHRLogoSuffix /></button>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<a><TextWithHoge /></a>`,
-      errors: [{ message: defaultErrorMessage }]
+      errors: [{ message: defaultErrorMessage }],
     },
     {
       code: `<a><AnyComponent /></a>`,
-      options: [{
-        componentsWithText: ['HogeComponent']
-      }],
-      errors: [{ message: defaultErrorMessage }]
+      options: [
+        {
+          componentsWithText: ['HogeComponent'],
+        },
+      ],
+      errors: [{ message: defaultErrorMessage }],
     },
-  ]
+  ],
 })

@@ -48,32 +48,37 @@ module.exports = {
     const notHasSpreadAttribute =
       option.checkType == 'allow-spread-attributes'
         ? ':not(:has(JSXSpreadAttribute))'
-        : OPTION.react_hook_form ? ':not(:has(JSXSpreadAttribute CallExpression[callee.name="register"]))' : ''
+        : OPTION.react_hook_form
+          ? ':not(:has(JSXSpreadAttribute CallExpression[callee.name="register"]))'
+          : ''
 
     return {
-      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]:not(:has(:matches(${NAME_ATTRIBUTE},JSXAttribute[name.name="type"][value.value="radio"])))${notHasSpreadAttribute}`]: (node) => {
-        context.report({
-          node,
-          message: `${node.name.name} にname属性を指定してください${MESSAGE_UNDEFINED_NAME_PART}
+      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]:not(:has(:matches(${NAME_ATTRIBUTE},JSXAttribute[name.name="type"][value.value="radio"])))${notHasSpreadAttribute}`]:
+        (node) => {
+          context.report({
+            node,
+            message: `${node.name.name} にname属性を指定してください${MESSAGE_UNDEFINED_NAME_PART}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
-        })
-      },
-      [`JSXOpeningElement:matches([name.name=/RadioButton(Panel)?$/],[name.name=/(I|^i)nput?$/]:has(JSXAttribute[name.name="type"][value.value="radio"])):not(:has(${NAME_ATTRIBUTE}))${notHasSpreadAttribute}`]: (node) => {
-        context.report({
-          node,
-          message: `${node.name.name} にグループとなる他のinput[radio]と同じname属性を指定してください
+          })
+        },
+      [`JSXOpeningElement:matches([name.name=/RadioButton(Panel)?$/],[name.name=/(I|^i)nput?$/]:has(JSXAttribute[name.name="type"][value.value="radio"])):not(:has(${NAME_ATTRIBUTE}))${notHasSpreadAttribute}`]:
+        (node) => {
+          context.report({
+            node,
+            message: `${node.name.name} にグループとなる他のinput[radio]と同じname属性を指定してください
  - 適切に指定することで同じname属性を指定したinput[radio]とグループが確立され、適切なキーボード操作を行えるようになります${MESSAGE_UNDEFINED_NAME_PART}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
-        })
-      },
-      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]${notHasSpreadAttribute} ${NAME_ATTRIBUTE}[value.value]:not([value.value=${INPUT_NAME_REGEX}])`]: (node) => {
-        const value = node.value.value
-        context.report({
-          node,
-          message: `${node.parent.name.name} のname属性の値(${value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}
+          })
+        },
+      [`JSXOpeningElement[name.name=/((I|^i)nput|(T|^t)extarea|(S|^s)elect|InputFile|RadioButton(Panel)?|(Check|Combo)(B|b)ox|(Date|Wareki|Time)Picker|DropZone)$/]${notHasSpreadAttribute} ${NAME_ATTRIBUTE}[value.value]:not([value.value=${INPUT_NAME_REGEX}])`]:
+        (node) => {
+          const value = node.value.value
+          context.report({
+            node,
+            message: `${node.parent.name.name} のname属性の値(${value})はブラウザの自動補完が適切に行えない可能性があるため${MESSAGE_PART_FORMAT}
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-has-name-attribute`,
-        })
-      },
+          })
+        },
     }
   },
 }

@@ -39,6 +39,7 @@ tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroo
 - **domainConstituteDir**: ドメインを構築するディレクトリ名を指定
 
 ### ディレクトリ例
+
 ```
 / constants
 / modules  // 全体共通ディレクトリ
@@ -62,11 +63,12 @@ tsconfig.json の compilerOptions.pathsに `@/*` もしくは `~/*` としてroo
 ```
 
 ### 指定例
+
 ```js
 const DOMAIN_RULE_ARGS = {
-  globalModuleDir: [ './constants', './modules' ],
-  domainModuleDir: [ 'modules' ],
-  domainConstituteDir: [ 'adapters', 'slices', 'views', 'parts' ],
+  globalModuleDir: ['./constants', './modules'],
+  domainModuleDir: ['modules'],
+  domainConstituteDir: ['adapters', 'slices', 'views', 'parts'],
 }
 ```
 

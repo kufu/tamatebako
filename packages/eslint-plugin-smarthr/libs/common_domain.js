@@ -11,7 +11,9 @@ const BASE_SCHEMA_PROPERTIES = {
 
 const calculateDomainContext = (context) => {
   if (!rootPath) {
-    throw new Error('tsconfig.json の compilerOptions.paths に `"@/*": ["any_path/*"]` 形式でフロントエンドのroot dir を指定してください')
+    throw new Error(
+      'tsconfig.json の compilerOptions.paths に `"@/*": ["any_path/*"]` 形式でフロントエンドのroot dir を指定してください',
+    )
   }
 
   const filename = context.getFilename()
@@ -72,10 +74,10 @@ const calculateDomainNode = (calclatedContext, node) => {
   let isGlobalModuleImport = false
   if (
     !resolvedImportPath ||
-    option.globalModuleDir &&
-    option.globalModuleDir.some((global) =>
-      !!resolvedImportPath.match(new RegExp(`^${path.resolve(`${process.cwd()}/${global}`)}`))
-    )
+    (option.globalModuleDir &&
+      option.globalModuleDir.some(
+        (global) => !!resolvedImportPath.match(new RegExp(`^${path.resolve(`${process.cwd()}/${global}`)}`)),
+      ))
   ) {
     isGlobalModuleImport = true
   }
@@ -108,7 +110,7 @@ const calculateDomainNode = (calclatedContext, node) => {
     const { domainConstituteDir } = option
     isDomainConstitute =
       !!deductedNames.find((d) => domainConstituteDir.includes(d)) || // 同一dirを削り、その中にconstitute dir があれば同一ドメイン
-      domainConstituteDir.includes(dirs[0]) && domainConstituteDir.includes(paths[0]) // 同一を削りきった先頭が両方constitute dirならば同一ドメイン
+      (domainConstituteDir.includes(dirs[0]) && domainConstituteDir.includes(paths[0])) // 同一を削りきった先頭が両方constitute dirならば同一ドメイン
 
     // HINT: 同一ドメイン内（例: workflows/index）で定形で利用されるディレクトリ名を省くことで
     // ドメインの識別に利用される文字を抽出する

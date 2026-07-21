@@ -67,7 +67,6 @@ Date.parse(value)
 
 ## ✅ Correct
 
-
 ```js
 // 年月日などを個別に指定しており、日付をparseする必要がないためOK
 new Date(2022, 11, 31)

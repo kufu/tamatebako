@@ -53,8 +53,13 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
   invalid: [
     { code: `if (action) action()`, errors: [{ message: ERROR_ADD }], output: 'action?.()' },
     { code: `if (obj.action) { obj.action(hoge, fuga) }`, errors: [{ message: ERROR_ADD }], output: 'obj.action?.(hoge, fuga)' },
-    { code: `if (obj.hoge.fuga.action) obj.hoge.fuga.action()`, errors: [{ message: ERROR_ADD }], output: 'obj.hoge.fuga.action?.()' },
-    { code: `
+    {
+      code: `if (obj.hoge.fuga.action) obj.hoge.fuga.action()`,
+      errors: [{ message: ERROR_ADD }],
+      output: 'obj.hoge.fuga.action?.()',
+    },
+    {
+      code: `
       if (obj.hoge.fuga.action) {
         obj.hoge.fuga.action(
           a,
@@ -62,18 +67,25 @@ ruleTester.run('best-practice-for-optional-chaining', rule, {
           c
         )
       }
-    `, errors: [{ message: ERROR_ADD }], output: `
+    `,
+      errors: [{ message: ERROR_ADD }],
+      output: `
       obj.hoge.fuga.action?.(
           a,
           b,
           c
         )
-    ` },
+    `,
+    },
     // 条件部分が実行部分の先頭にマッチする場合
     { code: `if (A.B) { A.B.C.d() }`, errors: [{ message: ERROR_ADD }], output: 'A.B?.C.d()' },
     { code: `if (obj.hoge) { obj.hoge.fuga.action() }`, errors: [{ message: ERROR_ADD }], output: 'obj.hoge?.fuga.action()' },
     { code: `if (obj.hoge) obj.hoge.fuga.action()`, errors: [{ message: ERROR_ADD }], output: 'obj.hoge?.fuga.action()' },
-    { code: `if (obj.hoge.fuga) { obj.hoge.fuga.method() }`, errors: [{ message: ERROR_ADD }], output: 'obj.hoge.fuga?.method()' },
+    {
+      code: `if (obj.hoge.fuga) { obj.hoge.fuga.method() }`,
+      errors: [{ message: ERROR_ADD }],
+      output: 'obj.hoge.fuga?.method()',
+    },
     // 深いネスト
     { code: `if (a.b.c.d) { a.b.c.d.e.f() }`, errors: [{ message: ERROR_ADD }], output: 'a.b.c.d?.e.f()' },
     { code: `if (obj.a.b.c) obj.a.b.c.d.e()`, errors: [{ message: ERROR_ADD }], output: 'obj.a.b.c?.d.e()' },

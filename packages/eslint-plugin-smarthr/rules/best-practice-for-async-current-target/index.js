@@ -33,7 +33,9 @@ module.exports = {
     const getSourceCodeText = (node) => context.sourceCode.getText(node)
 
     return {
-      [`:matches(FunctionExpression, ArrowFunctionExpression) MemberExpression[property.name="currentTarget"][object.name]`]: (node) => {
+      [`:matches(FunctionExpression, ArrowFunctionExpression) MemberExpression[property.name="currentTarget"][object.name]`]: (
+        node,
+      ) => {
         switch (checkFunctionTopVariable(node.parent, node.object.name, getSourceCodeText)) {
           case 1:
             context.report({

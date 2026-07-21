@@ -48,14 +48,14 @@ export const translations = { ... }
 export const translations = {
   Common: {
     Button: {
-      Submit: '送信'
-    }
-  }
+      Submit: '送信',
+    },
+  },
 }
 
 // ✅ OK: フラットな構造
 export const translations = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 }
 ```
 
@@ -67,13 +67,13 @@ export const translations = {
 // ❌ NG: 数値、真偽値
 export const translations = {
   count: 123,
-  enabled: true
+  enabled: true,
 }
 
 // ✅ OK: 文字列のみ
 export const translations = {
   count: '123',
-  enabled: 'true'
+  enabled: 'true',
 }
 ```
 
@@ -116,7 +116,7 @@ export type TranslationKeys = string
 export const translations = {
   count: 123,
   enabled: true,
-  value: null
+  value: null,
 }
 ```
 
@@ -128,8 +128,8 @@ export const translations = {
 // ❌ NG
 export const translations = {
   Common: {
-    Button: 'ボタン'
-  }
+    Button: 'ボタン',
+  },
 }
 ```
 
@@ -150,7 +150,7 @@ export const translations = { ...base, key2: 'value2' }
 ```typescript
 // ❌ NG
 export const translations = {
-  message: `Hello ${name}`
+  message: `Hello ${name}`,
 }
 ```
 
@@ -179,7 +179,7 @@ export const translations = { key1: 'new value' }
 ```typescript
 export const translations = {
   'Common/Button/Submit': '送信',
-  'Common/Button/Cancel': 'キャンセル'
+  'Common/Button/Cancel': 'キャンセル',
 }
 ```
 
@@ -188,7 +188,7 @@ export const translations = {
 ```typescript
 export default {
   'Common/Button/Submit': '送信',
-  'Common/Button/Cancel': 'キャンセル'
+  'Common/Button/Cancel': 'キャンセル',
 }
 ```
 
@@ -196,7 +196,7 @@ export default {
 
 ```typescript
 export const translations = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 } as const
 ```
 
@@ -205,17 +205,17 @@ export const translations = {
 ```typescript
 // satisfies のみ
 export const translations = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 } satisfies Record<string, string>
 
 // as const と satisfies の併用
 export const translations = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 } as const satisfies Record<string, string>
 
 // satisfies と as const の併用（順序逆）
 export const translations = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 } satisfies Record<string, string> as const
 ```
 
@@ -223,7 +223,7 @@ export const translations = {
 
 ```typescript
 export const translations: Record<string, string> = {
-  'Common/Button/Submit': '送信'
+  'Common/Button/Submit': '送信',
 }
 ```
 
@@ -231,7 +231,7 @@ export const translations: Record<string, string> = {
 
 ```typescript
 export const translations = {
-  message: `Hello`
+  message: `Hello`,
 }
 ```
 
@@ -240,7 +240,7 @@ export const translations = {
 ```typescript
 export const translations = {
   submit: '送信',
-  cancel: 'キャンセル'
+  cancel: 'キャンセル',
 }
 ```
 
@@ -251,7 +251,7 @@ export type TranslationKeys = keyof typeof translations
 
 export const translations = {
   'Common/Button/Submit': '送信',
-  'Common/Button/Cancel': 'キャンセル'
+  'Common/Button/Cancel': 'キャンセル',
 }
 ```
 
@@ -309,9 +309,9 @@ export default [
   {
     files: ['**/ja.ts'],
     rules: {
-      'smarthr/require-i18n-translation-sync': 'error'
-    }
-  }
+      'smarthr/require-i18n-translation-sync': 'error',
+    },
+  },
 ]
 ```
 
@@ -332,13 +332,16 @@ export default [
   {
     files: ['**/ja.ts'],
     rules: {
-      'smarthr/require-i18n-translation-sync': ['error', {
-        targetFileName: 'ja.ts',
-        indent: 2,
-        endOfLine: 'lf'
-      }]
-    }
-  }
+      'smarthr/require-i18n-translation-sync': [
+        'error',
+        {
+          targetFileName: 'ja.ts',
+          indent: 2,
+          endOfLine: 'lf',
+        },
+      ],
+    },
+  },
 ]
 ```
 
@@ -351,19 +354,25 @@ export default [
   {
     files: ['**/ja.ts'],
     rules: {
-      'smarthr/require-i18n-translation-sync': ['error', {
-        targetFileName: 'ja.ts'
-      }]
-    }
+      'smarthr/require-i18n-translation-sync': [
+        'error',
+        {
+          targetFileName: 'ja.ts',
+        },
+      ],
+    },
   },
   {
     files: ['**/en.ts'],
     rules: {
-      'smarthr/require-i18n-translation-sync': ['error', {
-        targetFileName: 'en.ts'
-      }]
-    }
-  }
+      'smarthr/require-i18n-translation-sync': [
+        'error',
+        {
+          targetFileName: 'en.ts',
+        },
+      ],
+    },
+  },
 ]
 ```
 

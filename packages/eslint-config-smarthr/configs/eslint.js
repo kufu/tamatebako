@@ -8,13 +8,13 @@ export default [
   {
     name: 'eslint-config-smarthr/eslint',
     plugins: {
-      'import': importPlugin,
+      import: importPlugin,
     },
     languageOptions: {
       parserOptions: {
         ecmaVersion: 2018,
         sourceType: 'module',
-      }
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -145,5 +145,5 @@ export default [
         },
       ],
     },
-  }
+  },
 ]

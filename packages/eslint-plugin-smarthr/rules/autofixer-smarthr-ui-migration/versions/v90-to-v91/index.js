@@ -47,13 +47,19 @@ module.exports = {
   messages: {
     renameDialog: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました',
     renameType: 'ResponseMessage の type 属性は status にリネームされました',
-    removeRight: 'ResponseMessage の right 属性は削除されました。このエラーが表示された場合は @group-smarthrui-core に連絡してください',
-    removeIconGap: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で icon.gap を使用してください',
-    removeIconGapWithParentIcon: 'ResponseMessage の iconGap 属性は削除されました。親コンポーネントに既に icon が設定されているため、手動で調整してください',
+    removeRight:
+      'ResponseMessage の right 属性は削除されました。このエラーが表示された場合は @group-smarthrui-core に連絡してください',
+    removeIconGap:
+      'ResponseMessage の iconGap 属性は削除されました。親コンポーネント（Heading/FormControl/Fieldset）で icon.gap を使用してください',
+    removeIconGapWithParentIcon:
+      'ResponseMessage の iconGap 属性は削除されました。親コンポーネントに既に icon が設定されているため、手動で調整してください',
     migrateResponseMessage: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください',
-    migrateResponseMessageWithUnknownAttrs: '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください。status/iconGap 以外の属性（id, onClick など）がある場合は手動で移行してください',
-    removeArbitraryDisplayName: 'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
-    renameAliasFile: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from \'@/path/{{old}}\' → from \'@/path/{{new}}\'）',
+    migrateResponseMessageWithUnknownAttrs:
+      '見出し/ラベル内の ResponseMessage は親コンポーネントの icon 属性に移行してください。status/iconGap 以外の属性（id, onClick など）がある場合は手動で移行してください',
+    removeArbitraryDisplayName:
+      'AppHeader の arbitraryDisplayName 属性は削除されました。email, empCode, firstName, lastName から自動生成されます',
+    renameAliasFile:
+      "smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from '@/path/{{old}}' → from '@/path/{{new}}'）",
   },
 
   createCheckers(context, sourceCode, options = {}) {
@@ -335,14 +341,7 @@ module.exports = {
           node: iconGapAttr || responseMessageNode,
           messageId: iconGapAttr ? 'removeIconGap' : 'migrateResponseMessage',
           fix(fixer) {
-            return fixResponseMessageMigration(
-              fixer,
-              parent,
-              responseMessageElement,
-              children,
-              iconName,
-              iconGapValue
-            )
+            return fixResponseMessageMigration(fixer, parent, responseMessageElement, children, iconName, iconGapValue)
           },
         })
       }
@@ -388,9 +387,7 @@ module.exports = {
 
           // Headingコンポーネントを検出
           if (name === 'Heading') {
-            const iconAttr = current.openingElement.attributes.find(
-              (a) => a.type === 'JSXAttribute' && a.name.name === 'icon'
-            )
+            const iconAttr = current.openingElement.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'icon')
             return {
               type: 'Heading',
               element: current,
@@ -402,9 +399,7 @@ module.exports = {
 
           // FormControlコンポーネントのlabel属性内を検出
           if (name === 'FormControl') {
-            const labelAttr = current.openingElement.attributes.find(
-              (a) => a.type === 'JSXAttribute' && a.name.name === 'label'
-            )
+            const labelAttr = current.openingElement.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'label')
             if (labelAttr && isResponseMessageInAttribute(labelAttr, node)) {
               const iconAttr = getLabelIconAttribute(labelAttr)
               return {
@@ -421,7 +416,7 @@ module.exports = {
           // Fieldsetコンポーネントのlegend属性内を検出
           if (name === 'Fieldset') {
             const legendAttr = current.openingElement.attributes.find(
-              (a) => a.type === 'JSXAttribute' && a.name.name === 'legend'
+              (a) => a.type === 'JSXAttribute' && a.name.name === 'legend',
             )
             if (legendAttr && isResponseMessageInAttribute(legendAttr, node)) {
               const iconAttr = getLabelIconAttribute(legendAttr)
@@ -473,9 +468,7 @@ module.exports = {
         labelAttr.value.type === 'JSXExpressionContainer' &&
         labelAttr.value.expression.type === 'ObjectExpression'
       ) {
-        const iconProp = labelAttr.value.expression.properties.find(
-          (p) => p.type === 'Property' && p.key.name === 'icon'
-        )
+        const iconProp = labelAttr.value.expression.properties.find((p) => p.type === 'Property' && p.key.name === 'icon')
         return iconProp
       }
       return null
@@ -538,9 +531,10 @@ module.exports = {
      */
     function fixResponseMessageMigration(fixer, parent, responseMessageElement, children, iconName, iconGapValue) {
       // gap値がundefinedまたは0.25（デフォルト値）の場合は省略
-      const iconTemplate = !iconGapValue || iconGapValue === 0.25 || iconGapValue === '0.25'
-        ? `{ prefix: <${iconName} /> }`
-        : `{ prefix: <${iconName} />, gap: ${iconGapValue} }`
+      const iconTemplate =
+        !iconGapValue || iconGapValue === 0.25 || iconGapValue === '0.25'
+          ? `{ prefix: <${iconName} /> }`
+          : `{ prefix: <${iconName} />, gap: ${iconGapValue} }`
 
       if (parent.type === 'Heading') {
         // Heading の場合
@@ -582,4 +576,3 @@ module.exports = {
     return checkers
   },
 }
-

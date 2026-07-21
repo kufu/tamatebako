@@ -7,6 +7,7 @@
 decorators属性に関する移行ルールを作成する際は、**必ず [DECORATORS.md](./DECORATORS.md) を参照してください。**
 
 **要点:**
+
 - decorators = デフォルト文言変更用（主用途: 多言語化）
 - v94以降 = 内部で翻訳対応（decorators不要）
 - エラーメッセージ = 利用者視点で「翻訳は自動対応」を明示
@@ -60,7 +61,7 @@ Claude Code、ChatGPT、Cursor、GitHub Copilot などのAI開発アシスタン
 
 **重要:** 新しいバージョンを追加したら、このプロンプトの「参考にするファイル」セクションを最新のversionディレクトリに更新してください。これにより、次回以降のversion追加時により適切な実装が行えます。
 
-```
+````
 autofixer-smarthr-ui-migrationルールに新しいバージョン（v[XX]→v[YY]）の移行ルールを追加してください。
 
 ## 参考にするファイル
@@ -140,7 +141,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
 
      // ... チェッカー実装
    }
-   ```
+````
 
 3. `versions/v[XX]-to-v[YY]/README.md` を作成（ユーザー向け移行ガイド）
    - 各変更の説明
@@ -156,6 +157,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    - invalid: v[XX]形式が検出されて修正されること
 
    **テストケースの構造:**
+
    ```javascript
    const v[XX]Tov[YY]Options = [{ from: '[XX]', to: '[YY]' }]
 
@@ -176,6 +178,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    ```
 
 6. `index.js`のVERSION_MODULESに登録
+
    ```javascript
    const v[XX]Tov[YY] = require('./versions/v[XX]-to-v[YY]/index')
 
@@ -186,6 +189,7 @@ smarthr-ui v[YY]のリリースノート: [GitHubリリースページのURL]
    ```
 
 7. `test/autofixer-smarthr-ui-migration.js` を更新
+
    ```javascript
    const v[XX]Tov[YY]Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v[XX]-to-v[YY]/test')
 
@@ -239,6 +243,7 @@ import { ControlledActionDialog, ControlledActionDialog } from 'smarthr-ui'
 ```
 
 **原因:**
+
 - v90→v91: `ActionDialog` → `ControlledActionDialog`
 - v91→v92: `RemoteTriggerActionDialog` → `ActionDialog`
 - ESLintのstaged fixesにより、2回目の自動修正で新しく生成された`ActionDialog`がさらに`ControlledActionDialog`に変換されてしまう
@@ -340,6 +345,7 @@ create(context) {
 `helpers.js` に共通のヘルパー関数が用意されています。これにより、各versionファイルで重複コードを書く必要がありません。
 
 **利用可能なヘルパー:**
+
 - `setupSmarthrUiAliasOptions(context, options)`: validSources拡張とaliasファイル判定を一括で行う
 - `isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias)`: ファイルパスマッチング（低レベル、通常は不要）
 
@@ -391,6 +397,7 @@ createCheckers(context, sourceCode, options = {}) {
 
 **現状（v92時点）:**
 各versionディレクトリで以下のパターンが繰り返されています：
+
 - ImportDeclarationチェッカー（コンポーネント名リネーム）
 - ExportNamedDeclarationチェッカー（re-export対応）
 - JSXOpeningElementチェッカー（JSX要素のリネーム）
@@ -405,6 +412,7 @@ createCheckers(context, sourceCode, options = {}) {
 3. **パターンの確立**: v93, v94... と増えて明確なパターンが確立されてから検討すべき
 
 **再検討のタイミング:**
+
 - v93, v94などが追加され、パターンが安定した時点
 - チェッカー生成ヘルパー（`createComponentRenameCheckers`など）の実装を検討
 - その際は `helpers.js` に追加し、REFERENCE.mdに「共通パターン」として記載
@@ -421,7 +429,8 @@ createCheckers(context, sourceCode, options = {}) {
 3. `versions/vXX-to-vYY/REFERENCE.md` を作成（前versionのREFERENCE.mdをベースに、今回特有のパターンを追加）
 
 これにより、このドキュメント自体が常に最新の実装を参照し、**自己進化**します。
-```
+
+````
 
 ## チェックリスト
 
@@ -483,10 +492,11 @@ createCheckers(context, sourceCode, options = {}) {
    git checkout staging  # または master/main
    git pull
    git checkout -b test/migrator-vXX-to-vYY
-   ```
+````
 
 3. **migratorの追加と設定**
    - 開発中の `eslint-plugin-smarthr` を対象プロダクトに追加
+
    ```bash
    # 相対パスで開発中のパッケージを追加
    pnpm add -D ../../../tamatebako/packages/eslint-plugin-smarthr
@@ -495,41 +505,45 @@ createCheckers(context, sourceCode, options = {}) {
    ```
 
    - **Legacy Config形式** (`.eslintrc.js`) の場合：
+
    ```javascript
    module.exports = {
      extends: ['smarthr'],
      rules: {
        'smarthr/autofixer-smarthr-ui-migration': [
          'error',
-         { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
-       ]
-     }
+         { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' },
+       ],
+     },
    }
    ```
 
    - **Flat Config形式** (`eslint.config.mjs`) の場合：
+
    ```javascript
    import smarthr from 'eslint-config-smarthr'
-   import smarthrPlugin from 'eslint-plugin-smarthr'  // 追加
+   import smarthrPlugin from 'eslint-plugin-smarthr' // 追加
 
    export default [
      ...smarthr,
      {
        plugins: {
-         'smarthr-local': smarthrPlugin,  // 別名で登録
+         'smarthr-local': smarthrPlugin, // 別名で登録
        },
        rules: {
          'smarthr-local/autofixer-smarthr-ui-migration': [
            'error',
-           { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' }
+           { from: 'XX', to: 'YY', smarthrUiAlias: '@/components/parts/smarthr-ui' },
          ],
        },
      },
    ]
    ```
+
    **注意:** Flat Configでは、すでに `eslint-config-smarthr` 経由で `smarthr` プラグインが登録されているため、開発中のバージョンを使用するには別名（例: `smarthr-local`）で登録する必要があります。
 
 4. **初回実行**
+
    ```bash
    npm run lint:fix  # または eslint --fix .
    ```
@@ -538,6 +552,7 @@ createCheckers(context, sourceCode, options = {}) {
    - 実行時に出た問題（エラー、不正な変換など）を確認
    - 問題があれば migrator の実装を修正
    - **重要:** 再実行前に、staging が更新されていない状態（migration前の状態）に戻す
+
    ```bash
    git reset --hard HEAD  # 変更を破棄
    # migratorを修正後、再度実行
@@ -547,6 +562,7 @@ createCheckers(context, sourceCode, options = {}) {
 
 6. **PR作成**
    - 問題が修正されたことを確認できたら、差分を確認しやすいよう draft で PR 作成
+
    ```bash
    git add .
    git commit -m "test: vXX to vYY migration test"
@@ -557,6 +573,7 @@ createCheckers(context, sourceCode, options = {}) {
 
 7. **クリーンアップ**
    - 検証完了後、対象プロダクトを元の状態に戻す
+
    ```bash
    # PRはクローズ（マージしない）
    gh pr close test/migrator-vXX-to-vYY
@@ -572,6 +589,7 @@ createCheckers(context, sourceCode, options = {}) {
    ```
 
 **確認ポイント:**
+
 - [ ] エラーが出ずに実行完了する
 - [ ] 意図した変換が正しく行われている
 - [ ] 不要な変更が含まれていない
@@ -591,6 +609,7 @@ https://github.com/kufu/smarthr-ui/releases
 **最新version:** [v97-to-v98/REFERENCE.md](./versions/v97-to-v98/REFERENCE.md)
 
 このドキュメントには以下が含まれます：
+
 - ファイル構造と各セクションの説明
 - 定数定義、messages、createCheckers関数の書き方
 - 自動修正の判断基準

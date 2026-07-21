@@ -32,7 +32,8 @@ const REGEX_IGNORE_FILENAME = /\.(spec|test|stories)\./
 const REGEX_IGNORE_TEXT = /^\s*(\.|\+|\-|〜|：|:|（|）|\(|\)|,|\*|\/|[0-9]+)\s*$/
 const checkIgnoreText = (text) => !REGEX_IGNORE_TEXT.test(text)
 
-const someReportTemplateLiteralError = (quasi) => quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked)
+const someReportTemplateLiteralError = (quasi) =>
+  quasi.value.cooked && quasi.value.cooked.trim() !== '' && checkIgnoreText(quasi.value.cooked)
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -83,8 +84,10 @@ module.exports = {
       const attributes = elementsObj[elementName]
 
       if (attributes.length !== 0) {
-        handlers[`JSXOpeningElement[name.name="${elementName}"] > ${generateAttributeSelector(attributes)}`] = reportAttributeError
-        handlers[`JSXOpeningElement[name.name="${elementName}"] > ${generateTemplateLiteralSelector(attributes)}`] = reportTemplateLiteralError
+        handlers[`JSXOpeningElement[name.name="${elementName}"] > ${generateAttributeSelector(attributes)}`] =
+          reportAttributeError
+        handlers[`JSXOpeningElement[name.name="${elementName}"] > ${generateTemplateLiteralSelector(attributes)}`] =
+          reportTemplateLiteralError
       }
     }
 
@@ -93,9 +96,8 @@ module.exports = {
       const attributeSelector = generateAttributeSelector(wildcardAttributes)
       const templateLiteralSelector = generateTemplateLiteralSelector(wildcardAttributes)
 
-      const baseSelector = specificElements.length > 0
-        ? `JSXOpeningElement:not([name.name=/^(${specificElements.join('|')})$/]) > `
-        : ''
+      const baseSelector =
+        specificElements.length > 0 ? `JSXOpeningElement:not([name.name=/^(${specificElements.join('|')})$/]) > ` : ''
 
       handlers[baseSelector + attributeSelector] = reportAttributeError
       handlers[baseSelector + templateLiteralSelector] = reportTemplateLiteralError

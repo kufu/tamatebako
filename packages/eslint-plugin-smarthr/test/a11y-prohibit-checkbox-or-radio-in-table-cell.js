@@ -30,53 +30,89 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
   invalid: [
     {
       code: `<Td><Checkbox /></Td>`,
-      errors: [{ message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<Th><Checkbox /></Th>`,
-      errors: [{ message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<Th><Checkbox id="my-checkbox" name="agree" error /></Th>`,
-      errors: [{ message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<Td><RadioButton /></Td>`,
-      errors: [{ message: `Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
 
     {
       code: `<Td><div><div><Checkbox /></div></div></Td>`,
-      errors: [{ message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<Td><><><Checkbox /></></></Td>`,
-      errors: [{ message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
 
     {
       code: `<CustomTd><CustomCheckbox /></CustomTd>`,
-      errors: [{ message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<CustomTh><CustomCheckbox /></CustomTh>`,
-      errors: [{ message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Th の子孫に Checkbox を置くことはできません。代わりに ThCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
       code: `<CustomTd><CustomRadioButton /></CustomTd>`,
-      errors: [{ message: `Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
+      errors: [
+        {
+          message: `Td の子孫に RadioButton を置くことはできません。代わりに TdRadioButton を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
     },
     {
-      name: "https://smarthr.atlassian.net/browse/A11Y2-23",
+      name: 'https://smarthr.atlassian.net/browse/A11Y2-23',
       code: `
         <CheckTd onClick={() => toggleChecked(crewEvaluation.id)}>
           <CheckBox
@@ -86,8 +122,12 @@ ruleTester.run('a11y-prohibit-checkbox-or-radio-in-table-cell', rule, {
           />
         </CheckTd>
       `,
-      errors: [{ message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell` }],
-    }
+      errors: [
+        {
+          message: `Td の子孫に Checkbox を置くことはできません。代わりに TdCheckbox を使用してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-prohibit-checkbox-or-radio-in-table-cell`,
+        },
+      ],
+    },
   ],
 })

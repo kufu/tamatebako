@@ -98,7 +98,6 @@ import { SecondaryButton } from 'smarthr-ui'
 
 ## ✅ Correct
 
-
 ```js
 // client/src/Buttons/SecondaryButton.tsx
 import { SecondaryButton } from 'smarthr-ui'

@@ -26,8 +26,10 @@ const TARGET_VERSION = 'v93'
 
 module.exports = {
   messages: {
-    removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。selectButtonLabel 属性を使用してください',
-    migrateSelectButtonLabelManually: '{{component}} の decorators.selectButtonLabel を手動で移行してください。selectButtonLabel属性として独立しました。詳細: https://github.com/kufu/smarthr-ui/pull/6236',
+    removeDecorators:
+      'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。selectButtonLabel 属性を使用してください',
+    migrateSelectButtonLabelManually:
+      '{{component}} の decorators.selectButtonLabel を手動で移行してください。selectButtonLabel属性として独立しました。詳細: https://github.com/kufu/smarthr-ui/pull/6236',
   },
 
   createCheckers(context, sourceCode, options = {}) {
@@ -61,7 +63,7 @@ module.exports = {
 
       // selectButtonLabelプロパティを探す
       const selectButtonLabelProp = expression.properties.find(
-        (prop) => prop.type === 'Property' && prop.key.name === 'selectButtonLabel'
+        (prop) => prop.type === 'Property' && prop.key.name === 'selectButtonLabel',
       )
 
       if (!selectButtonLabelProp) {
@@ -76,11 +78,7 @@ module.exports = {
       const value = selectButtonLabelProp.value
 
       // ArrowFunctionExpressionで、引数なし、returnなしのパターンのみ対応
-      if (
-        value.type !== 'ArrowFunctionExpression' ||
-        value.params.length > 0 ||
-        value.body.type === 'BlockStatement'
-      ) {
+      if (value.type !== 'ArrowFunctionExpression' || value.params.length > 0 || value.body.type === 'BlockStatement') {
         return { type: 'not-migratable' }
       }
 
@@ -142,9 +140,7 @@ module.exports = {
 
               // 1. selectButtonLabel属性を追加
               const { value, isStringLiteral } = result
-              const selectButtonLabelAttr = isStringLiteral
-                ? ` selectButtonLabel="${value}"`
-                : ` selectButtonLabel={${value}}`
+              const selectButtonLabelAttr = isStringLiteral ? ` selectButtonLabel="${value}"` : ` selectButtonLabel={${value}}`
               fixes.push(fixer.insertTextAfter(node.parent.name, selectButtonLabelAttr))
 
               // 2. decorators属性を削除

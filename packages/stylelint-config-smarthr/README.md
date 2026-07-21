@@ -18,8 +18,6 @@ Add a following `.stylelintrc` in your project.
 
 ```json
 {
-  "extends": [
-    "stylelint-config-smarthr"
-  ]
+  "extends": ["stylelint-config-smarthr"]
 }
 ```

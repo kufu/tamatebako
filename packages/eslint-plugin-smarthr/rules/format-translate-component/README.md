@@ -53,11 +53,15 @@
 ## ❌ Incorrect
 
 ```jsx
-<Translate><Any>ほげ</Any></Translate>
+<Translate>
+  <Any>ほげ</Any>
+</Translate>
 ```
 
 ```jsx
-<Translate><Any /></Translate>
+<Translate>
+  <Any />
+</Translate>
 ```
 
 ```jsx
@@ -74,15 +78,23 @@
 ```jsx
 <Translate>ほげ</Translate>
 ```
+
 ```jsx
-<Translate>ほげ<br />ふが</Translate>
+<Translate>
+  ほげ
+  <br />
+  ふが
+</Translate>
 ```
+
 ```jsx
 <Translate>{any}</Translate>
 ```
+
 ```jsx
-<Translate dangerouslySetInnerHTML={{ __html: "ほげ" }} />
+<Translate dangerouslySetInnerHTML={{ __html: 'ほげ' }} />
 ```
+
 ```jsx
 // prohibitAttributies: ['data-translate'],
 <Any data-hoge="true">...</Any>

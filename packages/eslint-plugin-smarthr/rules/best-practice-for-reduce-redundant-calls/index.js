@@ -2,8 +2,7 @@ module.exports = {
   meta: {
     type: 'suggestion',
     docs: {
-      description:
-        'すべての分岐で同じ関数を呼び出している場合、引数のみを条件分岐にすることを推奨します',
+      description: 'すべての分岐で同じ関数を呼び出している場合、引数のみを条件分岐にすることを推奨します',
       category: 'Best Practices',
       recommended: false,
     },
@@ -58,11 +57,7 @@ module.exports = {
       const firstComponentName = getJSXElementName(jsxElements[0])
 
       // React.FragmentまたはFragmentは除外
-      if (
-        !firstComponentName ||
-        firstComponentName === 'Fragment' ||
-        firstComponentName === 'React.Fragment'
-      ) {
+      if (!firstComponentName || firstComponentName === 'Fragment' || firstComponentName === 'React.Fragment') {
         return
       }
 
@@ -262,7 +257,6 @@ module.exports = {
       }
     }
 
-
     /**
      * if-else文を検証（early returnパターンも含む）
      */
@@ -286,7 +280,11 @@ module.exports = {
             if (ifIndex > 0) {
               const prevStmt = parent.body[ifIndex - 1]
 
-              if (prevStmt.type === 'IfStatement' && !prevStmt.alternate && getSingleStatement(prevStmt.consequent)?.type === 'ReturnStatement') {
+              if (
+                prevStmt.type === 'IfStatement' &&
+                !prevStmt.alternate &&
+                getSingleStatement(prevStmt.consequent)?.type === 'ReturnStatement'
+              ) {
                 return
               }
             }
@@ -296,7 +294,11 @@ module.exports = {
             if (ifIndex + 1 < parent.body.length) {
               const nextStmt = parent.body[ifIndex + 1]
 
-              if (nextStmt.type === 'IfStatement' && !nextStmt.alternate && getSingleStatement(nextStmt.consequent)?.type === 'ReturnStatement') {
+              if (
+                nextStmt.type === 'IfStatement' &&
+                !nextStmt.alternate &&
+                getSingleStatement(nextStmt.consequent)?.type === 'ReturnStatement'
+              ) {
                 return
               }
             }
@@ -672,10 +674,7 @@ module.exports = {
       SwitchStatement: checkSwitchStatement,
       ConditionalExpression(node) {
         // 最上位の三項演算子のみ検証（ネストした三項演算子は親で処理される）
-        if (
-          node.parent.type !== 'ConditionalExpression' ||
-          (node.parent.consequent !== node && node.parent.alternate !== node)
-        ) {
+        if (node.parent.type !== 'ConditionalExpression' || (node.parent.consequent !== node && node.parent.alternate !== node)) {
           checkConditionalExpression(node)
         }
       },

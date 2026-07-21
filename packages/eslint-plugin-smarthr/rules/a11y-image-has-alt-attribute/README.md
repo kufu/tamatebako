@@ -9,7 +9,6 @@
 
 [詳細: 画像に代替テキストが付与されている](https://smarthr.design/accessibility/check-list/alternative-text/)
 
-
 ### 画像に代替テキストが不要な場合について
 
 例外的に**装飾目的の画像はaltに空文字を指定する**ことが許容されます。(例: `<XxxImage alt="" />`)<br />

@@ -38,7 +38,6 @@ tabindex属性は本来、インタラクティブな要素（ボタン、入力
 scroll可能な要素を実装する場合、smarthr-ui/Scrollerコンポーネントの利用を推奨します。<br />
 Scrollerコンポーネントはtabindex属性を自動的に設定するため、手動でtabIndexを設定する必要がなく、アクセシビリティ対応が容易になります。
 
-
 ## rules
 
 ```js

@@ -48,7 +48,7 @@ module.exports = {
               node: exp,
               message: `${name}は \`\` で囲まないでください。queryStringを結合するなどのURL生成は ${name} 内で行います。 (例: ${name}({ query: { hoge: 'abc' } })
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/prohibit-path-within-template-literal`,
-            });
+            })
           }
         }
       },

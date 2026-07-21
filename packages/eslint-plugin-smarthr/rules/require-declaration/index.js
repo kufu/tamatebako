@@ -39,7 +39,9 @@ const find = (type, ds, rd) => ds.find((d) => d.type === type && d.id.name === r
 const codeSeparator = '[^a-zA-Z0-1_$]'
 const useRegex = (use) => {
   const actualUse = use.replace(/\./g, '\\.')
-  return new RegExp(`((${codeSeparator}(${actualUse})${codeSeparator})|(^(${actualUse})${codeSeparator})|${codeSeparator}(${actualUse})$)`)
+  return new RegExp(
+    `((${codeSeparator}(${actualUse})${codeSeparator})|(^(${actualUse})${codeSeparator})|${codeSeparator}(${actualUse})$)`,
+  )
 }
 
 /**
@@ -54,7 +56,7 @@ module.exports = {
     const options = context.options[0]
     const targetRequires = []
     for (const regex in options) {
-      if ((new RegExp(regex)).test(context.filename)) {
+      if (new RegExp(regex).test(context.filename)) {
         targetRequires.push(regex)
       }
     }
@@ -90,17 +92,26 @@ module.exports = {
                 break
               case 'const':
               case 'let':
-                hit = declarations.find((d) => d.type === 'VariableDeclaration' && d.kind === localOption.type && d.declarations.some((dd) => {
-                  if (dd.id.name) {
-                    return dd.id.name === requireDeclaration
-                  }
+                hit = declarations.find(
+                  (d) =>
+                    d.type === 'VariableDeclaration' &&
+                    d.kind === localOption.type &&
+                    d.declarations.some((dd) => {
+                      if (dd.id.name) {
+                        return dd.id.name === requireDeclaration
+                      }
 
-                  // const { hoge } = fuga パターン
-                  return dd.id.properties.some((p) => p.key.name === requireDeclaration)
-                }))
+                      // const { hoge } = fuga パターン
+                      return dd.id.properties.some((p) => p.key.name === requireDeclaration)
+                    }),
+                )
                 break
               case 'arrow-function':
-                hit = declarations.find((d) => d.type === 'VariableDeclaration' && d.declarations.some((dd) => dd.id.name === requireDeclaration && dd.init.type === 'ArrowFunctionExpression'))
+                hit = declarations.find(
+                  (d) =>
+                    d.type === 'VariableDeclaration' &&
+                    d.declarations.some((dd) => dd.id.name === requireDeclaration && dd.init.type === 'ArrowFunctionExpression'),
+                )
                 break
             }
 
@@ -128,7 +139,7 @@ module.exports = {
           }
         }
       },
-    };
+    }
   },
 }
 

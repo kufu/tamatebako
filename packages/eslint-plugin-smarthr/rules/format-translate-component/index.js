@@ -1,16 +1,14 @@
 const SCHEMA = [
   {
     type: 'object',
-    required: [
-      'componentName',
-    ],
+    required: ['componentName'],
     properties: {
       componentPath: { type: 'string', default: '' },
       componentName: { type: 'string' },
       prohibitAttributies: { type: 'array', items: { type: 'string' }, default: [] },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 const NOOP = () => {}
@@ -39,7 +37,7 @@ module.exports = {
           context.report({
             node,
             message: `${hit} 属性は使用せず、 ${componentPath || componentName} コンポーネントを利用してください`,
-          });
+          })
         }
       }
     }
@@ -75,7 +73,7 @@ module.exports = {
                 return context.report({
                   node,
                   message: `${componentName} 内では <br />, <RangeSeparator /> 以外のタグは使えません`,
-                });
+                })
             }
           }
 
@@ -83,7 +81,7 @@ module.exports = {
             context.report({
               node,
               message: `${componentName} 内には必ずテキストを設置してください`,
-            });
+            })
           }
         }
       },

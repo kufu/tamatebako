@@ -2,19 +2,9 @@
  * AST操作の汎用ユーティリティ
  */
 
-const FUNCTION_SCOPE_TYPES = new Set([
-  'FunctionDeclaration',
-  'FunctionExpression',
-  'ArrowFunctionExpression',
-])
+const FUNCTION_SCOPE_TYPES = new Set(['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression'])
 
-const LOOP_STATEMENT_TYPES = new Set([
-  'ForStatement',
-  'ForInStatement',
-  'ForOfStatement',
-  'WhileStatement',
-  'DoWhileStatement',
-])
+const LOOP_STATEMENT_TYPES = new Set(['ForStatement', 'ForInStatement', 'ForOfStatement', 'WhileStatement', 'DoWhileStatement'])
 
 const NEEDING_PARENS_TYPES = new Set([
   'NewExpression',
@@ -59,10 +49,7 @@ function containsNode(parent, target) {
     for (const key in node) {
       if (key === 'parent') continue
       const child = node[key]
-      if (child && (
-        (Array.isArray(child) && child.some(c => traverse(c))) ||
-        (typeof child === 'object' && traverse(child))
-      )) {
+      if (child && ((Array.isArray(child) && child.some((c) => traverse(c))) || (typeof child === 'object' && traverse(child)))) {
         return true
       }
     }
@@ -85,10 +72,11 @@ function containsNodeType(node, nodeType) {
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (child && (
-      (Array.isArray(child) && child.some(c => containsNodeType(c, nodeType))) ||
-      (typeof child === 'object' && containsNodeType(child, nodeType))
-    )) {
+    if (
+      child &&
+      ((Array.isArray(child) && child.some((c) => containsNodeType(c, nodeType))) ||
+        (typeof child === 'object' && containsNodeType(child, nodeType)))
+    ) {
       return true
     }
   }
@@ -114,9 +102,10 @@ function calculateComplexity(node, maxComplexity) {
 
   function traverse(n) {
     if (
-      !n || typeof n !== 'object' ||
+      !n ||
+      typeof n !== 'object' ||
       // maxComplexityを超えたら計算を中断
-      maxComplexity !== undefined && complexity > maxComplexity
+      (maxComplexity !== undefined && complexity > maxComplexity)
     ) {
       return
     }

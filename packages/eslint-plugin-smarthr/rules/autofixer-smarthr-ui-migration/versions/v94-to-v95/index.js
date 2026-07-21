@@ -34,14 +34,18 @@ const DIALOG_COMPONENTS_WITH_BUTTONS = ['FormDialog', 'ActionDialog']
 
 module.exports = {
   messages: {
-    removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。翻訳はsmarthr-ui内で自動的に行われます',
-    migrateAppLauncherDecorators: 'smarthr-ui {{to}} では AppLauncher の decorators.triggerLabel は triggerLabel 属性に移行されました。動的な値を渡す場合のみ triggerLabel 属性を使用してください',
+    removeDecorators:
+      'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました。翻訳はsmarthr-ui内で自動的に行われます',
+    migrateAppLauncherDecorators:
+      'smarthr-ui {{to}} では AppLauncher の decorators.triggerLabel は triggerLabel 属性に移行されました。動的な値を渡す場合のみ triggerLabel 属性を使用してください',
     migrateActionText: 'smarthr-ui {{to}} では {{component}} の actionText 属性は actionButton に統合されました',
     migrateActionTheme: 'smarthr-ui {{to}} では {{component}} の actionTheme 属性は actionButton に統合されました',
     migrateActionDisabled: 'smarthr-ui {{to}} では {{component}} の actionDisabled 属性は actionButton に統合されました',
     migrateCloseDisabled: 'smarthr-ui {{to}} では {{component}} の closeDisabled 属性は closeButton に統合されました',
-    migrateDecoratorsCloseButtonLabel: 'smarthr-ui {{to}} では {{component}} の decorators.closeButtonLabel 属性は closeButton に統合されました',
-    migrateMessageDialogDecorators: 'smarthr-ui {{to}} では MessageDialog の decorators.closeButtonLabel 属性は closeButton に統合されました',
+    migrateDecoratorsCloseButtonLabel:
+      'smarthr-ui {{to}} では {{component}} の decorators.closeButtonLabel 属性は closeButton に統合されました',
+    migrateMessageDialogDecorators:
+      'smarthr-ui {{to}} では MessageDialog の decorators.closeButtonLabel 属性は closeButton に統合されました',
   },
 
   createCheckers(context, sourceCode, options = {}) {
@@ -78,7 +82,7 @@ module.exports = {
       // ============================================================
 
       // FormDialog/ActionDialog要素を検出
-      'JSXOpeningElement'(node) {
+      JSXOpeningElement(node) {
         const componentName = node.name.name
 
         // 対象コンポーネントのみ
@@ -275,9 +279,7 @@ module.exports = {
                 const extractedValue = extractDecoratorValue(decoratorsAttr, 'closeButtonLabel')
                 if (extractedValue) {
                   // 自動修正可能: decoratorsを削除してcloseButtonを追加
-                  return [
-                    fixer.replaceText(decoratorsAttr, `closeButton=${extractedValue}`),
-                  ]
+                  return [fixer.replaceText(decoratorsAttr, `closeButton=${extractedValue}`)]
                 }
 
                 // 複雑なため、エラーのみ表示（手動対応）
@@ -298,7 +300,7 @@ module.exports = {
         if (decoratorsValue.includes('triggerLabel')) {
           // triggerLabel属性が既にあるかチェック
           const triggerLabelAttr = node.parent.attributes.find(
-            (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'triggerLabel'
+            (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'triggerLabel',
           )
 
           context.report({
@@ -350,7 +352,7 @@ module.exports = {
         if (decoratorsValue.includes('closeButtonLabel')) {
           // closeButton属性が既にあるかチェック
           const closeButtonAttr = node.parent.attributes.find(
-            (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'closeButton'
+            (attr) => attr.type === 'JSXAttribute' && attr.name.name === 'closeButton',
           )
 
           context.report({

@@ -18,7 +18,8 @@ module.exports = {
   meta: {
     type: 'suggestion',
     messages: {
-      inWhiteBg: 'InformationPanelを白背景に配置しないでください。InformationPanelをBaseColumnで包むか、InformationPanelを包んでいるDialogのcontentBgColorにWHITE以外の値を指定してください。詳細: https://smarthr.design/products/components/information-panel/',
+      inWhiteBg:
+        'InformationPanelを白背景に配置しないでください。InformationPanelをBaseColumnで包むか、InformationPanelを包んでいるDialogのcontentBgColorにWHITE以外の値を指定してください。詳細: https://smarthr.design/products/components/information-panel/',
     },
     schema: [],
   },
@@ -42,9 +43,7 @@ module.exports = {
           }
 
           // targetパターンにマッチするか確認
-          const isTarget = typeof targetPattern === 'string'
-            ? name === targetPattern
-            : targetPattern.test(name)
+          const isTarget = typeof targetPattern === 'string' ? name === targetPattern : targetPattern.test(name)
 
           if (isTarget) {
             return { ok: false, targetNode: current }
@@ -70,7 +69,7 @@ module.exports = {
         if (!result.ok) {
           // contentBgColor属性をチェック
           const attr = result.targetNode.openingElement.attributes.find(
-            a => a.type === 'JSXAttribute' && a.name.name === 'contentBgColor'
+            (a) => a.type === 'JSXAttribute' && a.name.name === 'contentBgColor',
           )
           const bgColor = attr?.value?.value
 
@@ -79,7 +78,7 @@ module.exports = {
             context.report({ node, messageId: 'inWhiteBg' })
           }
         }
-      }
+      },
     }
-  }
+  },
 }

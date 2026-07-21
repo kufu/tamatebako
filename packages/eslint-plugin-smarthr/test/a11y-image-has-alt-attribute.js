@@ -33,9 +33,9 @@ ruleTester.run('a11y-image-has-alt-attribute', rule, {
     { code: '<AnyImg {...hoge} />', options: [{ checkType: 'allow-spread-attributes' }] },
   ],
   invalid: [
-    { code: '<img />', errors: [ { message: messageNotExistAlt } ] },
-    { code: '<HogeImage alt="" />', errors: [ { message: messageNullAlt } ] },
-    { code: '<AnyImg {...hoge} />', errors: [ { message: messageNotExistAlt } ]  },
-    { code: '<AnyImg {...hoge} />', options: [{ checkType: 'always' }], errors: [ { message: messageNotExistAlt } ] },
-  ]
+    { code: '<img />', errors: [{ message: messageNotExistAlt }] },
+    { code: '<HogeImage alt="" />', errors: [{ message: messageNullAlt }] },
+    { code: '<AnyImg {...hoge} />', errors: [{ message: messageNotExistAlt }] },
+    { code: '<AnyImg {...hoge} />', options: [{ checkType: 'always' }], errors: [{ message: messageNotExistAlt }] },
+  ],
 })

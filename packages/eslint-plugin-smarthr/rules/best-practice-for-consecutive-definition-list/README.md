@@ -42,9 +42,15 @@
 ```tsx
 // maxColumns を使用してカラム数を指定
 <DefinitionList>
-  <DefinitionListItem maxColumns={1} term="項目1">内容1</DefinitionListItem>
-  <DefinitionListItem maxColumns={2} term="項目2">内容2</DefinitionListItem>
-  <DefinitionListItem maxColumns={2} term="項目3">内容3</DefinitionListItem>
+  <DefinitionListItem maxColumns={1} term="項目1">
+    内容1
+  </DefinitionListItem>
+  <DefinitionListItem maxColumns={2} term="項目2">
+    内容2
+  </DefinitionListItem>
+  <DefinitionListItem maxColumns={2} term="項目3">
+    内容3
+  </DefinitionListItem>
 </DefinitionList>
 ```
 

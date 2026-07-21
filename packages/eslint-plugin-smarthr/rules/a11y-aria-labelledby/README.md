@@ -8,9 +8,11 @@
 [aria-labelledby属性](https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby)は他要素からテキストを参照し、そのテキストをaccessible nameとしてaria-labelledby属性を記述した要素に設定します。<br />
 
 ```jsx
-<span id="label">入力要素1</span>
-{/* accessible nameは '入力要素1' になる */}
-<input aria-labelledby="label" />
+;<span id="label">入力要素1</span>
+{
+  /* accessible nameは '入力要素1' になる */
+}
+;<input aria-labelledby="label" />
 ```
 
 この特性からaria-labelledby属性の設定に変数の使用を強制することでtypoなどのミスを防ぐ事が出決ます。
@@ -78,7 +80,9 @@ aria-labelledby属性には複数の要素のidを設定することが可能性
           <Th id={empCodeId}>{crew.empcode}</Th>
           <Td id={nameId}>{crew.name}</Td>
           <Td>{crew.outline}</Td>
-          <Td><Button>編集</Button></Td>
+          <Td>
+            <Button>編集</Button>
+          </Td>
         </tr>
       )
     })}
@@ -91,7 +95,6 @@ Table等で複数指定を利用する場合が多いですが、 **その行が
 上記の例で言えば**名前だけでは同姓同名と被る可能性がある**、**従業員IDだけではどの従業員か人間が分かりづらい** などの観点があり、両方の要素を設定するほうが望ましいでしょう。<br />
 逆に**概要**や**操作**のカラムをaria-labelledbyに含めることは過剰な情報になるため、含めないほうが良いでしょう。<br />
 スクリーンリーダーなどがaria-labelledbyを読み上げる際、過剰な情報は利用者にとってノイズとなる可能性が高いためです。
-
 
 ## rules
 

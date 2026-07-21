@@ -38,7 +38,6 @@
 
 ## ✅ Correct
 
-
 ```js
 // src/pages/slices/index.ts
 // src/modules/entities/item.ts

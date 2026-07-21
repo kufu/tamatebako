@@ -1,34 +1,35 @@
 import styled from 'styled-components'
 
 const InvalidStyles = styled.ul`
-  Width: 10px;
-  margin-top :10px;
+  width: 10px;
+  margin-top: 10px;
   margin-bottom: 0px;
-  margin-left: 10PX;
+  margin-left: 10px;
   padding: 0 0 0 0;
-  top: 0; bottom: 0;
-  font-family: "Arial", sans-serif;
+  top: 0;
+  bottom: 0;
+  font-family: 'Arial', sans-serif;
   color: #ffffff;
-  background-color: #FFF;
+  background-color: #fff;
   font-size: 0.55555px;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: auto;
   /* some comments */
-  opacity: .5;
+  opacity: 0.5;
   &:after {
     content: '';
     background-color: rgba(0 0 0 / 50%);
   }
-  >li:not( :first-child) {
+  > li:not(:first-child) {
     margin-top: 10px;
   }
-  div{}
-  [ _target= blank ] {
+  div {
+  }
+  [_target='blank'] {
     display: block;
   }
-  display: block
-
+  display: block;
 `
 
 const ValidStyles = styled.ul`

@@ -8,6 +8,6 @@ export default [
     name: 'eslint-config-smarthr/prettier',
     rules: {
       ...Prettier.rules,
-    }
-  }
+    },
+  },
 ]

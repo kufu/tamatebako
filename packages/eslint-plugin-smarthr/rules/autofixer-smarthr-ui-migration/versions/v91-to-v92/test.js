@@ -108,7 +108,9 @@ module.exports = {
       code: `export { RemoteTriggerActionDialog } from 'smarthr-ui'`,
       output: `export { ActionDialog } from 'smarthr-ui'`,
       options: v91ToV92Options,
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+      ],
     },
 
     // re-export with alias
@@ -116,7 +118,9 @@ module.exports = {
       code: `export { RemoteTriggerActionDialog as MyDialog } from 'smarthr-ui'`,
       output: `export { ActionDialog as MyDialog } from 'smarthr-ui'`,
       options: v91ToV92Options,
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+      ],
     },
 
     // JSX要素
@@ -128,7 +132,9 @@ module.exports = {
       code: `<RemoteTriggerActionDialog />`,
       output: `<ActionDialog />`,
       options: v91ToV92Options,
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+      ],
     },
 
     // typeof型参照
@@ -326,7 +332,9 @@ const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] 
       code: `import { RemoteTriggerActionDialog } from '@/components/parts/smarthr-ui'`,
       output: `import { ActionDialog } from '@/components/parts/smarthr-ui'`,
       options: [{ from: '91', to: '92', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
+      ],
     },
 
     // aliasファイル内のexport変数名
@@ -336,7 +344,16 @@ const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] 
       filename: '/Users/test/src/components/parts/smarthr-ui/RemoteTriggerActionDialog.tsx',
       options: [{ from: '91', to: '92', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
       errors: [
-        { messageId: 'renameAliasFile', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92', oldFile: 'RemoteTriggerActionDialog.tsx', newFile: 'ActionDialog.tsx' } },
+        {
+          messageId: 'renameAliasFile',
+          data: {
+            old: 'RemoteTriggerActionDialog',
+            new: 'ActionDialog',
+            to: 'v92',
+            oldFile: 'RemoteTriggerActionDialog.tsx',
+            newFile: 'ActionDialog.tsx',
+          },
+        },
         { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerActionDialog', new: 'ActionDialog', to: 'v92' } },
       ],
     },
@@ -347,7 +364,9 @@ const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] 
       output: `export const FormDialog = (props) => <div>{props.children}</div>`,
       filename: '/Users/test/src/components/parts/smarthr-ui.tsx',
       options: [{ from: '91', to: '92', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerFormDialog', new: 'FormDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerFormDialog', new: 'FormDialog', to: 'v92' } },
+      ],
     },
 
     // re-export from alias
@@ -355,7 +374,9 @@ const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] 
       code: `export { RemoteTriggerMessageDialog } from '@/components/parts/smarthr-ui'`,
       output: `export { MessageDialog } from '@/components/parts/smarthr-ui'`,
       options: [{ from: '91', to: '92', smarthrUiAlias: '@/components/parts/smarthr-ui' }],
-      errors: [{ messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerMessageDialog', new: 'MessageDialog', to: 'v92' } }],
+      errors: [
+        { messageId: 'renameRemoteTriggerDialog', data: { old: 'RemoteTriggerMessageDialog', new: 'MessageDialog', to: 'v92' } },
+      ],
     },
   ],
 }

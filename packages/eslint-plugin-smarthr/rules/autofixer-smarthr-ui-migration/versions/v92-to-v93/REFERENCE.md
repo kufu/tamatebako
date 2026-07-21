@@ -40,7 +40,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 
   // selectButtonLabelプロパティを探す
   const selectButtonLabelProp = expression.properties.find(
-    (prop) => prop.type === 'Property' && prop.key.name === 'selectButtonLabel'
+    (prop) => prop.type === 'Property' && prop.key.name === 'selectButtonLabel',
   )
 
   if (!selectButtonLabelProp) {
@@ -55,11 +55,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
   const value = selectButtonLabelProp.value
 
   // ArrowFunctionExpressionで、引数なし、returnなしのパターンのみ対応
-  if (
-    value.type !== 'ArrowFunctionExpression' ||
-    value.params.length > 0 ||
-    value.body.type === 'BlockStatement'
-  ) {
+  if (value.type !== 'ArrowFunctionExpression' || value.params.length > 0 || value.body.type === 'BlockStatement') {
     return { type: 'not-migratable' }
   }
 
@@ -79,6 +75,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 ```
 
 **ポイント:**
+
 - **spread syntax検出**: `SpreadElement` の存在をチェック
 - **selectButtonLabelの有無**: プロパティが存在するかチェック
 - **他のキーの存在**: selectButtonLabel以外のキーがないかチェック
@@ -179,6 +176,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 ```
 
 **処理フロー:**
+
 1. **spread syntax** → エラーのみ（`migrateSelectButtonLabelManually`）
 2. **selectButtonLabel以外のキーあり** → エラーのみ（`migrateSelectButtonLabelManually`）
 3. **selectButtonLabel自動移行可能** → selectButtonLabel追加 + decorators削除
@@ -186,6 +184,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 5. **selectButtonLabelなし** → decorators削除のみ
 
 **メッセージID:**
+
 - `removeDecorators`: decorators削除（自動修正あり）
 - `migrateSelectButtonLabelManually`: selectButtonLabelの手動移行が必要（自動修正なし）
 
@@ -272,6 +271,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 ```
 
 **ポイント:**
+
 - **outputあり**: 自動修正が行われる
 - **outputなし**: エラーのみ（手動対応が必要）
 - **messageId**: `removeDecorators`（自動修正）または `migrateSelectButtonLabelManually`（手動対応）
@@ -281,6 +281,7 @@ function extractSelectButtonLabel(decoratorsNode, sourceCode) {
 **このREFERENCE.mdを作成したら、DEVELOPER.mdの「参考にするファイル」セクションを必ず更新してください！**
 
 更新箇所:
+
 - `rules/autofixer-smarthr-ui-migration/DEVELOPER.md` の56-65行目付近
 - `v91-to-v92` → `v92-to-v93` に変更
 

@@ -1,5 +1,5 @@
-const rule = require('../rules/a11y-heading-in-sectioning-content');
-const RuleTester = require('eslint').RuleTester;
+const rule = require('../rules/a11y-heading-in-sectioning-content')
+const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -27,8 +27,12 @@ const notHaveHeadingMessage = (elementName, isNav) => `${elementName} はHeading
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-heading-in-sectioning-content
  - SectioningContentはHeadingを含むようにマークアップする必要があります
  - ${elementName}に設定しているいずれかの属性がHeading，もしくはHeadingのテキストに該当する場合、その属性の名称を /^(heading|title)$/ にマッチする名称に変更してください
- - Headingにするべき適切な文字列が存在しない場合、 ${elementName} は削除するか、SectioningContentではない要素に差し替えてください${isNav ? `
- - nav要素の場合、aria-label、もしくはaria-labelledby属性を設定し、どんなナビゲーションなのかがわかる名称を設定してください` : ''}`
+ - Headingにするべき適切な文字列が存在しない場合、 ${elementName} は削除するか、SectioningContentではない要素に差し替えてください${
+   isNav
+     ? `
+ - nav要素の場合、aria-label、もしくはaria-labelledby属性を設定し、どんなナビゲーションなのかがわかる名称を設定してください`
+     : ''
+ }`
 
 ruleTester.run('a11y-heading-in-sectioning-content', rule, {
   valid: [
@@ -60,22 +64,56 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<HogeNav aria-labelledby="any"><Any /></HogeNav>' },
   ],
   invalid: [
-    { code: 'const StyledArticle = styled.article``', errors: [ { message: `"article"を利用せず、smarthr-ui/Articleを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.article" -> "styled(Article)")` } ] },
-    { code: 'const StyledAside = styled.aside``', errors: [ { message: `"aside"を利用せず、smarthr-ui/Asideを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.aside" -> "styled(Aside)")` } ] },
-    { code: 'const StyledNav = styled.nav``', errors: [ { message: `"nav"を利用せず、smarthr-ui/Navを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.nav" -> "styled(Nav)")` } ] },
-    { code: 'const StyledSection = styled.section``', errors: [ { message: `"section"を利用せず、smarthr-ui/Sectionを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.section" -> "styled(Section)")` } ] },
-    { code: '<><PageHeading>hoge</PageHeading><PageHeading>fuga</PageHeading></>', errors: [ { message: pageMessage } ] },
-    { code: '<Heading>hoge</Heading>', errors: [ { message } ] },
-    { code: '<><Heading>hoge</Heading><Heading>fuga</Heading></>', errors: [ { message }, { message } ] },
-    { code: 'const Hoge = () => <FugaHeading anyArg={abc}>hoge</FugaHeading>', errors: [ { message } ] },
-    { code: '<Section><Heading>hoge</Heading><Heading>fuga</Heading></Section>', errors: [ { message: lowerMessage } ] },
-    { code: '<Section><PageHeading>hoge</PageHeading></Section>', errors: [ { message: pageInSectionMessage } ] },
-    { code: '<Section><Heading tag="h2">hoge</Heading></Section>', errors: [ { message: noTagAttrMessage } ] },
-    { code: '<Section><Heading unrecommendedTag="h2">hoge</Heading></Section>', errors: [ { message: noTagAttrMessage } ] },
-    { code: '<Section></Section>', errors: [ { message: notHaveHeadingMessage('Section') } ] },
-    { code: '<Aside><HogeSection></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') }, { message: notHaveHeadingMessage('HogeSection') } ] },
-    { code: '<Aside any="hoge"><HogeSection><Heading /></HogeSection></Aside>', errors: [ { message: notHaveHeadingMessage('Aside') } ] },
-    { code: '<HogeNav><Any /></HogeNav>', errors: [ { message: notHaveHeadingMessage('HogeNav', true) } ] },
-    { code: '<HogeNav aria-diabled="true"><Any /></HogeNav>', errors: [ { message: notHaveHeadingMessage('HogeNav', true) } ] },
+    {
+      code: 'const StyledArticle = styled.article``',
+      errors: [
+        {
+          message: `"article"を利用せず、smarthr-ui/Articleを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.article" -> "styled(Article)")`,
+        },
+      ],
+    },
+    {
+      code: 'const StyledAside = styled.aside``',
+      errors: [
+        {
+          message: `"aside"を利用せず、smarthr-ui/Asideを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.aside" -> "styled(Aside)")`,
+        },
+      ],
+    },
+    {
+      code: 'const StyledNav = styled.nav``',
+      errors: [
+        {
+          message: `"nav"を利用せず、smarthr-ui/Navを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.nav" -> "styled(Nav)")`,
+        },
+      ],
+    },
+    {
+      code: 'const StyledSection = styled.section``',
+      errors: [
+        {
+          message: `"section"を利用せず、smarthr-ui/Sectionを拡張してください。Headingのレベルが自動計算されるようになります。(例: "styled.section" -> "styled(Section)")`,
+        },
+      ],
+    },
+    { code: '<><PageHeading>hoge</PageHeading><PageHeading>fuga</PageHeading></>', errors: [{ message: pageMessage }] },
+    { code: '<Heading>hoge</Heading>', errors: [{ message }] },
+    { code: '<><Heading>hoge</Heading><Heading>fuga</Heading></>', errors: [{ message }, { message }] },
+    { code: 'const Hoge = () => <FugaHeading anyArg={abc}>hoge</FugaHeading>', errors: [{ message }] },
+    { code: '<Section><Heading>hoge</Heading><Heading>fuga</Heading></Section>', errors: [{ message: lowerMessage }] },
+    { code: '<Section><PageHeading>hoge</PageHeading></Section>', errors: [{ message: pageInSectionMessage }] },
+    { code: '<Section><Heading tag="h2">hoge</Heading></Section>', errors: [{ message: noTagAttrMessage }] },
+    { code: '<Section><Heading unrecommendedTag="h2">hoge</Heading></Section>', errors: [{ message: noTagAttrMessage }] },
+    { code: '<Section></Section>', errors: [{ message: notHaveHeadingMessage('Section') }] },
+    {
+      code: '<Aside><HogeSection></HogeSection></Aside>',
+      errors: [{ message: notHaveHeadingMessage('Aside') }, { message: notHaveHeadingMessage('HogeSection') }],
+    },
+    {
+      code: '<Aside any="hoge"><HogeSection><Heading /></HogeSection></Aside>',
+      errors: [{ message: notHaveHeadingMessage('Aside') }],
+    },
+    { code: '<HogeNav><Any /></HogeNav>', errors: [{ message: notHaveHeadingMessage('HogeNav', true) }] },
+    { code: '<HogeNav aria-diabled="true"><Any /></HogeNav>', errors: [{ message: notHaveHeadingMessage('HogeNav', true) }] },
   ],
-});
+})

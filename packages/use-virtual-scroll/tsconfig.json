@@ -1,16 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": [
-    "node_modules",
-    "**/*.stories.tsx"
-  ],
+  "exclude": ["node_modules", "**/*.stories.tsx"],
   "compilerOptions": {
     "jsx": "preserve",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["esnext", "dom"],
     "outDir": "./lib",
-    "rootDir": "./src",
+    "rootDir": "./src"
   }
 }

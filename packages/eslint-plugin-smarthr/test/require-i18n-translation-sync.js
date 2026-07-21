@@ -113,14 +113,14 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // エスケープ: ダブルクォートを含む（シングルクォート文字列）
     {
-      code: "export const translations = { key1: 'hogefuga\"piyo\".' }",
+      code: 'export const translations = { key1: \'hogefuga"piyo".\' }',
       filename: setupTestFile('valid-escape-double.ts', { key1: 'hogefuga"piyo".' }),
       options: defaultOptions,
     },
 
     // エスケープ: シングルクォートを含む（ダブルクォート文字列）
     {
-      code: "export const translations = { key1: \"hoge'fuga'.\" }",
+      code: 'export const translations = { key1: "hoge\'fuga\'." }',
       filename: setupTestFile('valid-escape-single.ts', { key1: "hoge'fuga'." }),
       options: defaultOptions,
     },
@@ -177,13 +177,15 @@ ruleTester.run('require-i18n-translation-sync', rule, {
     // 特殊パターン: 複合的なパターン
     {
       code: "export const translations = { complex: '{user}さん、<strong>重要</strong>なお知らせです。{br}詳細は{link}をご確認ください。' }",
-      filename: setupTestFile('valid-complex.ts', { complex: '{user}さん、<strong>重要</strong>なお知らせです。{br}詳細は{link}をご確認ください。' }),
+      filename: setupTestFile('valid-complex.ts', {
+        complex: '{user}さん、<strong>重要</strong>なお知らせです。{br}詳細は{link}をご確認ください。',
+      }),
       options: defaultOptions,
     },
 
     // 特殊パターン: 空のオブジェクト
     {
-      code: "export const translations = {}",
+      code: 'export const translations = {}',
       filename: setupTestFile('valid-empty.ts', {}),
       options: defaultOptions,
     },
@@ -273,7 +275,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（数値）
     {
-      code: "export const translations = { key1: 123 }",
+      code: 'export const translations = { key1: 123 }',
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -281,7 +283,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（真偽値）
     {
-      code: "export const translations = { key1: true }",
+      code: 'export const translations = { key1: true }',
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],
@@ -289,7 +291,7 @@ ruleTester.run('require-i18n-translation-sync', rule, {
 
     // 値が文字列以外（null）
     {
-      code: "export const translations = { key1: null }",
+      code: 'export const translations = { key1: null }',
       filename: createTestPath('ja.ts'),
       options: defaultOptions,
       errors: [{ messageId: 'invalidValue' }],

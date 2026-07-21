@@ -31,7 +31,6 @@ export type Items = Item[]
 
 ## ✅ Correct
 
-
 ```js
 export type Item = { attr: string }
 ```

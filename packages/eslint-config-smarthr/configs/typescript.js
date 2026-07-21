@@ -9,7 +9,7 @@ export default [
   {
     name: 'eslint-config-smarthr/typescript',
     plugins: {
-      typescript: typeScriptEslint.plugin
+      typescript: typeScriptEslint.plugin,
     },
     languageOptions: {
       parser: typeScriptEslint.parser,
@@ -17,7 +17,7 @@ export default [
         ...globals.browser,
         ...globals.es2015,
         ...globals.commonjs,
-      }
+      },
     },
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
@@ -36,6 +36,6 @@ export default [
       '@typescript-eslint/prefer-namespace-keyword': 'off',
       '@typescript-eslint/unified-signatures': 'warn',
       'no-useless-constructor': 'off',
-    }
-  }
+    },
+  },
 ]

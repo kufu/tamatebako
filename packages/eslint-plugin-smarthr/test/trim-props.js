@@ -41,10 +41,7 @@ ruleTester.run('trim-props', rule, {
     {
       code: '<img src=" /sample.jpg" alt="sample " />',
       output: '<img src="/sample.jpg" alt="sample" />',
-      errors: [
-        { message: ERROR_MESSAGE },
-        { message: ERROR_MESSAGE },
-      ],
+      errors: [{ message: ERROR_MESSAGE }, { message: ERROR_MESSAGE }],
     },
     {
       code: '<div data-spec=" info-area ">....</div>',

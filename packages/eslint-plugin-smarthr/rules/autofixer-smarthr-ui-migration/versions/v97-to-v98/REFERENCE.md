@@ -9,11 +9,13 @@
 v97-to-v98 では、すべての破壊的変更に対して自動修正を行わず、検出のみを行います。
 
 **理由:**
+
 - `useDevice` → `useTheme().device`: 返り値の構造が異なり、単純な置換では対応不可
 - `Th decorators`: 使用方法が多様で、一律の削除では対応不可
 - `useDecorator` → `useTranslation()`: APIが完全に異なるため、単純な置換では対応不可
 
 **実装方法:**
+
 ```javascript
 // fix関数を提供しない
 context.report({
@@ -44,6 +46,7 @@ AST セレクタを使用して特定のimportを検出します。
 ```
 
 **ポイント:**
+
 - `node.parent.source.value` でimport元を確認
 - `validSources` と `isAliasFile` でsmarthr-ui関連のimportのみを対象にする
 
@@ -62,6 +65,7 @@ JSXOpeningElement配下のJSXAttributeを検出します。
 ```
 
 **ポイント:**
+
 - JSXOpeningElementで対象コンポーネントを絞り込む
 - JSXAttributeで対象属性を検出
 - validSourcesチェックは不要（コンポーネント名のみで判定）
@@ -100,6 +104,7 @@ messages: {
 - セルフクロージングタグ
 
 各テストケースには以下を含める:
+
 - `code`: テスト対象コード
 - `options`: `[{ from: '97', to: '98' }]`
 - `errors`: 期待されるエラー（messageId、data）

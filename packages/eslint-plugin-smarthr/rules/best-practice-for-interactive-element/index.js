@@ -29,7 +29,8 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
   '^option',
   '^summary',
 ].join('|')})$`
-const INTERACTIVE_ON_REGEX = /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
+const INTERACTIVE_ON_REGEX =
+  /^on(Change|Input|Focus|Blur|(Double)?Click|Key(Down|Up|Press)|Mouse(Enter|Over|Down|Up|Leave)|Select|Submit)$/
 const DELEGATE_REGEX = /(d|D)elegate/
 
 const ARROW_ROLES = {
@@ -37,10 +38,9 @@ const ARROW_ROLES = {
   '(^i|I)nput$': ['switch', 'combobox'],
   '(^b|B)utton$': ['option', 'menuitem'],
 }
-const NOT_ARROW_ROLE_ATTRIBUTES = Object.entries(ARROW_ROLES).reduce((prev, [key, vs]) => (
-    vs.reduce((p, v) => `${p}:not([parent.name.name=/${key}/][value.value="${v}"])`, prev)
-  ),
-  ''
+const NOT_ARROW_ROLE_ATTRIBUTES = Object.entries(ARROW_ROLES).reduce(
+  (prev, [key, vs]) => vs.reduce((p, v) => `${p}:not([parent.name.name=/${key}/][value.value="${v}"])`, prev),
+  '',
 )
 
 const ELEMENT_HAS_ROLE_ATTRIBUTE = 'JSXOpeningElement:has(JSXAttribute[name.name="role"])'
@@ -54,7 +54,7 @@ const SCHEMA = [
       additionalInteractiveComponentRegex: { type: 'array', items: { type: 'string' } },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 const hasDelegateParam = (p) => DELEGATE_REGEX.test(p.name)
@@ -78,33 +78,34 @@ module.exports = {
           node: node.parent,
           message: `${node.parent.name.name}にrole属性は指定しないでください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
-        });
+        })
       },
       [AS_FORM_PART_WITH_ROLE_SELECTOR]: (node) => {
         context.report({
           node: node.parent,
           message: `<${node.parent.name.name} ${context.sourceCode.getText(node)}>にrole属性は指定しないでください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element`,
-        });
+        })
       },
-      [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE})) > JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}]:not([value.expression.name=${DELEGATE_REGEX}])`]: (node) => {
-        switch (node.value.expression.type) {
-          case 'MemberExpression':
-            if (DELEGATE_REGEX.test(context.sourceCode.getText(node.expression))) {
-              return
-            }
-            break
-          case 'ArrowFunctionExpression':
-            if (node.value.expression.params.some(hasDelegateParam)) {
-              return
-            }
+      [`JSXOpeningElement:not(${targetNameProp}):not(:has(${AS_FORM_PART_ATTRIBUTE})) > JSXAttribute[name.name=${INTERACTIVE_ON_REGEX}]:not([value.expression.name=${DELEGATE_REGEX}])`]:
+        (node) => {
+          switch (node.value.expression.type) {
+            case 'MemberExpression':
+              if (DELEGATE_REGEX.test(context.sourceCode.getText(node.expression))) {
+                return
+              }
+              break
+            case 'ArrowFunctionExpression':
+              if (node.value.expression.params.some(hasDelegateParam)) {
+                return
+              }
 
-            break
-        }
+              break
+          }
 
-        context.report({
-          node: node.parent,
-          message: `${node.parent.name.name}にデフォルトで用意されているonXxx形式の属性は設定しないでください
+          context.report({
+            node: node.parent,
+            message: `${node.parent.name.name}にデフォルトで用意されているonXxx形式の属性は設定しないでください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-interactive-element
  - 対応方法1: 対象の属性がコンポーネント内の特定のインタラクティブな要素に設定される場合、名称を具体的なものに変更してください
    - 属性名を"${INTERACTIVE_ON_REGEX}"に一致しないものに変更してください
@@ -115,11 +116,11 @@ module.exports = {
  - 対応方法3: 対象の属性が設定されているコンポーネントがインタラクティブなコンポーネントの場合、名称を調整してください
    - "${interactiveComponentPattern}" の正規表現にmatchするコンポーネントに変更、もしくは名称を調整してください
  - 対応方法4: インタラクティブな親要素、もしくは子要素が存在する場合、onXxx属性を移動して設定することを検討してください`,
-        });
-      }
-    };
+          })
+        },
+    }
   },
-};
-module.exports.schema = SCHEMA;
-module.exports.INTERACTIVE_COMPONENT_NAMES = INTERACTIVE_COMPONENT_NAMES;
-module.exports.AS_FORM_PART_ATTRIBUTE = AS_FORM_PART_ATTRIBUTE;
+}
+module.exports.schema = SCHEMA
+module.exports.INTERACTIVE_COMPONENT_NAMES = INTERACTIVE_COMPONENT_NAMES
+module.exports.AS_FORM_PART_ATTRIBUTE = AS_FORM_PART_ATTRIBUTE

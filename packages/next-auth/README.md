@@ -25,7 +25,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         redirectUri: 'redirectUri',
         clientId: 'clientId',
         clientSecret: 'clientSecret',
-      })
+      }),
     ],
     // ...省略
   })

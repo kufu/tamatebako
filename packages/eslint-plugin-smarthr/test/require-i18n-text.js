@@ -11,9 +11,15 @@ const ruleTester = new RuleTester({
   },
 })
 
-const attributeError = (element, attr, text) => `${element}の${attr}属性に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
+const attributeError = (
+  element,
+  attr,
+  text,
+) => `${element}の${attr}属性に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
-const childTextError = (text) => `子要素に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
+const childTextError = (
+  text,
+) => `子要素に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
 
 const options = [
@@ -165,7 +171,10 @@ ruleTester.run('require-i18n-text', rule, {
           },
         },
       ],
-      errors: [{ message: attributeError('Button', 'label', 'Submit') }, { message: attributeError('Button', 'helperText', 'Help') }],
+      errors: [
+        { message: attributeError('Button', 'label', 'Submit') },
+        { message: attributeError('Button', 'helperText', 'Help') },
+      ],
     },
 
     // 子要素エラー（オプション未設定時でもチェックされる）

@@ -146,9 +146,7 @@ function Component() {
 }
 
 // 三項演算子
-const element = isModerator
-  ? <UserCard role="moderator" hoge={data} />
-  : <UserCard role="user" hoge={data} />
+const element = isModerator ? <UserCard role="moderator" hoge={data} /> : <UserCard role="user" hoge={data} />
 ```
 
 **子要素あり の場合:**
@@ -158,50 +156,96 @@ const element = isModerator
 // 同じコンポーネント、同じ属性、異なる子要素 → 検出される
 function Component() {
   if (isAdmin) {
-    return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+    return (
+      <Hoge name="Admin">
+        <Fuga>{children}</Fuga>
+      </Hoge>
+    )
   } else {
-    return <Hoge name="Admin"><Piyo>{children}</Piyo></Hoge>
+    return (
+      <Hoge name="Admin">
+        <Piyo>{children}</Piyo>
+      </Hoge>
+    )
   }
 }
 
 // 属性の差分が1つ、異なる子要素 → 検出される
 function Component() {
   if (isAdmin) {
-    return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+    return (
+      <Hoge name="Admin">
+        <Fuga>{children}</Fuga>
+      </Hoge>
+    )
   } else {
-    return <Hoge name="User"><Piyo>{children}</Piyo></Hoge>
+    return (
+      <Hoge name="User">
+        <Piyo>{children}</Piyo>
+      </Hoge>
+    )
   }
 }
 
 // 同じ属性、同じ子要素 → 検出される
 function Component() {
   if (condition) {
-    return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
+    return (
+      <Hoge name="test">
+        <Fuga>{children}</Fuga>
+      </Hoge>
+    )
   } else {
-    return <Hoge name="test"><Fuga>{children}</Fuga></Hoge>
+    return (
+      <Hoge name="test">
+        <Fuga>{children}</Fuga>
+      </Hoge>
+    )
   }
 }
 
 // 三項演算子
-const element = isAdmin
-  ? <Container size="large"><AdminPanel /></Container>
-  : <Container size="large"><UserPanel /></Container>
+const element = isAdmin ? (
+  <Container size="large">
+    <AdminPanel />
+  </Container>
+) : (
+  <Container size="large">
+    <UserPanel />
+  </Container>
+)
 
 // spread attributes
 function Component() {
   if (condition) {
-    return <Hoge {...props}><Fuga></Fuga></Hoge>
+    return (
+      <Hoge {...props}>
+        <Fuga></Fuga>
+      </Hoge>
+    )
   } else {
-    return <Hoge {...props}><Piyo></Piyo></Hoge>
+    return (
+      <Hoge {...props}>
+        <Piyo></Piyo>
+      </Hoge>
+    )
   }
 }
 
 // spread + 通常の属性
 function Component() {
   if (condition) {
-    return <Hoge {...props} name="test"><Fuga></Fuga></Hoge>
+    return (
+      <Hoge {...props} name="test">
+        <Fuga></Fuga>
+      </Hoge>
+    )
   } else {
-    return <Hoge {...props} name="test"><Piyo></Piyo></Hoge>
+    return (
+      <Hoge {...props} name="test">
+        <Piyo></Piyo>
+      </Hoge>
+    )
   }
 }
 ```
@@ -259,11 +303,23 @@ function handler() {
 function Component() {
   switch (type) {
     case 'admin':
-      return <Layout><AdminPanel /></Layout>
+      return (
+        <Layout>
+          <AdminPanel />
+        </Layout>
+      )
     case 'user':
-      return <Layout><UserPanel /></Layout>
+      return (
+        <Layout>
+          <UserPanel />
+        </Layout>
+      )
     default:
-      return <Layout><GuestPanel /></Layout>
+      return (
+        <Layout>
+          <GuestPanel />
+        </Layout>
+      )
   }
 }
 ```
@@ -326,9 +382,17 @@ function Component({ searchKeyword }) {
 ```jsx
 // 子要素がある場合でも、属性の差分が2つ以上なら許容される
 if (isAdmin) {
-  return <UserCard name="Admin" role="admin"><div>Admin</div></UserCard>
+  return (
+    <UserCard name="Admin" role="admin">
+      <div>Admin</div>
+    </UserCard>
+  )
 } else {
-  return <UserCard name="User" role="user"><div>User</div></UserCard>
+  return (
+    <UserCard name="User" role="user">
+      <div>User</div>
+    </UserCard>
+  )
 }
 ```
 
@@ -347,9 +411,17 @@ if (condition) {
 ```jsx
 // spreadの変数が異なるため、許容される
 if (condition) {
-  return <Hoge {...propsA}><Fuga></Fuga></Hoge>
+  return (
+    <Hoge {...propsA}>
+      <Fuga></Fuga>
+    </Hoge>
+  )
 } else {
-  return <Hoge {...propsB}><Piyo></Piyo></Hoge>
+  return (
+    <Hoge {...propsB}>
+      <Piyo></Piyo>
+    </Hoge>
+  )
 }
 ```
 
@@ -358,9 +430,17 @@ if (condition) {
 ```jsx
 // 属性の形式が異なるため、許容される
 if (condition) {
-  return <Hoge name="test"><Fuga></Fuga></Hoge>
+  return (
+    <Hoge name="test">
+      <Fuga></Fuga>
+    </Hoge>
+  )
 } else {
-  return <Hoge {...props}><Piyo></Piyo></Hoge>
+  return (
+    <Hoge {...props}>
+      <Piyo></Piyo>
+    </Hoge>
+  )
 }
 ```
 
@@ -369,16 +449,32 @@ if (condition) {
 ```jsx
 // React.FragmentとFragmentは除外される
 if (condition) {
-  return <React.Fragment><ComponentA /></React.Fragment>
+  return (
+    <React.Fragment>
+      <ComponentA />
+    </React.Fragment>
+  )
 } else {
-  return <React.Fragment><ComponentB /></React.Fragment>
+  return (
+    <React.Fragment>
+      <ComponentB />
+    </React.Fragment>
+  )
 }
 
 // Fragmentも同様
 if (condition) {
-  return <Fragment><ComponentA /></Fragment>
+  return (
+    <Fragment>
+      <ComponentA />
+    </Fragment>
+  )
 } else {
-  return <Fragment><ComponentB /></Fragment>
+  return (
+    <Fragment>
+      <ComponentB />
+    </Fragment>
+  )
 }
 ```
 
@@ -415,7 +511,7 @@ switch (role) {
 switch (role) {
   case 'admin':
     sendNotification('admin', user)
-    // break忘れ → 次のcaseの処理も実行される（複数ステートメント扱い）
+  // break忘れ → 次のcaseの処理も実行される（複数ステートメント扱い）
   case 'user':
     sendNotification('user', user)
     break
@@ -501,32 +597,40 @@ sendNotification(roleMap[role] || 'user', user)
 ```jsx
 // Before（属性差分が0または1の場合）
 if (isAdmin) {
-  return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+  return (
+    <Hoge name="Admin">
+      <Fuga>{children}</Fuga>
+    </Hoge>
+  )
 } else {
-  return <Hoge name="User"><Piyo>{children}</Piyo></Hoge>
+  return (
+    <Hoge name="User">
+      <Piyo>{children}</Piyo>
+    </Hoge>
+  )
 }
 
 // After（属性を条件分岐）
-return (
-  <Hoge name={isAdmin ? "Admin" : "User"}>
-    {isAdmin ? <Fuga>{children}</Fuga> : <Piyo>{children}</Piyo>}
-  </Hoge>
-)
+return <Hoge name={isAdmin ? 'Admin' : 'User'}>{isAdmin ? <Fuga>{children}</Fuga> : <Piyo>{children}</Piyo>}</Hoge>
 
 // または、属性が同じ場合は子要素のみ条件分岐
 // Before
 if (isAdmin) {
-  return <Hoge name="Admin"><Fuga>{children}</Fuga></Hoge>
+  return (
+    <Hoge name="Admin">
+      <Fuga>{children}</Fuga>
+    </Hoge>
+  )
 } else {
-  return <Hoge name="Admin"><Piyo>{children}</Piyo></Hoge>
+  return (
+    <Hoge name="Admin">
+      <Piyo>{children}</Piyo>
+    </Hoge>
+  )
 }
 
 // After
-return (
-  <Hoge name="Admin">
-    {isAdmin ? <Fuga>{children}</Fuga> : <Piyo>{children}</Piyo>}
-  </Hoge>
-)
+return <Hoge name="Admin">{isAdmin ? <Fuga>{children}</Fuga> : <Piyo>{children}</Piyo>}</Hoge>
 ```
 
 ## 注意点

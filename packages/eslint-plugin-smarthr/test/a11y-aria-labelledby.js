@@ -28,5 +28,5 @@ ruleTester.run('a11y-aria-labelledby', rule, {
     // TemplateLiteral - 変数を含み、文字列リテラル部分がある
     { code: '<Any aria-labelledby={`hoge-${fuga}`} />', errors: [{ message: ERROR_MESSAGE }] },
     { code: '<Any aria-labelledby={`${"hoge"} ${fuga}`} />', errors: [{ message: ERROR_MESSAGE }] },
-  ]
+  ],
 })

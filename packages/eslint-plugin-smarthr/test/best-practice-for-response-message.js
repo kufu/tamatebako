@@ -65,154 +65,154 @@ ruleTester.run('best-practice-for-response-message', rule, {
     {
       code: `<Heading><ResponseMessage type="success">Xxxx</ResponseMessage></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<h1><ResponseMessage type="info">Hoge</ResponseMessage></h1>`,
       output: `<h1><Text icon={{ prefix: <FaCircleInfoIcon /> }}>Hoge</Text></h1>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<h2><ResponseMessage type="error">Fuga</ResponseMessage></h2>`,
       output: `<h2><Text icon={{ prefix: <FaCircleExclamationIcon /> }}>Fuga</Text></h2>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<h3><ResponseMessage type="warning">Piyo</ResponseMessage></h3>`,
       output: `<h3><Text icon={{ prefix: <WarningIcon /> }}>Piyo</Text></h3>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<PageHeading><ResponseMessage type="success">Hoge</ResponseMessage></PageHeading>`,
       output: `<PageHeading icon={{ prefix: <FaCircleCheckIcon /> }}>Hoge</PageHeading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // 拡張ResponseMessage（後方一致）
     {
       code: `<Heading><CustomResponseMessage type="success">Xxxx</CustomResponseMessage></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<h1><ExtendedResponseMessage type="info">Hoge</ExtendedResponseMessage></h1>`,
       output: `<h1><Text icon={{ prefix: <FaCircleInfoIcon /> }}>Hoge</Text></h1>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // Heading内に複数要素がある場合
     {
       code: `<Heading>Xxxx<ResponseMessage type="info">Hoge</ResponseMessage></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleInfoIcon /> }}>XxxxHoge</Heading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // 既にicon属性がある場合（自動修正なし）
     {
       code: `<Heading icon={<FaUserIcon />}><ResponseMessage type="success">Xxxx</ResponseMessage></Heading>`,
       output: null,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<FormControl label={{ text: <ResponseMessage type="info">Foo</ResponseMessage>, icon: <FaCircleInfoIcon /> }} />`,
       output: null,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // FormControlのlabel属性内にResponseMessage
     {
       code: `<FormControl label={<ResponseMessage type="success">Foo</ResponseMessage>} />`,
       output: `<FormControl label={{ text: Foo, icon: { prefix: <FaCircleCheckIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<FormControl label={<><ResponseMessage type="info">Foo</ResponseMessage>Xxxx</>} />`,
       output: `<FormControl label={{ text: Foo, icon: { prefix: <FaCircleInfoIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<FormControl label={<CustomResponseMessage type="success">Foo</CustomResponseMessage>} />`,
       output: `<FormControl label={{ text: Foo, icon: { prefix: <FaCircleCheckIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // Fieldsetのlegend属性内にResponseMessage
     {
       code: `<Fieldset legend={<ResponseMessage type="success">Bar</ResponseMessage>} />`,
       output: `<Fieldset legend={{ text: Bar, icon: { prefix: <FaCircleCheckIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<Fieldset legend={<><ResponseMessage type="warning">Bar</ResponseMessage>Hoge</>} />`,
       output: `<Fieldset legend={{ text: Bar, icon: { prefix: <WarningIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<Fieldset legend={<CustomResponseMessage type="info">Bar</CustomResponseMessage>} />`,
       output: `<Fieldset legend={{ text: Bar, icon: { prefix: <FaCircleInfoIcon /> } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // label要素のchildren内にResponseMessage
     {
       code: `<label><ResponseMessage type="success">Foo</ResponseMessage></label>`,
       output: `<label><Text icon={{ prefix: <FaCircleCheckIcon /> }}>Foo</Text></label>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<label>Xxxx<ResponseMessage type="info">Foo</ResponseMessage></label>`,
       output: `<label>Xxxx<Text icon={{ prefix: <FaCircleInfoIcon /> }}>Foo</Text></label>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<label><CustomResponseMessage type="success">Foo</CustomResponseMessage></label>`,
       output: `<label><Text icon={{ prefix: <FaCircleCheckIcon /> }}>Foo</Text></label>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // legend要素のchildren内にResponseMessage
     {
       code: `<legend><ResponseMessage type="warning">Bar</ResponseMessage></legend>`,
       output: `<legend><Text icon={{ prefix: <WarningIcon /> }}>Bar</Text></legend>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<legend><ResponseMessage type="error">Bar</ResponseMessage>Hoge</legend>`,
       output: `<legend><Text icon={{ prefix: <FaCircleExclamationIcon /> }}>Bar</Text>Hoge</legend>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<legend><CustomResponseMessage type="info">Bar</CustomResponseMessage></legend>`,
       output: `<legend><Text icon={{ prefix: <FaCircleInfoIcon /> }}>Bar</Text></legend>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
 
     // iconGap属性が指定されている場合
     {
       code: `<Heading><ResponseMessage type="success" iconGap={0.5}>Xxxx</ResponseMessage></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon />, gap: 0.5 }}>Xxxx</Heading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<h1><ResponseMessage type="info" iconGap={1}>Hoge</ResponseMessage></h1>`,
       output: `<h1><Text icon={{ prefix: <FaCircleInfoIcon />, gap: 1 }}>Hoge</Text></h1>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<FormControl label={<ResponseMessage type="success" iconGap={0.5}>Foo</ResponseMessage>} />`,
       output: `<FormControl label={{ text: Foo, icon: { prefix: <FaCircleCheckIcon />, gap: 0.5 } }} />`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     {
       code: `<label><ResponseMessage type="warning" iconGap={0.75}>Bar</ResponseMessage></label>`,
       output: `<label><Text icon={{ prefix: <WarningIcon />, gap: 0.75 }}>Bar</Text></label>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
     // iconGap={0.25}（デフォルト値）の場合はgap指定を省略
     {
       code: `<Heading><ResponseMessage type="success" iconGap={0.25}>Xxxx</ResponseMessage></Heading>`,
       output: `<Heading icon={{ prefix: <FaCircleCheckIcon /> }}>Xxxx</Heading>`,
-      errors: [{ message: ERROR_MESSAGE }]
+      errors: [{ message: ERROR_MESSAGE }],
     },
-  ]
+  ],
 })

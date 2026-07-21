@@ -28,9 +28,9 @@ ruleTester.run('a11y-form-control-in-form', rule, {
     { code: 'const HogeFieldset = <><AnyFieldset /></>' },
   ],
   invalid: [
-    { code: '<FormControl />', errors: [ { message: generateErrorText('FormControl') } ] },
-    { code: '<fieldset />', errors: [ { message: generateErrorText('fieldset') } ] },
-    { code: '<AnyFieldset />', errors: [ { message: generateErrorText('AnyFieldset') } ] },
-    { code: 'const Hoge = <><AnyFormControl /></>', errors: [ { message: generateErrorText('AnyFormControl') } ] },
-  ]
+    { code: '<FormControl />', errors: [{ message: generateErrorText('FormControl') }] },
+    { code: '<fieldset />', errors: [{ message: generateErrorText('fieldset') }] },
+    { code: '<AnyFieldset />', errors: [{ message: generateErrorText('AnyFieldset') }] },
+    { code: 'const Hoge = <><AnyFormControl /></>', errors: [{ message: generateErrorText('AnyFormControl') }] },
+  ],
 })

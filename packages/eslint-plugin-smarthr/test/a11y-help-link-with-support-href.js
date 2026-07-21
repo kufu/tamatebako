@@ -29,5 +29,5 @@ ruleTester.run('a11y-help-link-with-support-href', rule, {
     { code: `<HogeLink href={path.support.hoge?.fuga} />`, errors: [{ message: errorText }] },
     { code: `<HogeAnchor href={a ? path.support.hoge?.fuga : null} />`, errors: [{ message: errorText }] },
     { code: `<HogeLink href={a ? undefined : supportHogeHref} />`, errors: [{ message: errorText }] },
-  ]
+  ],
 })

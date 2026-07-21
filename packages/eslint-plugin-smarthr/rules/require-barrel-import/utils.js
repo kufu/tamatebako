@@ -51,7 +51,8 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 
   return {
     // 禁止パターン
-    'ImportDeclaration, VariableDeclaration, FunctionDeclaration, ClassDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration': reportPurityError,
+    'ImportDeclaration, VariableDeclaration, FunctionDeclaration, ClassDeclaration, TSTypeAliasDeclaration, TSInterfaceDeclaration':
+      reportPurityError,
   }
 }
 
@@ -68,7 +69,7 @@ const extractFileName = (filePath) => filePath.split('/').pop().replace(REGEX_BA
  * @param {Array<string>} fileNames - barrelファイル名の配列
  * @returns {Array<string>} パス候補の配列
  */
-const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap(name => TARGET_EXTS.map(ext => `${dir}/${name}.${ext}`))
+const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap((name) => TARGET_EXTS.map((ext) => `${dir}/${name}.${ext}`))
 
 /**
  * 同じディレクトリ内の他のバレルファイルを取得
@@ -79,13 +80,10 @@ const generateBarrelFilePaths = (dir, fileNames) => fileNames.flatMap(name => TA
 const getSiblingBarrelFiles = (currentBarrelPath, barrelFileNames) => {
   const currentFileName = extractFileName(currentBarrelPath)
 
-  return generateBarrelFilePaths(getParentDir(currentBarrelPath), barrelFileNames)
-    .filter(
-      barrelPath =>
-        barrelPath !== currentBarrelPath &&
-        extractFileName(barrelPath) !== currentFileName &&
-        fs.existsSync(barrelPath)
-    )
+  return generateBarrelFilePaths(getParentDir(currentBarrelPath), barrelFileNames).filter(
+    (barrelPath) =>
+      barrelPath !== currentBarrelPath && extractFileName(barrelPath) !== currentFileName && fs.existsSync(barrelPath),
+  )
 }
 
 // export { A, B } from './file' パターン
@@ -120,7 +118,7 @@ const extractExportsFromBarrel = (barrelFilePath) => {
         }
       }
 
-      const exportedItems = match[1].split(',').map(name => {
+      const exportedItems = match[1].split(',').map((name) => {
         const trimmed = name.trim()
         // "as" を使っている場合: "Button as MyButton" → importedName: Button, exportedName: MyButton
         const asMatch = trimmed.match(EXPORT_AS_REGEX)
@@ -148,7 +146,6 @@ const extractExportsFromBarrel = (barrelFilePath) => {
 
     // export * from './file' パターン（すべてをre-exportするので、重複チェック対象外とする）
     // export * as namespace from './file' は含まない
-
   } catch (err) {
     // ファイル読み込みエラーは無視（存在チェックは呼び出し側で行う）
   }
@@ -188,9 +185,7 @@ const findDuplicateExports = (currentFilePath, currentBarrelExports, barrelFileN
   const duplicates = []
   for (const { node, exportedName, sourceFile, importedName } of currentBarrelExports) {
     for (const [siblingPath, siblingExports] of siblingExportsMap) {
-      const duplicate = siblingExports.find(
-        exp => exp.sourceFile === sourceFile && exp.importedName === importedName
-      )
+      const duplicate = siblingExports.find((exp) => exp.sourceFile === sourceFile && exp.importedName === importedName)
       if (duplicate) {
         duplicates.push({
           node,
@@ -220,9 +215,7 @@ const createDuplicateExportMessage = (exportedName, currentFilePath, siblingPath
   const sourceFileName = path.basename(sourceFile)
 
   // export { A as B } の場合と export { A } の場合でメッセージを変える
-  const exportInfo = exportedName !== importedName
-    ? `'${importedName}' (as ${exportedName})`
-    : `'${exportedName}'`
+  const exportInfo = exportedName !== importedName ? `'${importedName}' (as ${exportedName})` : `'${exportedName}'`
 
   return `${sourceFileName} の ${exportInfo} は ${siblingFileName} でも export されています。同じファイルから同じものを複数のバレルファイルで re-export することは禁止されています。
 

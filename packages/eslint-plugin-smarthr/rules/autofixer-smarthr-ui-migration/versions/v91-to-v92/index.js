@@ -54,19 +54,10 @@ const SIZE_COMPONENT_PATTERNS = [
 ]
 
 // 3. decorators属性を持つコンポーネント
-const DECORATORS_COMPONENTS = [
-  'MultiCombobox',
-  'SingleCombobox',
-  'SearchInput',
-  'Textarea',
-  'InformationPanel',
-]
+const DECORATORS_COMPONENTS = ['MultiCombobox', 'SingleCombobox', 'SearchInput', 'Textarea', 'InformationPanel']
 
 // Comboboxコンポーネント（noResultTextの移行が必要）
-const COMBOBOX_COMPONENTS = [
-  'MultiCombobox',
-  'SingleCombobox',
-]
+const COMBOBOX_COMPONENTS = ['MultiCombobox', 'SingleCombobox']
 
 // v92を示す定数（メッセージで使用）
 const TARGET_VERSION = 'v92'
@@ -77,11 +68,15 @@ const TARGET_VERSION = 'v92'
 
 module.exports = {
   messages: {
-    renameRemoteTriggerDialog: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました（RemoteTrigger版が推奨版になりました）',
+    renameRemoteTriggerDialog:
+      'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました（RemoteTrigger版が推奨版になりました）',
     convertSizeValue: 'smarthr-ui {{to}} ではサイズ指定が大文字に統一されました: size="{{old}}" → size="{{new}}"',
-    removeDecorators: 'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました（smarthr-ui内部で自動的に翻訳されるようになりました）',
-    migrateNoResultTextManually: '{{component}} の decorators.noResultText を手動で移行してください。noResultText属性として独立しました。詳細: https://github.com/kufu/smarthr-ui/pull/6238',
-    renameAliasFile: 'smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from \'@/path/{{old}}\' → from \'@/path/{{new}}\'）',
+    removeDecorators:
+      'smarthr-ui {{to}} では {{component}} の decorators 属性は削除されました（smarthr-ui内部で自動的に翻訳されるようになりました）',
+    migrateNoResultTextManually:
+      '{{component}} の decorators.noResultText を手動で移行してください。noResultText属性として独立しました。詳細: https://github.com/kufu/smarthr-ui/pull/6238',
+    renameAliasFile:
+      "smarthr-ui {{to}} では {{old}} が {{new}} にリネームされました。以下の手順で対応してください: 1. ファイル名を変更（例: git mv {{oldFile}} {{newFile}}）2. このファイルをimportしている箇所を更新（例: from '@/path/{{old}}' → from '@/path/{{new}}'）",
   },
 
   createCheckers(context, sourceCode, options = {}) {
@@ -114,9 +109,7 @@ module.exports = {
       }
 
       // noResultTextプロパティを探す
-      const noResultTextProp = expression.properties.find(
-        (prop) => prop.type === 'Property' && prop.key.name === 'noResultText'
-      )
+      const noResultTextProp = expression.properties.find((prop) => prop.type === 'Property' && prop.key.name === 'noResultText')
 
       if (!noResultTextProp) {
         return { type: 'no-result-text' }
@@ -125,11 +118,7 @@ module.exports = {
       const value = noResultTextProp.value
 
       // ArrowFunctionExpressionで、引数なし、returnなしのパターンのみ対応
-      if (
-        value.type !== 'ArrowFunctionExpression' ||
-        value.params.length > 0 ||
-        value.body.type === 'BlockStatement'
-      ) {
+      if (value.type !== 'ArrowFunctionExpression' || value.params.length > 0 || value.body.type === 'BlockStatement') {
         return { type: 'not-migratable' }
       }
 
@@ -286,7 +275,7 @@ module.exports = {
         const componentName = node.parent.name.name
 
         // 対象コンポーネントかチェック（正規表現パターンマッチング）
-        const isTargetComponent = SIZE_COMPONENT_PATTERNS.some(pattern => pattern.test(componentName))
+        const isTargetComponent = SIZE_COMPONENT_PATTERNS.some((pattern) => pattern.test(componentName))
         if (!isTargetComponent) return
 
         const sizeValue = node.value.value
@@ -339,9 +328,7 @@ module.exports = {
 
                 // 1. noResultText属性を追加
                 const { value, isStringLiteral } = result
-                const noResultTextAttr = isStringLiteral
-                  ? ` noResultText="${value}"`
-                  : ` noResultText={${value}}`
+                const noResultTextAttr = isStringLiteral ? ` noResultText="${value}"` : ` noResultText={${value}}`
                 fixes.push(fixer.insertTextAfter(node.parent.name, noResultTextAttr))
 
                 // 2. decorators属性を削除

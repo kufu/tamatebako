@@ -14,10 +14,10 @@ const ScrollOnWindow = () => {
   const originalItems = [...Array(1000)].map((_, i) => i)
   const itemHeight = 20
 
-  const { items, listRef, createListStyle, createItemStyle } = useVirtualScroll<
-    typeof originalItems[number],
-    HTMLUListElement
-  >(originalItems, itemHeight)
+  const { items, listRef, createListStyle, createItemStyle } = useVirtualScroll<(typeof originalItems)[number], HTMLUListElement>(
+    originalItems,
+    itemHeight,
+  )
 
   return (
     <ul ref={listRef} style={createListStyle()}>
@@ -41,16 +41,11 @@ const ScrollOnContainer = () => {
   const originalItems = [...Array(1000)].map((_, i) => i)
   const itemHeight = 20
 
-  const {
-    items,
-    listRef,
-    scrollableContainerRef,
-    createListStyle,
-    createItemStyle,
-  } = useVirtualScroll<typeof originalItems[number], HTMLUListElement, HTMLDivElement>(
-    originalItems,
-    itemHeight,
-  )
+  const { items, listRef, scrollableContainerRef, createListStyle, createItemStyle } = useVirtualScroll<
+    (typeof originalItems)[number],
+    HTMLUListElement,
+    HTMLDivElement
+  >(originalItems, itemHeight)
 
   return (
     <div
@@ -77,9 +72,9 @@ const ScrollOnContainer = () => {
 
 第3引数にオブジェクト形式で options を指定できます。
 
-| name                  | required   | type   | description                                                                          |
-|-----------------------|-----------|--------|--------------------------------------------------------------------------------------|
-| marginItemCount | -        | number | スクロールコンテナ外にリストアイテムをいくつ表示しておくかの設定です。スクロール時のリストアイテムのちらつきが気になる場合は値を設定してください。デフォルト値は0です。  |
+| name            | required | type   | description                                                                                                                                                             |
+| --------------- | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| marginItemCount | -        | number | スクロールコンテナ外にリストアイテムをいくつ表示しておくかの設定です。スクロール時のリストアイテムのちらつきが気になる場合は値を設定してください。デフォルト値は0です。 |
 
 ## License
 

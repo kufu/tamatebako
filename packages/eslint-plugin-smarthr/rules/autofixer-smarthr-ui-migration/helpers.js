@@ -29,11 +29,7 @@ function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
   // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
   // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
   // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
-  return (
-    filename.includes(`/${pathPart}/`) ||
-    filename.endsWith(`/${pathPart}`) ||
-    filename.includes(`/${pathPart}.`)
-  )
+  return filename.includes(`/${pathPart}/`) || filename.endsWith(`/${pathPart}`) || filename.includes(`/${pathPart}.`)
 }
 
 /**
@@ -64,10 +60,7 @@ function setupSmarthrUiAliasOptions(context, options) {
   }
 
   const filename = context.getFilename()
-  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
-    filename,
-    customSmarthrUiAlias
-  )
+  const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(filename, customSmarthrUiAlias)
 
   return { validSources, isAliasFile, filename }
 }

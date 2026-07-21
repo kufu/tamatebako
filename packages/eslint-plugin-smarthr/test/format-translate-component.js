@@ -15,7 +15,7 @@ const options = [
     componentPath: '@/any/path/Translate',
     componentName: 'Translate',
     prohibitAttributies: ['data-translate'],
-  }
+  },
 ]
 
 ruleTester.run('format-translate-component', rule, {
@@ -28,9 +28,21 @@ ruleTester.run('format-translate-component', rule, {
     { code: '<Translate dangerouslySetInnerHTML={{ __html: "ほげ" }} />', options },
   ],
   invalid: [
-    { code: '<Any data-translate="true">ほげ</Any>', options, errors: [ { message: 'data-translate 属性は使用せず、 @/any/path/Translate コンポーネントを利用してください' } ] },
-    { code: '<Translate><Any>ほげ</Any></Translate>', options, errors: [ { message: 'Translate 内では <br />, <RangeSeparator /> 以外のタグは使えません' } ] },
-    { code: '<Translate><Any /></Translate>', options, errors: [ { message: 'Translate 内では <br />, <RangeSeparator /> 以外のタグは使えません' } ] },
-    { code: '<Translate></Translate>', options, errors: [ { message: 'Translate 内には必ずテキストを設置してください' } ] },
-  ]
+    {
+      code: '<Any data-translate="true">ほげ</Any>',
+      options,
+      errors: [{ message: 'data-translate 属性は使用せず、 @/any/path/Translate コンポーネントを利用してください' }],
+    },
+    {
+      code: '<Translate><Any>ほげ</Any></Translate>',
+      options,
+      errors: [{ message: 'Translate 内では <br />, <RangeSeparator /> 以外のタグは使えません' }],
+    },
+    {
+      code: '<Translate><Any /></Translate>',
+      options,
+      errors: [{ message: 'Translate 内では <br />, <RangeSeparator /> 以外のタグは使えません' }],
+    },
+    { code: '<Translate></Translate>', options, errors: [{ message: 'Translate 内には必ずテキストを設置してください' }] },
+  ],
 })

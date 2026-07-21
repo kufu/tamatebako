@@ -2,10 +2,9 @@
 
 ## [1.3.1](https://github.com/kufu/tamatebako/compare/wareki-v1.3.0...wareki-v1.3.1) (2026-07-02)
 
-
 ### Bug Fixes
 
-* **wareki:** warekiToDateで「元年」を解釈できるようにする ([#1428](https://github.com/kufu/tamatebako/issues/1428)) ([0d2f137](https://github.com/kufu/tamatebako/commit/0d2f137a2ff1670ae4e430dac812cca362f586ca))
+- **wareki:** warekiToDateで「元年」を解釈できるようにする ([#1428](https://github.com/kufu/tamatebako/issues/1428)) ([0d2f137](https://github.com/kufu/tamatebako/commit/0d2f137a2ff1670ae4e430dac812cca362f586ca))
 
 ## Change Log
 

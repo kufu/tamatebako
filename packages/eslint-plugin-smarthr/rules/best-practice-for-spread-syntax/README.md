@@ -147,7 +147,7 @@ const obj = {
 ```
 
 ```jsx
-<AnyComponent {...props} hoge={props.hoge || "hoge"} />
+<AnyComponent {...props} hoge={props.hoge || 'hoge'} />
 ```
 
 ```jsx

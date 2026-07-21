@@ -14,7 +14,10 @@ const searchBubbleUp = (node) => {
       return null
     case 'JSXElement':
       // formかFieldsetでラップされていればOK
-      if (node.openingElement.name.name && (wrapperRegex.test(node.openingElement.name.name) || node.openingElement.attributes.some(includeAsAttrFormOrFieldset))) {
+      if (
+        node.openingElement.name.name &&
+        (wrapperRegex.test(node.openingElement.name.name) || node.openingElement.attributes.some(includeAsAttrFormOrFieldset))
+      ) {
         return node
       }
       break

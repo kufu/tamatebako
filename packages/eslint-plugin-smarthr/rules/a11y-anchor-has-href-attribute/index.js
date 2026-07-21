@@ -7,7 +7,7 @@ const OPTION = (() => {
   if (fs.existsSync(file)) {
     const json = JSON5.parse(fs.readFileSync(file))
 
-    if (json.dependencies){
+    if (json.dependencies) {
       const dependencies = Object.keys(json.dependencies)
 
       let nextjs = false
@@ -58,7 +58,7 @@ const SCHEMA = [
       checkType: { type: 'string', enum: ['always', 'allow-spread-attributes'], default: 'always' },
     },
     additionalProperties: false,
-  }
+  },
 ]
 
 /**

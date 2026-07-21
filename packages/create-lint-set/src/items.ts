@@ -28,7 +28,7 @@ export const items: Item[] = [
       'stylelint-config-smarthr',
       'stylelint-config-standard',
       'stylelint-config-styled-components',
-      'postcss-styled-syntax'
+      'postcss-styled-syntax',
     ],
     configFilePattern: /\.stylelintrc.*?/,
     npmScriptsSample: '"stylelint": "stylelint \'./**/*.ts{,x}\'',

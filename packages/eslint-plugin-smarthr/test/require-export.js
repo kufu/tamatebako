@@ -18,7 +18,7 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['hoge'],
-        }
+        },
       ],
     },
     {
@@ -26,7 +26,7 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['hoge', 'fuga'],
-        }
+        },
       ],
     },
     {
@@ -34,7 +34,7 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['fuga'],
-        }
+        },
       ],
     },
     {
@@ -42,7 +42,7 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['hoge'],
-        }
+        },
       ],
     },
     {
@@ -50,7 +50,7 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['default'],
-        }
+        },
       ],
     },
   ],
@@ -60,30 +60,42 @@ ruleTester.run('require-export', rule, {
       options: [
         {
           '^.+$': ['fuga'],
-        }
+        },
       ],
-      errors: [{ message: `fuga をexportしてください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
+      errors: [
+        {
+          message: `fuga をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export`,
+        },
+      ],
     },
     {
       code: `export const hoge = {}`,
       options: [
         {
           '^.+$': ['fuga'],
-        }
+        },
       ],
-      errors: [{ message: `fuga をexportしてください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
+      errors: [
+        {
+          message: `fuga をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export`,
+        },
+      ],
     },
     {
       code: `const hoge = {}; export { hoge }`,
       options: [
         {
           '^.+$': ['default'],
-        }
+        },
       ],
-      errors: [{ message: `default をexportしてください
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export` }],
+      errors: [
+        {
+          message: `default をexportしてください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-export`,
+        },
+      ],
     },
-  ]
+  ],
 })

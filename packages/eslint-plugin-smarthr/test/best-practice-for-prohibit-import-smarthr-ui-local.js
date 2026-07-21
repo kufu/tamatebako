@@ -16,12 +16,13 @@ const ruleTester = new RuleTester({
   },
 })
 ruleTester.run('best-practice-for-prohibit-import-smarthr-ui-local', rule, {
-  valid: [
-    { code: `import { AnchorButton } from 'smarthr-ui'` },
-  ],
+  valid: [{ code: `import { AnchorButton } from 'smarthr-ui'` }],
   invalid: [
-    { code: `import { AnchorButton } from 'smarthr-ui/lib/components/Button/AnchorButton'`, errors: [ { message: ERROR_MESSAGE } ] },
-    { code: `import { FaArrowRightIcon } from 'smarthr-ui/lib/components/Icon'`, errors: [ { message: ERROR_MESSAGE } ] },
-    { code: `import { HeadingTagTypes } from 'smarthr-ui/lib/components/Heading/Heading'`, errors: [ { message: ERROR_MESSAGE } ] },
-  ]
+    {
+      code: `import { AnchorButton } from 'smarthr-ui/lib/components/Button/AnchorButton'`,
+      errors: [{ message: ERROR_MESSAGE }],
+    },
+    { code: `import { FaArrowRightIcon } from 'smarthr-ui/lib/components/Icon'`, errors: [{ message: ERROR_MESSAGE }] },
+    { code: `import { HeadingTagTypes } from 'smarthr-ui/lib/components/Heading/Heading'`, errors: [{ message: ERROR_MESSAGE }] },
+  ],
 })

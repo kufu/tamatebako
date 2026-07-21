@@ -20,13 +20,13 @@ module.exports = {
         context.report({
           node,
           message: `button要素を利用する場合、type属性に "button" もしくは "submit" を指定してください${ERRORMESSAGE_SUFFIX}`,
-        });
+        })
       },
       [`MemberExpression[object.name="styled"][property.name="button"]`]: (node) => {
         context.report({
           node,
           message: `"styled.button" の直接利用をやめ、smarthr-ui/Button、もしくはsmarthr-ui/UnstyledButtonを利用してください${ERRORMESSAGE_SUFFIX}`,
-        });
+        })
       },
     }
   },

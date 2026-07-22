@@ -239,7 +239,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
     'eslint-plugin-smarthr/component-name': 'error',
     'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'error',
-    'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn',
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/format-import-path': 'off',

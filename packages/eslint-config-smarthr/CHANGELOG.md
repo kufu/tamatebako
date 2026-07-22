@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.11.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.10.0...eslint-config-smarthr-v14.11.0) (2026-07-22)
+
+
+### Features
+
+* update ESLint rule severities in eslint-config-smarthr ([#1476](https://github.com/kufu/tamatebako/issues/1476)) ([5213e9f](https://github.com/kufu/tamatebako/commit/5213e9f2b1659bd2b3bfe7cdb118a2ed001aa072))
+
 ## [14.10.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.9.1...eslint-config-smarthr-v14.10.0) (2026-07-14)
 
 

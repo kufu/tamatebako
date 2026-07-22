@@ -51,7 +51,7 @@ export default [
       'smarthr/a11y-prohibit-overflow-hidden': 'error',
       'smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-      'smarthr/a11y-scroller-has-tabindex': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-scroller-has-tabindex': 'error',
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',

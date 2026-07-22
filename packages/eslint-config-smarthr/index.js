@@ -77,7 +77,7 @@ export default [
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
       'smarthr/design-system-guideline-bulk-action-row-button': 'error',
-      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
       'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
       'smarthr/format-import-path': 'off',

@@ -198,7 +198,7 @@ const config = {
 
     // === eslint-plugin-smarthr ===
     'eslint-plugin-smarthr/a11y-anchor-has-href-attribute': 'error',
-    'eslint-plugin-smarthr/a11y-aria-labelledby': 'warn',
+    'eslint-plugin-smarthr/a11y-aria-labelledby': 'error',
     'eslint-plugin-smarthr/a11y-clickable-element-has-text': 'error',
     'eslint-plugin-smarthr/a11y-form-control-in-form': 'error',
     'eslint-plugin-smarthr/a11y-heading-in-sectioning-content': 'error',

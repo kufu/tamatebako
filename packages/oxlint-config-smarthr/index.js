@@ -213,7 +213,7 @@ const config = {
     'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-    'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'warn',
+    'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'error',
     'eslint-plugin-smarthr/a11y-trigger-has-button': 'error',
     'eslint-plugin-smarthr/best-practice-for-async-current-target': 'error',
     'eslint-plugin-smarthr/best-practice-for-button-element': 'error',

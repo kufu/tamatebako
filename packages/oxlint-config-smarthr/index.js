@@ -235,7 +235,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],
     'eslint-plugin-smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
     'eslint-plugin-smarthr/best-practice-for-tailwind-variants': 'off',
-    'eslint-plugin-smarthr/best-practice-for-text-component': 'warn',
+    'eslint-plugin-smarthr/best-practice-for-text-component': 'error',
     'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
     'eslint-plugin-smarthr/component-name': 'error',
     'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定

@@ -220,7 +220,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'error',
     'eslint-plugin-smarthr/best-practice-for-date': 'error',
     'eslint-plugin-smarthr/best-practice-for-data-test-attribute': 'off',
-    'eslint-plugin-smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/best-practice-for-default-props': 'error',
     'eslint-plugin-smarthr/best-practice-for-interactive-element': 'error',
     'eslint-plugin-smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',

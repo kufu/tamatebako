@@ -31,7 +31,7 @@
     "jest": "^30.4.2",
     "postcss-styled-syntax": "^0.7.2",
     "styled-components": "^6.4.3",
-    "stylelint": "^17.13.0",
+    "stylelint": "^17.14.0",
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-config-standard": "^40.0.0",
     "vitest": "^4.1.10"

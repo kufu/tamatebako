@@ -226,7 +226,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',
     'eslint-plugin-smarthr/best-practice-for-nested-attributes-array-index': 'error',
     'eslint-plugin-smarthr/best-practice-for-no-unnecessary-variable': 'off',
-    'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'warn', // TODO: 2026/06に導入。導入したプロダクトの数に応じてerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'error',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
     'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定

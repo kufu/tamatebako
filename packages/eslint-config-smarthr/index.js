@@ -36,7 +36,7 @@ export default [
 
       // original rules
       'smarthr/a11y-anchor-has-href-attribute': 'error',
-      'smarthr/a11y-aria-labelledby': 'warn', // TODO: 2026/03に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/a11y-aria-labelledby': 'error',
       'smarthr/a11y-clickable-element-has-text': 'error',
       'smarthr/a11y-form-control-in-form': 'error',
       'smarthr/a11y-heading-in-sectioning-content': 'error',
@@ -48,38 +48,38 @@ export default [
       'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
       'smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
       'smarthr/a11y-prohibit-input-placeholder': 'error',
-      'smarthr/a11y-prohibit-overflow-hidden': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-prohibit-overflow-hidden': 'error',
       'smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-      'smarthr/a11y-scroller-has-tabindex': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-scroller-has-tabindex': 'error',
       'smarthr/a11y-trigger-has-button': 'error',
       'smarthr/best-practice-for-async-current-target': 'error',
       'smarthr/best-practice-for-button-element': 'error',
-      'smarthr/best-practice-for-consecutive-definition-list': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+      'smarthr/best-practice-for-consecutive-definition-list': 'error',
       'smarthr/best-practice-for-date': 'error',
       'smarthr/best-practice-for-data-test-attribute': 'off',
-      'smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+      'smarthr/best-practice-for-default-props': 'error',
       'smarthr/best-practice-for-interactive-element': 'error',
-      'smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
+      'smarthr/best-practice-for-lazy-variable': ['error', { fix: false }],
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
       'smarthr/best-practice-for-no-unnecessary-variable': 'off',
-      'smarthr/best-practice-for-unstable-dependencies': 'warn', // TODO: 2026/06に導入。導入したプロダクトの数に応じてerror化を検討予定
+      'smarthr/best-practice-for-unstable-dependencies': 'error',
       'smarthr/best-practice-for-optional-chaining': 'error',
       'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
-      'smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定
+      'smarthr/best-practice-for-reduce-redundant-calls': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
       'smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
       'smarthr/best-practice-for-tailwind-variants': 'off',
-      'smarthr/best-practice-for-text-component': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/best-practice-for-text-component': 'error',
       'smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/component-name': 'error',
-      'smarthr/design-system-guideline-bulk-action-row-button': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
-      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-bulk-action-row-button': 'error',
+      'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
-      'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',
@@ -91,7 +91,7 @@ export default [
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
       'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
-      'smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
+      'smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

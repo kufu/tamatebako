@@ -67,7 +67,7 @@ export default [
       'smarthr/best-practice-for-unstable-dependencies': 'error',
       'smarthr/best-practice-for-optional-chaining': 'error',
       'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
-      'smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定
+      'smarthr/best-practice-for-reduce-redundant-calls': 'error',
       'smarthr/best-practice-for-remote-trigger-dialog': 'error',
       'smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
       'smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],

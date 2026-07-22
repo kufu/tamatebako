@@ -229,7 +229,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'error',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
-    'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'error',
     'eslint-plugin-smarthr/best-practice-for-remote-trigger-dialog': 'error',
     'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off',
     'eslint-plugin-smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],

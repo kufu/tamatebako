@@ -231,12 +231,12 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
     'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'error',
     'eslint-plugin-smarthr/best-practice-for-remote-trigger-dialog': 'error',
-    'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off',
-    'eslint-plugin-smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],
+    'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
     'eslint-plugin-smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
     'eslint-plugin-smarthr/best-practice-for-tailwind-variants': 'off',
     'eslint-plugin-smarthr/best-practice-for-text-component': 'error',
-    'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
+    'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
     'eslint-plugin-smarthr/component-name': 'error',
     'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
@@ -252,7 +252,7 @@ const config = {
     'eslint-plugin-smarthr/require-barrel-import': 'error',
     'eslint-plugin-smarthr/require-declaration': 'off',
     'eslint-plugin-smarthr/require-export': 'off',
-    'eslint-plugin-smarthr/require-i18n-text': 'warn',
+    'eslint-plugin-smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/require-import': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',

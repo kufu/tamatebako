@@ -60,7 +60,7 @@ export default [
       'smarthr/best-practice-for-data-test-attribute': 'off',
       'smarthr/best-practice-for-default-props': 'error',
       'smarthr/best-practice-for-interactive-element': 'error',
-      'smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
+      'smarthr/best-practice-for-lazy-variable': ['error', { fix: false }],
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
       'smarthr/best-practice-for-no-unnecessary-variable': 'off',

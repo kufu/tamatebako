@@ -48,7 +48,7 @@ export default [
       'smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
       'smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
       'smarthr/a11y-prohibit-input-placeholder': 'error',
-      'smarthr/a11y-prohibit-overflow-hidden': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定
+      'smarthr/a11y-prohibit-overflow-hidden': 'error',
       'smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
       'smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
       'smarthr/a11y-scroller-has-tabindex': 'warn', // TODO: 2026/04にwarn化。問題なければerrorに変更予定

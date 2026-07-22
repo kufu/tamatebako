@@ -217,7 +217,7 @@ const config = {
     'eslint-plugin-smarthr/a11y-trigger-has-button': 'error',
     'eslint-plugin-smarthr/best-practice-for-async-current-target': 'error',
     'eslint-plugin-smarthr/best-practice-for-button-element': 'error',
-    'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'error',
     'eslint-plugin-smarthr/best-practice-for-date': 'error',
     'eslint-plugin-smarthr/best-practice-for-data-test-attribute': 'off',
     'eslint-plugin-smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定

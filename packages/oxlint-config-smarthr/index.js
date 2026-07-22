@@ -198,7 +198,7 @@ const config = {
 
     // === eslint-plugin-smarthr ===
     'eslint-plugin-smarthr/a11y-anchor-has-href-attribute': 'error',
-    'eslint-plugin-smarthr/a11y-aria-labelledby': 'warn',
+    'eslint-plugin-smarthr/a11y-aria-labelledby': 'error',
     'eslint-plugin-smarthr/a11y-clickable-element-has-text': 'error',
     'eslint-plugin-smarthr/a11y-form-control-in-form': 'error',
     'eslint-plugin-smarthr/a11y-heading-in-sectioning-content': 'error',
@@ -210,38 +210,38 @@ const config = {
     'eslint-plugin-smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-placeholder': 'error',
-    'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'warn',
+    'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
-    'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'warn',
+    'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'error',
     'eslint-plugin-smarthr/a11y-trigger-has-button': 'error',
     'eslint-plugin-smarthr/best-practice-for-async-current-target': 'error',
     'eslint-plugin-smarthr/best-practice-for-button-element': 'error',
-    'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/best-practice-for-consecutive-definition-list': 'error',
     'eslint-plugin-smarthr/best-practice-for-date': 'error',
     'eslint-plugin-smarthr/best-practice-for-data-test-attribute': 'off',
-    'eslint-plugin-smarthr/best-practice-for-default-props': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/best-practice-for-default-props': 'error',
     'eslint-plugin-smarthr/best-practice-for-interactive-element': 'error',
-    'eslint-plugin-smarthr/best-practice-for-lazy-variable': ['warn', { fix: false }], // TODO: 2026/06にwarn化。問題なければerrorに変更予定。fix: false は問題なければ true にする
+    'eslint-plugin-smarthr/best-practice-for-lazy-variable': ['error', { fix: false }],
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',
     'eslint-plugin-smarthr/best-practice-for-nested-attributes-array-index': 'error',
     'eslint-plugin-smarthr/best-practice-for-no-unnecessary-variable': 'off',
-    'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'warn', // TODO: 2026/06に導入。導入したプロダクトの数に応じてerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'error',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
-    'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'warn', // TODO: 2026/07に導入。問題なければerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-reduce-redundant-calls': 'error',
     'eslint-plugin-smarthr/best-practice-for-remote-trigger-dialog': 'error',
-    'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off',
-    'eslint-plugin-smarthr/best-practice-for-spread-syntax': ['error', { fix: true }],
+    'eslint-plugin-smarthr/best-practice-for-rest-parameters': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
+    'eslint-plugin-smarthr/best-practice-for-spread-syntax': [ 'error', { fix: true } ],
     'eslint-plugin-smarthr/best-practice-for-tailwind-prohibit-root-margin': 'off',
     'eslint-plugin-smarthr/best-practice-for-tailwind-variants': 'off',
-    'eslint-plugin-smarthr/best-practice-for-text-component': 'warn',
-    'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off',
+    'eslint-plugin-smarthr/best-practice-for-text-component': 'error',
+    'eslint-plugin-smarthr/best-practice-for-unnesessary-early-return': 'off', // TODO: 2025/12に導入。導入したプロダクトの数に応じてerror化を検討予定
     'eslint-plugin-smarthr/component-name': 'error',
-    'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
-    'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'warn',
+    'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'error',
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
-    'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
     'eslint-plugin-smarthr/format-import-path': 'off',
     'eslint-plugin-smarthr/format-translate-component': 'off',
     'eslint-plugin-smarthr/no-import-other-domain': 'off',
@@ -252,8 +252,8 @@ const config = {
     'eslint-plugin-smarthr/require-barrel-import': 'error',
     'eslint-plugin-smarthr/require-declaration': 'off',
     'eslint-plugin-smarthr/require-export': 'off',
-    'eslint-plugin-smarthr/require-i18n-text': 'warn',
-    'eslint-plugin-smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
+    'eslint-plugin-smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
     'eslint-plugin-smarthr/require-import': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',
   },

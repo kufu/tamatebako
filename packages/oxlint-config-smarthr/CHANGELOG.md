@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.19](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.18...oxlint-config-smarthr-v0.1.19) (2026-07-22)
+
+
+### Features
+
+* update ESLint rule severities in oxlint-config-smarthr ([#1478](https://github.com/kufu/tamatebako/issues/1478)) ([b00f155](https://github.com/kufu/tamatebako/commit/b00f155643178d4c28e8f0ac375e53bc430ea243))
+
 ## [0.1.18](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.17...oxlint-config-smarthr-v0.1.18) (2026-07-14)
 
 

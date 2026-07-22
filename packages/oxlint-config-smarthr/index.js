@@ -210,7 +210,7 @@ const config = {
     'eslint-plugin-smarthr/a11y-prohibit-checkbox-or-radio-in-table-cell': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-maxlength-attribute': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-input-placeholder': 'error',
-    'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'warn',
+    'eslint-plugin-smarthr/a11y-prohibit-overflow-hidden': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-sectioning-content-in-form': 'error',
     'eslint-plugin-smarthr/a11y-prohibit-useless-sectioning-fragment': 'error',
     'eslint-plugin-smarthr/a11y-scroller-has-tabindex': 'warn',

@@ -79,7 +79,7 @@ export default [
       'smarthr/design-system-guideline-bulk-action-row-button': 'error',
       'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
-      'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'warn', // TODO: 2026/05にwarn化。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',

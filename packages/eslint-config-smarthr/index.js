@@ -91,7 +91,7 @@ export default [
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
       'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
-      'smarthr/require-i18n-translation-sync': 'off', // TODO: 2026/06に導入。問題なければwarn/error化を検討予定
+      'smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

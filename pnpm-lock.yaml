@@ -30,7 +30,7 @@ importers:
         specifier: ^30.4.2
         version: 30.4.2(@types/node@20.19.42)
       prettier:
-        specifier: ^3.8.5
+        specifier: ^3.9.5
         version: 3.9.5
       prettier-config-smarthr:
         specifier: ^1.0.1
@@ -13562,7 +13562,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
-      postcss: 8.5.15
+      postcss: 8.5.20
       rollup: 4.60.3
       tinyglobby: 0.2.16
     optionalDependencies:

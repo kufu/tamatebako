@@ -8,7 +8,7 @@ SmartHR Design Systemのガイドラインに基づき、InformationPanelは白�
 
 **理由:**
 - InformationPanelのレイヤー順序は3です
-- Baseのレイヤー順序は1です
+- Panelのレイヤー順序は1です
 - 視覚的に適切な階層関係を保つため、白背景の上に直接配置することは避けるべきです
 
 詳細: https://smarthr.design/products/components/information-panel/#h3-1
@@ -17,19 +17,19 @@ SmartHR Design Systemのガイドラインに基づき、InformationPanelは白�
 
 このルールは以下のパターンを検出します:
 
-### 1. Base内にInformationPanel
+### 1. Panel内にInformationPanel
 
 ```tsx
 // ❌ Bad
-<Base>
+<Panel>
   <InformationPanel>情報</InformationPanel>
-</Base>
+</Panel>
 
-<Base>
+<Panel>
   <div>
     <InformationPanel>情報</InformationPanel>
   </div>
-</Base>
+</Panel>
 ```
 
 ### 2. Dialog内にInformationPanel（白背景）
@@ -51,17 +51,23 @@ contentBgColorが未指定、または"WHITE"が指定されている場合:
 
 以下の場合はエラーになりません:
 
-### BaseColumn内にある場合
+### BaseColumnまたはGroupbox内にある場合
 
-BaseColumnは背景色を持つため、その中にInformationPanelを配置することは問題ありません:
+BaseColumnまたはGroupboxは背景色を持つため、その中にInformationPanelを配置することは問題ありません:
 
 ```tsx
 // ✅ Good
-<Base>
+<Panel>
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
-</Base>
+</Panel>
+
+<Panel>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
+</Panel>
 ```
 
 ### DialogでcontentBgColorが指定されている場合
@@ -89,36 +95,42 @@ BaseColumnは背景色を持つため、その中にInformationPanelを配置す
   <InformationPanel>情報</InformationPanel>
 </Cluster>
 
-// ✅ Good: BaseColumnを使用
-<Base>
+// ✅ Good: BaseColumnまたはGroupboxを使用
+<Panel>
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
-</Base>
+</Panel>
+
+<Base>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
+</Panel>
 
 // ✅ Good: DialogでcontentBgColorを指定
 <ActionDialog contentBgColor="COLUMN">
   <InformationPanel>情報</InformationPanel>
 </ActionDialog>
 
-// ✅ Good: Base外で使用
+// ✅ Good: Panel外で使用
 <InformationPanel>情報</InformationPanel>
 ```
 
 ## 誤った使用例
 
 ```tsx
-// ❌ Bad: Base内に直接配置
-<Base>
+// ❌ Bad: Panel内に直接配置
+<Panel>
   <InformationPanel>情報</InformationPanel>
-</Base>
+</Panel>
 
-// ❌ Bad: Base内の他要素の中に配置
-<Base>
+// ❌ Bad: Panel内の他要素の中に配置
+<Panel>
   <div>
     <InformationPanel>情報</InformationPanel>
   </div>
-</Base>
+</Panel>
 
 // ❌ Bad: DialogでcontentBgColorが未指定
 <ActionDialog>
@@ -146,7 +158,7 @@ DialogContents（Dialog内部のコンテンツ領域）はデフォルトで白
 
 **解決方法:**
 1. contentBgColorを指定する（推奨）
-2. BaseColumnで包む
+2. BaseColumnまたはGroupboxで包む
 
 ```tsx
 // ✅ Good: contentBgColorを指定
@@ -159,5 +171,12 @@ DialogContents（Dialog内部のコンテンツ領域）はデフォルトで白
   <BaseColumn>
     <InformationPanel>情報</InformationPanel>
   </BaseColumn>
+</ActionDialog>
+
+// ✅ Good: Groupboxで包む
+<ActionDialog>
+  <Groupbox>
+    <InformationPanel>情報</InformationPanel>
+  </Groupbox>
 </ActionDialog>
 ```

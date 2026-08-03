@@ -57,6 +57,7 @@ ruleTester.run('a11y-heading-in-sectioning-content', rule, {
     { code: '<HogeBase as="aside"><Heading>hoge</Heading></HogeBase>' },
     { code: '<HogeBaseColumn forwardedAs="nav"><Heading>hoge</Heading></HogeBaseColumn>' },
     { code: '<HogeGroupbox forwardedAs="nav"><Heading>hoge</Heading></HogeGroupbox>' },
+    { code: '<Panel as="section"><Heading>hoge</Heading></Panel>' },
     { code: '<HogeNav aria-label="any"><Any /></HogeNav>' },
     { code: '<HogeNav aria-labelledby="any"><Any /></HogeNav>' },
   ],

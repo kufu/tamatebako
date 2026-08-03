@@ -4,7 +4,7 @@
  * SmartHR Design System ガイドラインに基づき、InformationPanelを白背景に直接配置することを防ぎます。
  *
  * 検出パターン:
- * 1. Base内にInformationPanel
+ * 1. Base/Panel内にInformationPanel
  * 2. Dialog内にInformationPanel（contentBgColorが未指定またはWHITE）
  *
  * 例外:
@@ -56,9 +56,9 @@ module.exports = {
     }
 
     return {
-      // Base以下のInformationPanel
-      'JSXElement[openingElement.name.name="Base"] JSXElement[openingElement.name.name="InformationPanel"]'(node) {
-        const result = checkWhiteBg(node, 'Base')
+      // Base/Panel以下のInformationPanel
+      'JSXElement[openingElement.name.name=/^(Base|Panel)$/] JSXElement[openingElement.name.name="InformationPanel"]'(node) {
+        const result = checkWhiteBg(node, /^(Base|Panel)$/)
         if (!result.ok) {
           context.report({ node, messageId: 'inWhiteBg' })
         }

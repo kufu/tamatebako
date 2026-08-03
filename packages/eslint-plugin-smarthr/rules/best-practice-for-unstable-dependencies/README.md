@@ -205,11 +205,65 @@ useEffect(() => {
 
 **注意:** メモ化は依存関係が明確な場合に有効です。依存関係が不明確な場合は、方法1のrefを使用することを推奨します。
 
+### 方法5: イベントオブジェクトから値を取得する（useCallbackの場合）
+
+useCallbackでイベントハンドラーを定義する場合、値を依存配列に含めずに、イベントオブジェクトから取得できます。
+
+**button要素の`value`属性を使う:**
+
+```javascript
+// ❌ 値を依存配列に含める
+const handleClick = useCallback(() => {
+  doSomething(itemId)
+}, [itemId])  // itemIdが変わるたびにコールバックが再生成される
+
+<button onClick={handleClick}>削除</button>
+```
+
+```javascript
+// ✅ イベントから値を取得
+const handleClick = useCallback((e) => {
+  const itemId = e.currentTarget.value
+  doSomething(itemId)
+}, [])  // 依存配列が空になり、コールバックが安定する
+
+<button value={itemId} onClick={handleClick}>削除</button>
+```
+
+**data-*属性も同様に使える:**
+
+```javascript
+const handleClick = useCallback((e) => {
+  const itemId = e.currentTarget.getAttribute('data-id')
+  const itemType = e.currentTarget.getAttribute('data-type')
+  doSomething(itemId, itemType)
+}, [])
+
+<button
+  data-id={itemId}
+  data-type={itemType}
+  onClick={handleClick}
+>
+  削除
+</button>
+```
+
+**メリット:**
+- 依存配列が空になり、コールバックが安定する
+- コンポーネントの再レンダリングが減る
+- リスト内の各アイテムで異なるコールバック関数を生成する必要がない
+
+**注意:**
+- この方法はイベントハンドラー（onClick、onChange等）でのみ使用できます。useEffect内など、イベントオブジェクトがない場合は他の方法を使用してください。
+- `value`属性や`getAttribute()`で取得した値は**文字列**になります。数値や真偽値が必要な場合は適切に変換してください（例: `Number(e.currentTarget.value)`、`e.currentTarget.value === 'true'`）。
+
 ## オプション
 
 ### additionalUnstableNames
 
 デフォルトでは `children` のみをチェックしますが、他の変数名を追加できます。
+
+#### 文字列形式（完全一致）
 
 ```javascript
 {
@@ -217,6 +271,78 @@ useEffect(() => {
     "additionalUnstableNames": ["icon", "prefix", "object", "items", "callback"]
   }]
 }
+```
+
+#### 正規表現パターン
+
+`/pattern/` のように先頭と末尾を `/` で囲むと、正規表現パターンとして扱われます。
+
+**例1: Refで終わる変数を検出**
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": ["/Ref$/"]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  console.log(inputRef.current)
+}, [inputRef])  // "inputRef"はパターン/Ref$/にマッチ
+```
+
+**例2: onで始まる変数（イベントハンドラー）を検出**
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": ["/^on[A-Z]/"]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  onClick()
+}, [onClick])  // "onClick"はパターン/^on[A-Z]/にマッチ
+```
+
+#### オブジェクト形式（カスタムメッセージ付き）
+
+特定のパターンに対して独自のエラーメッセージを設定できます。
+
+```javascript
+{
+  "smarthr/best-practice-for-unstable-dependencies": ["error", {
+    "additionalUnstableNames": [
+      {
+        "pattern": "/Ref$/",
+        "message": "Refは再レンダリングをトリガーしません。"
+      },
+      {
+        "pattern": "/^on[A-Z]/",
+        "message": "イベントハンドラーは依存配列に含めないでください。"
+      }
+    ]
+  }]
+}
+```
+
+```javascript
+// ❌ NG
+useEffect(() => {
+  console.log(inputRef.current)
+}, [inputRef])
+// エラー: 依存配列に不安定な参照と予想される"inputRef"が含まれています。Refは再レンダリングをトリガーしません。
+
+useEffect(() => {
+  onClick()
+}, [onClick])
+// エラー: 依存配列に不安定な参照と予想される"onClick"が含まれています。イベントハンドラーは依存配列に含めないでください。
 ```
 
 ### additionalTargetHooks

@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:kufu/tamatebako.git"
+    "url": "git+https://github.com/kufu/tamatebako.git"
   },
   "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/stylelint-config-smarthr",
   "publishConfig": {
@@ -29,12 +29,12 @@
     "@types/jest": "^30.0.0",
     "@types/styled-components": "^5.1.36",
     "jest": "^30.4.2",
-    "postcss-styled-syntax": "^0.7.1",
-    "styled-components": "^6.4.2",
-    "stylelint": "^17.13.0",
+    "postcss-styled-syntax": "^0.7.2",
+    "styled-components": "^6.4.3",
+    "stylelint": "^17.14.0",
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-config-standard": "^40.0.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "postcss-styled-syntax": "^0.4.0 || ^0.5.0 || ^0.6.0 || ^0.7.0",

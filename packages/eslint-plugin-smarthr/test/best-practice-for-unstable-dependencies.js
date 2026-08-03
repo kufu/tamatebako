@@ -84,6 +84,33 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
       `,
       options: [{ additionalTargetHooks: ['useCustom'] }],
     },
+    // 正規表現パターン: Refで終わらない変数
+    {
+      code: `
+        useEffect(() => {
+          console.log(reference)
+        }, [reference])
+      `,
+      options: [{ additionalUnstableNames: ['/Ref$/'] }],
+    },
+    // 正規表現パターン: onで始まらない変数
+    {
+      code: `
+        useEffect(() => {
+          console.log(handler)
+        }, [handler])
+      `,
+      options: [{ additionalUnstableNames: ['/^on[A-Z]/'] }],
+    },
+    // オブジェクト形式: パターンにマッチしない
+    {
+      code: `
+        useEffect(() => {
+          console.log(value)
+        }, [value])
+      `,
+      options: [{ additionalUnstableNames: [{ pattern: '/Ref$/', message: 'Refは再レンダリングをトリガーしません。' }] }],
+    },
   ],
   invalid: [
     // useEffect with children
@@ -277,6 +304,104 @@ ruleTester.run('best-practice-for-unstable-dependencies', rule, {
         {
           messageId: 'unstableDependency',
           data: { name: 'icon', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 正規表現パターン: Refで終わる変数を検出
+    {
+      code: `
+        useEffect(() => {
+          console.log(inputRef.current)
+        }, [inputRef])
+      `,
+      options: [{ additionalUnstableNames: ['/Ref$/'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'inputRef', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 正規表現パターン: onで始まる変数（イベントハンドラ）を検出
+    {
+      code: `
+        useEffect(() => {
+          onClick()
+        }, [onClick])
+      `,
+      options: [{ additionalUnstableNames: ['/^on[A-Z]/'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'onClick', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 正規表現パターン: 複数のパターンを指定
+    {
+      code: `
+        useEffect(() => {
+          console.log(buttonRef, onChange)
+        }, [buttonRef, onChange])
+      `,
+      options: [{ additionalUnstableNames: ['/Ref$/', '/^on[A-Z]/'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'buttonRef', detailLink: DETAIL_LINK },
+        },
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'onChange', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // オブジェクト形式: カスタムメッセージを指定
+    {
+      code: `
+        useEffect(() => {
+          console.log(inputRef.current)
+        }, [inputRef])
+      `,
+      options: [{ additionalUnstableNames: [{ pattern: '/Ref$/', message: 'Refは再レンダリングをトリガーしません。' }] }],
+      errors: [
+        {
+          messageId: 'customUnstableDependency',
+          data: { name: 'inputRef', message: 'Refは再レンダリングをトリガーしません。', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 文字列とオブジェクト形式の混在
+    {
+      code: `
+        useEffect(() => {
+          console.log(icon, onClick)
+        }, [icon, onClick])
+      `,
+      options: [{ additionalUnstableNames: ['icon', { pattern: '/^on[A-Z]/', message: 'イベントハンドラーは依存配列に含めないでください。' }] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'icon', detailLink: DETAIL_LINK },
+        },
+        {
+          messageId: 'customUnstableDependency',
+          data: { name: 'onClick', message: 'イベントハンドラーは依存配列に含めないでください。', detailLink: DETAIL_LINK },
+        },
+      ],
+    },
+    // 正規表現パターン: ドル記号のエスケープを確認
+    {
+      code: `
+        useEffect(() => {
+          console.log(price$)
+        }, [price$])
+      `,
+      options: [{ additionalUnstableNames: ['price$'] }],
+      errors: [
+        {
+          messageId: 'unstableDependency',
+          data: { name: 'price$', detailLink: DETAIL_LINK },
         },
       ],
     },

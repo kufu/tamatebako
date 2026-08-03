@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.23.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.1...eslint-plugin-smarthr-v6.23.0) (2026-07-14)
+
+
+### Features
+
+* **autofixer:** smarthr-ui v97→v98 移行ルールを追加 ([#1454](https://github.com/kufu/tamatebako/issues/1454)) ([4532cf4](https://github.com/kufu/tamatebako/commit/4532cf438d61a2232225e42bbebaed5d428edfc6))
+* **best-practice-for-optional-chaining:** if文の条件部分にマッチする箇所へoptional chainingを挿入 ([#1453](https://github.com/kufu/tamatebako/issues/1453)) ([ca2194f](https://github.com/kufu/tamatebako/commit/ca2194fa95a4bfa275ef1c9e4a0975c1c93c78c0))
+
+
+### Bug Fixes
+
+* else句/default句がない場合は検出対象外にする ([#1455](https://github.com/kufu/tamatebako/issues/1455)) ([2fb5bc9](https://github.com/kufu/tamatebako/commit/2fb5bc95bfb298e84d953d35f7143a43b796398c))
+* update JSX detection logic documentation for reduce-redundant-calls ([#1451](https://github.com/kufu/tamatebako/issues/1451)) ([1a043f9](https://github.com/kufu/tamatebako/commit/1a043f9c98d81fc81b0093748f4d5880d4eb9864))
+
+## [6.22.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.0...eslint-plugin-smarthr-v6.22.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* best-practice-for-reduce-redundant-callsでJSX属性の差分数に基づいて検出するように改善 ([#1446](https://github.com/kufu/tamatebako/issues/1446)) ([b74f734](https://github.com/kufu/tamatebako/commit/b74f734dd1315f8bf6cd2ccab5f21f0571326c74))
+
+## [6.22.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.2...eslint-plugin-smarthr-v6.22.0) (2026-07-02)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration v95-to-v96, v96-to-v97 対応 ([#1442](https://github.com/kufu/tamatebako/issues/1442)) ([d70787b](https://github.com/kufu/tamatebako/commit/d70787bc6961b0f65b6cc78506fab92707ce3f90))
+* best-practice-for-reduce-redundant-calls ルールを追加 ([#1440](https://github.com/kufu/tamatebako/issues/1440)) ([0564d24](https://github.com/kufu/tamatebako/commit/0564d24fa5de3b9f812d23c7396411e064604234))
+* best-practice-for-unstable-dependenciesに正規表現パターンとカスタムメッセージを追加 ([#1424](https://github.com/kufu/tamatebako/issues/1424)) ([9ed3f1f](https://github.com/kufu/tamatebako/commit/9ed3f1fac878b7f0f37c5a1f3db1b66d30d507c9))
+
+## [6.21.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.1...eslint-plugin-smarthr-v6.21.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* require-i18n-translation-syncでsatisfies演算子に対応 ([#1415](https://github.com/kufu/tamatebako/issues/1415)) ([d0eb87a](https://github.com/kufu/tamatebako/commit/d0eb87a1616c63145499b8adc9fc20d5f6f8c5b9))
+
+## [6.21.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.0...eslint-plugin-smarthr-v6.21.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* **eslint-plugin-smarthr:** use https repository metadata ([#1407](https://github.com/kufu/tamatebako/issues/1407)) ([e6d3d82](https://github.com/kufu/tamatebako/commit/e6d3d82d4d833a2716c67d91f82fe7bd6e2ab6cc))
+
+## [6.21.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.20.0...eslint-plugin-smarthr-v6.21.0) (2026-06-22)
+
+
+### Features
+
+* require-i18n-translation-sync ESLintルールを追加 ([#1406](https://github.com/kufu/tamatebako/issues/1406)) ([5286bbb](https://github.com/kufu/tamatebako/commit/5286bbb94c6b774f9132f6d40ef36c216cff0399))
+
 ## [6.20.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.19.0...eslint-plugin-smarthr-v6.20.0) (2026-06-16)
 
 

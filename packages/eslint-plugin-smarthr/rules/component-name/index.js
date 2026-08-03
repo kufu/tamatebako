@@ -79,6 +79,7 @@ const EXPECTED_NAMES = {
   'AnchorButton$': 'AnchorButton$',
   'Base$': 'Base$',  // 後方互換性のために残す
   'BaseColumn$': 'BaseColumn$',
+  'Groupbox$': 'Groupbox$',
   'Panel$': 'Panel$',
   'Center$': 'Center$',
   'Check(B|b)ox$': 'Checkbox$',
@@ -157,6 +158,7 @@ const UNEXPECTED_NAMES = {
   '(T|^t)extarea$': '(Textarea)$',
   'Base$': '(Base)$',  // 後方互換性のために残す
   'BaseColumn$': '(BaseColumn)$',
+  'Groupbox$': '(Groupbox)$',
   'Panel$': '(Panel)$',
   'Center$': '(Center)$',
   'Check(B|b)ox$': '(Checkbox)$',

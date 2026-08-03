@@ -160,8 +160,8 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       use-intl:
-        specifier: ^4.13.2
-        version: 4.13.2(react@19.2.7)
+        specifier: ^4.13.4
+        version: 4.13.4(react@19.2.7)
 
   packages/next-auth:
     dependencies:
@@ -4326,9 +4326,6 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  icu-minify@4.13.2:
-    resolution: {integrity: sha512-XhYQTEnBXBCyF6ERiwItFweoOXDUciujaGjIWCA7RhOCEPDfhVSTtuwfRq6HdVk7tKnYJh+yaurP96zGnaKsPg==}
-
   icu-minify@4.13.4:
     resolution: {integrity: sha512-yK6HyPLGlQjqm8fTKtnBpM77z7vl7JdDBN2EXLvmgAu/b7XaOHWZb73M3ISl9ahBTehBv7RYeqqWSHfk1v2YcA==}
 
@@ -6234,11 +6231,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  use-intl@4.13.2:
-    resolution: {integrity: sha512-p6/gCromeBoec+wEuOIkPaytH77RBjW94KWv8MRsNrbI4UOx8QgwNhgl9lbPOKM/b0dpanLhCYztLEH5yQUjtg==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
   use-intl@4.13.4:
     resolution: {integrity: sha512-wRhU5zyPNgu845++EJ8ckQsi89b22QUop7NlGxNXpsnKSwEJr7WErAkdAYeVQgFTmDWsa8e2NI1e14XbWz9Ecw==}
@@ -10924,10 +10916,6 @@ snapshots:
     dependencies:
       postcss: 8.5.20
 
-  icu-minify@4.13.2:
-    dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.7
-
   icu-minify@4.13.4:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.7
@@ -13280,14 +13268,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-intl@4.13.2(react@19.2.7):
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.4
-      '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.13.2
-      intl-messageformat: 11.2.4
-      react: 19.2.7
 
   use-intl@4.13.4(react@19.2.7):
     dependencies:

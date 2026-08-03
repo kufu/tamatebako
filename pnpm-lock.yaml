@@ -151,7 +151,7 @@ importers:
         specifier: ^30.4.1
         version: 30.4.1
       next-intl:
-        specifier: ^4.13.3
+        specifier: ^4.13.4
         version: 4.13.4(next@14.2.16(@babel/core@7.29.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(typescript@6.0.3)
       react:
         specifier: ^19.2.7
@@ -160,8 +160,8 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       use-intl:
-        specifier: ^4.13.2
-        version: 4.13.2(react@19.2.7)
+        specifier: ^4.13.4
+        version: 4.13.4(react@19.2.7)
 
   packages/next-auth:
     dependencies:
@@ -256,10 +256,10 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.95.0(@swc/core@1.13.5)(postcss@8.5.20))
       '@storybook/react':
-        specifier: ^10.5.0
+        specifier: ^10.5.4
         version: 10.5.5(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@storybook/react-webpack5':
-        specifier: ^10.5.0
+        specifier: ^10.5.4
         version: 10.5.5(@swc/core@1.13.5)(@types/react@19.2.17)(postcss@8.5.20)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@types/react':
         specifier: ^19.2.17
@@ -274,7 +274,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       storybook:
-        specifier: ^10.5.0
+        specifier: ^10.5.4
         version: 10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   packages/wareki: {}
@@ -4326,9 +4326,6 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  icu-minify@4.13.2:
-    resolution: {integrity: sha512-XhYQTEnBXBCyF6ERiwItFweoOXDUciujaGjIWCA7RhOCEPDfhVSTtuwfRq6HdVk7tKnYJh+yaurP96zGnaKsPg==}
-
   icu-minify@4.13.4:
     resolution: {integrity: sha512-yK6HyPLGlQjqm8fTKtnBpM77z7vl7JdDBN2EXLvmgAu/b7XaOHWZb73M3ISl9ahBTehBv7RYeqqWSHfk1v2YcA==}
 
@@ -6235,11 +6232,6 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-intl@4.13.2:
-    resolution: {integrity: sha512-p6/gCromeBoec+wEuOIkPaytH77RBjW94KWv8MRsNrbI4UOx8QgwNhgl9lbPOKM/b0dpanLhCYztLEH5yQUjtg==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
-
   use-intl@4.13.4:
     resolution: {integrity: sha512-wRhU5zyPNgu845++EJ8ckQsi89b22QUop7NlGxNXpsnKSwEJr7WErAkdAYeVQgFTmDWsa8e2NI1e14XbWz9Ecw==}
     peerDependencies:
@@ -7975,7 +7967,7 @@ snapshots:
 
   '@jest/pattern@30.0.0':
     dependencies:
-      '@types/node': 20.19.42
+      '@types/node': 20.19.43
       jest-regex-util: 30.0.0
 
   '@jest/pattern@30.4.0':
@@ -10924,10 +10916,6 @@ snapshots:
     dependencies:
       postcss: 8.5.20
 
-  icu-minify@4.13.2:
-    dependencies:
-      '@formatjs/icu-messageformat-parser': 3.5.7
-
   icu-minify@4.13.4:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.7
@@ -13280,14 +13268,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-intl@4.13.2(react@19.2.7):
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.4
-      '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.13.2
-      intl-messageformat: 11.2.4
-      react: 19.2.7
 
   use-intl@4.13.4(react@19.2.7):
     dependencies:

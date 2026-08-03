@@ -151,7 +151,7 @@ importers:
         specifier: ^30.4.1
         version: 30.4.1
       next-intl:
-        specifier: ^4.13.3
+        specifier: ^4.13.4
         version: 4.13.4(next@14.2.16(@babel/core@7.29.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(typescript@6.0.3)
       react:
         specifier: ^19.2.7

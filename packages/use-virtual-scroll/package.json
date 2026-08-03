@@ -40,8 +40,8 @@
     "@storybook/react-webpack5": "^10.4.6",
     "@types/react": "^19.2.17",
     "babel-loader": "^10.1.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "storybook": "^10.4.6"
   }
 }

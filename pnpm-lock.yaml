@@ -11181,7 +11181,7 @@ snapshots:
       '@babel/parser': 7.29.7
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.8.2
+      semver: 7.8.5
     transitivePeerDependencies:
       - supports-color
 

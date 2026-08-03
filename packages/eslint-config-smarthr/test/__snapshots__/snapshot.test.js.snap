@@ -2988,7 +2988,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-aria-labelledby": [
-      1,
+      2,
     ],
     "smarthr/a11y-clickable-element-has-text": [
       2,
@@ -3024,7 +3024,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-prohibit-overflow-hidden": [
-      1,
+      2,
     ],
     "smarthr/a11y-prohibit-sectioning-content-in-form": [
       2,
@@ -3033,7 +3033,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/a11y-scroller-has-tabindex": [
-      1,
+      2,
     ],
     "smarthr/a11y-trigger-has-button": [
       2,
@@ -3045,7 +3045,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-consecutive-definition-list": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-data-test-attribute": [
       0,
@@ -3054,7 +3054,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-default-props": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-interactive-element": [
       2,
@@ -3063,7 +3063,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-lazy-variable": [
-      1,
+      2,
       {
         "fix": false,
       },
@@ -3081,7 +3081,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-reduce-redundant-calls": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-remote-trigger-dialog": [
       2,
@@ -3103,28 +3103,28 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       0,
     ],
     "smarthr/best-practice-for-text-component": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-unnesessary-early-return": [
       0,
     ],
     "smarthr/best-practice-for-unstable-dependencies": [
-      1,
+      2,
     ],
     "smarthr/component-name": [
       2,
     ],
     "smarthr/design-system-guideline-bulk-action-row-button": [
-      1,
+      2,
     ],
     "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
-      1,
+      2,
     ],
     "smarthr/design-system-guideline-prohibit-double-icons": [
       0,
     ],
     "smarthr/design-system-guideline-prohibit-information-panel-in-white-bg": [
-      1,
+      2,
     ],
     "smarthr/format-import-path": [
       0,
@@ -3160,7 +3160,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       1,
     ],
     "smarthr/require-i18n-translation-sync": [
-      0,
+      1,
     ],
     "smarthr/require-import": [
       0,

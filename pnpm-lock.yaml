@@ -256,10 +256,10 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3(storybook@10.5.9(@types/react@19.2.18)(prettier@3.9.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(webpack@5.95.0(@swc/core@1.13.5)(clean-css@5.3.3)(esbuild@0.25.12)(html-minifier-terser@6.1.0)(postcss@8.5.20)(uglify-js@3.19.3))
       '@storybook/react':
-        specifier: ^10.5.7
+        specifier: ^10.5.8
         version: 10.5.9(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.5.9(@types/react@19.2.18)(prettier@3.9.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@10.2.2)(typescript@6.0.3)
       '@storybook/react-webpack5':
-        specifier: ^10.5.7
+        specifier: ^10.5.8
         version: 10.5.9(@swc/core@1.13.5)(@types/react@19.2.18)(clean-css@5.3.3)(esbuild@0.25.12)(html-minifier-terser@6.1.0)(postcss@8.5.20)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.5.9(@types/react@19.2.18)(prettier@3.9.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@10.2.2)(typescript@6.0.3)(uglify-js@3.19.3)
       '@types/react':
         specifier: ^19.2.18
@@ -274,7 +274,7 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
       storybook:
-        specifier: ^10.5.7
+        specifier: ^10.5.8
         version: 10.5.9(@types/react@19.2.18)(prettier@3.9.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   packages/wareki: {}

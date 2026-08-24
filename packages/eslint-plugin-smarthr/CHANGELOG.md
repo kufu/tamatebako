@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.24.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.23.0...eslint-plugin-smarthr-v6.24.0) (2026-08-24)
+
+
+### Features
+
+* Groupboxコンポーネントのサポート追加（BaseColumnとの互換性維持） ([#1456](https://github.com/kufu/tamatebako/issues/1456)) ([7fb6e32](https://github.com/kufu/tamatebako/commit/7fb6e32c0ace63b2c4289eb8d264a9ac5b6392d0))
+* Panelコンポーネント対応を追加 ([#1198](https://github.com/kufu/tamatebako/issues/1198)) ([d67a48a](https://github.com/kufu/tamatebako/commit/d67a48a999719629b99460bd23fa026a020ca949))
+
 ## [6.23.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.1...eslint-plugin-smarthr-v6.23.0) (2026-07-14)
 
 

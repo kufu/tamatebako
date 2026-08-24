@@ -15,6 +15,20 @@ const TARGET_EXTS = ['ts', 'tsx', 'js', 'jsx']
 const isBarrelFile = (filePath, barrelFileNames) => barrelFileNames.includes(path.basename(filePath, path.extname(filePath)))
 
 /**
+ * ファイルのトップレベルに書かれた宣言かどうか
+ * 関数やブロックの内部にあるローカル宣言は、それを含むトップレベルの宣言が
+ * 報告されるため、重複して報告しない
+ * @param {object} node - 判定対象のnode
+ * @param {object} [node.parent] - 親node
+ * @returns {boolean}
+ */
+const isTopLevelDeclaration = ({ parent }) =>
+  parent?.type === 'Program' ||
+  // export const Foo = ... / export default function Foo() {} 等
+  ((parent?.type === 'ExportNamedDeclaration' || parent?.type === 'ExportDefaultDeclaration') &&
+    parent.parent?.type === 'Program')
+
+/**
  * バレルファイルの純粋性をチェックするビジター
  * バレルファイルは re-export のみを行うべきで、以下は禁止:
  * - import文
@@ -34,6 +48,11 @@ const createBarrelPurityVisitor = (context, barrelFileNames) => {
 
   // エラー報告の共通処理
   const reportPurityError = (node) => {
+    // トップレベル以外（関数内のローカル宣言等）は報告しない
+    if (!isTopLevelDeclaration(node)) {
+      return
+    }
+
     context.report({
       node,
       message: `バレルファイルは設置されたディレクトリ外へのexportが責務です。

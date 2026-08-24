@@ -19,25 +19,14 @@ const isBarrelFile = (filePath, barrelFileNames) => barrelFileNames.includes(pat
  * 関数やブロックの内部にあるローカル宣言は、それを含むトップレベルの宣言が
  * 報告されるため、重複して報告しない
  * @param {object} node - 判定対象のnode
+ * @param {object} [node.parent] - 親node
  * @returns {boolean}
  */
-const isTopLevelDeclaration = (node) => {
-  const parent = node.parent
-
-  if (!parent) {
-    return false
-  }
-
-  if (parent.type === 'Program') {
-    return true
-  }
-
+const isTopLevelDeclaration = ({ parent }) =>
+  parent?.type === 'Program' ||
   // export const Foo = ... / export default function Foo() {} 等
-  return (
-    (parent.type === 'ExportNamedDeclaration' || parent.type === 'ExportDefaultDeclaration') &&
-    parent.parent?.type === 'Program'
-  )
-}
+  ((parent?.type === 'ExportNamedDeclaration' || parent?.type === 'ExportDefaultDeclaration') &&
+    parent.parent?.type === 'Program')
 
 /**
  * バレルファイルの純粋性をチェックするビジター

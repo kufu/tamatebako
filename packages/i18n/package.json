@@ -34,7 +34,7 @@
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.18",
     "jest-environment-jsdom": "^30.4.1",
-    "next-intl": "^4.13.6",
+    "next-intl": "^4.13.7",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "use-intl": "^4.13.4"

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.24.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.0...eslint-plugin-smarthr-v6.24.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* バレルファイルの純粋性チェックが関数内のローカル宣言まで報告する問題を修正 ([#1500](https://github.com/kufu/tamatebako/issues/1500)) ([951e512](https://github.com/kufu/tamatebako/commit/951e5120e468660febd702f04933583dd3b65930))
+
 ## [6.24.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.23.0...eslint-plugin-smarthr-v6.24.0) (2026-08-24)
 
 

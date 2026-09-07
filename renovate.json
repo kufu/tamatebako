@@ -1,5 +1,12 @@
 {
   "extends": [
     "github>kufu/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "利用者に影響する dependencies の更新は deps type にして release-please のリリース対象にする",
+      "matchDepTypes": ["dependencies", "optionalDependencies", "peerDependencies"],
+      "semanticCommitType": "deps"
+    }
   ]
 }

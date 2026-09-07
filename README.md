@@ -34,6 +34,8 @@ Frontend packages for projects at SmartHR
 
 基本的にはこれでリリースは完了です。
 
+リリース Pull Request は、パッケージ配下に `feat` / `fix` / `perf` / `revert` / `deps` のいずれかのコミットが入ったときに作成されます。renovate による `dependencies` / `peerDependencies` の更新は `deps:` コミットになるためリリース対象となり、`devDependencies` の更新は `chore:` コミットになるためリリース対象外です。
+
 リリースの成功/失敗は、#dev_github_tamatebako の Slack チャンネルへの通知を確認するか、Github Actions の実行結果を直接確認してください。
 
 ### 2. publish workflow に失敗した場合は手元でリリースを行う

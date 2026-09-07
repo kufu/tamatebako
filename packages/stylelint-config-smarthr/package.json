@@ -12,7 +12,7 @@
   },
   "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/stylelint-config-smarthr",
   "publishConfig": {
-    "access": "public"
+    "registry": "https://registry.npmjs.org"
   },
   "bugs": {
     "url": "https://github.com/kufu/tamatebako/issues"
@@ -21,14 +21,12 @@
     "stylelint"
   ],
   "scripts": {
-    "test": "pnpm vitest run"
+    "test": "vitest run"
   },
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "@types/styled-components": "^5.1.36",
-    "jest": "^30.4.2",
     "postcss-styled-syntax": "^0.7.2",
     "styled-components": "^6.5.3",
     "stylelint": "^17.14.1",

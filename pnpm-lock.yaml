@@ -195,15 +195,9 @@ importers:
 
   packages/stylelint-config-smarthr:
     devDependencies:
-      '@types/jest':
-        specifier: ^30.0.0
-        version: 30.0.0
       '@types/styled-components':
         specifier: ^5.1.36
         version: 5.1.36
-      jest:
-        specifier: ^30.4.2
-        version: 30.4.2(@types/node@20.19.43)(supports-color@10.2.2)
       postcss-styled-syntax:
         specifier: ^0.7.2
         version: 0.7.2(postcss@8.5.20)
@@ -11336,25 +11330,6 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@30.4.2(@types/node@20.19.43)(supports-color@10.2.2):
-    dependencies:
-      '@jest/core': 30.4.2(supports-color@10.2.2)
-      '@jest/test-result': 30.4.1
-      '@jest/types': 30.4.1
-      chalk: 4.1.2
-      exit-x: 0.2.2
-      import-local: 3.2.0
-      jest-config: 30.4.2(@types/node@20.19.43)(supports-color@10.2.2)
-      jest-util: 30.4.1
-      jest-validate: 30.4.1
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - esbuild-register
-      - supports-color
-      - ts-node
-
   jest-config@30.4.2(@types/node@20.19.42)(supports-color@10.2.2):
     dependencies:
       '@babel/core': 7.29.7(supports-color@10.2.2)
@@ -11382,37 +11357,6 @@ snapshots:
       strip-json-comments: 3.1.1
     optionalDependencies:
       '@types/node': 20.19.42
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - supports-color
-
-  jest-config@30.4.2(@types/node@20.19.43)(supports-color@10.2.2):
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@10.2.2)
-      '@jest/get-type': 30.1.0
-      '@jest/pattern': 30.4.0
-      '@jest/test-sequencer': 30.4.1
-      '@jest/types': 30.4.1
-      babel-jest: 30.4.1(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
-      chalk: 4.1.2
-      ci-info: 4.3.1
-      deepmerge: 4.3.1
-      glob: 10.5.0
-      graceful-fs: 4.2.11
-      jest-circus: 30.4.2(supports-color@10.2.2)
-      jest-docblock: 30.4.0
-      jest-environment-node: 30.4.1
-      jest-regex-util: 30.4.0
-      jest-resolve: 30.4.1
-      jest-runner: 30.4.2(supports-color@10.2.2)
-      jest-util: 30.4.1
-      jest-validate: 30.4.1
-      parse-json: 5.2.0
-      pretty-format: 30.4.1
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.19.43
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -11698,19 +11642,6 @@ snapshots:
       '@jest/types': 30.4.1
       import-local: 3.2.0
       jest-cli: 30.4.2(@types/node@20.19.42)(supports-color@10.2.2)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - esbuild-register
-      - supports-color
-      - ts-node
-
-  jest@30.4.2(@types/node@20.19.43)(supports-color@10.2.2):
-    dependencies:
-      '@jest/core': 30.4.2(supports-color@10.2.2)
-      '@jest/types': 30.4.1
-      import-local: 3.2.0
-      jest-cli: 30.4.2(@types/node@20.19.43)(supports-color@10.2.2)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros

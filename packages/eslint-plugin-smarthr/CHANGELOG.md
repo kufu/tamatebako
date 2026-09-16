@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.25.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.1...eslint-plugin-smarthr-v6.25.0) (2026-09-16)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration に v98→v99 の移行ルールを追加 ([#1524](https://github.com/kufu/tamatebako/issues/1524)) ([87a9935](https://github.com/kufu/tamatebako/commit/87a9935fd47cbc60c63214e4a2eae589d8522f16))
+
 ## [6.24.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.0...eslint-plugin-smarthr-v6.24.1) (2026-08-31)
 
 

@@ -31,8 +31,8 @@
     "react": ">=16.13.0"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.1",
-    "@babel/preset-env": "^8.0.2",
+    "@babel/core": "^8.0.5",
+    "@babel/preset-env": "^8.0.5",
     "@babel/preset-react": "^8.0.1",
     "@babel/preset-typescript": "^8.0.1",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.3",

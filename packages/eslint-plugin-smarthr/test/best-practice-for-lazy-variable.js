@@ -1669,5 +1669,27 @@ console.log(x)
         },
       ],
     },
+    // 深くネストした配列リテラルでも警告内容が変わらないこと（#1536）
+    {
+      code: `
+        export const Component = (props) => {
+          const v0 = props.a + 0
+          const v1 = props.a + 1
+          const v2 = props.a + 2
+          const v3 = props.a + 3
+          const unrelated = ${'['.repeat(16)}0${']'.repeat(16)}
+          if (!props.a) return null
+          return <span data-x={unrelated.length}>{v0}{v1}{v2}{v3}</span>
+        }
+      `,
+      options: [{ fix: false }],
+      errors: [
+        { messageId: 'moveToLazy', data: { name: 'v0' } },
+        { messageId: 'moveToLazy', data: { name: 'v1' } },
+        { messageId: 'moveToLazy', data: { name: 'v2' } },
+        { messageId: 'moveToLazy', data: { name: 'v3' } },
+        { messageId: 'moveToLazy', data: { name: 'unrelated' } },
+      ],
+    },
   ],
 })

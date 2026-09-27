@@ -556,6 +556,11 @@ function isUsedBeforeEarlyExit(varName, declarationNode, earlyExit, declarationS
 function containsVariableUsage(node, varName, declarationNode, excludeNode = null, stopAtFunctionScope = false) {
   if (!node || typeof node !== 'object' || node === excludeNode) return false
 
+  // 配列は要素のみを走査する（配列自身を子ノードとして再走査しない）
+  if (Array.isArray(node)) {
+    return node.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))
+  }
+
   if (node.type === 'Identifier' && node.name === varName && node !== declarationNode.id) {
     return true
   }
@@ -565,10 +570,7 @@ function containsVariableUsage(node, varName, declarationNode, excludeNode = nul
   for (const key in node) {
     if (key === 'parent') continue
     const child = node[key]
-    if (child && (
-      (Array.isArray(child) && child.some(c => containsVariableUsage(c, varName, declarationNode, excludeNode, stopAtFunctionScope))) ||
-      (typeof child === 'object' && containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope))
-    )) {
+    if (child && typeof child === 'object' && containsVariableUsage(child, varName, declarationNode, excludeNode, stopAtFunctionScope)) {
       return true
     }
   }

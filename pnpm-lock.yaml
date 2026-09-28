@@ -152,7 +152,7 @@ importers:
         version: 30.5.1(supports-color@10.2.2)
       next-intl:
         specifier: ^4.14.5
-        version: 4.14.5(next@14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 4.14.5(@types/react@19.2.18)(next@14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -160,8 +160,8 @@ importers:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
       use-intl:
-        specifier: ^4.14.5
-        version: 4.14.5(react@19.2.8)
+        specifier: ^4.14.6
+        version: 4.14.7(@types/react@19.2.18)(react@19.2.8)
 
   packages/next-auth:
     dependencies:
@@ -4399,6 +4399,9 @@ packages:
   icu-minify@4.14.5:
     resolution: {integrity: sha512-5RQ5fP5inR+VZRTR4KwYBzy217ua4E9lxBT+zFHZcJv0dTOtRs9xXECSIWMQHAfmd0Hq2RXSSP2Gmyw/oQQY6A==}
 
+  icu-minify@4.14.7:
+    resolution: {integrity: sha512-cbBAiLGee7kzysqaoQLLaIXAYaKEhNRYo05ye9rLj8+MLq/VurqLBHv6vqhTVeyQ7jcvuTujkxmiR1Au4ku8nw==}
+
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -6299,10 +6302,14 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-intl@4.14.5:
-    resolution: {integrity: sha512-NNGSInks18BAasPgnMrnahNkEZSkWpbWE70IcEDWPUZwS39tVuDB/Vo6J3FaDnYwwKioR33JfWFOzEFnhuJcJw==}
+  use-intl@4.14.7:
+    resolution: {integrity: sha512-L7l2mo3KE8OetLkyIOdKZfN0J05+e9gB7cxgrVthkjIGu1nCW9KOBgZkVcK7w0tbc3WLfnEMgX3J+vSXMCZA/A==}
     peerDependencies:
+      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   use-sync-external-store@1.6.0:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
@@ -11071,6 +11078,10 @@ snapshots:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.7
 
+  icu-minify@4.14.7:
+    dependencies:
+      '@formatjs/icu-messageformat-parser': 3.5.7
+
   ignore@5.3.2: {}
 
   ignore@7.0.5: {}
@@ -11991,7 +12002,7 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.14.5: {}
 
-  next-intl@4.14.5(next@14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
+  next-intl@4.14.5(@types/react@19.2.18)(next@14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
     dependencies:
       '@eloqnt/config': 0.1.0
       '@eloqnt/format-json': 0.1.0
@@ -12004,9 +12015,10 @@ snapshots:
       next: 14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl-swc-plugin-extractor: 4.14.5
       react: 19.2.8
-      use-intl: 4.14.5(react@19.2.8)
+      use-intl: 4.14.7(@types/react@19.2.18)(react@19.2.8)
     transitivePeerDependencies:
       - '@swc/helpers'
+      - '@types/react'
 
   next@14.2.16(@babel/core@8.0.6)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
@@ -13342,13 +13354,15 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-intl@4.14.5(react@19.2.8):
+  use-intl@4.14.7(@types/react@19.2.18)(react@19.2.8):
     dependencies:
       '@formatjs/fast-memoize': 3.1.4
       '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.14.5
+      icu-minify: 4.14.7
       intl-messageformat: 11.2.4
       react: 19.2.8
+    optionalDependencies:
+      '@types/react': 19.2.18
 
   use-sync-external-store@1.6.0(react@19.2.8):
     dependencies:

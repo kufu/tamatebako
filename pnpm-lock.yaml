@@ -185,8 +185,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.24.1
-        version: 6.24.1(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2))
+        specifier: 6.26.0
+        version: 6.26.0(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -4274,6 +4274,11 @@ packages:
 
   eslint-plugin-smarthr@6.24.1:
     resolution: {integrity: sha512-yMUeZbbhhp6IG4Vaw7f6vaHJqiGaNx9ktmj79EpPgiE3mI7BDqUIKSDRojtj8EBYbvqjBC6G3wBGD04XKx5zyQ==}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@6.26.0:
+    resolution: {integrity: sha512-G5TntEinKlaaGbLsWctKgklhzFSdeifVNlANoBDG5turttv0TjO+OjIh3bziE1bCBGMd/pYmStRfQ+6HNnJiow==}
     peerDependencies:
       eslint: ^9
 
@@ -10071,9 +10076,9 @@ snapshots:
     dependencies:
       acorn: 8.18.0
 
-  acorn-jsx@5.3.2(acorn@8.15.0):
+  acorn-jsx@5.3.2(acorn@8.18.0):
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.18.0
 
   acorn@8.15.0: {}
 
@@ -11234,6 +11239,11 @@ snapshots:
       eslint: 9.39.5(jiti@2.4.2)(supports-color@10.2.2)
       json5: 2.2.3
 
+  eslint-plugin-smarthr@6.26.0(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2)):
+    dependencies:
+      eslint: 9.39.5(jiti@2.4.2)(supports-color@10.2.2)
+      json5: 2.2.3
+
   eslint-scope@5.1.1:
     dependencies:
       esrecurse: 4.3.0
@@ -11293,8 +11303,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.15.0
-      acorn-jsx: 5.3.2(acorn@8.15.0)
+      acorn: 8.18.0
+      acorn-jsx: 5.3.2(acorn@8.18.0)
       eslint-visitor-keys: 4.2.1
 
   esprima@4.0.1: {}

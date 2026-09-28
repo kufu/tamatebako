@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.26.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.25.0...eslint-plugin-smarthr-v6.26.0) (2026-09-28)
+
+
+### Features
+
+* lazy-variableにbreak/continue検出を追加 ([#1379](https://github.com/kufu/tamatebako/issues/1379)) ([ba496a0](https://github.com/kufu/tamatebako/commit/ba496a03a394aa1c535dd20cb0f8d3ee2306f42f))
+* Storybookのフォーカスインジケーターテスト機能を追加 ([#1395](https://github.com/kufu/tamatebako/issues/1395)) ([9185ca3](https://github.com/kufu/tamatebako/commit/9185ca357342a1cb40c16c08952e1468a3faa03c))
+
+
+### Bug Fixes
+
+* **a11y-scroller-has-tabindex:** role="application"を持つ要素を対象外にする ([#1552](https://github.com/kufu/tamatebako/issues/1552)) ([c1f5450](https://github.com/kufu/tamatebako/commit/c1f545004d3b6e7a9dac566531fb200e5091244e))
+* ast-utilsが配列の子ノードを二重走査する問題を修正 ([#1545](https://github.com/kufu/tamatebako/issues/1545)) ([66eb79e](https://github.com/kufu/tamatebako/commit/66eb79eb46389e87e8f469dbc82d08a1542f4b87))
+
 ## [6.25.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.1...eslint-plugin-smarthr-v6.25.0) (2026-09-16)
 
 

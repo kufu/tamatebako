@@ -31,13 +31,15 @@ HTMLはその構造上、基本的に記述順が早いほど重要な情報で�
 tabindex属性は本来、インタラクティブな要素（ボタン、入力フィールドなど）やscroll可能な要素に設定するべきものです。<br />
 通常のdivやspanなどの非インタラクティブな要素にtabindex属性を設定すると、キーボードナビゲーションの際に不要な要素にフォーカスが当たってしまい、ユーザー体験が低下する可能性があります。<br />
 このルールは、インタラクティブでない要素（button、input、a要素などではない要素）に不要なtabindex属性が設定されていないかをチェックします。<br />
-ただし、overflow系のclassName（overflow-auto、overflow-scrollなど）を持つ要素は、scroll可能な要素として例外的に許可されます。
+ただし、以下の要素は例外的に許可されます。
+
+- overflow系のclassName（overflow-auto、overflow-scrollなど）を持つ要素（scroll可能な要素として許可）
+- `role="application"` を持つ要素（キーボード操作可能にする意図的なtabIndexとして許可）
 
 ## smarthr-ui/Scrollerコンポーネントの推奨
 
 scroll可能な要素を実装する場合、smarthr-ui/Scrollerコンポーネントの利用を推奨します。<br />
 Scrollerコンポーネントはtabindex属性を自動的に設定するため、手動でtabIndexを設定する必要がなく、アクセシビリティ対応が容易になります。
-
 
 ## rules
 
@@ -114,6 +116,13 @@ Scrollerコンポーネントはtabindex属性を自動的に設定するため�
 // scroll可能な要素にtabIndexが設定されている
 <div className="overflow-auto" tabIndex={0}>
   <Table />
+</div>
+```
+
+```jsx
+// role="application"を持つ要素はキーボード操作可能にする意図的なtabIndexとして許可される
+<div role="application" tabIndex={0}>
+  <CustomWidget />
 </div>
 ```
 

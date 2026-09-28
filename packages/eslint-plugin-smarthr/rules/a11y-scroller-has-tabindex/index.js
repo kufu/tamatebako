@@ -6,12 +6,13 @@ const REGEX_OVERFLOW_CLASSNAME = /(^| |\-)overflow\-((x|y)\-)?(auto|scroll)($| )
 
 const TABINDEX = 'JSXAttribute[name.name="tabIndex"]'
 const CLASS_NAME = 'JSXAttribute[name.name="className"]'
+const ROLE_APPLICATION_ATTRIBUTE = 'JSXAttribute[name.name="role"][value.value="application"]'
 const NOT_TABSTOP = `JSXOpeningElement:not(:has(${TABINDEX}:matches([value.value="0"],[value.expression.value=0])))`
 const OVERFLOW_CLASSNAME_LITERAL = `${CLASS_NAME}[value.value=${REGEX_OVERFLOW_CLASSNAME}]`
 const OVERFLOW_CLASSNAME_TEMPLATE = `${CLASS_NAME}[value.expression.type="TemplateLiteral"][value.expression.expressions.length>0]`
 
 const INTERACTIVE_COMPONENT_PATTERN = `/(${INTERACTIVE_COMPONENT_NAMES})/`
-const TABINDEX_ELEMENT = `JSXOpeningElement:not([name.name=${INTERACTIVE_COMPONENT_PATTERN}]):not(:has(${AS_FORM_PART_ATTRIBUTE})):has(${TABINDEX}:matches([value.value=/^(0|-1)$/],[value.expression.value=0],[value.expression.operator="-"][value.expression.argument.value=1]))`
+const TABINDEX_ELEMENT = `JSXOpeningElement:not([name.name=${INTERACTIVE_COMPONENT_PATTERN}]):not(:has(${AS_FORM_PART_ATTRIBUTE})):not(:has(${ROLE_APPLICATION_ATTRIBUTE})):has(${TABINDEX}:matches([value.value=/^(0|-1)$/],[value.expression.value=0],[value.expression.operator="-"][value.expression.argument.value=1]))`
 
 const SELECTOR_INVALID_TABINDEX = `${TABINDEX} Literal:not(:matches([value=/^(0|-1)$/],[value=0],[value=1][parent.operator="-"]))`
 const SELECTOR_OVERFLOW_CLASS_LITERAL = `${NOT_TABSTOP}:has(${OVERFLOW_CLASSNAME_LITERAL})`

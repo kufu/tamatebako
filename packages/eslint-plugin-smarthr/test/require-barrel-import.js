@@ -1589,6 +1589,79 @@ ruleTester.run('require-barrel-import', rule, {
       ],
     },
 
+    // 純粋性チェックはトップレベルの宣言のみを報告する
+    // 関数内のローカル宣言まで報告すると、1つの違反が宣言の数だけ報告されてしまう
+
+    // 22. export const の関数内にローカル変数がある場合、export const のみ報告
+    {
+      code: `export const useContainer = () => {
+        const foo = 'bar'
+        const baz = 'qux'
+        return { foo, baz }
+      }`,
+      filename: (() => {
+        createFixture('barrel-purity-nested-const', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-nested-const/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 23. トップレベルのfunction内にローカル変数がある場合、functionのみ報告
+    {
+      code: `function init() {
+        const store = {}
+        function render() {}
+        class Renderer {}
+        return store
+      }`,
+      filename: (() => {
+        createFixture('barrel-purity-nested-in-function', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-nested-in-function/components/index.tsx`
+      })(),
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
+    // 24. export default function内にローカル宣言がある場合、export defaultのみ報告
+    {
+      code: `export default function Page() {
+        const theme = {}
+        type Props = { theme: typeof theme }
+        return theme as Props['theme']
+      }`,
+      filename: (() => {
+        createFixture('barrel-purity-nested-in-export-default', {
+          'components': {
+            'index.tsx': '',
+          },
+        })
+        return `${fixturesRoot}/barrel-purity-nested-in-export-default/components/index.tsx`
+      })(),
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        {
+          message: /バレルファイルは設置されたディレクトリ外へのexportが責務です/,
+        },
+      ],
+    },
+
     // ========================================
     // 同じディレクトリのバレルファイル間での重複export検出
     // ========================================

@@ -30,13 +30,13 @@
     "test": "__tests__"
   },
   "dependencies": {
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.2"
   },
   "devDependencies": {
-    "@types/node": "^20.19.42",
+    "@types/node": "^20.19.43",
     "@types/uuid": "^11.0.0",
     "ioredis": "^5.11.1",
-    "next-auth": "^4.24.14"
+    "next-auth": "^4.24.15"
   },
   "peerDependencies": {
     "ioredis": ">=5.2.4",

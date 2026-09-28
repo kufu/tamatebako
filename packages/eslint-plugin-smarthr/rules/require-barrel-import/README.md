@@ -354,6 +354,19 @@ export interface ComponentAPI {
 }
 ```
 
+なお、報告されるのは**ファイルのトップレベルの宣言のみ**です。関数やブロックの内部にあるローカル宣言は報告されません。
+それを含むトップレベルの宣言が報告されるため、そちらを別ファイルへ切り出せば解消します。
+
+```typescript
+// ❌ export const の1件のみ報告される（内部の const は報告されない）
+export const useContainer = () => {
+  const foo = 'bar'
+  const baz = 'qux'
+
+  return { foo, baz }
+}
+```
+
 ### ✅ 許可されるパターン
 
 ```typescript

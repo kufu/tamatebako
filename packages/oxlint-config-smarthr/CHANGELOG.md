@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.1.19](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.18...oxlint-config-smarthr-v0.1.19) (2026-07-22)
+
+
+### Features
+
+* update ESLint rule severities in oxlint-config-smarthr ([#1478](https://github.com/kufu/tamatebako/issues/1478)) ([b00f155](https://github.com/kufu/tamatebako/commit/b00f155643178d4c28e8f0ac375e53bc430ea243))
+
+## [0.1.18](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.17...oxlint-config-smarthr-v0.1.18) (2026-07-14)
+
+
+### Features
+
+* eslint-plugin-smarthr 6.23.0への更新（oxlint-config-smarthr） ([#1458](https://github.com/kufu/tamatebako/issues/1458)) ([1426d00](https://github.com/kufu/tamatebako/commit/1426d002c9a72f3e5a75ef800c1fa5947d3de566))
+
+## [0.1.17](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.16...oxlint-config-smarthr-v0.1.17) (2026-07-03)
+
+
+### Bug Fixes
+
+* update eslint-plugin-smarthr to v6.22.1 in oxlint-config-smarthr ([#1449](https://github.com/kufu/tamatebako/issues/1449)) ([f4b8164](https://github.com/kufu/tamatebako/commit/f4b816400e77a23f4dcc9a40f16a59583f02e441))
+
+## [0.1.16](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.15...oxlint-config-smarthr-v0.1.16) (2026-07-02)
+
+
+### Features
+
+* eslint-plugin-smarthrをv6.22.0に更新してbest-practice-for-reduce-redundant-callsを導入 ([#1445](https://github.com/kufu/tamatebako/issues/1445)) ([0a6aa2e](https://github.com/kufu/tamatebako/commit/0a6aa2e546cb4d376d0ab27c80e64675b1ec8c6e))
+
+## [0.1.15](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.14...oxlint-config-smarthr-v0.1.15) (2026-07-02)
+
+
+### Bug Fixes
+
+* oxlint-config-smarthrのeslint-plugin-smarthrを6.21.2に修正 ([#1435](https://github.com/kufu/tamatebako/issues/1435)) ([305dc53](https://github.com/kufu/tamatebako/commit/305dc5388070c4ef2ab8d7b81050620032efb9fb))
+
 ## [0.1.14](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.13...oxlint-config-smarthr-v0.1.14) (2026-06-30)
 
 

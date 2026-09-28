@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.25.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.1...eslint-plugin-smarthr-v6.25.0) (2026-09-16)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration に v98→v99 の移行ルールを追加 ([#1524](https://github.com/kufu/tamatebako/issues/1524)) ([87a9935](https://github.com/kufu/tamatebako/commit/87a9935fd47cbc60c63214e4a2eae589d8522f16))
+
+## [6.24.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.0...eslint-plugin-smarthr-v6.24.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* バレルファイルの純粋性チェックが関数内のローカル宣言まで報告する問題を修正 ([#1500](https://github.com/kufu/tamatebako/issues/1500)) ([951e512](https://github.com/kufu/tamatebako/commit/951e5120e468660febd702f04933583dd3b65930))
+
+## [6.24.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.23.0...eslint-plugin-smarthr-v6.24.0) (2026-08-24)
+
+
+### Features
+
+* Groupboxコンポーネントのサポート追加（BaseColumnとの互換性維持） ([#1456](https://github.com/kufu/tamatebako/issues/1456)) ([7fb6e32](https://github.com/kufu/tamatebako/commit/7fb6e32c0ace63b2c4289eb8d264a9ac5b6392d0))
+* Panelコンポーネント対応を追加 ([#1198](https://github.com/kufu/tamatebako/issues/1198)) ([d67a48a](https://github.com/kufu/tamatebako/commit/d67a48a999719629b99460bd23fa026a020ca949))
+
+## [6.23.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.1...eslint-plugin-smarthr-v6.23.0) (2026-07-14)
+
+
+### Features
+
+* **autofixer:** smarthr-ui v97→v98 移行ルールを追加 ([#1454](https://github.com/kufu/tamatebako/issues/1454)) ([4532cf4](https://github.com/kufu/tamatebako/commit/4532cf438d61a2232225e42bbebaed5d428edfc6))
+* **best-practice-for-optional-chaining:** if文の条件部分にマッチする箇所へoptional chainingを挿入 ([#1453](https://github.com/kufu/tamatebako/issues/1453)) ([ca2194f](https://github.com/kufu/tamatebako/commit/ca2194fa95a4bfa275ef1c9e4a0975c1c93c78c0))
+
+
+### Bug Fixes
+
+* else句/default句がない場合は検出対象外にする ([#1455](https://github.com/kufu/tamatebako/issues/1455)) ([2fb5bc9](https://github.com/kufu/tamatebako/commit/2fb5bc95bfb298e84d953d35f7143a43b796398c))
+* update JSX detection logic documentation for reduce-redundant-calls ([#1451](https://github.com/kufu/tamatebako/issues/1451)) ([1a043f9](https://github.com/kufu/tamatebako/commit/1a043f9c98d81fc81b0093748f4d5880d4eb9864))
+
+## [6.22.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.0...eslint-plugin-smarthr-v6.22.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* best-practice-for-reduce-redundant-callsでJSX属性の差分数に基づいて検出するように改善 ([#1446](https://github.com/kufu/tamatebako/issues/1446)) ([b74f734](https://github.com/kufu/tamatebako/commit/b74f734dd1315f8bf6cd2ccab5f21f0571326c74))
+
+## [6.22.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.2...eslint-plugin-smarthr-v6.22.0) (2026-07-02)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration v95-to-v96, v96-to-v97 対応 ([#1442](https://github.com/kufu/tamatebako/issues/1442)) ([d70787b](https://github.com/kufu/tamatebako/commit/d70787bc6961b0f65b6cc78506fab92707ce3f90))
+* best-practice-for-reduce-redundant-calls ルールを追加 ([#1440](https://github.com/kufu/tamatebako/issues/1440)) ([0564d24](https://github.com/kufu/tamatebako/commit/0564d24fa5de3b9f812d23c7396411e064604234))
+* best-practice-for-unstable-dependenciesに正規表現パターンとカスタムメッセージを追加 ([#1424](https://github.com/kufu/tamatebako/issues/1424)) ([9ed3f1f](https://github.com/kufu/tamatebako/commit/9ed3f1fac878b7f0f37c5a1f3db1b66d30d507c9))
+
 ## [6.21.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.1...eslint-plugin-smarthr-v6.21.2) (2026-06-30)
 
 

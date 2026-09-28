@@ -4,11 +4,11 @@
  * SmartHR Design System ガイドラインに基づき、InformationPanelを白背景に直接配置することを防ぎます。
  *
  * 検出パターン:
- * 1. Base内にInformationPanel
+ * 1. Base/Panel内にInformationPanel
  * 2. Dialog内にInformationPanel（contentBgColorが未指定またはWHITE）
  *
  * 例外:
- * - BaseColumn内にある場合（BaseColumnは背景色を持つため）
+ * - BaseColumnまたはGroupbox内にある場合（背景色を持つため）
  * - DialogでcontentBgColorがWHITE以外の場合
  *
  * @see https://smarthr.design/products/components/information-panel/
@@ -18,7 +18,7 @@ module.exports = {
   meta: {
     type: 'suggestion',
     messages: {
-      inWhiteBg: 'InformationPanelを白背景に配置しないでください。InformationPanelをBaseColumnで包むか、InformationPanelを包んでいるDialogのcontentBgColorにWHITE以外の値を指定してください。詳細: https://smarthr.design/products/components/information-panel/',
+      inWhiteBg: 'InformationPanelを白背景に配置しないでください。InformationPanelをBaseColumnまたはGroupboxで包むか、InformationPanelを包んでいるDialogのcontentBgColorにWHITE以外の値を指定してください。詳細: https://smarthr.design/products/components/information-panel/',
     },
     schema: [],
   },
@@ -36,8 +36,8 @@ module.exports = {
         if (current.type === 'JSXElement') {
           const name = current.openingElement.name.name
 
-          // BaseColumnが見つかったらOK（探索終了）
-          if (name === 'BaseColumn') {
+          // BaseColumnまたはGroupboxが見つかったらOK（探索終了）
+          if (name === 'BaseColumn' || name === 'Groupbox') {
             return { ok: true }
           }
 
@@ -56,9 +56,9 @@ module.exports = {
     }
 
     return {
-      // Base以下のInformationPanel
-      'JSXElement[openingElement.name.name="Base"] JSXElement[openingElement.name.name="InformationPanel"]'(node) {
-        const result = checkWhiteBg(node, 'Base')
+      // Base/Panel以下のInformationPanel
+      'JSXElement[openingElement.name.name=/^(Base|Panel)$/] JSXElement[openingElement.name.name="InformationPanel"]'(node) {
+        const result = checkWhiteBg(node, /^(Base|Panel)$/)
         if (!result.ok) {
           context.report({ node, messageId: 'inWhiteBg' })
         }

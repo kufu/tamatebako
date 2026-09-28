@@ -23,6 +23,11 @@ ruleTester.run('design-system-guideline-prohibit-information-panel-in-white-bg',
       code: '<Base><BaseColumn><InformationPanel>情報</InformationPanel></BaseColumn></Base>',
     },
 
+    // Base > Groupbox > InformationPanel
+    {
+      code: '<Base><Groupbox><InformationPanel>情報</InformationPanel></Groupbox></Base>',
+    },
+
     // Stack内
     {
       code: '<Stack><InformationPanel>情報</InformationPanel></Stack>',
@@ -36,6 +41,11 @@ ruleTester.run('design-system-guideline-prohibit-information-panel-in-white-bg',
     // Base > BaseColumn > div > InformationPanel
     {
       code: '<Base><BaseColumn><div><InformationPanel>情報</InformationPanel></div></BaseColumn></Base>',
+    },
+
+    // Base > Groupbox > div > InformationPanel
+    {
+      code: '<Base><Groupbox><div><InformationPanel>情報</InformationPanel></div></Groupbox></Base>',
     },
 
     // ActionDialog with contentBgColor="COLUMN"
@@ -62,6 +72,21 @@ ruleTester.run('design-system-guideline-prohibit-information-panel-in-white-bg',
     {
       code: '<ActionDialog><BaseColumn><InformationPanel>情報</InformationPanel></BaseColumn></ActionDialog>',
     },
+
+    // Dialog > Groupbox > InformationPanel
+    {
+      code: '<ActionDialog><Groupbox><InformationPanel>情報</InformationPanel></Groupbox></ActionDialog>',
+    },
+
+    // Panel > BaseColumn > InformationPanel
+    {
+      code: '<Panel><BaseColumn><InformationPanel>情報</InformationPanel></BaseColumn></Panel>',
+    },
+
+    // Panel > BaseColumn > div > InformationPanel
+    {
+      code: '<Panel><BaseColumn><div><InformationPanel>情報</InformationPanel></div></BaseColumn></Panel>',
+    },
   ],
 
   invalid: [
@@ -86,6 +111,12 @@ ruleTester.run('design-system-guideline-prohibit-information-panel-in-white-bg',
     // Base > BaseColumn > Base > InformationPanel
     {
       code: '<Base><BaseColumn><Base><InformationPanel>情報</InformationPanel></Base></BaseColumn></Base>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // Base > Groupbox > Base > InformationPanel
+    {
+      code: '<Base><Groupbox><Base><InformationPanel>情報</InformationPanel></Base></Groupbox></Base>',
       errors: [{ messageId: 'inWhiteBg' }],
     },
 
@@ -122,6 +153,36 @@ ruleTester.run('design-system-guideline-prohibit-information-panel-in-white-bg',
     // ネスト: Base > div > Base > InformationPanel
     {
       code: '<Base><div><Base><InformationPanel>情報</InformationPanel></Base></div></Base>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // Panel直下
+    {
+      code: '<Panel><InformationPanel>情報</InformationPanel></Panel>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // Panel > div > InformationPanel
+    {
+      code: '<Panel><div><InformationPanel>情報</InformationPanel></div></Panel>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // Panel > Stack > InformationPanel
+    {
+      code: '<Panel><Stack><InformationPanel>情報</InformationPanel></Stack></Panel>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // Panel > BaseColumn > Panel > InformationPanel
+    {
+      code: '<Panel><BaseColumn><Panel><InformationPanel>情報</InformationPanel></Panel></BaseColumn></Panel>',
+      errors: [{ messageId: 'inWhiteBg' }],
+    },
+
+    // ネスト: Panel > div > Panel > InformationPanel
+    {
+      code: '<Panel><div><Panel><InformationPanel>情報</InformationPanel></Panel></div></Panel>',
       errors: [{ messageId: 'inWhiteBg' }],
     },
   ],

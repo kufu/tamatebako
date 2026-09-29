@@ -196,16 +196,16 @@ importers:
   packages/storybook-focus-indicator:
     devDependencies:
       '@storybook/react':
-        specifier: ^10.0.0
+        specifier: ^10.6.0
         version: 10.6.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.9)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@10.2.2)(typescript@6.0.3)
       '@types/node':
         specifier: ^20.19.43
         version: 20.19.43
       storybook:
-        specifier: ^10.0.0
+        specifier: ^10.6.0
         version: 10.6.0(@types/react@19.2.18)(prettier@3.9.9)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       storybook-addon-pseudo-states:
-        specifier: ^10.0.0
+        specifier: ^10.6.0
         version: 10.6.0(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.9)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       tsdown:
         specifier: ^0.4.4
@@ -13583,7 +13583,7 @@ snapshots:
       '@vitest/expect': 3.2.4
       '@vitest/spy': 3.2.4
       '@webcontainer/env': 1.1.1
-      esbuild: 0.25.12
+      esbuild: 0.28.2
       jsonc-parser: 3.3.1
       open: 10.2.0
       oxc-parser: 0.127.0

@@ -32,6 +32,9 @@
     "packages/wareki": {},
     "packages/oxlint-config-smarthr": {
       "initial-version": "0.1.0"
+    },
+    "packages/storybook-focus-indicator": {
+      "initial-version": "0.1.0"
     }
   }
 }

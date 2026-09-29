@@ -1,6 +1,6 @@
 {
   "name": "storybook-focus-indicator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Storybook utilities for focus indicator accessibility testing",
   "type": "module",
   "exports": {
@@ -49,6 +49,6 @@
     "storybook-addon-pseudo-states": "^10.0.0",
     "tsdown": "^0.4.4",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.8"
   }
 }

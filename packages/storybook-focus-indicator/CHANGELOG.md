@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/kufu/tamatebako/compare/storybook-focus-indicator-v0.1.2...storybook-focus-indicator-v0.1.3) (2026-09-29)
+
+
+### Bug Fixes
+
+* **storybook-focus-indicator:** distが含まれないままpublishされる不具合を修正 ([#1569](https://github.com/kufu/tamatebako/issues/1569)) ([6df68ae](https://github.com/kufu/tamatebako/commit/6df68ae8a5774f6f53ded2b8b2c8cdda599e5a66))
+
 ## [0.1.2](https://github.com/kufu/tamatebako/compare/storybook-focus-indicator-v0.1.1...storybook-focus-indicator-v0.1.2) (2026-09-29)
 
 

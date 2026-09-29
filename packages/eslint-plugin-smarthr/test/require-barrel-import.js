@@ -14,7 +14,18 @@ const ruleTester = new RuleTester({
 })
 
 // テストフィクスチャのルートディレクトリ
+// HINT: @/エイリアスがtsconfig.jsonで test-fixtures/* に解決されるため、
+// このディレクトリ自体はネストできない（一部のテストが `@/testName/...` の形で
+// 直接このルート直下のパスをimportしている）。
 const fixturesRoot = path.join(__dirname, '..', 'test-fixtures')
+
+// このファイルが作成したfixtureディレクトリのみを記録する。
+// HINT: 他のテストファイル（format-import-path.jsなど）とtest-fixtures/を共有しているため、
+// 以前はafterAllで共有ルート直下の全ディレクトリを削除していた。しかしJestはテストファイルを
+// 別workerプロセスで並列実行するため、他のテストファイルが実行中のfixtureまで削除してしまい
+// ランダムな失敗を引き起こしていた（実際に発生した不具合）。このファイルが作成したディレクトリ
+// だけを記録・削除することで、他のテストファイルのfixtureに影響しないようにする。
+const createdFixtureDirs = new Set()
 
 /**
  * テスト用のファイル構造を作成するヘルパー
@@ -24,6 +35,7 @@ const fixturesRoot = path.join(__dirname, '..', 'test-fixtures')
  */
 function createFixture(testName, structure) {
   const fixtureDir = path.join(fixturesRoot, testName)
+  createdFixtureDirs.add(fixtureDir)
 
   // ディレクトリが既に存在する場合は削除
   if (fs.existsSync(fixtureDir)) {
@@ -55,18 +67,9 @@ function createFixture(testName, structure) {
  * テスト終了後のクリーンアップ
  */
 function cleanupFixtures() {
-  if (fs.existsSync(fixturesRoot)) {
-    const entries = fs.readdirSync(fixturesRoot)
-    for (const entry of entries) {
-      const fullPath = path.join(fixturesRoot, entry)
-      try {
-        if (fs.statSync(fullPath).isDirectory()) {
-          fs.rmSync(fullPath, { recursive: true, force: true })
-        }
-      } catch (err) {
-        // シンボリックリンクが壊れている場合などはスキップ
-        continue
-      }
+  for (const dir of createdFixtureDirs) {
+    if (fs.existsSync(dir)) {
+      fs.rmSync(dir, { recursive: true, force: true })
     }
   }
 }

@@ -199,7 +199,7 @@ importers:
         specifier: ^10.0.0
         version: 10.6.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.9)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(supports-color@10.2.2)(typescript@6.0.3)
       '@types/node':
-        specifier: ^20.19.42
+        specifier: ^20.19.43
         version: 20.19.43
       storybook:
         specifier: ^10.0.0
@@ -4269,11 +4269,6 @@ packages:
 
   eslint-plugin-smarthr@6.23.0:
     resolution: {integrity: sha512-bDaNsqshERZ8SKdNV5gTgdiOWTsWtMVNRcFhSX1oBc/bJW7V2z0MzC3I6+iRIsH4/GX+zCo+3YB9bdH08H9KeQ==}
-    peerDependencies:
-      eslint: ^9
-
-  eslint-plugin-smarthr@6.24.1:
-    resolution: {integrity: sha512-yMUeZbbhhp6IG4Vaw7f6vaHJqiGaNx9ktmj79EpPgiE3mI7BDqUIKSDRojtj8EBYbvqjBC6G3wBGD04XKx5zyQ==}
     peerDependencies:
       eslint: ^9
 
@@ -11230,11 +11225,6 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-smarthr@6.23.0(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2)):
-    dependencies:
-      eslint: 9.39.5(jiti@2.4.2)(supports-color@10.2.2)
-      json5: 2.2.3
-
-  eslint-plugin-smarthr@6.24.1(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2)):
     dependencies:
       eslint: 9.39.5(jiti@2.4.2)(supports-color@10.2.2)
       json5: 2.2.3

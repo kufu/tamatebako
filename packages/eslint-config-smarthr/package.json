@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.1"
   },
   "peerDependencies": {
     "eslint": "^9.0.0",

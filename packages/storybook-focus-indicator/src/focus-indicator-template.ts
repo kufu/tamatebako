@@ -69,18 +69,21 @@ export const focusIndicatorTemplate = <TStory>(
       await (defaultStory as StoryObj<any>).play?.(args)
 
       // 最初のリンクにフォーカスを当てるためのplay function
+      // 単数形のfindByRoleは候補が2つ以上あると例外になり、その例外もcatchが飲み込むため、
+      // リンクが複数ある画面ではどこにもフォーカスが当たらないままになっていた
       try {
-        const link = await screen.findByRole('link')
-        link.focus()
+        const links = await screen.findAllByRole('link')
+        links[0]!.focus()
       } catch {
         // タイムアウトした場合はここに来るが、何もしないことでエラーを回避
         console.log('リンクが出現しなかったため、フォーカスをスキップしました')
       }
 
       // 最初のcomboboxにフォーカスを当てるためのplay function
+      // リンクとコンボボックスの両方がある場合は、あとから当てたコンボボックスが最終的なフォーカスになる
       try {
-        const combobox = await screen.findByRole('combobox')
-        combobox.focus()
+        const comboboxes = await screen.findAllByRole('combobox')
+        comboboxes[0]!.focus()
       } catch {
         // タイムアウトした場合はここに来るが、何もしないことでエラーを回避
         console.log('コンボボックスが出現しなかったため、フォーカスをスキップしました')

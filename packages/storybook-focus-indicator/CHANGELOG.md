@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/kufu/tamatebako/compare/storybook-focus-indicator-v0.1.1...storybook-focus-indicator-v0.1.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* storybook-focus-indicatorのvitest指定をpnpm-lock.yamlと一致させる ([#1567](https://github.com/kufu/tamatebako/issues/1567)) ([fc42def](https://github.com/kufu/tamatebako/commit/fc42defce4f318dd916c623f1bf79ce5a3eb1bcd))
+
 ## [0.1.1](https://github.com/kufu/tamatebako/compare/storybook-focus-indicator-v0.1.0...storybook-focus-indicator-v0.1.1) (2026-09-29)
 
 

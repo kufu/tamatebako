@@ -44,10 +44,10 @@
     "storybook-addon-pseudo-states": "^10.0.0"
   },
   "devDependencies": {
-    "@storybook/react": "^10.0.0",
+    "@storybook/react": "^10.6.0",
     "@types/node": "^20.19.43",
-    "storybook": "^10.0.0",
-    "storybook-addon-pseudo-states": "^10.0.0",
+    "storybook": "^10.6.0",
+    "storybook-addon-pseudo-states": "^10.6.0",
     "tsdown": "^0.4.4",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"

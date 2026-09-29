@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@storybook/react": "^10.0.0",
-    "@types/node": "^20.19.42",
+    "@types/node": "^20.19.43",
     "storybook": "^10.0.0",
     "storybook-addon-pseudo-states": "^10.0.0",
     "tsdown": "^0.4.0",

@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "prepack": "tsdown",
     "test": "vitest run"
   },
   "repository": {

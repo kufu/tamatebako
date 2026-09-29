@@ -38,7 +38,7 @@
     "@storybook/addon-webpack5-compiler-swc": "^4.0.3",
     "@storybook/react": "^10.6.0",
     "@storybook/react-webpack5": "^10.6.0",
-    "@types/react": "^19.2.18",
+    "@types/react": "^19.3.0",
     "babel-loader": "^10.1.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

@@ -30,7 +30,7 @@ importers:
         specifier: ^30.5.2
         version: 30.5.2(@types/node@20.19.43)(supports-color@10.2.2)
       prettier:
-        specifier: ^3.9.8
+        specifier: ^3.9.9
         version: 3.9.9
       prettier-config-smarthr:
         specifier: ^1.0.1

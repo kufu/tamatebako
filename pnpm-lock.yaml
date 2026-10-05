@@ -387,8 +387,8 @@ importers:
         specifier: ^30.5.2
         version: 30.5.2(@types/node@20.19.43)(supports-color@10.2.2)
       postcss-styled-syntax:
-        specifier: ^0.7.2
-        version: 0.7.2(postcss@8.5.20)
+        specifier: ^0.7.3
+        version: 0.7.3(postcss@8.5.28)
       styled-components:
         specifier: ^6.5.3
         version: 6.5.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -397,7 +397,7 @@ importers:
         version: 17.15.0(supports-color@10.2.2)(typescript@6.0.3)
       stylelint-config-sass-guidelines:
         specifier: ^13.0.0
-        version: 13.0.0(postcss@8.5.20)(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
+        version: 13.0.0(postcss@8.5.28)(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
       stylelint-config-standard:
         specifier: ^40.0.0
         version: 40.0.0(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
@@ -5976,8 +5976,8 @@ packages:
     resolution: {integrity: sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==}
     engines: {node: '>=4'}
 
-  postcss-styled-syntax@0.7.2:
-    resolution: {integrity: sha512-PrxG8BC6yh6pmrHx7NrseYt5TiSN57LbGYZxmreg7co7g+zXe6BwUfsZ6r/gghxbtabde3Z0hinelXj4jlJF4Q==}
+  postcss-styled-syntax@0.7.3:
+    resolution: {integrity: sha512-F6PSmNJKnOk1E5BWNqp6lEg3qlVYexKPf9C5eoBflPxNyS29goTATFVU7vUi0WWMmpAK+Pf2yHuUdjKXL2bOTg==}
     engines: {node: '>=14.17'}
     peerDependencies:
       postcss: ^8.5.1
@@ -9195,62 +9195,43 @@ snapshots:
   '@oxc-resolver/binding-win32-x64-msvc@11.21.2':
     optional: true
 
-  '@oxlint/binding-android-arm-eabi@1.59.0':
-    optional: true
+  '@oxlint/binding-android-arm-eabi@1.59.0': {}
 
-  '@oxlint/binding-android-arm64@1.59.0':
-    optional: true
+  '@oxlint/binding-android-arm64@1.59.0': {}
 
-  '@oxlint/binding-darwin-arm64@1.59.0':
-    optional: true
+  '@oxlint/binding-darwin-arm64@1.59.0': {}
 
-  '@oxlint/binding-darwin-x64@1.59.0':
-    optional: true
+  '@oxlint/binding-darwin-x64@1.59.0': {}
 
-  '@oxlint/binding-freebsd-x64@1.59.0':
-    optional: true
+  '@oxlint/binding-freebsd-x64@1.59.0': {}
 
-  '@oxlint/binding-linux-arm-gnueabihf@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-arm-gnueabihf@1.59.0': {}
 
-  '@oxlint/binding-linux-arm-musleabihf@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-arm-musleabihf@1.59.0': {}
 
-  '@oxlint/binding-linux-arm64-gnu@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-arm64-gnu@1.59.0': {}
 
-  '@oxlint/binding-linux-arm64-musl@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-arm64-musl@1.59.0': {}
 
-  '@oxlint/binding-linux-ppc64-gnu@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-ppc64-gnu@1.59.0': {}
 
-  '@oxlint/binding-linux-riscv64-gnu@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-riscv64-gnu@1.59.0': {}
 
-  '@oxlint/binding-linux-riscv64-musl@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-riscv64-musl@1.59.0': {}
 
-  '@oxlint/binding-linux-s390x-gnu@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-s390x-gnu@1.59.0': {}
 
-  '@oxlint/binding-linux-x64-gnu@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-x64-gnu@1.59.0': {}
 
-  '@oxlint/binding-linux-x64-musl@1.59.0':
-    optional: true
+  '@oxlint/binding-linux-x64-musl@1.59.0': {}
 
-  '@oxlint/binding-openharmony-arm64@1.59.0':
-    optional: true
+  '@oxlint/binding-openharmony-arm64@1.59.0': {}
 
-  '@oxlint/binding-win32-arm64-msvc@1.59.0':
-    optional: true
+  '@oxlint/binding-win32-arm64-msvc@1.59.0': {}
 
-  '@oxlint/binding-win32-ia32-msvc@1.59.0':
-    optional: true
+  '@oxlint/binding-win32-ia32-msvc@1.59.0': {}
 
-  '@oxlint/binding-win32-x64-msvc@1.59.0':
-    optional: true
+  '@oxlint/binding-win32-x64-msvc@1.59.0': {}
 
   '@panva/hkdf@1.2.1': {}
 
@@ -13255,9 +13236,9 @@ snapshots:
     dependencies:
       postcss: 8.5.28
 
-  postcss-scss@4.0.9(postcss@8.5.20):
+  postcss-scss@4.0.9(postcss@8.5.28):
     dependencies:
-      postcss: 8.5.20
+      postcss: 8.5.28
 
   postcss-selector-parser@7.1.4:
     dependencies:
@@ -13269,9 +13250,9 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-styled-syntax@0.7.2(postcss@8.5.20):
+  postcss-styled-syntax@0.7.3(postcss@8.5.28):
     dependencies:
-      postcss: 8.5.20
+      postcss: 8.5.28
       typescript: 6.0.3
 
   postcss-value-parser@4.2.0: {}
@@ -13902,11 +13883,11 @@ snapshots:
     dependencies:
       stylelint: 17.15.0(supports-color@10.2.2)(typescript@6.0.3)
 
-  stylelint-config-sass-guidelines@13.0.0(postcss@8.5.20)(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3)):
+  stylelint-config-sass-guidelines@13.0.0(postcss@8.5.28)(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3)):
     dependencies:
       '@stylistic/stylelint-plugin': 5.0.1(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
-      postcss: 8.5.20
-      postcss-scss: 4.0.9(postcss@8.5.20)
+      postcss: 8.5.28
+      postcss-scss: 4.0.9(postcss@8.5.28)
       stylelint: 17.15.0(supports-color@10.2.2)(typescript@6.0.3)
       stylelint-scss: 7.0.0(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
 

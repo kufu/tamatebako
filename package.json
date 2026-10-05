@@ -29,7 +29,7 @@
     "prettier-config-smarthr": "^1.0.1",
     "react": "^19.3.0",
     "rimraf": "^5.0.10",
-    "ts-jest": "^29.4.13",
+    "ts-jest": "^29.4.14",
     "typescript": "^6.0.3"
   },
   "packageManager": "pnpm@12.6.0"

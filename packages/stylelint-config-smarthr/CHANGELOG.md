@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.0](https://github.com/kufu/tamatebako/compare/stylelint-config-smarthr-v3.0.2...stylelint-config-smarthr-v3.1.0) (2026-10-08)
+
+
+### Features
+
+* **stylelint-config-smarthr:** peerDependencies に stylelint-config-standard v39 を追加 ([#1573](https://github.com/kufu/tamatebako/issues/1573)) ([35d89ef](https://github.com/kufu/tamatebako/commit/35d89ef3f14a2de2dbee4cddf11c64f7c5618fe4))
+
 ## 3.0.2 (2024-11-29)
 
 **Note:** Version bump only for package stylelint-config-smarthr

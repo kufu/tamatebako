@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.6](https://github.com/kufu/tamatebako/compare/create-lint-set-v1.1.5...create-lint-set-v1.1.6) (2026-10-16)
+
+
+### Dependencies
+
+* update dependency chalk to v6 ([#1591](https://github.com/kufu/tamatebako/issues/1591)) ([54bc5ab](https://github.com/kufu/tamatebako/commit/54bc5ab7353a8fad3fecfacaf9e5263a8dabdcac))
+* update dependency fs-extra to ^11.4.1 ([#1576](https://github.com/kufu/tamatebako/issues/1576)) ([22cc8c7](https://github.com/kufu/tamatebako/commit/22cc8c78bf967414b4bd28da84985be09147446f))
+
 ## [1.1.5](https://github.com/kufu/tamatebako/compare/@smarthr/create-lint-set@1.1.4...@smarthr/create-lint-set@1.1.5) (2024-11-29)
 
 **Note:** Version bump only for package @smarthr/create-lint-set

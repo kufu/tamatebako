@@ -8,13 +8,23 @@ const RuleTester = require('eslint').RuleTester
 // テスト用の一時ディレクトリ
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'i18n-sync-test-'))
 
+// 他言語ファイル検出（同じディレクトリ内の他の.jsonファイルをスキャンする）が
+// 無関係なテストケース同士で誤検出しないよう、呼び出しごとに専用ディレクトリを発行する
+let fixtureCounter = 0
+function createFixtureDir() {
+  const dir = path.join(tmpDir, `fixture-${fixtureCounter++}`)
+  fs.mkdirSync(dir, { recursive: true })
+  return dir
+}
+
 /**
  * テスト用のJSONファイルを作成
  */
 function setupTestFile(basename, translations, options = {}) {
-  const tsPath = path.join(tmpDir, basename)
+  const dir = createFixtureDir()
+  const tsPath = path.join(dir, basename)
   const parsed = path.parse(basename)
-  const jsonPath = path.join(tmpDir, parsed.name + '.json')
+  const jsonPath = path.join(dir, parsed.name + '.json')
 
   // JSONファイルを作成
   const indent = options.indent || 2
@@ -31,7 +41,7 @@ function setupTestFile(basename, translations, options = {}) {
  * テスト用のファイルパスを生成（JSONなし）
  */
 function createTestPath(basename) {
-  return path.join(tmpDir, basename)
+  return path.join(createFixtureDir(), basename)
 }
 
 const ruleTester = new RuleTester({
@@ -236,6 +246,32 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       filename: setupTestFile('valid-default-as-const-satisfies.ts', { key1: 'value1' }),
       options: defaultOptions,
     },
+
+    // 他言語ファイルがja側のキーの一部しか持たない（未翻訳）場合はOK
+    {
+      code: "export const translations = { key1: 'value1', key2: 'value2' }",
+      filename: (() => {
+        const tsPath = path.join(tmpDir, 'locale-subset', 'ja.ts')
+        fs.mkdirSync(path.dirname(tsPath), { recursive: true })
+        fs.writeFileSync(path.join(tmpDir, 'locale-subset', 'ja.json'), '{\n  "key1": "value1",\n  "key2": "value2"\n}\n', 'utf8')
+        fs.writeFileSync(path.join(tmpDir, 'locale-subset', 'en.json'), '{\n  "key1": "value1"\n}\n', 'utf8')
+        return tsPath
+      })(),
+      options: defaultOptions,
+    },
+
+    // 他言語ファイルが不正なJSONの場合はこのチェックの対象外
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: (() => {
+        const tsPath = path.join(tmpDir, 'locale-invalid-json', 'ja.ts')
+        fs.mkdirSync(path.dirname(tsPath), { recursive: true })
+        fs.writeFileSync(path.join(tmpDir, 'locale-invalid-json', 'ja.json'), '{\n  "key1": "value1"\n}\n', 'utf8')
+        fs.writeFileSync(path.join(tmpDir, 'locale-invalid-json', 'en.json'), 'not valid json', 'utf8')
+        return tsPath
+      })(),
+      options: defaultOptions,
+    },
   ],
 
   invalid: [
@@ -339,6 +375,49 @@ ruleTester.run('require-i18n-translation-sync', rule, {
       })(),
       options: defaultOptions,
       errors: [{ messageId: 'notSync' }],
+    },
+
+    // 他言語ファイルにjaにないキーが残っている（リネーム/削除の追従漏れ）
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: (() => {
+        const tsPath = path.join(tmpDir, 'locale-orphan', 'ja.ts')
+        fs.mkdirSync(path.dirname(tsPath), { recursive: true })
+        fs.writeFileSync(path.join(tmpDir, 'locale-orphan', 'ja.json'), '{\n  "key1": "value1"\n}\n', 'utf8')
+        fs.writeFileSync(path.join(tmpDir, 'locale-orphan', 'en.json'), '{\n  "key1": "value1",\n  "oldKey": "old value"\n}\n', 'utf8')
+        return tsPath
+      })(),
+      options: defaultOptions,
+      errors: [
+        {
+          messageId: 'orphanKeyInOtherLocale',
+          data: { localeFile: 'en.json', key: 'oldKey', tsFile: 'ja.ts' },
+        },
+      ],
+    },
+
+    // 複数の他言語ファイルで、複数の孤立キーがある場合
+    {
+      code: "export const translations = { key1: 'value1' }",
+      filename: (() => {
+        const tsPath = path.join(tmpDir, 'locale-multi-orphan', 'ja.ts')
+        fs.mkdirSync(path.dirname(tsPath), { recursive: true })
+        fs.writeFileSync(path.join(tmpDir, 'locale-multi-orphan', 'ja.json'), '{\n  "key1": "value1"\n}\n', 'utf8')
+        fs.writeFileSync(path.join(tmpDir, 'locale-multi-orphan', 'en.json'), '{\n  "key1": "value1",\n  "oldKey": "old value"\n}\n', 'utf8')
+        fs.writeFileSync(path.join(tmpDir, 'locale-multi-orphan', 'zh.json'), '{\n  "key1": "value1",\n  "removedKey": "removed"\n}\n', 'utf8')
+        return tsPath
+      })(),
+      options: defaultOptions,
+      errors: [
+        {
+          messageId: 'orphanKeyInOtherLocale',
+          data: { localeFile: 'en.json', key: 'oldKey', tsFile: 'ja.ts' },
+        },
+        {
+          messageId: 'orphanKeyInOtherLocale',
+          data: { localeFile: 'zh.json', key: 'removedKey', tsFile: 'ja.ts' },
+        },
+      ],
     },
   ],
 })

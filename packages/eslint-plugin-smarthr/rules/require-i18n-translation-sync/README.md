@@ -81,6 +81,13 @@ export const translations = {
 
 ja.ts と ja.json の内容が一致する必要があります。不一致の場合、autofixで ja.json を自動生成します。
 
+### 5. 他言語ファイルにja側で削除・リネームされたキーが残っていないか
+
+同じディレクトリにある他言語のJSONファイル（en.json, zh.json など）をチェックし、ja.ts に存在しないキーが残っていないか確認します。
+
+- **ja側にのみ存在するキー**: 未翻訳として許容されます（エラーになりません）
+- **他言語側にのみ存在するキー**: エラーになります。ja.ts でキーが削除・リネームされた際に、他言語ファイル側の追従を忘れている可能性が高いためです
+
 ## エラーケース
 
 ### オブジェクトリテラルが複数
@@ -172,6 +179,25 @@ export const translations = { key1: 'new value' }
 
 **修正:** ESLintの`--fix`オプションを使用すると、ja.json が自動的に更新されます。
 
+### 他言語ファイルにjaにないキーが残っている
+
+```typescript
+// ja.ts
+export const translations = { key1: 'value1' }
+```
+
+```json
+// en.json
+{
+  "key1": "value1",
+  "oldKey": "old value"
+}
+```
+
+**エラー:** en.json にキー "oldKey" が存在しますが、ja.ts に対応するキーがありません。ja.ts でキーが削除またはリネームされた際に、en.json 側の追従を忘れている可能性があります。
+
+**対応:** ja.ts でのキーのリネーム・削除内容を確認し、en.json 側も合わせて修正してください（このチェックは検出のみで自動修正は行いません）。
+
 ## OK例
 
 ### export const
@@ -252,6 +278,23 @@ export type TranslationKeys = keyof typeof translations
 export const translations = {
   'Common/Button/Submit': '送信',
   'Common/Button/Cancel': 'キャンセル'
+}
+```
+
+### 他言語ファイルが未翻訳のキーを持つ（jaにしかキーがない）
+
+```typescript
+// ja.ts
+export const translations = {
+  key1: 'value1',
+  key2: 'value2'
+}
+```
+
+```json
+// en.json（key2が未翻訳）
+{
+  "key1": "value1"
 }
 ```
 
@@ -382,3 +425,4 @@ eslint --fix path/to/ja.ts
 - このルールは指定されたファイル名（デフォルト: ja.ts）にのみ適用されます
 - JSONファイルのキー順序は、TypeScriptファイルの記述順を保持します
 - 他言語ファイル（en.json, zh.json など）は翻訳ツールで管理し、開発者が直接編集することは想定していません
+- 他言語ファイルの孤立キーチェックは、ja.ts と同じディレクトリにある `.json` ファイル（ja.json自身を除く）をすべて対象とします。このチェックは検出のみで自動修正は行いません

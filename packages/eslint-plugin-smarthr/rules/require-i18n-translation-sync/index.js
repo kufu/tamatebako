@@ -176,7 +176,66 @@ function findExportedObject(program) {
 }
 
 /**
- * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<'multipleExports' | 'noExport' | 'notObject' | 'invalidValue' | 'notSync'>}
+ * 同じディレクトリにある他言語のJSONファイル一覧を取得する
+ *
+ * 他言語ファイル（en.json, zh.json など）は翻訳ツールで管理され、
+ * targetFileNameに対応するJSONファイル（例: ja.json）がSSOTとなる。
+ *
+ * @param {string} dir - 翻訳ファイルが置かれているディレクトリ
+ * @param {string} targetJsonBasename - 除外するSSOTのJSONファイル名（例: ja.json）
+ * @returns {string[]} 他言語JSONファイルのファイル名一覧
+ */
+function findOtherLocaleJsonFiles(dir, targetJsonBasename) {
+  let entries
+  try {
+    entries = fs.readdirSync(dir)
+  } catch (error) {
+    return []
+  }
+
+  return entries.filter((entry) => entry.endsWith('.json') && entry !== targetJsonBasename)
+}
+
+/**
+ * 他言語のJSONファイルに、SSOT（ja.tsなど）に存在しないキーがないかチェックする
+ *
+ * SSOT側にあって他言語側にないキーは「未翻訳」として許容するが、
+ * 他言語側にあってSSOT側にないキーは、SSOT側でのキーのリネームや削除の際に
+ * 他言語ファイルの追従を忘れている可能性が高いためエラーとする。
+ *
+ * @param {Record<string, string>} translations - SSOT（ja.tsなど）から抽出した翻訳データ
+ * @param {string} dir - 翻訳ファイルが置かれているディレクトリ
+ * @param {string} targetJsonBasename - SSOTのJSONファイル名（例: ja.json）
+ * @returns {Array<{ localeFile: string, key: string }>} 孤立キーの一覧
+ */
+function findOrphanKeysInOtherLocales(translations, dir, targetJsonBasename) {
+  const orphans = []
+
+  for (const localeFile of findOtherLocaleJsonFiles(dir, targetJsonBasename)) {
+    let localeTranslations
+    try {
+      localeTranslations = JSON.parse(fs.readFileSync(path.join(dir, localeFile), 'utf8'))
+    } catch (error) {
+      // JSONとして不正なファイルはこのルールの対象外
+      continue
+    }
+
+    if (!localeTranslations || typeof localeTranslations !== 'object' || Array.isArray(localeTranslations)) {
+      continue
+    }
+
+    for (const key of Object.keys(localeTranslations)) {
+      if (!(key in translations)) {
+        orphans.push({ localeFile, key })
+      }
+    }
+  }
+
+  return orphans
+}
+
+/**
+ * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<'multipleExports' | 'noExport' | 'notObject' | 'invalidValue' | 'notSync' | 'orphanKeyInOtherLocale'>}
  */
 module.exports = {
   meta: {
@@ -189,6 +248,7 @@ module.exports = {
       notObject: 'exportする値はオブジェクトリテラルである必要があります。',
       invalidValue: '{{message}}',
       notSync: '翻訳ファイル（{{tsFile}}）とJSONファイル（{{jsonFile}}）の内容が一致しません。autofixで同期できます。',
+      orphanKeyInOtherLocale: '{{localeFile}} にキー "{{key}}" が存在しますが、{{tsFile}} に対応するキーがありません。{{tsFile}} でキーが削除またはリネームされた際に、{{localeFile}} 側の追従を忘れている可能性があります。',
     },
   },
   create(context) {
@@ -291,6 +351,19 @@ module.exports = {
               // fixerは何も返さない（ファイル外の変更のため）
               return []
             },
+          })
+        }
+
+        // 他言語ファイルに、SSOT（ja.tsなど）側で削除・リネームされたキーが
+        // 残っていないかチェックする（SSOT側にしかないキーは未翻訳として許容する）
+        const jsonFileBasename = path.basename(jsonFilePath)
+        const tsFile = path.basename(tsFilePath)
+
+        for (const orphan of findOrphanKeysInOtherLocales(translations, parsed.dir, jsonFileBasename)) {
+          context.report({
+            node,
+            messageId: 'orphanKeyInOtherLocale',
+            data: { localeFile: orphan.localeFile, key: orphan.key, tsFile },
           })
         }
       },

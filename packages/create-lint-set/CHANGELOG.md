@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.7](https://github.com/kufu/tamatebako/compare/create-lint-set-v1.1.6...create-lint-set-v1.1.7) (2026-10-20)
+
+
+### Bug Fixes
+
+* create-lint-setのbinフィールドがscope付きパッケージ名で壊れていた問題を修正 ([#1613](https://github.com/kufu/tamatebako/issues/1613)) ([ec8160d](https://github.com/kufu/tamatebako/commit/ec8160d765f8258381274d18c7be803459819523))
+
 ## [1.1.6](https://github.com/kufu/tamatebako/compare/create-lint-set-v1.1.5...create-lint-set-v1.1.6) (2026-10-20)
 
 

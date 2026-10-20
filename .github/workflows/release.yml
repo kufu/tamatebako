@@ -5,6 +5,14 @@ on:
     branches:
       - master
 
+# release_please はmasterの内容を読み取ってブランチを強制更新するため、
+# 複数実行が重なると、後から完了した実行が先に完了した実行の内容を
+# 上書きしてレースコンディションになる（実行開始時点の古いmasterの
+# 内容で上書きされてしまう）ことがある。直列実行にして防止する。
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release_please:
     runs-on: ubuntu-latest

@@ -343,8 +343,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.26.0
-        version: 6.26.0(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2))
+        specifier: 6.27.0
+        version: 6.27.0(eslint@9.39.5(jiti@2.4.2)(supports-color@10.2.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.27.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.26.0...eslint-plugin-smarthr-v6.27.0) (2026-10-20)
+
+
+### Features
+
+* **require-i18n-translation-sync:** 他言語ファイルの孤立キーを検出する ([#1610](https://github.com/kufu/tamatebako/issues/1610)) ([e41b41f](https://github.com/kufu/tamatebako/commit/e41b41fa2b36bc9468e426182268ca4795ef4388))
+
 ## [6.26.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.25.0...eslint-plugin-smarthr-v6.26.0) (2026-09-28)
 
 

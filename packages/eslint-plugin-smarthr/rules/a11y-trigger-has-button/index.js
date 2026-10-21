@@ -3,9 +3,9 @@ const BUTTON_REGEX = /(B|^b)utton$/
 const ANCHOR_BUTTON_REGEX = /AnchorButton$/
 const FALSY_TEXT_REGEX = /^\s*\n+\s*$/
 
-const filterFalsyJSXText = (cs) => cs.filter((c) => (
-  !(c.type === 'JSXText' && FALSY_TEXT_REGEX.test(c.value))
-))
+const isFalsyJSXText = (c) => c.type === 'JSXText' && FALSY_TEXT_REGEX.test(c.value)
+const isComment = (c) => c.type === 'JSXExpressionContainer' && c.expression.type === 'JSXEmptyExpression'
+const filterChildren = (cs) => cs.filter((c) => !isFalsyJSXText(c) && !isComment(c))
 
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
@@ -18,7 +18,7 @@ module.exports = {
   create(context) {
     return {
       [`JSXElement[openingElement.name.name=${TRIGGER_REGEX}]:not([openingElement.name.name=/HelpDialogTrigger$/])`]: (parentNode) => {
-        const children = filterFalsyJSXText(parentNode.children)
+        const children = filterChildren(parentNode.children)
 
         if (children.length > 1) {
           const node = parentNode.openingElement

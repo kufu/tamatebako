@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // tsc で lib を出力して公開するパッケージは "type": "module" を持たず、相対 import にも拡張子を付けていない。
+    // ESM で出力すると Node が相対 import を解決できず ERR_MODULE_NOT_FOUND になるため、CommonJS で出力する。
+    "module": "commonjs"
+  }
+}

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.4](https://github.com/kufu/tamatebako/compare/i18n-v0.2.3...i18n-v0.2.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* tsc で出力する公開パッケージを CommonJS に戻す ([#1621](https://github.com/kufu/tamatebako/issues/1621)) ([b534e5b](https://github.com/kufu/tamatebako/commit/b534e5beb9d19a7fb410a68a4143600a9259a61e))
+
 ## [0.2.3](https://github.com/kufu/tamatebako/compare/i18n-v0.2.2...i18n-v0.2.3) (2025-12-23)
 
 

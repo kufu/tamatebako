@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.8](https://github.com/kufu/tamatebako/compare/use-bulk-check-v1.0.7...use-bulk-check-v1.0.8) (2026-10-22)
+
+
+### Bug Fixes
+
+* tsc で出力する公開パッケージを CommonJS に戻す ([#1621](https://github.com/kufu/tamatebako/issues/1621)) ([b534e5b](https://github.com/kufu/tamatebako/commit/b534e5beb9d19a7fb410a68a4143600a9259a61e))
+
 ## [1.0.7](https://github.com/kufu/tamatebako/compare/@smarthr/use-bulk-check@1.0.6...@smarthr/use-bulk-check@1.0.7) (2024-11-29)
 
 **Note:** Version bump only for package @smarthr/use-bulk-check

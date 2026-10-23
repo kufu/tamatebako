@@ -29,7 +29,7 @@
     "@types/jest": "^30.0.0",
     "@types/styled-components": "^5.1.36",
     "jest": "^30.5.2",
-    "postcss-styled-syntax": "^0.7.3",
+    "postcss-styled-syntax": "^0.7.4",
     "styled-components": "^6.6.0",
     "stylelint": "^17.16.0",
     "stylelint-config-sass-guidelines": "^13.0.0",

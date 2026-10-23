@@ -5,9 +5,9 @@ const HANDLER_ATTRIBUTE_REGEX = /^(on[A-Z]|handle[A-Z])/
 
 const SCHEMA = []
 
-const EXCLUSIVE_MESSAGE = `InputコンポーネントにprefixまたはsuffixとsubActionAreaを同時に指定することはできません。
+const EXCLUSIVE_MESSAGE = `InputコンポーネントにsuffixとsubActionAreaを同時に指定することはできません。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
- - prefix/suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
+ - suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
  - いずれか一方のみを指定してください`
 
 const INTERACTIVE_ELEMENT_MESSAGE = `Inputコンポーネントのprefix/suffixに操作可能な要素を配置することはできません。
@@ -21,7 +21,7 @@ module.exports = {
   },
   create(context) {
     return {
-      [`JSXOpeningElement[name.name=/Input$/]:has(> JSXAttribute[name.name=${DECORATIVE_ATTRIBUTE_REGEX}]):has(> JSXAttribute[name.name="subActionArea"])`]: (node) => {
+      'JSXOpeningElement[name.name=/Input$/]:has(> JSXAttribute[name.name="suffix"]):has(> JSXAttribute[name.name="subActionArea"])': (node) => {
         context.report({
           node,
           message: EXCLUSIVE_MESSAGE,

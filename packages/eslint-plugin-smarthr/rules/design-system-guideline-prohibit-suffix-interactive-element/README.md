@@ -14,7 +14,7 @@ Inputコンポーネントの`prefix`/`suffix`属性に操作可能な要素を�
 
 - **コンポーネント**: 名前が`Input`で終わるすべてのコンポーネント
 - **検出内容**:
-  1. `prefix`または`suffix`と`subActionArea`を同時に指定している場合
+  1. `suffix`と`subActionArea`を同時に指定している場合（`prefix`と`subActionArea`の同時指定は許容）
   2. `prefix`または`suffix`内にButtonやRemoteDialogTriggerなど操作可能なコンポーネントを含めている場合
   3. `prefix`または`suffix`内に`onXxxx`や`handleXxxx`といったハンドラ属性を持つ要素を含めている場合
 
@@ -33,9 +33,6 @@ Inputコンポーネントの`prefix`/`suffix`属性に操作可能な要素を�
 ```jsx
 // suffixとsubActionAreaを同時に指定
 <Input suffix={<Icon name="search" />} subActionArea={<Button>クリア</Button>} />
-
-// prefixとsubActionAreaを同時に指定
-<Input prefix={<Icon name="search" />} subActionArea={<Button>クリア</Button>} />
 
 // prefix/suffix内に操作可能なコンポーネント
 <Input suffix={<Button>クリア</Button>} />
@@ -56,4 +53,7 @@ Inputコンポーネントの`prefix`/`suffix`属性に操作可能な要素を�
 // 操作可能な要素はsubActionAreaに配置
 <Input subActionArea={<Button>クリア</Button>} />
 <Input subActionArea={<RemoteDialogTrigger targetId="dialog">開く</RemoteDialogTrigger>} />
+
+// prefixとsubActionAreaの同時指定は許容
+<Input prefix={<Icon name="search" />} subActionArea={<Button>クリア</Button>} />
 ```

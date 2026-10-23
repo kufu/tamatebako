@@ -11,9 +11,9 @@ const ruleTester = new RuleTester({
   },
 })
 
-const EXCLUSIVE_MESSAGE = `InputコンポーネントにprefixまたはsuffixとsubActionAreaを同時に指定することはできません。
+const EXCLUSIVE_MESSAGE = `InputコンポーネントにsuffixとsubActionAreaを同時に指定することはできません。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
- - prefix/suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
+ - suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
  - いずれか一方のみを指定してください`
 
 const INTERACTIVE_ELEMENT_MESSAGE = `Inputコンポーネントのprefix/suffixに操作可能な要素を配置することはできません。
@@ -35,6 +35,9 @@ ruleTester.run('design-system-guideline-prohibit-suffix-interactive-element', ru
     { code: `<Input subActionArea={<Button>クリア</Button>} />` },
     { code: `<Input subActionArea={<RemoteDialogTrigger targetId="dialog">開く</RemoteDialogTrigger>} />` },
 
+    // prefixとsubActionAreaの同時指定は許容
+    { code: `<Input prefix={<Icon name="search" />} subActionArea={<Button>クリア</Button>} />` },
+
     // prefix/suffix内に非操作要素(div/span)でハンドラ属性を持たない場合
     { code: `<Input suffix={<div>円</div>} />` },
     { code: `<Input prefix={<span className="unit">%</span>} />` },
@@ -53,12 +56,6 @@ ruleTester.run('design-system-guideline-prohibit-suffix-interactive-element', ru
     },
     {
       code: `<FugaInput suffix="円" subActionArea={<Button>クリア</Button>} />`,
-      errors: [{ message: EXCLUSIVE_MESSAGE }],
-    },
-
-    // prefixとsubActionAreaの同時指定
-    {
-      code: `<Input prefix={<Icon name="search" />} subActionArea={<Button>クリア</Button>} />`,
       errors: [{ message: EXCLUSIVE_MESSAGE }],
     },
 

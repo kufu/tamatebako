@@ -27,13 +27,7 @@ module.exports = {
           message: EXCLUSIVE_MESSAGE,
         })
       },
-      [`JSXOpeningElement[name.name=/Input$/] > JSXAttribute[name.name=${DECORATIVE_ATTRIBUTE_REGEX}] > JSXExpressionContainer JSXOpeningElement[name.name=/${INTERACTIVE_COMPONENT_NAMES}/]`]: (node) => {
-        context.report({
-          node,
-          message: INTERACTIVE_ELEMENT_MESSAGE,
-        })
-      },
-      [`JSXOpeningElement[name.name=/Input$/] > JSXAttribute[name.name=${DECORATIVE_ATTRIBUTE_REGEX}] > JSXExpressionContainer JSXOpeningElement:has(JSXAttribute[name.name=${HANDLER_ATTRIBUTE_REGEX}])`]: (node) => {
+      [`JSXOpeningElement[name.name=/Input$/] > JSXAttribute[name.name=${DECORATIVE_ATTRIBUTE_REGEX}] > JSXExpressionContainer JSXOpeningElement:matches([name.name=/${INTERACTIVE_COMPONENT_NAMES}/], :has(JSXAttribute[name.name=${HANDLER_ATTRIBUTE_REGEX}]))`]: (node) => {
         context.report({
           node,
           message: INTERACTIVE_ELEMENT_MESSAGE,

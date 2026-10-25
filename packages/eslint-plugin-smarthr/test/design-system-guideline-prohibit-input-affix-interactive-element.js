@@ -106,5 +106,11 @@ ruleTester.run('design-system-guideline-prohibit-input-affix-interactive-element
       code: `<Input prefix={<span handleSearch={search}>検索</span>} />`,
       errors: [{ message: INTERACTIVE_ELEMENT_MESSAGE }],
     },
+
+    // 操作可能なコンポーネント かつ ハンドラ属性を両方持つ要素は1件のみ報告される
+    {
+      code: `<Input suffix={<Button onClick={clear}>×</Button>} />`,
+      errors: [{ message: INTERACTIVE_ELEMENT_MESSAGE }],
+    },
   ],
 })

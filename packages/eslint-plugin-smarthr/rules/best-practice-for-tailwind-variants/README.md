@@ -20,13 +20,15 @@ tv関数で生成した関数の実行を `useMemo` hook でメモ化するこ�
 - 将来の移行作業の簡易化：useMemo内にtailwind系の実行をまとめることで、tailwind-variantsから別のライブラリへ乗り換える際の作業を楽にします
 - コードの一貫性：すべてのtailwind-variants使用箇所で同じパターンを適用することで、プロジェクト全体の保守性が向上します
 
+ただし、module scope（トップレベル）での呼び出しはimport時に一度しか評価されず、実質的にメモ化済みと同等であるため対象外とします。IIFE（即時実行関数）でラップされている場合も同様にmodule scope呼び出しとして扱います。
+
 ## チェック内容
 
 このルールは以下の3つの観点からチェックを行います：
 
 1. **import時の名称固定**: tailwind-variants(tv) のimport時の名称を `tv` に固定しているか（`as` などでの名称変更の禁止）
 2. **変数名の統一**: tv の実行結果を格納する変数名が `classNameGenerator` または `xxxClassNameGenerator` になっているか
-3. **useMemoの使用**: tvで生成した関数の実行を `useMemo` hook でメモ化しているか
+3. **useMemoの使用**: tvで生成した関数の実行を `useMemo` hook でメモ化しているか（module scopeでの呼び出しは対象外）
 
 ## rules
 
@@ -67,4 +69,21 @@ const classNameGenerator = tv({
 ...
 
 const yyyy = useMemo(() => classNameGenerator(), [])
+```
+```jsx
+import { tv } from 'tailwind-variants'
+
+const classNameGenerator = tv({
+  ...
+})
+
+// module scope(トップレベル)での呼び出しはuseMemo不要
+export const visuallyHiddenTextClassName = classNameGenerator()
+
+// IIFEでラップされている場合も同様
+const CLASS_NAMES = (() => {
+  const { container, balloon } = classNameGenerator()
+
+  return { container: container(), balloon: balloon() }
+})()
 ```

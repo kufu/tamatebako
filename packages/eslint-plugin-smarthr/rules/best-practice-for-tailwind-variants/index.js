@@ -29,6 +29,25 @@ const findNodeUseMemo = (node) => {
   return null
 }
 
+const FUNCTION_NODE_TYPES = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']
+const isIIFE = (node) => node.parent?.type === 'CallExpression' && node.parent.callee === node
+
+const isModuleScopeCall = (node) => {
+  if (!node || node.type === 'Program') {
+    return true
+  }
+
+  if (FUNCTION_NODE_TYPES.includes(node.type)) {
+    if (!isIIFE(node)) {
+      return false
+    }
+
+    return isModuleScopeCall(node.parent.parent)
+  }
+
+  return isModuleScopeCall(node.parent)
+}
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -59,7 +78,7 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants`,
             });
           }
-        } else if (TV_RESULT_CONST_NAME_REGEX.test(node.callee.name) && !findNodeUseMemo(node.parent)) {
+        } else if (TV_RESULT_CONST_NAME_REGEX.test(node.callee.name) && !findNodeUseMemo(node.parent) && !isModuleScopeCall(node.parent)) {
           context.report({
             node,
             message: `"${node.callee.name}" を実行する際、useMemoでラップし、メモ化してください

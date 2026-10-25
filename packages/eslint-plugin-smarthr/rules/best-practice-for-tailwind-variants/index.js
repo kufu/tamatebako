@@ -3,6 +3,7 @@ const SCHEMA = []
 const TV_COMPONENTS_METHOD = 'tv'
 const TV_COMPONENTS = 'tailwind-variants'
 const TV_RESULT_CONST_NAME_REGEX = /(C|c)lassNameGenerator$/
+const CLASS_NAME_RESULT_REGEX = /((C|c)lassNames?|CLASS_NAMES?)$/
 
 const findValidImportNameNode = (s) => s.type === 'ImportSpecifier' && s.imported.name === TV_COMPONENTS_METHOD && s.local.name !== TV_COMPONENTS_METHOD
 
@@ -78,12 +79,24 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants`,
             });
           }
-        } else if (TV_RESULT_CONST_NAME_REGEX.test(node.callee.name) && !findNodeUseMemo(node.parent) && !isModuleScopeCall(node.parent)) {
-          context.report({
-            node,
-            message: `"${node.callee.name}" を実行する際、useMemoでラップし、メモ化してください
+        } else if (TV_RESULT_CONST_NAME_REGEX.test(node.callee.name)) {
+          if (!findNodeUseMemo(node.parent) && !isModuleScopeCall(node.parent)) {
+            context.report({
+              node,
+              message: `"${node.callee.name}" を実行する際、useMemoでラップし、メモ化してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants`,
-          });
+            });
+          }
+
+          const idNode = findNodeHasId(node.parent)
+
+          if (idNode && idNode.id.type === 'Identifier' && !CLASS_NAME_RESULT_REGEX.test(idNode.id.name)) {
+            context.report({
+              node: idNode,
+              message: `"${node.callee.name}"の実行結果を格納する変数名は "${idNode.id.name}" ではなく "${CLASS_NAME_RESULT_REGEX}"にmatchする名称に統一してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants`,
+            });
+          }
         }
       },
     }

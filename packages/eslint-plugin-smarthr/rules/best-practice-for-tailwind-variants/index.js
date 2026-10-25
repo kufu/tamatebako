@@ -111,6 +111,15 @@ module.exports = {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants`,
             });
           }
+
+          if (idNode && idNode.id.type === 'ObjectPattern' && node.arguments.length > 0) {
+            context.report({
+              node,
+              message: `"${node.callee.name}"を分割代入でslot毎の生成関数として取り出す場合、引数を渡すことはできません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants
+ - 引数は各slotの生成関数を実行する際に個別に指定してください（例: "const { wrapper } = ${node.callee.name}(); wrapper({ className })"）`,
+            });
+          }
         }
       },
     }

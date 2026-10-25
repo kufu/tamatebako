@@ -28,14 +28,19 @@ tv関数で生成した関数の実行を `useMemo` hook でメモ化するこ�
 
 なお、`const { container, balloon } = classNameGenerator()` のようにサブジェネレータ関数を分割代入で取り出している場合は対象外とします（取り出した時点ではまだclass名の実体が生成されていないため）。
 
+### slot毎の分割代入時、引数の個別指定を強制
+
+`const { wrapper, balloon } = classNameGenerator()` のようにslot毎の生成関数を分割代入で取り出すパターンでは、`classNameGenerator`自体に引数を渡すことを禁止します。引数は各slotの生成関数（`wrapper()`、`balloon()`等）を実行する際に個別に指定することを強制することで、どの引数がどのslotに影響するのかという変数の影響範囲を明確にします。
+
 ## チェック内容
 
-このルールは以下の4つの観点からチェックを行います：
+このルールは以下の5つの観点からチェックを行います：
 
 1. **import時の名称固定**: tailwind-variants(tv) のimport時の名称を `tv` に固定しているか（`as` などでの名称変更の禁止）
 2. **変数名の統一**: tv の実行結果を格納する変数名が `classNameGenerator` または `xxxClassNameGenerator` になっているか
 3. **useMemoの使用**: tvで生成した関数の実行を `useMemo` hook でメモ化しているか（module scopeでの呼び出しは対象外）
 4. **実行結果の変数名統一**: `classNameGenerator`実行結果を格納する変数名が `className` / `classNames`（プレフィックス付き、または `CLASS_NAME` / `CLASS_NAMES` 形式の定数）になっているか（分割代入でサブジェネレータを取り出す場合は対象外）
+5. **slot毎の引数指定の強制**: `classNameGenerator`実行結果を分割代入でslot毎の生成関数として取り出す場合、`classNameGenerator`自体に引数を渡していないか
 
 ## rules
 
@@ -73,6 +78,16 @@ const classNameGenerator = tv({
 // 実行結果を格納する変数名がclassName/classNames(プレフィックス付き)やCLASS_NAME/CLASS_NAMESになっていない
 const hoge = useMemo(() => classNameGenerator(), [])
 ```
+```jsx
+import { tv } from 'tailwind-variants'
+
+const classNameGenerator = tv({
+  ...
+})
+
+// slot毎に分割代入する場合、classNameGenerator自体に引数を渡すことはできない
+const { wrapper, balloon } = classNameGenerator({ className })
+```
 
 ## ✅ Correct
 
@@ -101,6 +116,7 @@ export const visuallyHiddenTextClassName = classNameGenerator()
 const CLASS_NAMES = (() => {
   const { container, balloon } = classNameGenerator()
 
-  return { container: container(), balloon: balloon() }
+  // 引数は各slotの生成関数を実行する際に個別に指定する
+  return { container: container({ className }), balloon: balloon() }
 })()
 ```

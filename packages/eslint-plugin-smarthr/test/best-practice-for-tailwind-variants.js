@@ -72,5 +72,9 @@ ruleTester.run('best-practice-for-button-element', rule, {
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
     { code: `const HOGE = useMemo(() => classNameGenerator(), [])`, errors: [ { message: `"classNameGenerator"の実行結果を格納する変数名は "HOGE" ではなく "/((C|c)lassNames?|CLASS_NAMES?)$/"にmatchする名称に統一してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+
+    // JSX属性に直接埋め込まれ変数に代入されていない場合、命名チェックは対象外(useMemo要求のみ発生)
+    { code: `const Component = () => <div className={classNameGenerator({ fill: 'white' })} />`, errors: [ { message: `"classNameGenerator" を実行する際、useMemoでラップし、メモ化してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
   ]
 })

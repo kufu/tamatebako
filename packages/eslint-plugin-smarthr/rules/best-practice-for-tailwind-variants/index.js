@@ -30,6 +30,20 @@ const findNodeUseMemo = (node) => {
   return null
 }
 
+const findDirectResultIdNode = (node) => {
+  let current = node.parent
+
+  if (current.type === 'ArrowFunctionExpression' && current.body === node) {
+    const useMemoCall = current.parent
+
+    if (useMemoCall.type === 'CallExpression' && useMemoCall.callee.name === 'useMemo' && useMemoCall.arguments[0] === current) {
+      current = useMemoCall.parent
+    }
+  }
+
+  return current.type === 'VariableDeclarator' ? current : null
+}
+
 const FUNCTION_NODE_TYPES = ['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']
 const isIIFE = (node) => node.parent?.type === 'CallExpression' && node.parent.callee === node
 
@@ -88,7 +102,7 @@ module.exports = {
             });
           }
 
-          const idNode = findNodeHasId(node.parent)
+          const idNode = findDirectResultIdNode(node)
 
           if (idNode && idNode.id.type === 'Identifier' && !CLASS_NAME_RESULT_REGEX.test(idNode.id.name)) {
             context.report({

@@ -6,12 +6,12 @@ const HANDLER_ATTRIBUTE_REGEX = /^(on[A-Z]|handle[A-Z])/
 const SCHEMA = []
 
 const EXCLUSIVE_MESSAGE = `InputコンポーネントにsuffixとsubActionAreaを同時に指定することはできません。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element
  - suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
  - いずれか一方のみを指定してください`
 
 const INTERACTIVE_ELEMENT_MESSAGE = `Inputコンポーネントのprefix/suffixに操作可能な要素を配置することはできません。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element
  - prefix/suffixは装飾用のpropsです。ButtonやRemoteDialogTriggerなどの操作可能なコンポーネント、onXxxxやhandleXxxxといったハンドラ属性を持つ要素はsubActionAreaに配置してください`
 
 module.exports = {

@@ -1,4 +1,4 @@
-# smarthr/design-system-guideline-prohibit-suffix-interactive-element
+# smarthr/design-system-guideline-prohibit-input-affix-interactive-element
 
 Inputコンポーネントの`prefix`/`suffix`属性に操作可能な要素を配置すること、および`prefix`/`suffix`と`subActionArea`を同時に指定することを禁止するルールです。
 
@@ -23,7 +23,7 @@ Inputコンポーネントの`prefix`/`suffix`属性に操作可能な要素を�
 ```js
 {
   rules: {
-    'smarthr/design-system-guideline-prohibit-suffix-interactive-element': 'error', // 'warn', 'off'
+    'smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'error', // 'warn', 'off'
   },
 }
 ```

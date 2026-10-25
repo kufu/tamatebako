@@ -1,4 +1,4 @@
-const rule = require('../rules/design-system-guideline-prohibit-suffix-interactive-element')
+const rule = require('../rules/design-system-guideline-prohibit-input-affix-interactive-element')
 const RuleTester = require('eslint').RuleTester
 
 const ruleTester = new RuleTester({
@@ -12,15 +12,15 @@ const ruleTester = new RuleTester({
 })
 
 const EXCLUSIVE_MESSAGE = `InputコンポーネントにsuffixとsubActionAreaを同時に指定することはできません。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element
  - suffixは装飾用、subActionAreaは操作用の要素を配置するためのpropsです
  - いずれか一方のみを指定してください`
 
 const INTERACTIVE_ELEMENT_MESSAGE = `Inputコンポーネントのprefix/suffixに操作可能な要素を配置することはできません。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-suffix-interactive-element
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element
  - prefix/suffixは装飾用のpropsです。ButtonやRemoteDialogTriggerなどの操作可能なコンポーネント、onXxxxやhandleXxxxといったハンドラ属性を持つ要素はsubActionAreaに配置してください`
 
-ruleTester.run('design-system-guideline-prohibit-suffix-interactive-element', rule, {
+ruleTester.run('design-system-guideline-prohibit-input-affix-interactive-element', rule, {
   valid: [
     // suffixのみ: 装飾用要素
     { code: `<Input suffix={<Icon name="search" />} />` },

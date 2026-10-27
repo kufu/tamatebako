@@ -11,7 +11,7 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 ## 対象
 
-現時点では以下の組み合わせが対象です（今後拡張予定。Dialog系コンポーネントは対象外）：
+現時点では以下の組み合わせが対象です（今後拡張予定）：
 
 | コンポーネント | prop | 必須キー |
 | --- | --- | --- |
@@ -23,6 +23,12 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 | `InformationPanel` | `heading` | `text` |
 | `Text` | `maxLines` | `max` |
 | `Text` | `icon` | `prefix` |
+| `ActionDialog` | `heading` / `actionButton` / `closeButton` | `text` |
+| `FormDialog` | `heading` / `actionButton` / `closeButton` | `text` |
+| `MessageDialog` | `heading` | `text` |
+| `StepFormDialog` | `heading` / `submitButton` / `closeButton` / `backButton` | `text` |
+
+コンポーネント名は末尾一致（例: `ActionDialog`は`ControlledActionDialog`や`RemoteTriggerActionDialog`等も対象）で判定します。
 
 対象propの値がobject形式で、かつ必須キー**のみ**を持つ場合に検出します。spread構文（`{ ...xxx }`）を含む場合や、必須キー以外の追加プロパティ（`size`、`styleType`、`tooltip`等）を持つ場合は対象外です。
 
@@ -64,4 +70,14 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 {/* ✅ 追加プロパティを伴う場合はobject形式のまま許容 */}
 <Text maxLines={{ max: 3, tooltip: true }}>長いテキスト</Text>
+```
+```jsx
+{/* ❌ */}
+<ActionDialog heading={{ text: '確認' }} actionButton={{ text: '送信' }}>...</ActionDialog>
+
+{/* ✅ 自動修正後 */}
+<ActionDialog heading={'確認'} actionButton={'送信'}>...</ActionDialog>
+
+{/* ✅ theme等の追加プロパティを伴う場合はobject形式のまま許容 */}
+<ActionDialog heading="確認" actionButton={{ text: '送信', theme: 'danger' }}>...</ActionDialog>
 ```

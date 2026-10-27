@@ -62,6 +62,22 @@ ruleTester.run('best-practice-for-object-props', rule, {
     // Text: icon (mainKey: prefix)
     { code: `<Text icon={<Icon />}>{children}</Text>` },
     { code: `<Text icon={{ prefix: <Icon />, gap: 0.5 }}>{children}</Text>` },
+
+    // ActionDialog: heading/actionButton/closeButton (mainKey: text)
+    { code: `<ActionDialog heading="確認" actionButton="送信" closeButton="閉じる">{children}</ActionDialog>` },
+    { code: `<ControlledActionDialog heading={{ text: '確認', sub: '補足' }} actionButton={{ text: '送信', theme: 'danger' }} closeButton={{ text: '閉じる', disabled: true }}>{children}</ControlledActionDialog>` },
+
+    // FormDialog: heading/actionButton/closeButton (mainKey: text)
+    { code: `<FormDialog heading="確認" actionButton="送信" closeButton="閉じる">{children}</FormDialog>` },
+    { code: `<ControlledFormDialog heading={{ text: '確認', sub: '補足' }} actionButton={{ text: '送信', disabled: true }} closeButton={{ text: '閉じる', disabled: true }}>{children}</ControlledFormDialog>` },
+
+    // MessageDialog: heading (mainKey: text)
+    { code: `<MessageDialog heading="確認">{children}</MessageDialog>` },
+    { code: `<ControlledMessageDialog heading={{ text: '確認', sub: '補足' }}>{children}</ControlledMessageDialog>` },
+
+    // StepFormDialog: heading/submitButton/closeButton/backButton (mainKey: text)
+    { code: `<StepFormDialog heading="確認" submitButton="送信" closeButton="閉じる" backButton="戻る">{children}</StepFormDialog>` },
+    { code: `<ControlledStepFormDialog heading={{ text: '確認', sub: '補足' }} submitButton={{ text: '送信', hidden: true }} closeButton={{ text: '閉じる', disabled: true }} backButton={{ text: '戻る', theme: 'secondary' }}>{children}</ControlledStepFormDialog>` },
   ],
   invalid: [
     {
@@ -127,6 +143,49 @@ ruleTester.run('best-practice-for-object-props', rule, {
       code: `<Text icon={{ prefix: <Icon /> }}>{children}</Text>`,
       output: `<Text icon={<Icon />}>{children}</Text>`,
       errors: [{ message: buildMessage('icon', 'prefix') }],
+    },
+
+    // ActionDialog: heading/actionButton/closeButton
+    {
+      code: `<ControlledActionDialog heading={{ text: '確認' }} actionButton={{ text: '送信' }} closeButton={{ text: '閉じる' }}>{children}</ControlledActionDialog>`,
+      output: `<ControlledActionDialog heading={'確認'} actionButton={'送信'} closeButton={'閉じる'}>{children}</ControlledActionDialog>`,
+      errors: [
+        { message: buildMessage('heading', 'text') },
+        { message: buildMessage('actionButton', 'text') },
+        { message: buildMessage('closeButton', 'text') },
+      ],
+    },
+
+    // FormDialog: heading
+    {
+      code: `<RemoteTriggerFormDialog heading={{ text: '確認' }}>{children}</RemoteTriggerFormDialog>`,
+      output: `<RemoteTriggerFormDialog heading={'確認'}>{children}</RemoteTriggerFormDialog>`,
+      errors: [{ message: buildMessage('heading', 'text') }],
+    },
+
+    // MessageDialog: heading
+    {
+      code: `<ControlledMessageDialog heading={{ text: '確認' }}>{children}</ControlledMessageDialog>`,
+      output: `<ControlledMessageDialog heading={'確認'}>{children}</ControlledMessageDialog>`,
+      errors: [{ message: buildMessage('heading', 'text') }],
+    },
+
+    // StepFormDialog: submitButton/closeButton/backButton
+    {
+      code: `<ControlledStepFormDialog submitButton={{ text: '送信' }} closeButton={{ text: '閉じる' }} backButton={{ text: '戻る' }}>{children}</ControlledStepFormDialog>`,
+      output: `<ControlledStepFormDialog submitButton={'送信'} closeButton={'閉じる'} backButton={'戻る'}>{children}</ControlledStepFormDialog>`,
+      errors: [
+        { message: buildMessage('submitButton', 'text') },
+        { message: buildMessage('closeButton', 'text') },
+        { message: buildMessage('backButton', 'text') },
+      ],
+    },
+
+    // StepFormDialogはFormDialogで終わる名称でもあるため、heading検出が二重報告されないことを確認
+    {
+      code: `<ControlledStepFormDialog heading={{ text: '確認' }}>{children}</ControlledStepFormDialog>`,
+      output: `<ControlledStepFormDialog heading={'確認'}>{children}</ControlledStepFormDialog>`,
+      errors: [{ message: buildMessage('heading', 'text') }],
     },
   ],
 })

@@ -7,6 +7,18 @@ const TARGETS = [
   { component: 'InformationPanel', prop: 'heading', mainKey: 'text' },
   { component: 'Text', prop: 'maxLines', mainKey: 'max' },
   { component: 'Text', prop: 'icon', mainKey: 'prefix' },
+  { component: 'ActionDialog', prop: 'heading', mainKey: 'text' },
+  { component: 'ActionDialog', prop: 'actionButton', mainKey: 'text' },
+  { component: 'ActionDialog', prop: 'closeButton', mainKey: 'text' },
+  // HINT: StepFormDialogと誤ってマッチしないよう(?<!Step)で除外する
+  { component: '(?<!Step)FormDialog', prop: 'heading', mainKey: 'text' },
+  { component: '(?<!Step)FormDialog', prop: 'actionButton', mainKey: 'text' },
+  { component: '(?<!Step)FormDialog', prop: 'closeButton', mainKey: 'text' },
+  { component: 'MessageDialog', prop: 'heading', mainKey: 'text' },
+  { component: 'StepFormDialog', prop: 'heading', mainKey: 'text' },
+  { component: 'StepFormDialog', prop: 'submitButton', mainKey: 'text' },
+  { component: 'StepFormDialog', prop: 'closeButton', mainKey: 'text' },
+  { component: 'StepFormDialog', prop: 'backButton', mainKey: 'text' },
 ]
 
 const SCHEMA = []

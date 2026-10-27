@@ -201,6 +201,7 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 | `97` → `98` | [移行ガイド](./versions/v97-to-v98/README.md)（検出のみ） |
 | `98` → `99` | [移行ガイド](./versions/v98-to-v99/README.md) |
 | `99` → `100` | [移行ガイド](./versions/v99-to-v100/README.md) |
+| `100` → `101` | [移行ガイド](./versions/v100-to-v101/README.md) |
 
 ## 使用方法
 

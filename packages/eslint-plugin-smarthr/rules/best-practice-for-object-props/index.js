@@ -2,11 +2,13 @@ const TARGETS = [
   { component: 'ActionDialog', prop: 'actionButton', mainKey: 'text' },
   { component: 'ActionDialog', prop: 'closeButton', mainKey: 'text' },
   { component: 'ActionDialog', prop: 'heading', mainKey: 'text' },
-  { component: 'AnchorButton', prop: 'inactiveReason', mainKey: 'message' },
-  { component: 'Button', prop: 'disabledReason', mainKey: 'message' },
+  // HINT: smarthr-ui側でmessageのmainKeyをtextへ統一予定のため先行対応。
+  // 誤検知防止のため現行キー(message)はチェックせず、リネーム後に自然に検知される状態にしておく
+  { component: 'AnchorButton', prop: 'inactiveReason', mainKey: 'text' },
+  { component: 'Button', prop: 'disabledReason', mainKey: 'text' },
   { component: 'DefinitionListItem', prop: 'term', mainKey: 'text' },
-  { component: 'DropdownMenuButton', prop: 'trigger', mainKey: 'children' },
-  // HINT: smarthr-ui側でtriggerのmainKeyをchildrenからtextへリネーム予定のため先行対応
+  // HINT: smarthr-ui側でtriggerのmainKeyをchildrenからtextへリネーム予定のため先行対応。
+  // 誤検知防止のため現行キー(children)はチェックせず、リネーム後に自然に検知される状態にしておく
   { component: 'DropdownMenuButton', prop: 'trigger', mainKey: 'text' },
   { component: 'Fieldset', prop: 'legend', mainKey: 'text' },
   { component: 'FilterDropdown', prop: 'trigger', mainKey: 'text' },

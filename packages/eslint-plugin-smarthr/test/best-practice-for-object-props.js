@@ -21,22 +21,20 @@ ruleTester.run('best-practice-for-object-props', rule, {
     { code: `<DropdownMenuButton trigger="メニュー">{children}</DropdownMenuButton>` },
     { code: `<DropdownMenuButton trigger={<span>メニュー</span>}>{children}</DropdownMenuButton>` },
 
-    // 必須キー以外の追加プロパティを伴う場合は許容
-    { code: `<DropdownMenuButton trigger={{ children: 'メニュー', size: 's' }}>{children}</DropdownMenuButton>` },
-    { code: `<DropdownMenuButton trigger={{ children: 'メニュー', onlyIcon: true }}>{children}</DropdownMenuButton>` },
-
-    // DropdownMenuButton: trigger(mainKey: children/text、smarthr-ui側のリネーム予定に対応)
+    // DropdownMenuButton: trigger (mainKey: text、smarthr-ui側のchildren→textリネーム予定に対応。リネーム前のchildrenは対象外)
+    { code: `<DropdownMenuButton trigger={{ children: 'メニュー' }}>{children}</DropdownMenuButton>` },
     { code: `<DropdownMenuButton trigger={{ text: 'メニュー', size: 's' }}>{children}</DropdownMenuButton>` },
+    { code: `<DropdownMenuButton trigger={{ text: 'メニュー', onlyIcon: true }}>{children}</DropdownMenuButton>` },
 
     // spread構文を含む場合は対象外
     { code: `<DropdownMenuButton trigger={{ ...triggerProps }}>{children}</DropdownMenuButton>` },
-    { code: `<DropdownMenuButton trigger={{ ...triggerProps, children: 'メニュー' }}>{children}</DropdownMenuButton>` },
+    { code: `<DropdownMenuButton trigger={{ ...triggerProps, text: 'メニュー' }}>{children}</DropdownMenuButton>` },
 
     // 対象コンポーネント以外は対象外
-    { code: `<OtherButton trigger={{ children: 'メニュー' }}>{children}</OtherButton>` },
+    { code: `<OtherButton trigger={{ text: 'メニュー' }}>{children}</OtherButton>` },
 
     // 対象prop以外は対象外
-    { code: `<DropdownMenuButton other={{ children: 'メニュー' }}>{children}</DropdownMenuButton>` },
+    { code: `<DropdownMenuButton other={{ text: 'メニュー' }}>{children}</DropdownMenuButton>` },
 
     // FilterDropdown: trigger (mainKey: text)
     { code: `<FilterDropdown trigger="絞り込み" />` },
@@ -82,33 +80,30 @@ ruleTester.run('best-practice-for-object-props', rule, {
     { code: `<StepFormDialog heading="確認" submitButton="送信" closeButton="閉じる" backButton="戻る">{children}</StepFormDialog>` },
     { code: `<ControlledStepFormDialog heading={{ text: '確認', sub: '補足' }} submitButton={{ text: '送信', hidden: true }} closeButton={{ text: '閉じる', disabled: true }} backButton={{ text: '戻る', theme: 'secondary' }}>{children}</ControlledStepFormDialog>` },
 
-    // Button: disabledReason (mainKey: message)
+    // Button: disabledReason (mainKey: text、smarthr-ui側のmessage→textリネーム予定に対応。リネーム前のmessageは対象外)
     { code: `<Button disabledReason="権限がありません">保存</Button>` },
-    { code: `<Button disabledReason={{ message: '権限がありません', icon: FaLockIcon }}>保存</Button>` },
+    { code: `<Button disabledReason={{ message: '権限がありません' }}>保存</Button>` },
+    { code: `<Button disabledReason={{ text: '権限がありません', icon: FaLockIcon }}>保存</Button>` },
 
-    // AnchorButton: inactiveReason (mainKey: message)
+    // AnchorButton: inactiveReason (mainKey: text、smarthr-ui側のmessage→textリネーム予定に対応。リネーム前のmessageは対象外)
     { code: `<AnchorButton inactiveReason="権限がありません">保存</AnchorButton>` },
-    { code: `<AnchorButton inactiveReason={{ message: '権限がありません', icon: FaLockIcon }}>保存</AnchorButton>` },
+    { code: `<AnchorButton inactiveReason={{ message: '権限がありません' }}>保存</AnchorButton>` },
+    { code: `<AnchorButton inactiveReason={{ text: '権限がありません', icon: FaLockIcon }}>保存</AnchorButton>` },
   ],
   invalid: [
     {
-      code: `<DropdownMenuButton trigger={{ children: 'メニュー' }}>{children}</DropdownMenuButton>`,
-      output: `<DropdownMenuButton trigger={'メニュー'}>{children}</DropdownMenuButton>`,
-      errors: [{ message: buildMessage('trigger', 'children') }],
-    },
-    {
-      code: `<DropdownMenuButton trigger={{ children: <span>メニュー</span> }}>{children}</DropdownMenuButton>`,
-      output: `<DropdownMenuButton trigger={<span>メニュー</span>}>{children}</DropdownMenuButton>`,
-      errors: [{ message: buildMessage('trigger', 'children') }],
-    },
-    {
-      code: `<FugaDropdownMenuButton trigger={{ children: label }}>{children}</FugaDropdownMenuButton>`,
-      output: `<FugaDropdownMenuButton trigger={label}>{children}</FugaDropdownMenuButton>`,
-      errors: [{ message: buildMessage('trigger', 'children') }],
-    },
-    {
       code: `<DropdownMenuButton trigger={{ text: 'メニュー' }}>{children}</DropdownMenuButton>`,
       output: `<DropdownMenuButton trigger={'メニュー'}>{children}</DropdownMenuButton>`,
+      errors: [{ message: buildMessage('trigger', 'text') }],
+    },
+    {
+      code: `<DropdownMenuButton trigger={{ text: <span>メニュー</span> }}>{children}</DropdownMenuButton>`,
+      output: `<DropdownMenuButton trigger={<span>メニュー</span>}>{children}</DropdownMenuButton>`,
+      errors: [{ message: buildMessage('trigger', 'text') }],
+    },
+    {
+      code: `<FugaDropdownMenuButton trigger={{ text: label }}>{children}</FugaDropdownMenuButton>`,
+      output: `<FugaDropdownMenuButton trigger={label}>{children}</FugaDropdownMenuButton>`,
       errors: [{ message: buildMessage('trigger', 'text') }],
     },
 
@@ -206,16 +201,16 @@ ruleTester.run('best-practice-for-object-props', rule, {
 
     // Button: disabledReason
     {
-      code: `<Button disabledReason={{ message: '権限がありません' }}>保存</Button>`,
+      code: `<Button disabledReason={{ text: '権限がありません' }}>保存</Button>`,
       output: `<Button disabledReason={'権限がありません'}>保存</Button>`,
-      errors: [{ message: buildMessage('disabledReason', 'message') }],
+      errors: [{ message: buildMessage('disabledReason', 'text') }],
     },
 
     // AnchorButton: inactiveReason
     {
-      code: `<AnchorButton inactiveReason={{ message: '権限がありません' }}>保存</AnchorButton>`,
+      code: `<AnchorButton inactiveReason={{ text: '権限がありません' }}>保存</AnchorButton>`,
       output: `<AnchorButton inactiveReason={'権限がありません'}>保存</AnchorButton>`,
-      errors: [{ message: buildMessage('inactiveReason', 'message') }],
+      errors: [{ message: buildMessage('inactiveReason', 'text') }],
     },
   ],
 })

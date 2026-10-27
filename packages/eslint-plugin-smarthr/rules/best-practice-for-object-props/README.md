@@ -16,10 +16,10 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 | コンポーネント | prop | 必須キー |
 | --- | --- | --- |
 | `ActionDialog` | `actionButton` / `closeButton` / `heading` | `text` |
-| `AnchorButton` | `inactiveReason` | `message` |
-| `Button` | `disabledReason` | `message` |
+| `AnchorButton` | `inactiveReason` | `text`（※smarthr-ui側で`message`から`text`へリネーム予定。リネーム前は検知されない） |
+| `Button` | `disabledReason` | `text`（※smarthr-ui側で`message`から`text`へリネーム予定。リネーム前は検知されない） |
 | `DefinitionListItem` | `term` | `text` |
-| `DropdownMenuButton` | `trigger` | `children`（smarthr-ui側のリネーム予定に伴い`text`も許容） |
+| `DropdownMenuButton` | `trigger` | `text`（※smarthr-ui側で`children`から`text`へリネーム予定。リネーム前は検知されない） |
 | `Fieldset` | `legend` | `text` |
 | `FilterDropdown` | `trigger` | `text` |
 | `FormControl` | `label` | `text` |

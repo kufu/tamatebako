@@ -179,6 +179,7 @@ ruleTester.run('component-name', rule, {
     { code: 'const PaginationFuga = styled(FugaPagination)``', errors: [ { message: messageInheritance({ extended: 'PaginationFuga', matcher: /Pagination$/ }) } ]  },
     { code: 'const PanelAny = styled(FugaPanel)``', errors: [ { message: messageInheritance({ extended: 'PanelAny', matcher: /Panel$/ }) } ]  },
     { code: `import { HogeSideNav as Hoge } from './hoge'`, errors: [ { message: messageImportAs({ extended: 'Hoge', matcher: /Nav$/, base: 'HogeSideNav' }) }, { message: messageImportAs({ extended: 'Hoge', matcher: /SideNav$/, base: 'HogeSideNav' }) } ] },
+    { code: 'const AccordionAny = styled(FugaAccordion)``', errors: [ { message: messageInheritance({ extended: 'AccordionAny', matcher: /Accordion$/ }) } ]  },
     { code: 'const AccordionPanelAny = styled(FugaAccordionPanel)``', errors: [
       { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /AccordionPanel$/ }) },
       { message: messageInheritance({ extended: 'AccordionPanelAny', matcher: /Panel$/ }) }

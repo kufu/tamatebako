@@ -73,7 +73,8 @@ const EXPECTED_NAMES = {
   '(S|^s)ection$': 'Section$',
   '(S|^s)elect$': 'Select$',
   '(T|^t)extarea$': 'Textarea$',
-  'AccordionPanel$': 'AccordionPanel$',
+  'Accordion$': 'Accordion$',
+  'AccordionPanel$': 'AccordionPanel$',  // 後方互換性のために残す
   'ActionDialogWithTrigger$': 'ActionDialogWithTrigger$',
   'Anchor$': 'Anchor$',
   'AnchorButton$': 'AnchorButton$',

@@ -8,7 +8,7 @@ const INTERACTIVE_COMPONENT_NAMES = `(${[
   '(L|l)egend(s)$',
   '(S|s)elect(s)?',
   '(T|t)extarea(s)?',
-  'AccordionPanel(s)?',
+  'Accordion(Panel)?(s)?',
   'Anchor',
   'DisclosureTrigger?',
   'DropZone(s)?',

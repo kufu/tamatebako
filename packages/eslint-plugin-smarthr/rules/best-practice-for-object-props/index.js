@@ -1,5 +1,12 @@
 const TARGETS = [
   { component: 'DropdownMenuButton', prop: 'trigger', mainKey: 'children' },
+  { component: 'FilterDropdown', prop: 'trigger', mainKey: 'text' },
+  { component: 'FormControl', prop: 'label', mainKey: 'text' },
+  { component: 'Fieldset', prop: 'legend', mainKey: 'text' },
+  { component: 'DefinitionListItem', prop: 'term', mainKey: 'text' },
+  { component: 'InformationPanel', prop: 'heading', mainKey: 'text' },
+  { component: 'Text', prop: 'maxLines', mainKey: 'max' },
+  { component: 'Text', prop: 'icon', mainKey: 'prefix' },
 ]
 
 const SCHEMA = []
@@ -40,7 +47,7 @@ module.exports = {
         context.report({
           node,
           message: `"${prop}"に{ ${mainKey}: ... }のみを指定する場合はobject形式ではなく値を直接指定してください（例: ${prop}="値"）。
- - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-unnecessary-object-prop
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-object-props
  - 詳細な設定が必要な場合のみobject形式を使用してください`,
           fix(fixer) {
             const sourceCode = context.sourceCode || context.getSourceCode()

@@ -1,4 +1,4 @@
-# smarthr/design-system-guideline-prohibit-unnecessary-object-prop
+# smarthr/best-practice-for-object-props
 
 smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な設定が不要な場合にobject形式を使うことを禁止するルールです（自動修正対応）。
 
@@ -11,20 +11,27 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 ## 対象
 
-現時点では以下の組み合わせが対象です（今後拡張予定）：
+現時点では以下の組み合わせが対象です（今後拡張予定。Dialog系コンポーネントは対象外）：
 
 | コンポーネント | prop | 必須キー |
 | --- | --- | --- |
 | `DropdownMenuButton` | `trigger` | `children` |
+| `FilterDropdown` | `trigger` | `text` |
+| `FormControl` | `label` | `text` |
+| `Fieldset` | `legend` | `text` |
+| `DefinitionListItem` | `term` | `text` |
+| `InformationPanel` | `heading` | `text` |
+| `Text` | `maxLines` | `max` |
+| `Text` | `icon` | `prefix` |
 
-対象propの値がobject形式で、かつ必須キー**のみ**を持つ場合に検出します。spread構文（`{ ...xxx }`）を含む場合や、必須キー以外の追加プロパティ（`size`、`onlyIcon`等）を持つ場合は対象外です。
+対象propの値がobject形式で、かつ必須キー**のみ**を持つ場合に検出します。spread構文（`{ ...xxx }`）を含む場合や、必須キー以外の追加プロパティ（`size`、`styleType`、`tooltip`等）を持つ場合は対象外です。
 
 ## rules
 
 ```js
 {
   rules: {
-    'smarthr/design-system-guideline-prohibit-unnecessary-object-prop': 'error', // 'warn', 'off'
+    'smarthr/best-practice-for-object-props': 'error', // 'warn', 'off'
   },
 }
 ```
@@ -45,4 +52,16 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 {/* spread構文を含む場合は静的に判断できないため対象外 */}
 <DropdownMenuButton trigger={{ ...triggerProps }}>...</DropdownMenuButton>
+```
+```jsx
+{/* ❌ */}
+<Text maxLines={{ max: 3 }}>長いテキスト</Text>
+<Text icon={{ prefix: <Icon /> }}>テキスト</Text>
+
+{/* ✅ 自動修正後 */}
+<Text maxLines={3}>長いテキスト</Text>
+<Text icon={<Icon />}>テキスト</Text>
+
+{/* ✅ 追加プロパティを伴う場合はobject形式のまま許容 */}
+<Text maxLines={{ max: 3, tooltip: true }}>長いテキスト</Text>
 ```

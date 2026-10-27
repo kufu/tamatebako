@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.28.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.27.0...eslint-plugin-smarthr-v6.28.0) (2026-10-27)
+
+
+### Features
+
+* Accordionコンポーネント対応を追加（後方互換性のためAccordionPanelは保持） ([#1197](https://github.com/kufu/tamatebako/issues/1197)) ([92dbdcf](https://github.com/kufu/tamatebako/commit/92dbdcf5c18ddcd5cc4d27634798dec3d9dca91b))
+* autofixer-smarthr-ui-migrationにv100-to-v101を追加 ([#1638](https://github.com/kufu/tamatebako/issues/1638)) ([d41e9a1](https://github.com/kufu/tamatebako/commit/d41e9a12605053fe4c535aad8ef03be103045f43))
+* autofixer-smarthr-ui-migrationにv99-to-v100を追加 ([#1637](https://github.com/kufu/tamatebako/issues/1637)) ([01045ac](https://github.com/kufu/tamatebako/commit/01045ace475e32121fe7570a5985b48920c88094))
+* best-practice-for-default-propsの対象コンポーネントを拡張 ([#1636](https://github.com/kufu/tamatebako/issues/1636)) ([f1a3835](https://github.com/kufu/tamatebako/commit/f1a3835a49d27040b4e9f99ac10e3436fb40a977))
+* classNameGeneratorの実行結果を格納する変数名を統一するチェックを追加 ([#1632](https://github.com/kufu/tamatebako/issues/1632)) ([14e29ab](https://github.com/kufu/tamatebako/commit/14e29abd02fe385dc94942ea5ec0b13da10a1f2e))
+* Inputのprefix/suffixに操作可能な要素を配置することを禁止するルールを追加 ([#1625](https://github.com/kufu/tamatebako/issues/1625)) ([f14dad2](https://github.com/kufu/tamatebako/commit/f14dad24b4993cd02a4d694e5a283b19c70bc868))
+* slot毎に分割代入する場合、classNameGeneratorへの引数指定を禁止する ([#1633](https://github.com/kufu/tamatebako/issues/1633)) ([3daba23](https://github.com/kufu/tamatebako/commit/3daba23a8739e6ca09811a9f4b3e9c1c35c4eaa0))
+* 不要なobject形式のpropsを禁止するルール(best-practice-for-object-props)を追加 ([#1635](https://github.com/kufu/tamatebako/issues/1635)) ([837dd4e](https://github.com/kufu/tamatebako/commit/837dd4ef602adc321449f3fd51ec9daffb67265a))
+
+
+### Bug Fixes
+
+* a11y-trigger-has-button でコメントを置けるように修正 ([#1620](https://github.com/kufu/tamatebako/issues/1620)) ([c6f529c](https://github.com/kufu/tamatebako/commit/c6f529c59d627e0f6a8e6f723b6af5ff94b53ee4))
+* **best-practice-for-tailwind-variants:** module scopeでのclassNameGenerator呼び出しをuseMemo要求の対象外にする ([#1631](https://github.com/kufu/tamatebako/issues/1631)) ([68aebb9](https://github.com/kufu/tamatebako/commit/68aebb9169c0ffa5a1b4375014ba161dd5e7d197))
+
 ## [6.27.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.26.0...eslint-plugin-smarthr-v6.27.0) (2026-10-20)
 
 

@@ -94,6 +94,9 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 **SideNav**
 - `size="M"`
 
+**SmartHRAILogo**
+- `compact={true}`
+
 **StatusLabel**
 - `type="grey"`
 - `bold={false}`
@@ -220,6 +223,7 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - [SegmentedControl.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SegmentedControl/client/SegmentedControl.tsx)
 - [SideMenu.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideMenu/SideMenu.tsx)
 - [SideNav.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideNav/SideNav.tsx)
+- [SmartHRAILogo.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SmartHRAILogo/SmartHRAILogo.tsx)
 - [StatusLabel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/StatusLabel/StatusLabel.tsx)
 - [TabItem.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/TabBar/client/TabItem.tsx)
 - [Table.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Table/Table.tsx)

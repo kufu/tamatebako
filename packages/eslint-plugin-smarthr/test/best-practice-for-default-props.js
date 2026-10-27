@@ -106,6 +106,9 @@ ruleTester.run('best-practice-for-default-props', rule, {
       code: '<SideNav size="S">content</SideNav>',
     },
     {
+      code: '<SmartHRAILogo compact={false} />',
+    },
+    {
       code: '<StatusLabel type="red">content</StatusLabel>',
     },
     {
@@ -469,6 +472,12 @@ ruleTester.run('best-practice-for-default-props', rule, {
       code: '<SideNav size="M">content</SideNav>',
       output: '<SideNav>content</SideNav>',
       errors: [{ message: /prop "size" はデフォルト値と同じため不要です/ }],
+    },
+    // SmartHRAILogo: compact={true}
+    {
+      code: '<SmartHRAILogo compact={true} />',
+      output: '<SmartHRAILogo />',
+      errors: [{ message: /prop "compact" はデフォルト値と同じため不要です/ }],
     },
     // StatusLabel: type="grey"
     {

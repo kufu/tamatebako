@@ -76,6 +76,9 @@ const DEFAULT_PROPS = {
   SideNav: {
     size: 'M',
   },
+  SmartHRAILogo: {
+    compact: true,
+  },
   Stack: {
     inline: false,
     gap: 1,

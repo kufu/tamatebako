@@ -16,13 +16,12 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 
 ### Layout
 
-**Stack**
-- `inline={false}`
-- `gap={1}`
-
 **Cluster**
 - `inline={false}`
 - `gap={0.5}`
+
+**Container**
+- `size="DEFAULT"`
 
 **Reel**
 - `gap={0.5}`
@@ -34,10 +33,20 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - `gap={1}`
 - `right={false}`
 
+**Stack**
+- `inline={false}`
+- `gap={1}`
+
 ### その他
 
-**Heading**
-- `type="sectionTitle"`
+**AccordionPanel**
+- `iconPosition="left"`
+- `expandableMultiply={true}`
+
+**AnchorButton**
+- `size="M"`
+- `wide={false}`
+- `variant="secondary"`
 
 **Button**
 - `type="button"`
@@ -45,6 +54,66 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - `wide={false}`
 - `variant="secondary"`
 - `loading={false}`
+
+**DropZone**
+- `multiple={true}`（内部実装の`ActualDropZone`側のデフォルト値だが、`DropZone`からそのまま伝播するため対象に含める）
+
+**Heading**
+- `type="sectionTitle"`
+
+**InformationPanel**
+- `type="info"`
+
+**LineClamp**
+- `maxLines={3}`
+
+**Loader**
+- `size="M"`
+- `type="primary"`
+
+**ModelessDialog**
+- `resizable={false}`
+
+**PageHeading**
+- `autoPageTitle={true}`
+- `size="XL"`
+
+**ResponseMessage**
+- `status="info"`
+
+**Scroller**
+- `direction="vertical"`
+- `styleType="auto"`
+
+**SegmentedControl**
+- `size="M"`
+
+**SideMenu**
+- `elementAs="ul"`
+
+**SideNav**
+- `size="M"`
+
+**SmartHRAILogo**
+- `compact={true}`
+
+**StatusLabel**
+- `type="grey"`
+- `bold={false}`
+
+**TabItem**
+- `selected={false}`
+
+**Table**
+- `reel={true}`
+
+**Textarea**
+- `autoResize={false}`
+- `rows={2}`
+
+**Tooltip**
+- `type="description"`
+- `ariaDescribedbyTarget="wrapper"`
 
 ## options
 
@@ -88,12 +157,16 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 <Cluster inline={false} gap={0.5}>...</Cluster>
 <Reel gap={0.5} padding={0}>...</Reel>
 <Sidebar align="stretch" contentsMinWidth="50%" gap={1} right={false}>...</Sidebar>
+<Container size="DEFAULT">...</Container>
 
 // その他
 <Heading type="sectionTitle">Title</Heading>
 <Button type="button" size="M" wide={false} variant="secondary" loading={false}>
   Click
 </Button>
+<Loader size="M" type="primary" />
+<Table reel={true}>...</Table>
+<Tooltip type="description" ariaDescribedbyTarget="wrapper" message="hint">...</Tooltip>
 ```
 
 ## ✅ Correct
@@ -104,14 +177,19 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 <Cluster>...</Cluster>
 <Reel>...</Reel>
 <Sidebar>...</Sidebar>
+<Container>...</Container>
 <Heading>Title</Heading>
 <Button>Click</Button>
+<Loader />
+<Table>...</Table>
+<Tooltip message="hint">...</Tooltip>
 
 // デフォルト値と異なる値を指定する場合は必要
 <Stack inline gap={2}>...</Stack>
 <Cluster gap={1}>...</Cluster>
 <Reel gap={1} padding={1}>...</Reel>
 <Sidebar align="start" right>...</Sidebar>
+<Container size="S">...</Container>
 <Heading type="screenTitle">Title</Heading>
 <Button variant="primary" size="S" wide loading>
   Click
@@ -123,11 +201,31 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 デフォルト値は以下のsmarthr-uiソースコードから取得しています：
 
 ### Layout
-- [Stack.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/Stack/Stack.tsx)
 - [Cluster.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/Cluster/Cluster.tsx)
+- [Container.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/client/Container/Container.tsx)
 - [Reel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/Reel/Reel.tsx)
 - [Sidebar.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/Sidebar/Sidebar.tsx)
+- [Stack.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Layout/Stack/Stack.tsx)
 
 ### その他
-- [Heading.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Heading/Heading.tsx)
+- [AccordionPanel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/AccordionPanel/client/AccordionPanel.tsx)
+- [AnchorButton.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Button/AnchorButton.tsx)
 - [Button.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Button/Button.tsx)
+- [DropZone.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/DropZone/DropZone.tsx) / [ActualDropZone.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/DropZone/client/ActualDropZone.tsx)
+- [Heading.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Heading/client/Heading.tsx)
+- [InformationPanel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/InformationPanel/client/InformationPanel.tsx)
+- [LineClamp.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/LineClamp/LineClamp.tsx)
+- [Loader.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Loader/Loader.tsx)
+- [ModelessDialog.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Dialog/ModelessDialog/ModelessDialog.tsx)
+- [PageHeading.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Heading/client/PageHeading/PageHeading.tsx)
+- [ResponseMessage.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/ResponseMessage/ResponseMessage.tsx)
+- [Scroller.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Scroller/client/Scroller.tsx)
+- [SegmentedControl.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SegmentedControl/client/SegmentedControl.tsx)
+- [SideMenu.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideMenu/SideMenu.tsx)
+- [SideNav.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideNav/SideNav.tsx)
+- [SmartHRAILogo.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SmartHRAILogo/SmartHRAILogo.tsx)
+- [StatusLabel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/StatusLabel/StatusLabel.tsx)
+- [TabItem.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/TabBar/client/TabItem.tsx)
+- [Table.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Table/Table.tsx)
+- [Textarea.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Textarea/client/Textarea.tsx)
+- [Tooltip.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Tooltip/client/Tooltip.tsx)

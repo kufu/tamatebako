@@ -6,6 +6,8 @@ const TARGETS = [
   { component: 'Button', prop: 'disabledReason', mainKey: 'message' },
   { component: 'DefinitionListItem', prop: 'term', mainKey: 'text' },
   { component: 'DropdownMenuButton', prop: 'trigger', mainKey: 'children' },
+  // HINT: smarthr-ui側でtriggerのmainKeyをchildrenからtextへリネーム予定のため先行対応
+  { component: 'DropdownMenuButton', prop: 'trigger', mainKey: 'text' },
   { component: 'Fieldset', prop: 'legend', mainKey: 'text' },
   { component: 'FilterDropdown', prop: 'trigger', mainKey: 'text' },
   { component: 'FormControl', prop: 'label', mainKey: 'text' },
@@ -25,14 +27,26 @@ const TARGETS = [
 
 const SCHEMA = []
 
-const findMainKeyOnlyProperty = (objectExpression, mainKey) => {
+// HINT: 同じcomponent+propに複数のmainKeyを許容できるよう、selectorごとにグルーピングする
+const GROUPED_TARGETS = TARGETS.reduce((groups, { component, prop, mainKey }) => {
+  const selector = `JSXOpeningElement[name.name=/${component}$/] > JSXAttribute[name.name="${prop}"] > JSXExpressionContainer > ObjectExpression`
+
+  if (!groups[selector]) {
+    groups[selector] = { prop, mainKeys: [] }
+  }
+  groups[selector].mainKeys.push(mainKey)
+
+  return groups
+}, {})
+
+const findMainKeyOnlyProperty = (objectExpression, mainKeys) => {
   if (objectExpression.properties.length !== 1) {
     return null
   }
 
   const [property] = objectExpression.properties
 
-  if (property.type !== 'Property' || property.computed || property.key.name !== mainKey) {
+  if (property.type !== 'Property' || property.computed || !mainKeys.includes(property.key.name)) {
     return null
   }
 
@@ -48,11 +62,9 @@ module.exports = {
   create(context) {
     const visitor = {}
 
-    for (const { component, prop, mainKey } of TARGETS) {
-      const selector = `JSXOpeningElement[name.name=/${component}$/] > JSXAttribute[name.name="${prop}"] > JSXExpressionContainer > ObjectExpression`
-
+    for (const [selector, { prop, mainKeys }] of Object.entries(GROUPED_TARGETS)) {
       visitor[selector] = (node) => {
-        const mainKeyOnlyProperty = findMainKeyOnlyProperty(node, mainKey)
+        const mainKeyOnlyProperty = findMainKeyOnlyProperty(node, mainKeys)
 
         if (!mainKeyOnlyProperty) {
           return
@@ -60,7 +72,7 @@ module.exports = {
 
         context.report({
           node,
-          message: `"${prop}"に{ ${mainKey}: ... }のみを指定する場合はobject形式ではなく値を直接指定してください（例: ${prop}="値"）。
+          message: `"${prop}"に{ ${mainKeyOnlyProperty.key.name}: ... }のみを指定する場合はobject形式ではなく値を直接指定してください（例: ${prop}="値"）。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-object-props
  - 詳細な設定が必要な場合のみobject形式を使用してください`,
           fix(fixer) {

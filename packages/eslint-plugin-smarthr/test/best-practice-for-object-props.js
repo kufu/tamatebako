@@ -25,6 +25,9 @@ ruleTester.run('best-practice-for-object-props', rule, {
     { code: `<DropdownMenuButton trigger={{ children: 'メニュー', size: 's' }}>{children}</DropdownMenuButton>` },
     { code: `<DropdownMenuButton trigger={{ children: 'メニュー', onlyIcon: true }}>{children}</DropdownMenuButton>` },
 
+    // DropdownMenuButton: trigger(mainKey: children/text、smarthr-ui側のリネーム予定に対応)
+    { code: `<DropdownMenuButton trigger={{ text: 'メニュー', size: 's' }}>{children}</DropdownMenuButton>` },
+
     // spread構文を含む場合は対象外
     { code: `<DropdownMenuButton trigger={{ ...triggerProps }}>{children}</DropdownMenuButton>` },
     { code: `<DropdownMenuButton trigger={{ ...triggerProps, children: 'メニュー' }}>{children}</DropdownMenuButton>` },
@@ -102,6 +105,11 @@ ruleTester.run('best-practice-for-object-props', rule, {
       code: `<FugaDropdownMenuButton trigger={{ children: label }}>{children}</FugaDropdownMenuButton>`,
       output: `<FugaDropdownMenuButton trigger={label}>{children}</FugaDropdownMenuButton>`,
       errors: [{ message: buildMessage('trigger', 'children') }],
+    },
+    {
+      code: `<DropdownMenuButton trigger={{ text: 'メニュー' }}>{children}</DropdownMenuButton>`,
+      output: `<DropdownMenuButton trigger={'メニュー'}>{children}</DropdownMenuButton>`,
+      errors: [{ message: buildMessage('trigger', 'text') }],
     },
 
     // FilterDropdown: trigger

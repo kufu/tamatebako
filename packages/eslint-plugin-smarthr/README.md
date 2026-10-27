@@ -48,6 +48,7 @@
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [design-system-guideline-prohibit-information-panel-in-white-bg](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-information-panel-in-white-bg)
 - [design-system-guideline-prohibit-input-affix-interactive-element](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element)
+- [design-system-guideline-prohibit-unnecessary-object-prop](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-unnecessary-object-prop)
 - [format-import-path](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-import-path)
 - [format-translate-component](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/format-translate-component)
 - [no-import-other-domain](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/no-import-other-domain)

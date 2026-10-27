@@ -30,6 +30,7 @@
 - [best-practice-for-lazy-variable](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-lazy-variable)
 - [best-practice-for-nested-attributes-array-index](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-nested-attributes-array-index)
 - [best-practice-for-no-unnecessary-variable](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-no-unnecessary-variable)
+- [best-practice-for-object-props](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-object-props)
 - [best-practice-for-optional-chaining](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-optional-chaining)
 - [best-practice-for-prohibit-import-smarthr-ui-local](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-prohibit-import-smarthr-ui-local)
 - [best-practice-for-reduce-redundant-calls](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-reduce-redundant-calls)

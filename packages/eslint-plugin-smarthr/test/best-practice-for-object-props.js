@@ -78,6 +78,14 @@ ruleTester.run('best-practice-for-object-props', rule, {
     // StepFormDialog: heading/submitButton/closeButton/backButton (mainKey: text)
     { code: `<StepFormDialog heading="確認" submitButton="送信" closeButton="閉じる" backButton="戻る">{children}</StepFormDialog>` },
     { code: `<ControlledStepFormDialog heading={{ text: '確認', sub: '補足' }} submitButton={{ text: '送信', hidden: true }} closeButton={{ text: '閉じる', disabled: true }} backButton={{ text: '戻る', theme: 'secondary' }}>{children}</ControlledStepFormDialog>` },
+
+    // Button: disabledReason (mainKey: message)
+    { code: `<Button disabledReason="権限がありません">保存</Button>` },
+    { code: `<Button disabledReason={{ message: '権限がありません', icon: FaLockIcon }}>保存</Button>` },
+
+    // AnchorButton: inactiveReason (mainKey: message)
+    { code: `<AnchorButton inactiveReason="権限がありません">保存</AnchorButton>` },
+    { code: `<AnchorButton inactiveReason={{ message: '権限がありません', icon: FaLockIcon }}>保存</AnchorButton>` },
   ],
   invalid: [
     {
@@ -186,6 +194,20 @@ ruleTester.run('best-practice-for-object-props', rule, {
       code: `<ControlledStepFormDialog heading={{ text: '確認' }}>{children}</ControlledStepFormDialog>`,
       output: `<ControlledStepFormDialog heading={'確認'}>{children}</ControlledStepFormDialog>`,
       errors: [{ message: buildMessage('heading', 'text') }],
+    },
+
+    // Button: disabledReason
+    {
+      code: `<Button disabledReason={{ message: '権限がありません' }}>保存</Button>`,
+      output: `<Button disabledReason={'権限がありません'}>保存</Button>`,
+      errors: [{ message: buildMessage('disabledReason', 'message') }],
+    },
+
+    // AnchorButton: inactiveReason
+    {
+      code: `<AnchorButton inactiveReason={{ message: '権限がありません' }}>保存</AnchorButton>`,
+      output: `<AnchorButton inactiveReason={'権限がありません'}>保存</AnchorButton>`,
+      errors: [{ message: buildMessage('inactiveReason', 'message') }],
     },
   ],
 })

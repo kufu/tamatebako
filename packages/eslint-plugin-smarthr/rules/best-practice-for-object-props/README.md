@@ -15,18 +15,20 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 | コンポーネント | prop | 必須キー |
 | --- | --- | --- |
+| `ActionDialog` | `actionButton` / `closeButton` / `heading` | `text` |
+| `AnchorButton` | `inactiveReason` | `message` |
+| `Button` | `disabledReason` | `message` |
+| `DefinitionListItem` | `term` | `text` |
 | `DropdownMenuButton` | `trigger` | `children` |
+| `Fieldset` | `legend` | `text` |
 | `FilterDropdown` | `trigger` | `text` |
 | `FormControl` | `label` | `text` |
-| `Fieldset` | `legend` | `text` |
-| `DefinitionListItem` | `term` | `text` |
+| `FormDialog` | `actionButton` / `closeButton` / `heading` | `text` |
 | `InformationPanel` | `heading` | `text` |
-| `Text` | `maxLines` | `max` |
-| `Text` | `icon` | `prefix` |
-| `ActionDialog` | `heading` / `actionButton` / `closeButton` | `text` |
-| `FormDialog` | `heading` / `actionButton` / `closeButton` | `text` |
 | `MessageDialog` | `heading` | `text` |
-| `StepFormDialog` | `heading` / `submitButton` / `closeButton` / `backButton` | `text` |
+| `StepFormDialog` | `backButton` / `closeButton` / `heading` / `submitButton` | `text` |
+| `Text` | `icon` | `prefix` |
+| `Text` | `maxLines` | `max` |
 
 コンポーネント名は末尾一致（例: `ActionDialog`は`ControlledActionDialog`や`RemoteTriggerActionDialog`等も対象）で判定します。
 
@@ -80,4 +82,14 @@ smarthr-uiの`ReactNode | ObjectXxxType`形式のpropsに対して、詳細な�
 
 {/* ✅ theme等の追加プロパティを伴う場合はobject形式のまま許容 */}
 <ActionDialog heading="確認" actionButton={{ text: '送信', theme: 'danger' }}>...</ActionDialog>
+```
+```jsx
+{/* ❌ */}
+<Button disabledReason={{ message: '権限がありません' }}>保存</Button>
+
+{/* ✅ 自動修正後 */}
+<Button disabledReason={'権限がありません'}>保存</Button>
+
+{/* ✅ icon等の追加プロパティを伴う場合はobject形式のまま許容 */}
+<AnchorButton inactiveReason={{ message: '権限がありません', icon: FaLockIcon }}>保存</AnchorButton>
 ```

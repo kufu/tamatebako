@@ -1,6 +1,6 @@
 {
   "name": "@smarthr/use-virtual-scroll",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "React hooks for virtual scroll",
   "author": "SmartHR",
   "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/use-virtual-scroll",
@@ -31,17 +31,17 @@
     "react": ">=16.13.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.2",
-    "@babel/preset-react": "^7.28.5",
-    "@babel/preset-typescript": "^7.28.5",
+    "@babel/core": "^8.0.7",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.7",
     "@storybook/addon-webpack5-compiler-swc": "^4.0.3",
-    "@storybook/react": "^8.6.18",
-    "@storybook/react-webpack5": "^8.6.18",
-    "@types/react": "^19.2.14",
+    "@storybook/react": "^10.6.2",
+    "@storybook/react-webpack5": "^10.6.2",
+    "@types/react": "^19.3.0",
     "babel-loader": "^10.1.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "storybook": "^8.6.18"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "storybook": "^10.6.2"
   }
 }

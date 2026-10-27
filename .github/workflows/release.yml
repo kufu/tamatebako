@@ -5,6 +5,14 @@ on:
     branches:
       - master
 
+# release_please はmasterの内容を読み取ってブランチを強制更新するため、
+# 複数実行が重なると、後から完了した実行が先に完了した実行の内容を
+# 上書きしてレースコンディションになる（実行開始時点の古いmasterの
+# 内容で上書きされてしまう）ことがある。直列実行にして防止する。
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release_please:
     runs-on: ubuntu-latest
@@ -14,7 +22,7 @@ jobs:
     outputs:
       releases_created: ${{ steps.release_please.outputs.releases_created }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release_please
         with:
           config-file: release-please-config.json
@@ -28,21 +36,18 @@ jobs:
     needs: release_please
     if: ${{ needs.release_please.outputs.releases_created == 'true' }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           package_json_file: 'package.json'
           run_install: false
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: '.node-version'
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install
-      - run: |
-          npm install -g npm@latest
-          echo "Updated npm version: $(npm -v)"
-      - run: pnpm release --no-push --no-private --yes
+      - run: pnpm release
 
   notify:
     runs-on: ubuntu-latest
@@ -50,7 +55,7 @@ jobs:
     if: ${{ always() && needs.publish.result != 'skipped' }}
     steps:
       - name: Notify Slack
-        uses: slackapi/slack-github-action@v3
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook

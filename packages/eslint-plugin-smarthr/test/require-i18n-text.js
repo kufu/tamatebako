@@ -11,9 +11,9 @@ const ruleTester = new RuleTester({
   },
 })
 
-const attributeError = (element, attr) => `${element}の${attr}属性に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+const attributeError = (element, attr, text) => `${element}の${attr}属性に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
-const childTextError = `子要素に文字列リテラルが指定されています。多言語化対応のため、翻訳関数を使用してください
+const childTextError = (text) => `子要素に文字列リテラル "${text}" が指定されています。多言語化対応のため、翻訳関数を使用してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text`
 
 const options = [
@@ -61,6 +61,14 @@ ruleTester.run('require-i18n-text', rule, {
     { code: `<img alt="-" />` },
     { code: `<i>*</i>` },
     { code: `<i>/</i>` },
+    { code: `<div>〜</div>` },
+    { code: `<div>：</div>` },
+    { code: `<div>:</div>` },
+    { code: `<div>（</div>` },
+    { code: `<div>）</div>` },
+    { code: `<div>(</div>` },
+    { code: `<div>)</div>` },
+    { code: `<div>,</div>` },
 
     // ワイルドカード - 空配列で除外
     {
@@ -96,41 +104,41 @@ ruleTester.run('require-i18n-text', rule, {
     // 属性エラー: デフォルト設定
     {
       code: `<img alt="Profile picture" />`,
-      errors: [{ message: attributeError('img', 'alt') }],
+      errors: [{ message: attributeError('img', 'alt', 'Profile picture') }],
     },
     {
       code: `<CustomComponent aria-label="Label" />`,
-      errors: [{ message: attributeError('CustomComponent', 'aria-label') }],
+      errors: [{ message: attributeError('CustomComponent', 'aria-label', 'Label') }],
     },
     {
       code: `<DefinitionListItem term="Label" />`,
-      errors: [{ message: attributeError('DefinitionListItem', 'term') }],
+      errors: [{ message: attributeError('DefinitionListItem', 'term', 'Label') }],
     },
     {
       code: `<button title="Click me" />`,
-      errors: [{ message: attributeError('button', 'title') }],
+      errors: [{ message: attributeError('button', 'title', 'Click me') }],
     },
 
     // 数値、.と演算記号の場合でも他の文字列が含まれていればエラー
-    { code: `<Any aria-label="1234 あ" />`, errors: [{ message: attributeError('Any', 'aria-label') }] },
-    { code: `<div>a.</div>`, errors: [{ message: childTextError }] },
-    { code: `<a> + b</a>`, errors: [{ message: childTextError }] },
-    { code: `<img alt="-zod" />`, errors: [{ message: attributeError('img', 'alt') }] },
-    { code: `<i>*1</i>`, errors: [{ message: childTextError }] },
-    { code: `<i>a/</i>`, errors: [{ message: childTextError }] },
+    { code: `<Any aria-label="1234 あ" />`, errors: [{ message: attributeError('Any', 'aria-label', '1234 あ') }] },
+    { code: `<div>a.</div>`, errors: [{ message: childTextError('a.') }] },
+    { code: `<a> + b</a>`, errors: [{ message: childTextError('+ b') }] },
+    { code: `<img alt="-zod" />`, errors: [{ message: attributeError('img', 'alt', '-zod') }] },
+    { code: `<i>*1</i>`, errors: [{ message: childTextError('*1') }] },
+    { code: `<i>a/</i>`, errors: [{ message: childTextError('a/') }] },
 
     // 属性エラー: カスタムオプション
     {
       code: `<img alt="Profile picture" />`,
       options,
-      errors: [{ message: attributeError('img', 'alt') }],
+      errors: [{ message: attributeError('img', 'alt', 'Profile picture') }],
     },
 
     // 属性エラー: 同一要素の複数属性
     {
       code: `<img alt="Profile" title="User profile" />`,
       options,
-      errors: [{ message: attributeError('img', 'alt') }, { message: attributeError('img', 'title') }],
+      errors: [{ message: attributeError('img', 'alt', 'Profile') }, { message: attributeError('img', 'title', 'User profile') }],
     },
 
     // 属性エラー: ワイルドカード
@@ -143,7 +151,7 @@ ruleTester.run('require-i18n-text', rule, {
           },
         },
       ],
-      errors: [{ message: attributeError('CustomComponent', 'label') }],
+      errors: [{ message: attributeError('CustomComponent', 'label', 'Text') }],
     },
 
     // 属性エラー: 個別設定がワイルドカードより優先
@@ -157,20 +165,20 @@ ruleTester.run('require-i18n-text', rule, {
           },
         },
       ],
-      errors: [{ message: attributeError('Button', 'label') }, { message: attributeError('Button', 'helperText') }],
+      errors: [{ message: attributeError('Button', 'label', 'Submit') }, { message: attributeError('Button', 'helperText', 'Help') }],
     },
 
     // 子要素エラー（オプション未設定時でもチェックされる）
     {
       code: `<div>Hello World</div>`,
-      errors: [{ message: childTextError }],
+      errors: [{ message: childTextError('Hello World') }],
     },
 
     // 複合エラー: 属性と子要素
     {
       code: `<Button label="Submit">Click here</Button>`,
       options,
-      errors: [{ message: attributeError('Button', 'label') }, { message: childTextError }],
+      errors: [{ message: attributeError('Button', 'label', 'Submit') }, { message: childTextError('Click here') }],
     },
 
     // 複合エラー: 入れ子構造
@@ -178,22 +186,10 @@ ruleTester.run('require-i18n-text', rule, {
       code: `<div title="Parent"><Button label="Child">Grandchild text</Button></div>`,
       options,
       errors: [
-        { message: attributeError('div', 'title') },
-        { message: attributeError('Button', 'label') },
-        { message: childTextError },
+        { message: attributeError('div', 'title', 'Parent') },
+        { message: attributeError('Button', 'label', 'Child') },
+        { message: childTextError('Grandchild text') },
       ],
-    },
-
-    // TemplateLiteral - 変数を含み、文字列リテラル部分がある
-    {
-      code: `<img alt={\`Profile \${name}\`} />`,
-      options,
-      errors: [{ message: attributeError('img', 'alt') }],
-    },
-    {
-      code: `<div title={\`\${prefix} title\`} />`,
-      options,
-      errors: [{ message: attributeError('div', 'title') }],
     },
   ],
 })

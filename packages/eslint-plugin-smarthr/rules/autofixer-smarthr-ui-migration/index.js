@@ -16,10 +16,26 @@
  */
 
 const v90ToV91 = require('./versions/v90-to-v91/index')
+const v91ToV92 = require('./versions/v91-to-v92/index')
+const v92ToV93 = require('./versions/v92-to-v93/index')
+const v93ToV94 = require('./versions/v93-to-v94/index')
+const v94ToV95 = require('./versions/v94-to-v95/index')
+const v95ToV96 = require('./versions/v95-to-v96/index')
+const v96ToV97 = require('./versions/v96-to-v97/index')
+const v97ToV98 = require('./versions/v97-to-v98/index')
+const v98ToV99 = require('./versions/v98-to-v99/index')
 
 // サポートしているバージョン間の移行モジュール
 const VERSION_MODULES = {
   'v90-v91': v90ToV91,
+  'v91-v92': v91ToV92,
+  'v92-v93': v92ToV93,
+  'v93-v94': v93ToV94,
+  'v94-v95': v94ToV95,
+  'v95-v96': v95ToV96,
+  'v96-v97': v96ToV97,
+  'v97-v98': v97ToV98,
+  'v98-v99': v98ToV99,
 }
 
 module.exports = {
@@ -49,8 +65,17 @@ module.exports = {
     messages: {
       missingOptions: 'オプションで from と to を指定してください。例: { "from": "90", "to": "91" }',
       unsupportedVersion: 'サポートされていないバージョンです: {{from}} to {{to}}',
+      conflictingMigration: 'v{{from}}→v{{to}}の一気実行はコンポーネント名の衝突により正しく動作しません。段階的に実行してください: 1. { "from": "{{from}}", "to": "{{middle}}" } を実行 2. { "from": "{{middle}}", "to": "{{to}}" } を実行',
       skippedVersion: 'v{{version}} の自動修正ルールが実装されていません。変更内容は https://github.com/kufu/smarthr-ui/releases から対応するversionの情報を確認してください',
       ...v90ToV91.messages,
+      ...v91ToV92.messages,
+      ...v92ToV93.messages,
+      ...v93ToV94.messages,
+      ...v94ToV95.messages,
+      ...v95ToV96.messages,
+      ...v96ToV97.messages,
+      ...v97ToV98.messages,
+      ...v98ToV99.messages,
     },
   },
   create(context) {
@@ -87,6 +112,19 @@ module.exports = {
       }
     }
 
+    // コンポーネント名衝突の検出
+    if (migrationResult.conflict) {
+      return {
+        Program(node) {
+          context.report({
+            node,
+            messageId: 'conflictingMigration',
+            data: migrationResult.conflictData,
+          })
+        },
+      }
+    }
+
     const { path, skipped } = migrationResult
 
     // 各ステップのチェッカーを収集してマージ
@@ -113,16 +151,21 @@ module.exports = {
  *
  * @param {string} from - 移行元バージョン（例: "90"）
  * @param {string} to - 移行先バージョン（例: "91"）
- * @returns {{ path: string[], skipped: number[] } | null} 移行パス情報、または無効な場合はnull
+ * @returns {{ path: string[], skipped: number[], conflict?: boolean, conflictData?: object } | null} 移行パス情報、または無効な場合はnull
  *
  * @example
  * getMigrationPath('90', '91')
- * // => { path: ['90-91'], skipped: [] }
+ * // => { path: ['v90-v91'], skipped: [] }
  *
  * @example
  * getMigrationPath('90', '93')
  * // 92のモジュールがない場合
- * // => { path: ['90-91'], skipped: [92, 93] }
+ * // => { path: ['v90-v91'], skipped: [92, 93] }
+ *
+ * @example
+ * getMigrationPath('90', '92')
+ * // v90-v91とv91-v92の組み合わせは衝突
+ * // => { path: ['v90-v91', 'v91-v92'], skipped: [], conflict: true, conflictData: {...} }
  */
 function getMigrationPath(from, to) {
   const fromNum = parseInt(from)
@@ -151,6 +194,37 @@ function getMigrationPath(from, to) {
   // 適用可能なステップが1つもない場合は、完全にサポート外
   if (path.length === 0) {
     return null
+  }
+
+  // コンポーネント名衝突の検出
+  // v90→v91とv91→v92の両方が含まれる場合、ActionDialogの名前が衝突する
+  // (v90のActionDialog→ControlledActionDialog、v90のRemoteTriggerActionDialog→ActionDialog)
+  if (path.includes('v90-v91') && path.includes('v91-v92')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '91',
+      },
+    }
+  }
+
+  // v96→v97は検出のみのルール（手動対応必須）のため、他のバージョンとの一気実行を禁止
+  // v95→v96（自動修正）とv96→v97（検出のみ）を混在させると、エラーが消えず混乱する
+  if (path.includes('v95-v96') && path.includes('v96-v97')) {
+    return {
+      path,
+      skipped,
+      conflict: true,
+      conflictData: {
+        from,
+        to,
+        middle: '96',
+      },
+    }
   }
 
   return { path, skipped }

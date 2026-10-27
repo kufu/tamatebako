@@ -6,33 +6,31 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm build --watch",
-    "build": "lerna run prebuild --stream && pnpm tsc",
+    "build": "pnpm -r --stream run prebuild && pnpm tsc",
     "pretest": "pnpm build",
-    "test": "jest && lerna run test",
+    "test": "jest && pnpm -r run test",
     "tsc": "tsc --build packages --force",
     "lint": "eslint '**/*.{ts,tsx}'",
-    "versionup": "HUSKY_SKIP=true lerna version --conventional-commits",
     "prerelease": "pnpm build && pnpm lint && pnpm test",
-    "release": "lerna publish from-package",
+    "release": "pnpm -r publish",
     "prepare": "husky"
   },
   "author": "SmartHR",
   "license": "MIT",
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@types/jest": "^30.0.0",
-    "eslint": "9.39.4",
-    "eslint-config-smarthr": "13.7.0",
+    "eslint": "9.39.5",
+    "eslint-config-smarthr": "14.12.0",
     "husky": "^9.1.7",
-    "jest": "^30.3.0",
-    "lerna": "^9.0.7",
-    "prettier": "^3.8.1",
+    "jest": "^30.5.2",
+    "prettier": "^3.9.10",
     "prettier-config-smarthr": "^1.0.1",
-    "react": "^19.2.4",
+    "react": "^19.3.1",
     "rimraf": "^5.0.10",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "ts-jest": "^29.4.15",
+    "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "pnpm@12.14.0"
 }

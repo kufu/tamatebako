@@ -13,7 +13,7 @@
  * 参考: https://github.com/kufu/smarthr-ui/releases/tag/smarthr-ui-v91.0.0
  */
 
-const { rootPath } = require('../../../../libs/common')
+const { setupSmarthrUiAliasOptions } = require('../../helpers')
 
 // ============================================================
 // 定数定義
@@ -57,18 +57,7 @@ module.exports = {
   },
 
   createCheckers(context, sourceCode, options = {}) {
-    const customSmarthrUiAlias = options.smarthrUiAlias
-    const validSources = ['smarthr-ui']
-    if (customSmarthrUiAlias) {
-      validSources.push(customSmarthrUiAlias)
-    }
-
-    // 現在のファイルがaliasファイルか判定
-    const filename = context.getFilename()
-    const isAliasFile = customSmarthrUiAlias && isFileMatchingSmarthrUiAlias(
-      filename,
-      customSmarthrUiAlias
-    )
+    const { validSources, isAliasFile, filename } = setupSmarthrUiAliasOptions(context, options)
 
     const checkers = {
       // ============================================================
@@ -187,6 +176,24 @@ module.exports = {
               }
 
               return fixes
+            },
+          })
+        }
+      },
+
+      // typeof型参照での検出と修正
+      // 例: typeof ActionDialog → typeof ControlledActionDialog
+      'TSTypeQuery > Identifier'(node) {
+        const componentName = node.name
+        const newName = DIALOG_COMPONENTS[componentName]
+
+        if (newName) {
+          context.report({
+            node,
+            messageId: 'renameDialog',
+            data: { old: componentName, new: newName, to: TARGET_VERSION },
+            fix(fixer) {
+              return fixer.replaceText(node, newName)
             },
           })
         }
@@ -576,32 +583,3 @@ module.exports = {
   },
 }
 
-/**
- * smarthrUiAliasで指定されたパスと現在のファイルパスがマッチするか判定
- *
- * @param {string} filename - 現在処理中のファイルパス
- * @param {string} smarthrUiAlias - smarthrUiAliasオプションの値（例: '@/components/parts/smarthr-ui'）
- * @returns {boolean} マッチする場合true
- */
-function isFileMatchingSmarthrUiAlias(filename, smarthrUiAlias) {
-  // rootPathを使って絶対パスで比較を試みる
-  const resolved = smarthrUiAlias.replace(/^@\//, `${rootPath}/`)
-  if (filename.includes(resolved)) {
-    return true
-  }
-
-  // rootPathでマッチしない場合:
-  // パスの一部としてマッチング（テスト環境などで使用）
-  // 例: '@/components/parts/smarthr-ui' -> 'components/parts/smarthr-ui'
-  const pathPart = smarthrUiAlias.replace(/^@\//, '').replace(/^~\//, '')
-
-  // 以下のパターンにマッチング:
-  // 1. ディレクトリ形式: /components/parts/smarthr-ui/index.tsx
-  // 2. 個別ファイル: /components/parts/smarthr-ui/ActionDialog.tsx
-  // 3. 単一ファイル形式: /components/parts/smarthr-ui.tsx
-  return (
-    filename.includes(`/${pathPart}/`) ||
-    filename.endsWith(`/${pathPart}`) ||
-    filename.includes(`/${pathPart}.`)
-  )
-}

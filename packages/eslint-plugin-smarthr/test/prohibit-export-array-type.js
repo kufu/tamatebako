@@ -1,9 +1,10 @@
 const rule = require('../rules/prohibit-export-array-type')
 const RuleTester = require('eslint').RuleTester
+const tseslint = require('typescript-eslint')
 
 const ruleTester = new RuleTester({
   languageOptions: {
-    parser: require('@typescript-eslint/parser'),
+    parser: tseslint.parser,
     parserOptions: {
       ecmaFeatures: {
         jsx: true,

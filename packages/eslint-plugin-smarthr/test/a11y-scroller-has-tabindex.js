@@ -59,6 +59,10 @@ ruleTester.run('a11y-scroller-has-tabindex', rule, {
     { code: `<div className="overflow-x-auto" tabIndex={0} />` },
     { code: `<div className="overflow-y-scroll" tabIndex={0} />` },
     { code: `<div className={\`\${hoge} overflow-auto\`} tabIndex={0} />` },
+    // role="application"を持つ要素のtabIndex（キーボード操作可能にする意図的な設定）
+    { code: `<div role="application" tabIndex={0} />` },
+    { code: `<div role="application" tabIndex={-1} />` },
+    { code: `<Any role="application" tabIndex={0} />` },
   ],
   invalid: [
     // tabIndex値のチェック: 無効な値
@@ -80,12 +84,20 @@ ruleTester.run('a11y-scroller-has-tabindex', rule, {
     { code: `<Any className="foo overflow-auto bar" />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
     // テンプレートリテラルで変数結合
     { code: `<Any className={\`\${hoge} overflow-auto\`} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
-    { code: `<Any className={\`overflow-scroll \${fuga}\`} tabIndex={-1} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
+    {
+      code: `<Any className={\`overflow-scroll \${fuga}\`} tabIndex={-1} />`,
+      errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }],
+    },
     { code: `<Any className={\`\${hoge} overflow-x-auto \${fuga}\`} />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
-    { code: `<Any className={\`foo \${bar} overflow-y-scroll \${baz} qux\`} tabIndex="-1" />`, errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }] },
+    {
+      code: `<Any className={\`foo \${bar} overflow-y-scroll \${baz} qux\`} tabIndex="-1" />`,
+      errors: [{ message: SCROLLER_HAS_TABINDEX_ERROR }],
+    },
     // インタラクティブでない要素のtabIndex
     { code: `<div tabIndex={0} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('div') }] },
     { code: `<Stack tabIndex={0} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('Stack') }] },
     { code: `<span tabIndex={-1} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('span') }] },
-  ]
+    // role="application"以外のroleを持つ要素は引き続きエラー
+    { code: `<div role="button" tabIndex={0} />`, errors: [{ message: NON_INTERACTIVE_TABINDEX_ERROR('div') }] },
+  ],
 })

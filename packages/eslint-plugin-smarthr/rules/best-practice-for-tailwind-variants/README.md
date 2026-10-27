@@ -20,13 +20,27 @@ tv関数で生成した関数の実行を `useMemo` hook でメモ化するこ�
 - 将来の移行作業の簡易化：useMemo内にtailwind系の実行をまとめることで、tailwind-variantsから別のライブラリへ乗り換える際の作業を楽にします
 - コードの一貫性：すべてのtailwind-variants使用箇所で同じパターンを適用することで、プロジェクト全体の保守性が向上します
 
+ただし、module scope（トップレベル）での呼び出しはimport時に一度しか評価されず、実質的にメモ化済みと同等であるため対象外とします。IIFE（即時実行関数）でラップされている場合も同様にmodule scope呼び出しとして扱います。
+
+### 実行結果を格納する変数名の統一
+
+`classNameGenerator`（またはプレフィックス付き）を実行した結果を格納する変数名を `className` / `classNames`（またはプレフィックス付き、定数の場合は `CLASS_NAME` / `CLASS_NAMES`）に統一することで、class名の実体がどの変数に入っているかを一目で判別できるようにします。
+
+なお、`const { container, balloon } = classNameGenerator()` のようにサブジェネレータ関数を分割代入で取り出している場合は対象外とします（取り出した時点ではまだclass名の実体が生成されていないため）。
+
+### slot毎の分割代入時、引数の個別指定を強制
+
+`const { wrapper, balloon } = classNameGenerator()` のようにslot毎の生成関数を分割代入で取り出すパターンでは、`classNameGenerator`自体に引数を渡すことを禁止します。引数は各slotの生成関数（`wrapper()`、`balloon()`等）を実行する際に個別に指定することを強制することで、どの引数がどのslotに影響するのかという変数の影響範囲を明確にします。
+
 ## チェック内容
 
-このルールは以下の3つの観点からチェックを行います：
+このルールは以下の5つの観点からチェックを行います：
 
 1. **import時の名称固定**: tailwind-variants(tv) のimport時の名称を `tv` に固定しているか（`as` などでの名称変更の禁止）
 2. **変数名の統一**: tv の実行結果を格納する変数名が `classNameGenerator` または `xxxClassNameGenerator` になっているか
-3. **useMemoの使用**: tvで生成した関数の実行を `useMemo` hook でメモ化しているか
+3. **useMemoの使用**: tvで生成した関数の実行を `useMemo` hook でメモ化しているか（module scopeでの呼び出しは対象外）
+4. **実行結果の変数名統一**: `classNameGenerator`実行結果を格納する変数名が `className` / `classNames`（プレフィックス付き、または `CLASS_NAME` / `CLASS_NAMES` 形式の定数）になっているか（分割代入でサブジェネレータを取り出す場合は対象外）
+5. **slot毎の引数指定の強制**: `classNameGenerator`実行結果を分割代入でslot毎の生成関数として取り出す場合、`classNameGenerator`自体に引数を渡していないか
 
 ## rules
 
@@ -54,6 +68,26 @@ const xxx = tv({
 
 const yyyy = xxx()
 ```
+```jsx
+import { tv } from 'tailwind-variants'
+
+const classNameGenerator = tv({
+  ...
+})
+
+// 実行結果を格納する変数名がclassName/classNames(プレフィックス付き)やCLASS_NAME/CLASS_NAMESになっていない
+const hoge = useMemo(() => classNameGenerator(), [])
+```
+```jsx
+import { tv } from 'tailwind-variants'
+
+const classNameGenerator = tv({
+  ...
+})
+
+// slot毎に分割代入する場合、classNameGenerator自体に引数を渡すことはできない
+const { wrapper, balloon } = classNameGenerator({ className })
+```
 
 ## ✅ Correct
 
@@ -66,5 +100,23 @@ const classNameGenerator = tv({
 
 ...
 
-const yyyy = useMemo(() => classNameGenerator(), [])
+const className = useMemo(() => classNameGenerator(), [])
+```
+```jsx
+import { tv } from 'tailwind-variants'
+
+const classNameGenerator = tv({
+  ...
+})
+
+// module scope(トップレベル)での呼び出しはuseMemo不要
+export const visuallyHiddenTextClassName = classNameGenerator()
+
+// IIFEでラップされている場合も同様
+const CLASS_NAMES = (() => {
+  const { container, balloon } = classNameGenerator()
+
+  // 引数は各slotの生成関数を実行する際に個別に指定する
+  return { container: container({ className }), balloon: balloon() }
+})()
 ```

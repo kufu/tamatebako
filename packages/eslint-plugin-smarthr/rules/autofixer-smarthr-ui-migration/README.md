@@ -192,6 +192,14 @@ export const ActionDialog = (props) => <div>{props.children}</div>
 | バージョン | 詳細 |
 |-----------|------|
 | `90` → `91` | [移行ガイド](./versions/v90-to-v91/README.md) |
+| `91` → `92` | [移行ガイド](./versions/v91-to-v92/README.md) |
+| `92` → `93` | [移行ガイド](./versions/v92-to-v93/README.md) |
+| `93` → `94` | [移行ガイド](./versions/v93-to-v94/README.md) |
+| `94` → `95` | [移行ガイド](./versions/v94-to-v95/README.md) |
+| `95` → `96` | [移行ガイド](./versions/v95-to-v96/README.md) |
+| `96` → `97` | [移行ガイド](./versions/v96-to-v97/README.md)（検出のみ） |
+| `97` → `98` | [移行ガイド](./versions/v97-to-v98/README.md)（検出のみ） |
+| `98` → `99` | [移行ガイド](./versions/v98-to-v99/README.md) |
 
 ## 使用方法
 

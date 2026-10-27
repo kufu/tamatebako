@@ -17,17 +17,89 @@ ruleTester.run('best-practice-for-button-element', rule, {
     { code: `import { defaultConfig } from 'tailwind-variants'` },
     { code: `const classNameGenerator = tv()` },
     { code: `const xxxClassNameGenerator = tv()` },
-    { code: `const hoge = useMemo(() => classNameGenerator(), [])` },
-    { code: `const xxx = useMemo(() => hogeClassNameGenerator(), [])` },
+    { code: `const className = useMemo(() => classNameGenerator(), [])` },
+    { code: `const hogeClassName = useMemo(() => hogeClassNameGenerator(), [])` },
+
+    // module scope(トップレベル)での直接呼び出しはuseMemo不要
+    { code: `export const visuallyHiddenTextClassName = visuallyHiddenTextClassNameGenerator()` },
+    { code: `const { triggerWrapper, triggerButton, actionList, actionListItemButton } = classNameGenerator()` },
+
+    // module scope内のIIFEもuseMemo不要
+    { code: `const CLASS_NAMES = (() => { const className = classNameGenerator(); return className })()` },
+    { code: `const CLASS_NAMES = (function () { return classNameGenerator() })()` },
+
+    // module scope内のIIFE + 分割代入 + 個別呼び出しの組み合わせ
+    {
+      code: `const CLASS_NAMES = (() => {
+        const { wrapper, actionArea, buttonArea, message } = dialogContentClassNameGenerator()
+        return {
+          wrapper: wrapper(),
+          actionArea: actionArea(),
+          buttonArea: buttonArea(),
+          message: message(),
+        }
+      })()`,
+    },
+
+    // 実行結果を格納する変数名: camelCase
+    { code: `const className = classNameGenerator()` },
+    { code: `const classNames = classNameGenerator()` },
+    { code: `const buttonClassName = classNameGenerator()` },
+    { code: `const buttonClassNames = classNameGenerator()` },
+    { code: `const buttonClassName = useMemo(() => classNameGenerator(), [])` },
+
+    // 実行結果を格納する変数名: 定数(SCREAMING_SNAKE_CASE)
+    { code: `const CLASS_NAME = classNameGenerator()` },
+    { code: `const CLASS_NAMES = classNameGenerator()` },
+    { code: `const BUTTON_CLASS_NAME = classNameGenerator()` },
+    { code: `const BUTTON_CLASS_NAMES = classNameGenerator()` },
+    { code: `const CLASS_NAMES = useMemo(() => classNameGenerator(), [])` },
+
+    // slot毎に分割代入する場合、引数なしでの呼び出しは許容
+    { code: `const { wrapper, actionArea, buttonArea, message } = dialogContentClassNameGenerator()` },
+    { code: `const { wrapper } = useMemo(() => dialogContentClassNameGenerator(), [])` },
+    // 引数はslotの生成関数を実行する際に個別に指定する
+    {
+      code: `const CLASS_NAMES = (() => {
+        const { wrapper, actionArea } = dialogContentClassNameGenerator()
+        return { wrapper: wrapper({ type }), actionArea: actionArea() }
+      })()`,
+    },
   ],
   invalid: [
     { code: `import { tv as hoge } from 'tailwind-variants'`, errors: [ { message: `tailwind-variants をimportする際は、名称が"tv" となるようにしてください。例: "import { tv } from 'tailwind-variants'"
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
     { code: `const hoge = tv()`, errors: [ { message: `tvの実行結果を格納する変数名は "hoge" ではなく "/(C|c)lassNameGenerator$/"にmatchする名称に統一してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
-    { code: `const hoge = classNameGenerator()`, errors: [ { message: `"classNameGenerator" を実行する際、useMemoでラップし、メモ化してください
+    { code: `const Component = () => { const className = classNameGenerator(); return className }`, errors: [ { message: `"classNameGenerator" を実行する際、useMemoでラップし、メモ化してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
-    { code: `const hoge = hogeClassNameGenerator()`, errors: [ { message: `"hogeClassNameGenerator" を実行する際、useMemoでラップし、メモ化してください
+    { code: `const Component = () => { const hogeClassName = hogeClassNameGenerator(); return hogeClassName }`, errors: [ { message: `"hogeClassNameGenerator" を実行する際、useMemoでラップし、メモ化してください
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+
+    // 実行結果を格納する変数名が規約に沿っていない
+    { code: `const hoge = classNameGenerator()`, errors: [ { message: `"classNameGenerator"の実行結果を格納する変数名は "hoge" ではなく "/((C|c)lassNames?|CLASS_NAMES?)$/"にmatchする名称に統一してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+    { code: `const hoge = useMemo(() => classNameGenerator(), [])`, errors: [ { message: `"classNameGenerator"の実行結果を格納する変数名は "hoge" ではなく "/((C|c)lassNames?|CLASS_NAMES?)$/"にmatchする名称に統一してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+    { code: `const HOGE = useMemo(() => classNameGenerator(), [])`, errors: [ { message: `"classNameGenerator"の実行結果を格納する変数名は "HOGE" ではなく "/((C|c)lassNames?|CLASS_NAMES?)$/"にmatchする名称に統一してください。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+
+    // JSX属性に直接埋め込まれ変数に代入されていない場合、命名チェックは対象外(useMemo要求のみ発生)
+    { code: `const Component = () => <div className={classNameGenerator({ fill: 'white' })} />`, errors: [ { message: `"classNameGenerator" を実行する際、useMemoでラップし、メモ化してください
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants` } ] },
+
+    // slot毎に分割代入する場合、classNameGenerator自体に引数を渡すことはできない
+    { code: `const { wrapper, actionArea } = dialogContentClassNameGenerator({ type })`, errors: [ { message: `"dialogContentClassNameGenerator"を分割代入でslot毎の生成関数として取り出す場合、引数を渡すことはできません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants
+ - 引数は各slotの生成関数を実行する際に個別に指定してください（例: "const { wrapper } = dialogContentClassNameGenerator(); wrapper({ className })"）` } ] },
+    {
+      code: `const CLASS_NAMES = (() => {
+        const { wrapper, actionArea } = dialogContentClassNameGenerator({ type })
+        return { wrapper: wrapper(), actionArea: actionArea() }
+      })()`,
+      errors: [ { message: `"dialogContentClassNameGenerator"を分割代入でslot毎の生成関数として取り出す場合、引数を渡すことはできません。
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/best-practice-for-tailwind-variants
+ - 引数は各slotの生成関数を実行する際に個別に指定してください（例: "const { wrapper } = dialogContentClassNameGenerator(); wrapper({ className })"）` } ],
+    },
   ]
 })

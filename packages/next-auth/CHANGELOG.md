@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.8](https://github.com/kufu/tamatebako/compare/next-auth-v0.1.7...next-auth-v0.1.8) (2026-10-22)
+
+
+### Bug Fixes
+
+* tsc で出力する公開パッケージを CommonJS に戻す ([#1621](https://github.com/kufu/tamatebako/issues/1621)) ([b534e5b](https://github.com/kufu/tamatebako/commit/b534e5beb9d19a7fb410a68a4143600a9259a61e))
+
+## [0.1.7](https://github.com/kufu/tamatebako/compare/next-auth-v0.1.6...next-auth-v0.1.7) (2026-10-20)
+
+
+### Dependencies
+
+* update dependency uuid to ^14.0.3 ([#1604](https://github.com/kufu/tamatebako/issues/1604)) ([75346c7](https://github.com/kufu/tamatebako/commit/75346c76c123744c226b20557937d99b1355ddfe))
+
 ## [0.1.6](https://github.com/kufu/tamatebako/compare/next-auth-v0.1.5...next-auth-v0.1.6) (2025-03-14)
 
 

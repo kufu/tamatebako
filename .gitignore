@@ -2,5 +2,6 @@
 packages/*/lib/
 node_modules/
 tsconfig.tsbuildinfo
+packages/eslint-plugin-smarthr/test-fixtures/
 
 *storybook.log

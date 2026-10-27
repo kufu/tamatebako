@@ -1,0 +1,2029 @@
+const rule = require('../rules/best-practice-for-lazy-variable')
+const RuleTester = require('eslint').RuleTester
+
+const ruleTester = new RuleTester({
+  languageOptions: {
+    parserOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+  },
+})
+
+ruleTester.run('best-practice-for-lazy-variable', rule, {
+  valid: [
+    // 使用箇所がない
+    {
+      code: 'const x = getValue()',
+    },
+    // if文がない
+    {
+      code: `
+        const x = getValue()
+        console.log(x)
+      `,
+    },
+    // 2回以上使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+        console.log(x)
+      `,
+    },
+    // 関数スコープ内で使用（forEach）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          array.forEach(() => {
+            console.log(x)
+          })
+        }
+      `,
+    },
+    // 関数スコープ内で使用（アロー関数）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          const fn = () => console.log(x)
+        }
+      `,
+    },
+    // forループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          console.log(x)
+        }
+      `,
+    },
+    // whileループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        while (condition) {
+          console.log(x)
+        }
+      `,
+    },
+    // do-whileループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        do {
+          console.log(x)
+        } while (condition)
+      `,
+    },
+    // for-inループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const key in obj) {
+          console.log(x)
+        }
+      `,
+    },
+    // for-ofループ内で使用（ifなし） - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const item of array) {
+          console.log(x)
+        }
+      `,
+    },
+    // for > if - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          if (condition) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // for > for - 対象外（ネストしたループ）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // for > for > if - 対象外（ループの中のループの中のif）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // if > for - 対象外（ループを超える）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          for (let i = 0; i < 10; i++) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // switch文のdiscriminant（条件部分）で使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (x) {
+          case 'a':
+            console.log('matched')
+            break
+        }
+      `,
+    },
+    // switch文で複数caseで使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log(x)
+            break
+          case 'b':
+            console.log(x)
+            break
+        }
+      `,
+    },
+    // switch文のcase内で関数スコープ使用 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            array.forEach(() => {
+              console.log(x)
+            })
+            break
+        }
+      `,
+    },
+    // 三項演算子 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        const y = condition ? x : 0
+      `,
+    },
+    // 論理演算子 - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        const y = condition && x
+      `,
+    },
+    // while内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        while (condition) {
+          if (check) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // for-of内のif - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        for (const item of array) {
+          if (check) {
+            console.log(x)
+          }
+        }
+      `,
+    },
+    // ネストした条件文の途中に関数スコープ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          function helper() {
+            if (condition2) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // ネストした条件文の途中にループ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          for (let i = 0; i < 10; i++) {
+            if (condition2) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+    },
+    // var宣言 - 対象外
+    {
+      code: `
+        var x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+    },
+    // if条件部分とbody両方で使用 - 対象外（2回使用）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (x > 10) {
+          console.log(x)
+        }
+      `,
+    },
+    // 深いネスト（3階層）で途中にループ - 対象外
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          for (let i = 0; i < 10; i++) {
+            if (condition2) {
+              if (condition3) {
+                console.log(x)
+              }
+            }
+          }
+        }
+      `,
+    },
+    // return前に使用（条件部分で使用）
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (!data.isValid) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+    },
+    // try-finally内でdataを使う
+    {
+      code: `
+        function test() {
+          const data = getData()
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup(data)
+          }
+          console.log(data)
+        }
+      `,
+    },
+    // try-catch内でdataを使う
+    {
+      code: `
+        const data = getData()
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log(data)
+        } catch (e) {
+          console.log('caught')
+        }
+        console.log(data)
+      `,
+    },
+    // catch内でdataを使う + 外でも使う
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error:', data)
+          throw e
+        }
+        console.log(data)
+      `,
+    },
+    // React Hooks（useCallback）は移動対象外
+    {
+      code: `
+        function Component() {
+          const handleClick = useCallback(() => {
+            console.log('clicked')
+          }, [])
+          if (!condition) {
+            return null
+          }
+          console.log(handleClick)
+        }
+      `,
+    },
+    // React Hooks（useState）は移動対象外
+    {
+      code: `
+        function Component() {
+          const [count, setCount] = useState(0)
+          if (condition) {
+            console.log(count)
+          }
+        }
+      `,
+    },
+    // プロパティ名は変数参照ではない
+    {
+      code: `
+        const status = getStatus()
+        doSomething()
+        if (cond) {
+          obj.status = 1
+        }
+      `,
+    },
+    // オブジェクトのキーは変数参照ではない
+    {
+      code: `
+        function test() {
+          const name = getName()
+          doSomething()
+          if (cond) {
+            return { name: 'value' }
+          }
+        }
+      `,
+    },
+    // continue前に変数宣言し、continue前に使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (!value) continue
+          console.log(value)
+        }
+      `,
+    },
+    // ラベル付きbreak：外側で宣言、内側でbreak（外側のスコープなので検出されない）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // ラベル付きcontinue：外側で宣言、内側でcontinue（外側のスコープなので検出されない）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          const x = getValue()
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // switch内のbreak（switch脱出なので早期終了ではない）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          switch (condition) {
+            case 'a':
+              doSomething()
+              break
+          }
+          console.log(value)
+        }
+      `,
+    },
+    // ネストしたループ：外側で宣言、内側でbreak、外側で使用（移動対象外）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          console.log(x)
+        }
+      `,
+    },
+    // JSX: 複数回使用されている（useSectionWrapperの引数とJSXタグ名）
+    {
+      code: `
+        const Component = as || 'div'
+        const Wrapper = useSectionWrapper(Component)
+        const body = <Component {...rest} ref={ref} className={actualClassName} />
+      `,
+    },
+    // JSX: if文の中でJSXタグとして使用、その前にも使用（2回使用）
+    {
+      code: `
+        function test() {
+          const Component = as || 'div'
+          const Wrapper = useSectionWrapper(Component)
+          if (condition) {
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+    },
+  ],
+  invalid: [
+    // ネストした早期return
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (condition1) {
+            if (condition2) {
+              return
+            }
+            console.log('branch')
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (condition1) {
+            if (condition2) {
+              return
+            }
+            console.log('branch')
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // 基本: if body内で1回使用、間にコードあり
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // JSX: if文の中でのみJSXタグとして使用（1回のみなので移動対象）
+    {
+      code: `
+        function test() {
+          const Component = as || 'div'
+          someCode()
+          if (condition) {
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+      output: `
+        function test() {
+          someCode()
+          if (condition) {
+            const Component = as || 'div'
+            return <Component {...rest} ref={ref} />
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'Component' },
+        },
+      ],
+    },
+    // else内で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log("other")
+        } else {
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          console.log("other")
+        } else {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if内で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ブロックなしif（ブロック追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) console.log(x)
+      `,
+      output: `
+        someCode()
+        if (condition) {
+const x = getValue()
+console.log(x)
+}
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 間に複数のコード
+    {
+      code: `
+        const x = getValue()
+        code1()
+        code2()
+        code3()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
+        code1()
+        code2()
+        code3()
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if直前（間にコードなし）- body内で使用なので移動
+    {
+      code: `
+        const x = getValue()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch case内で使用（block無し → blockを追加）
+    {
+      code: `const x = getValue()
+someCode()
+switch (condition) {
+  case 'a':
+    console.log(x)
+    break
+}`,
+      output: `someCode()
+switch (condition) {
+  case 'a': {
+    const x = getValue()
+    console.log(x)
+    break
+  }
+}`,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch default内で使用（block無し → blockを追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default:
+            console.log(x)
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log('a')
+            break
+          default: {
+            const x = getValue()
+            console.log(x)
+            break
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch文の複数case（fallthrough）で既にblockがある場合
+    {
+      code: `
+        const response = getResponse()
+        const serverError = response.data
+        clearErrors()
+        switch (response.status) {
+          case 400:
+          case 404: {
+            if (serverError.code === 'ERROR') {
+              console.log(serverError.message)
+            }
+            if (serverError.detail) {
+              console.log(serverError.detail)
+            }
+            break
+          }
+        }
+      `,
+      output: `
+        const response = getResponse()
+        clearErrors()
+        switch (response.status) {
+          case 400:
+          case 404: {
+            const serverError = response.data
+            if (serverError.code === 'ERROR') {
+              console.log(serverError.message)
+            }
+            if (serverError.detail) {
+              console.log(serverError.detail)
+            }
+            break
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'serverError' },
+        },
+      ],
+    },
+    // ネストしたif（if > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたswitch（if > switch）（block無し → blockを追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          switch (condition2) {
+            case 'a':
+              console.log(x)
+              break
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          switch (condition2) {
+            case 'a': {
+              const x = getValue()
+              console.log(x)
+              break
+            }
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたswitch（switch > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              const x = getValue()
+              console.log(x)
+            }
+            break
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 深いネスト（if > if > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            if (condition3) {
+              console.log(x)
+            }
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            if (condition3) {
+              const x = getValue()
+              console.log(x)
+            }
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch > switch (内側のcaseにblockを追加)
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            switch (condition2) {
+              case 'b':
+                console.log(x)
+                break
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a':
+            switch (condition2) {
+              case 'b': {
+                const x = getValue()
+                console.log(x)
+                break
+              }
+            }
+            break
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if > if のネスト
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          if (condition3) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // let変数の移動
+    {
+      code: `
+        let x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          let x = getValue()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ブロックなしelse（ブロック追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log("a")
+        } else console.log(x)
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          console.log("a")
+        } else {
+const x = getValue()
+console.log(x)
+}
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 深いネスト（if > else > if）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else {
+          if (condition2) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else {
+          if (condition2) {
+            const x = getValue()
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 同じif内で複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 同じcase内で複数回使用（block無し → blockを追加）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition) {
+          case 'a':
+            console.log(x)
+            doSomething()
+            console.log(x)
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition) {
+          case 'a': {
+            const x = getValue()
+            console.log(x)
+            doSomething()
+            console.log(x)
+            break
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたif内の複数箇所で使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          if (condition2) {
+            console.log(x)
+          }
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          const x = getValue()
+          if (condition2) {
+            console.log(x)
+          }
+          if (condition3) {
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if内の複数ループで使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          for (let i = 0; i < 10; i++) {
+            console.log(x)
+          }
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          for (let i = 0; i < 10; i++) {
+            console.log(x)
+          }
+          for (let j = 0; j < 10; j++) {
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // if内の関数スコープで複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          array.forEach(() => {
+            console.log(x)
+          })
+          array.map(() => {
+            return x
+          })
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          const x = getValue()
+          array.forEach(() => {
+            console.log(x)
+          })
+          array.map(() => {
+            return x
+          })
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // switch内のif（複数箇所）
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        switch (condition1) {
+          case 'a':
+            if (condition2) {
+              console.log(x)
+            }
+            if (condition3) {
+              console.log(x)
+            }
+            break
+        }
+      `,
+      output: `
+        someCode()
+        switch (condition1) {
+          case 'a': {
+            const x = getValue()
+            if (condition2) {
+              console.log(x)
+            }
+            if (condition3) {
+              console.log(x)
+            }
+            break
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // else if内で複数回使用
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      output: `
+        someCode()
+        if (condition1) {
+          console.log("a")
+        } else if (condition2) {
+          const x = getValue()
+          console.log(x)
+          doSomething()
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 基本的な早期return
+    {
+      code: `
+        function test() {
+          const data = processData()
+          if (!condition) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (!condition) {
+            return
+          }
+          const data = processData()
+          console.log(data)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // ガード節パターン
+    {
+      code: `
+        function test() {
+          const user = getUser()
+          if (!isAuthenticated()) {
+            return null
+          }
+          console.log(user)
+        }
+      `,
+      output: `
+        function test() {
+          if (!isAuthenticated()) {
+            return null
+          }
+          const user = getUser()
+          console.log(user)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'user' },
+        },
+      ],
+    },
+    // throw文での早期終了
+    {
+      code: `
+        function test() {
+          const value = expensiveCalculation()
+          if (!isValid()) {
+            throw new Error('Invalid')
+          }
+          return value
+        }
+      `,
+      output: `
+        function test() {
+          if (!isValid()) {
+            throw new Error('Invalid')
+          }
+          const value = expensiveCalculation()
+          return value
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // 複数の早期return
+    {
+      code: `
+        function test() {
+          const data = getData()
+          if (condition1) {
+            return
+          }
+          if (condition2) {
+            return
+          }
+          if (condition3) {
+            return
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          if (condition1) {
+            return
+          }
+          if (condition2) {
+            return
+          }
+          if (condition3) {
+            return
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // switch文内のreturn
+    {
+      code: `
+        function test() {
+          const data = getData()
+          switch (type) {
+            case 'A':
+              return null
+            case 'B':
+              return null
+            default:
+              break
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          switch (type) {
+            case 'A':
+              return null
+            case 'B':
+              return null
+            default:
+              break
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // try-finally（finally内でdataを使わない）
+    {
+      code: `
+        function test() {
+          const data = getData()
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup()
+          }
+          console.log(data)
+        }
+      `,
+      output: `
+        function test() {
+          try {
+            if (condition) {
+              return
+            }
+            console.log('other')
+          } finally {
+            cleanup()
+          }
+          const data = getData()
+          console.log(data)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // try-catch（throw含む、try/catch内でdataを使わない）
+    {
+      code: `
+        const data = getData()
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log('other')
+        } catch (e) {
+          console.log('caught')
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          if (condition) {
+            throw new Error('error')
+          }
+          console.log('other')
+        } catch (e) {
+          console.log('caught')
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // catch内でthrow（catch内でdataを使わない）
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error occurred')
+          throw e
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          someCode()
+        } catch (e) {
+          console.error('error occurred')
+          throw e
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // catch内で条件付きthrow
+    {
+      code: `
+        const data = getData()
+        try {
+          someCode()
+        } catch (e) {
+          if (critical) {
+            throw e
+          }
+          console.log('recovered')
+        }
+        console.log(data)
+      `,
+      output: `
+        try {
+          someCode()
+        } catch (e) {
+          if (critical) {
+            throw e
+          }
+          console.log('recovered')
+        }
+        const data = getData()
+        console.log(data)
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // スコープ内で最初の使用箇所の前に別のstatementがある場合
+    {
+      code: `
+        const x = getValue()
+        someCode()
+        if (condition) {
+          console.log('first')
+          console.log(x)
+          doSomething()
+        }
+      `,
+      output: `
+        someCode()
+        if (condition) {
+          console.log('first')
+          const x = getValue()
+          console.log(x)
+          doSomething()
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ショートハンドプロパティは変数参照
+    {
+      code: `
+        function test() {
+          const name = getName()
+          doSomething()
+          if (cond) {
+            return { name }
+          }
+        }
+      `,
+      output: `
+        function test() {
+          doSomething()
+          if (cond) {
+            const name = getName()
+            return { name }
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'name' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - 自動修正なし
+    {
+      code: `
+        const data = fetchData()
+        doWork()
+        if (needsData) {
+          process(data)
+        }
+      `,
+      options: [{ fix: false }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'data' },
+        },
+      ],
+    },
+    // fix: false（デフォルト） - オプション指定なしでも自動修正なし
+    {
+      code: `
+        const result = calculate()
+        log()
+        if (shouldUse) {
+          apply(result)
+        }
+      `,
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'result' },
+        },
+      ],
+    },
+    // fix: true - 自動修正あり
+    {
+      code: `
+        const value = compute()
+        prepare()
+        if (ready) {
+          use(value)
+        }
+      `,
+      output: `
+        prepare()
+        if (ready) {
+          const value = compute()
+          use(value)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に変数を使用（break前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          if (itemStart >= matchEnd) break
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      output: `
+        for (let i = 0; i < normalizedTextItems.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + normalizedTextItems[i].length
+          const overlapStart = Math.max(matchStart, itemStart)
+          const overlapEnd = Math.min(matchEnd, itemEnd)
+          if (overlapEnd > overlapStart) {
+            matches.push({
+              pageIndex,
+              itemIndex: i,
+              matchStart: overlapStart - itemStart,
+              matchLength: overlapEnd - overlapStart,
+              globalIndex,
+            })
+          }
+          itemStart = itemEnd
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // continue後に変数を使用（continue前の宣言を移動）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const value = getValue(i)
+          if (skipCondition) continue
+          const result = process(value)
+          results.push(result)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (skipCondition) continue
+          const value = getValue(i)
+          const result = process(value)
+          results.push(result)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // break後に1回のみ使用（if文の直後のstatementでのみ使用）
+    {
+      code: `
+        for (let i = 0; i < items.length; i++) {
+          const itemEnd = itemStart + items[i].length
+          if (itemStart >= matchEnd) break
+          console.log(itemEnd)
+        }
+      `,
+      output: `
+        for (let i = 0; i < items.length; i++) {
+          if (itemStart >= matchEnd) break
+          const itemEnd = itemStart + items[i].length
+          console.log(itemEnd)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'itemEnd' },
+        },
+      ],
+    },
+    // ネストしたループでbreak（if文の直後でのみ使用）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            const value = compute(i, j)
+            if (shouldSkip) break
+            use(value)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+            const value = compute(i, j)
+            use(value)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'value' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側でbreak、外側のif内で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            if (shouldSkip) break
+          }
+          if (condition) {
+            const x = getValue(i)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きbreak：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) break outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) break outer
+            const x = getValue(j)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ラベル付きcontinue：内側で宣言、内側で使用（移動可能）
+    {
+      code: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            const x = getValue(j)
+            if (condition) continue outer
+            console.log(x)
+          }
+        }
+      `,
+      output: `
+        outer: for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
+            if (condition) continue outer
+            const x = getValue(j)
+            console.log(x)
+          }
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // ネストしたループ：外側で宣言、内側にbreak/continueなし、外側でbreak、外側で2回使用（移動可能）
+    {
+      code: `
+        for (let i = 0; i < outer.length; i++) {
+          const x = getValue(i)
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          console.log(x)
+          process(x)
+        }
+      `,
+      output: `
+        for (let i = 0; i < outer.length; i++) {
+          for (let j = 0; j < inner.length; j++) {
+            doSomething(j)
+          }
+          if (condition) break
+          const x = getValue(i)
+          console.log(x)
+          process(x)
+        }
+      `,
+      options: [{ fix: true }],
+      errors: [
+        {
+          messageId: 'moveToLazy',
+          data: { name: 'x' },
+        },
+      ],
+    },
+    // 深くネストした配列リテラルでも警告内容が変わらないこと（#1536）
+    {
+      code: `
+        export const Component = (props) => {
+          const v0 = props.a + 0
+          const v1 = props.a + 1
+          const v2 = props.a + 2
+          const v3 = props.a + 3
+          const unrelated = ${'['.repeat(16)}0${']'.repeat(16)}
+          if (!props.a) return null
+          return <span data-x={unrelated.length}>{v0}{v1}{v2}{v3}</span>
+        }
+      `,
+      options: [{ fix: false }],
+      errors: [
+        { messageId: 'moveToLazy', data: { name: 'v0' } },
+        { messageId: 'moveToLazy', data: { name: 'v1' } },
+        { messageId: 'moveToLazy', data: { name: 'v2' } },
+        { messageId: 'moveToLazy', data: { name: 'v3' } },
+        { messageId: 'moveToLazy', data: { name: 'unrelated' } },
+      ],
+    },
+  ],
+})

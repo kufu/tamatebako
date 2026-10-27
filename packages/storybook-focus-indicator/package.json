@@ -1,0 +1,55 @@
+{
+  "name": "storybook-focus-indicator",
+  "version": "0.1.3",
+  "description": "Storybook utilities for focus indicator accessibility testing",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "tsdown",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kufu/tamatebako.git",
+    "directory": "packages/storybook-focus-indicator"
+  },
+  "homepage": "https://github.com/kufu/tamatebako/tree/master/packages/storybook-focus-indicator",
+  "bugs": {
+    "url": "https://github.com/kufu/tamatebako/issues"
+  },
+  "keywords": [
+    "storybook",
+    "accessibility",
+    "a11y",
+    "focus-indicator",
+    "smarthr"
+  ],
+  "author": "SmartHR",
+  "license": "MIT",
+  "peerDependencies": {
+    "@storybook/react": "^8.0.0 || ^10.0.0",
+    "storybook": "^8.0.0 || ^10.0.0",
+    "storybook-addon-pseudo-states": "^10.0.0"
+  },
+  "devDependencies": {
+    "@storybook/react": "^10.6.2",
+    "@types/node": "^20.19.43",
+    "storybook": "^10.6.2",
+    "storybook-addon-pseudo-states": "^10.6.2",
+    "tsdown": "^0.23.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

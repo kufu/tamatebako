@@ -2,6 +2,250 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.27.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.26.0...eslint-plugin-smarthr-v6.27.0) (2026-10-20)
+
+
+### Features
+
+* **require-i18n-translation-sync:** 他言語ファイルの孤立キーを検出する ([#1610](https://github.com/kufu/tamatebako/issues/1610)) ([e41b41f](https://github.com/kufu/tamatebako/commit/e41b41fa2b36bc9468e426182268ca4795ef4388))
+
+## [6.26.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.25.0...eslint-plugin-smarthr-v6.26.0) (2026-09-28)
+
+
+### Features
+
+* lazy-variableにbreak/continue検出を追加 ([#1379](https://github.com/kufu/tamatebako/issues/1379)) ([ba496a0](https://github.com/kufu/tamatebako/commit/ba496a03a394aa1c535dd20cb0f8d3ee2306f42f))
+* Storybookのフォーカスインジケーターテスト機能を追加 ([#1395](https://github.com/kufu/tamatebako/issues/1395)) ([9185ca3](https://github.com/kufu/tamatebako/commit/9185ca357342a1cb40c16c08952e1468a3faa03c))
+
+
+### Bug Fixes
+
+* **a11y-scroller-has-tabindex:** role="application"を持つ要素を対象外にする ([#1552](https://github.com/kufu/tamatebako/issues/1552)) ([c1f5450](https://github.com/kufu/tamatebako/commit/c1f545004d3b6e7a9dac566531fb200e5091244e))
+* ast-utilsが配列の子ノードを二重走査する問題を修正 ([#1545](https://github.com/kufu/tamatebako/issues/1545)) ([66eb79e](https://github.com/kufu/tamatebako/commit/66eb79eb46389e87e8f469dbc82d08a1542f4b87))
+
+## [6.25.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.1...eslint-plugin-smarthr-v6.25.0) (2026-09-16)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration に v98→v99 の移行ルールを追加 ([#1524](https://github.com/kufu/tamatebako/issues/1524)) ([87a9935](https://github.com/kufu/tamatebako/commit/87a9935fd47cbc60c63214e4a2eae589d8522f16))
+
+## [6.24.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.24.0...eslint-plugin-smarthr-v6.24.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* バレルファイルの純粋性チェックが関数内のローカル宣言まで報告する問題を修正 ([#1500](https://github.com/kufu/tamatebako/issues/1500)) ([951e512](https://github.com/kufu/tamatebako/commit/951e5120e468660febd702f04933583dd3b65930))
+
+## [6.24.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.23.0...eslint-plugin-smarthr-v6.24.0) (2026-08-24)
+
+
+### Features
+
+* Groupboxコンポーネントのサポート追加（BaseColumnとの互換性維持） ([#1456](https://github.com/kufu/tamatebako/issues/1456)) ([7fb6e32](https://github.com/kufu/tamatebako/commit/7fb6e32c0ace63b2c4289eb8d264a9ac5b6392d0))
+* Panelコンポーネント対応を追加 ([#1198](https://github.com/kufu/tamatebako/issues/1198)) ([d67a48a](https://github.com/kufu/tamatebako/commit/d67a48a999719629b99460bd23fa026a020ca949))
+
+## [6.23.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.1...eslint-plugin-smarthr-v6.23.0) (2026-07-14)
+
+
+### Features
+
+* **autofixer:** smarthr-ui v97→v98 移行ルールを追加 ([#1454](https://github.com/kufu/tamatebako/issues/1454)) ([4532cf4](https://github.com/kufu/tamatebako/commit/4532cf438d61a2232225e42bbebaed5d428edfc6))
+* **best-practice-for-optional-chaining:** if文の条件部分にマッチする箇所へoptional chainingを挿入 ([#1453](https://github.com/kufu/tamatebako/issues/1453)) ([ca2194f](https://github.com/kufu/tamatebako/commit/ca2194fa95a4bfa275ef1c9e4a0975c1c93c78c0))
+
+
+### Bug Fixes
+
+* else句/default句がない場合は検出対象外にする ([#1455](https://github.com/kufu/tamatebako/issues/1455)) ([2fb5bc9](https://github.com/kufu/tamatebako/commit/2fb5bc95bfb298e84d953d35f7143a43b796398c))
+* update JSX detection logic documentation for reduce-redundant-calls ([#1451](https://github.com/kufu/tamatebako/issues/1451)) ([1a043f9](https://github.com/kufu/tamatebako/commit/1a043f9c98d81fc81b0093748f4d5880d4eb9864))
+
+## [6.22.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.22.0...eslint-plugin-smarthr-v6.22.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* best-practice-for-reduce-redundant-callsでJSX属性の差分数に基づいて検出するように改善 ([#1446](https://github.com/kufu/tamatebako/issues/1446)) ([b74f734](https://github.com/kufu/tamatebako/commit/b74f734dd1315f8bf6cd2ccab5f21f0571326c74))
+
+## [6.22.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.2...eslint-plugin-smarthr-v6.22.0) (2026-07-02)
+
+
+### Features
+
+* autofixer-smarthr-ui-migration v95-to-v96, v96-to-v97 対応 ([#1442](https://github.com/kufu/tamatebako/issues/1442)) ([d70787b](https://github.com/kufu/tamatebako/commit/d70787bc6961b0f65b6cc78506fab92707ce3f90))
+* best-practice-for-reduce-redundant-calls ルールを追加 ([#1440](https://github.com/kufu/tamatebako/issues/1440)) ([0564d24](https://github.com/kufu/tamatebako/commit/0564d24fa5de3b9f812d23c7396411e064604234))
+* best-practice-for-unstable-dependenciesに正規表現パターンとカスタムメッセージを追加 ([#1424](https://github.com/kufu/tamatebako/issues/1424)) ([9ed3f1f](https://github.com/kufu/tamatebako/commit/9ed3f1fac878b7f0f37c5a1f3db1b66d30d507c9))
+
+## [6.21.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.1...eslint-plugin-smarthr-v6.21.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* require-i18n-translation-syncでsatisfies演算子に対応 ([#1415](https://github.com/kufu/tamatebako/issues/1415)) ([d0eb87a](https://github.com/kufu/tamatebako/commit/d0eb87a1616c63145499b8adc9fc20d5f6f8c5b9))
+
+## [6.21.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.21.0...eslint-plugin-smarthr-v6.21.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* **eslint-plugin-smarthr:** use https repository metadata ([#1407](https://github.com/kufu/tamatebako/issues/1407)) ([e6d3d82](https://github.com/kufu/tamatebako/commit/e6d3d82d4d833a2716c67d91f82fe7bd6e2ab6cc))
+
+## [6.21.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.20.0...eslint-plugin-smarthr-v6.21.0) (2026-06-22)
+
+
+### Features
+
+* require-i18n-translation-sync ESLintルールを追加 ([#1406](https://github.com/kufu/tamatebako/issues/1406)) ([5286bbb](https://github.com/kufu/tamatebako/commit/5286bbb94c6b774f9132f6d40ef36c216cff0399))
+
+## [6.20.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.19.0...eslint-plugin-smarthr-v6.20.0) (2026-06-16)
+
+
+### Features
+
+* **best-practice-for-no-unnecessary-variable:** export { xxx as yyy } パターンで適切なメッセージを表示 ([#1375](https://github.com/kufu/tamatebako/issues/1375)) ([52d90fa](https://github.com/kufu/tamatebako/commit/52d90fa6eb682c956d71a12269d2cc2c4173d3dd))
+* 依存配列に不安定な参照を含めることを禁止するルールを追加 ([#1376](https://github.com/kufu/tamatebako/issues/1376)) ([af7c18e](https://github.com/kufu/tamatebako/commit/af7c18e74ce38391078a0bd14bf815529e852f8a))
+
+
+### Bug Fixes
+
+* best-practice-for-rest-parametersでin演算子も内部属性アクセスとして検知 ([#1372](https://github.com/kufu/tamatebako/issues/1372)) ([086b414](https://github.com/kufu/tamatebako/commit/086b414ef731ebd27aee935f2d31aa5d303dd9fd))
+* lazy-variable/no-unnecessary-variableでjsxタグ名を正しく扱う ([#1382](https://github.com/kufu/tamatebako/issues/1382)) ([391fe7e](https://github.com/kufu/tamatebako/commit/391fe7ea655e030ded3d2a3d45ae511c2da75dd1))
+
+## [6.19.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.18.0...eslint-plugin-smarthr-v6.19.0) (2026-06-10)
+
+
+### Features
+
+* require-barrel-import に同一ディレクトリ内の重複export検出機能を追加 ([#1350](https://github.com/kufu/tamatebako/issues/1350)) ([313449a](https://github.com/kufu/tamatebako/commit/313449a088aec3fa984f8bf1ba87e24bad1f10d6))
+
+## [6.18.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.17.0...eslint-plugin-smarthr-v6.18.0) (2026-06-09)
+
+
+### Features
+
+* best-practice-for-lazy-variable に fix オプション追加 ([#1355](https://github.com/kufu/tamatebako/issues/1355)) ([d2d1cd6](https://github.com/kufu/tamatebako/commit/d2d1cd6df5d800a0ff9907ec528e597eca930261))
+* best-practice-for-no-unnecessary-variableルールを追加 ([#1339](https://github.com/kufu/tamatebako/issues/1339)) ([57f82c2](https://github.com/kufu/tamatebako/commit/57f82c24ba97a3c4ea191c1c197b75a87d576d3a))
+
+## [6.17.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.16.0...eslint-plugin-smarthr-v6.17.0) (2026-06-08)
+
+
+### Features
+
+* add smarthr-ui v94 to v95 migrator ([#1334](https://github.com/kufu/tamatebako/issues/1334)) ([0d2692c](https://github.com/kufu/tamatebako/commit/0d2692cdf272f32f730623b672594c0898155742))
+* best-practice-for-lazy-variable ルールを追加 ([#1335](https://github.com/kufu/tamatebako/issues/1335)) ([a849c1c](https://github.com/kufu/tamatebako/commit/a849c1cb5bf5a7e940ff56b75d11c93ffb79e9da))
+
+## [6.16.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.15.0...eslint-plugin-smarthr-v6.16.0) (2026-05-19)
+
+
+### Features
+
+* design-system-guideline-bulk-action-row-button のlinterルールを追加 ([#1309](https://github.com/kufu/tamatebako/issues/1309)) ([d5934ae](https://github.com/kufu/tamatebako/commit/d5934ae3cc95ef9cb5696c00f22840351b5567ea))
+* InformationPanelを白背景に配置することを禁止するルールを追加 ([#1319](https://github.com/kufu/tamatebako/issues/1319)) ([6b3a9b6](https://github.com/kufu/tamatebako/commit/6b3a9b621956e196eb9fb5984e3acba458893eca))
+
+## [6.15.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.14.0...eslint-plugin-smarthr-v6.15.0) (2026-05-17)
+
+
+### Features
+
+* add v93-to-v94 migrator for smarthr-ui ([#1315](https://github.com/kufu/tamatebako/issues/1315)) ([06dce27](https://github.com/kufu/tamatebako/commit/06dce272572991f49f3de635790a06d2c6360f4f))
+* best-practice-for-consecutive-definition-listルールを追加 ([#1313](https://github.com/kufu/tamatebako/issues/1313)) ([4e5778f](https://github.com/kufu/tamatebako/commit/4e5778f95d598b233ca3a2e66e023247ed2fdb2f))
+* best-practice-for-default-propsルールを追加 ([#1312](https://github.com/kufu/tamatebako/issues/1312)) ([b0b0bb2](https://github.com/kufu/tamatebako/commit/b0b0bb2e8dd1a4533a9dbfe6583f45da8a6b8d81))
+* 同階層のバレルファイル間のimportを禁止 ([#1310](https://github.com/kufu/tamatebako/issues/1310)) ([4420109](https://github.com/kufu/tamatebako/commit/4420109a6c9f7fc23175928f7c605b69332ddbb7))
+
+## [6.14.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.13.0...eslint-plugin-smarthr-v6.14.0) (2026-05-13)
+
+
+### Features
+
+* **require-barrel-import:** バレルファイルの純粋性チェックを追加 ([#1271](https://github.com/kufu/tamatebako/issues/1271)) ([99c16ab](https://github.com/kufu/tamatebako/commit/99c16abc2c7aacedceafdc89df7ab6d8eda9eeb4))
+
+## [6.13.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.12.1...eslint-plugin-smarthr-v6.13.0) (2026-04-20)
+
+
+### Features
+
+* add autofixer for smarthr-ui v92 to v93 migration ([#1267](https://github.com/kufu/tamatebako/issues/1267)) ([cbff132](https://github.com/kufu/tamatebako/commit/cbff132559f93f4fdabc44a561ccc61afd4c8ed8))
+
+## [6.12.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.12.0...eslint-plugin-smarthr-v6.12.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* **v91-to-v92:** button/anchorButton系変種コンポーネントのsize属性変換に対応 ([#1251](https://github.com/kufu/tamatebako/issues/1251)) ([14335be](https://github.com/kufu/tamatebako/commit/14335bef82fa38ebe04b0b16fda5e5cd06165cae))
+
+## [6.12.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.11.0...eslint-plugin-smarthr-v6.12.0) (2026-04-15)
+
+
+### Features
+
+* **require-barrel-import:** additionalBarrelFileNamesオプション追加と同階層・子階層からのバレルimport禁止 ([#1244](https://github.com/kufu/tamatebako/issues/1244)) ([b38a143](https://github.com/kufu/tamatebako/commit/b38a1432a92bd3ee4e52f3a450177e59f65512f0))
+
+
+### Bug Fixes
+
+* **format-import-path:** dirCount関数でmatch結果がnullの場合のエラーを修正 ([#1246](https://github.com/kufu/tamatebako/issues/1246)) ([fc50fba](https://github.com/kufu/tamatebako/commit/fc50fbadc3da3b046a73bbab664c281fc7be847f))
+
+## [6.11.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.4...eslint-plugin-smarthr-v6.11.0) (2026-04-14)
+
+
+### Features
+
+* **autofixer-smarthr-ui-migration:** v91→v92移行ルールを追加 ([#1209](https://github.com/kufu/tamatebako/issues/1209)) ([c29bf7c](https://github.com/kufu/tamatebako/commit/c29bf7c628e25216245f4082354a88add7e650b2))
+* **require-barrel-import:** エラーメッセージを詳細化して実用性を向上 ([#1227](https://github.com/kufu/tamatebako/issues/1227)) ([e2280e5](https://github.com/kufu/tamatebako/commit/e2280e5e47bfb5c9a2b89bd08331a0b2643c278e))
+
+
+### Bug Fixes
+
+* **eslint-plugin-smarthr:** 不要な engines フィールドを削除 ([#1240](https://github.com/kufu/tamatebako/issues/1240)) ([678cfc6](https://github.com/kufu/tamatebako/commit/678cfc6fa4b05eb8547f45c135d27d44f51a7fc7))
+* **format-import-path:** 複数の拡張子(.presentational.tsx等)に対応 ([#1242](https://github.com/kufu/tamatebako/issues/1242)) ([9f51b41](https://github.com/kufu/tamatebako/commit/9f51b41e1be02f6d6f982f1211c4bfb516179119))
+
+## [6.10.4](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.3...eslint-plugin-smarthr-v6.10.4) (2026-04-13)
+
+
+### Bug Fixes
+
+* **require-i18n-text:** 許容する記号の拡充と、テストコードでの除外設定を追加 ([#1225](https://github.com/kufu/tamatebako/issues/1225)) ([705113f](https://github.com/kufu/tamatebako/commit/705113f9b599bb77bec35b2c9b28825603d581ea))
+
+## [6.10.3](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.2...eslint-plugin-smarthr-v6.10.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* **require-barrel-import:** commonParentのbarrelを除外して同一ツリー内の相対importを許可 ([#1222](https://github.com/kufu/tamatebako/issues/1222)) ([fe5a68c](https://github.com/kufu/tamatebako/commit/fe5a68cd50a6f76dde0c403dd1ec33e5b1dd5d57))
+* trim-propsのセレクターをesquery互換へ修正し、ESLint 9.xでのクラッシュを解消 ([#1214](https://github.com/kufu/tamatebako/issues/1214)) ([d2345a0](https://github.com/kufu/tamatebako/commit/d2345a0623ebbf0f805c7c8a6b2b957ac21b0ffd))
+
+## [6.10.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.1...eslint-plugin-smarthr-v6.10.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* **test:** typescript-eslint v8のparserに更新 ([#1217](https://github.com/kufu/tamatebako/issues/1217)) ([e44ac27](https://github.com/kufu/tamatebako/commit/e44ac27e26afc9cbe26244afd38e62bb65aecaa4))
+
+## [6.10.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.10.0...eslint-plugin-smarthr-v6.10.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* **require-barrel-import:** next.jsの特殊文字パスでのバグ修正とリファクタリング ([#1210](https://github.com/kufu/tamatebako/issues/1210)) ([458cfe9](https://github.com/kufu/tamatebako/commit/458cfe90084cbcee936bcb375216f5807880edd7))
+
+## [6.10.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.1...eslint-plugin-smarthr-v6.10.0) (2026-04-08)
+
+
+### Features
+
+* **a11y-heading-in-sectioning-content:** Scrollerコンポーネントを許可リストに追加 ([#1204](https://github.com/kufu/tamatebako/issues/1204)) ([7131d5c](https://github.com/kufu/tamatebako/commit/7131d5c2b6feb55ac44f952250f58db962153399))
+
+
+### Bug Fixes
+
+* **best-practice-for-text-component:** key属性対応とコードの最適化 ([#1205](https://github.com/kufu/tamatebako/issues/1205)) ([1c9821c](https://github.com/kufu/tamatebako/commit/1c9821c1d2c4f5d8b09f2a1a1f7e18310aecc31e))
+
+## [6.9.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.9.0...eslint-plugin-smarthr-v6.9.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* **best-practice-for-text-component:** 変換不可能なshr-クラスのみの場合に不要なスペースが挿入される問題を修正 ([#1199](https://github.com/kufu/tamatebako/issues/1199)) ([ad942fc](https://github.com/kufu/tamatebako/commit/ad942fcfa2484013fe82fd1c9d9b94c097a0e27a))
+
 ## [6.9.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.8.0...eslint-plugin-smarthr-v6.9.0) (2026-04-05)
 
 

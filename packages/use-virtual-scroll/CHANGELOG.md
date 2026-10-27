@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.7](https://github.com/kufu/tamatebako/compare/use-virtual-scroll-v1.1.6...use-virtual-scroll-v1.1.7) (2026-10-22)
+
+
+### Bug Fixes
+
+* tsc で出力する公開パッケージを CommonJS に戻す ([#1621](https://github.com/kufu/tamatebako/issues/1621)) ([b534e5b](https://github.com/kufu/tamatebako/commit/b534e5beb9d19a7fb410a68a4143600a9259a61e))
+
 ## [1.1.6](https://github.com/kufu/tamatebako/compare/@smarthr/use-virtual-scroll@1.1.5...@smarthr/use-virtual-scroll@1.1.6) (2024-11-29)
 
 **Note:** Version bump only for package @smarthr/use-virtual-scroll

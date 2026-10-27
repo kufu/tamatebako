@@ -119,6 +119,41 @@ module.exports = {
       errors: [{ messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } }],
     },
 
+    // typeof型参照
+    {
+      code: `import { ActionDialog } from 'smarthr-ui'
+type Props = ComponentProps<typeof ActionDialog>`,
+      output: `import { ControlledActionDialog } from 'smarthr-ui'
+type Props = ComponentProps<typeof ControlledActionDialog>`,
+      options: v90ToV91Options,
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'ActionDialog', new: 'ControlledActionDialog', to: 'v91' } },
+      ],
+    },
+
+    // 複数のtypeof型参照
+    {
+      code: `import { FormDialog } from 'smarthr-ui'
+type RefType = ElementRef<typeof FormDialog>
+const handleAction: ComponentPropsWithoutRef<typeof FormDialog>['onClickClose'] = () => {}`,
+      output: `import { ControlledFormDialog } from 'smarthr-ui'
+type RefType = ElementRef<typeof ControlledFormDialog>
+const handleAction: ComponentPropsWithoutRef<typeof ControlledFormDialog>['onClickClose'] = () => {}`,
+      options: v90ToV91Options,
+      languageOptions: {
+        parser: require('typescript-eslint').parser,
+      },
+      errors: [
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
+        { messageId: 'renameDialog', data: { old: 'FormDialog', new: 'ControlledFormDialog', to: 'v91' } },
+      ],
+    },
+
     // ============================================================
     // 2. ResponseMessageのtype→status
     // ============================================================

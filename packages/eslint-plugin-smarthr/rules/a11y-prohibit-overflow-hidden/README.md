@@ -18,17 +18,17 @@
 特によく利用されるパターンとしては `内部の要素を角丸にするために設定する` というものです。
 
 ```jsx
-<Base overflow="hidden">
+<Panel overflow="hidden">
   <Table />
-</Base>
+</Panel>
 ```
 
 この場合は子要素側で角丸を指定するべきです。
 
 ```jsx
-<Base>
+<Panel>
   <Table rounded={true} />
-</Base>
+</Panel>
 ```
 
 ### overflow="hidden" の実装上の問題
@@ -58,26 +58,26 @@
 
 ```jsx
 // 角丸を実現するためにはoverflow="hidden"ではなく、子要素にborder-radiusを指定することで実現するべき
-<Base overflow="hidden">
+<Panel overflow="hidden">
   <Table />
-</Base>
+</Panel>
 ```
 
 ## ✅ Correct
 
 ```jsx
-<Base>
+<Panel>
   <Table rounded={true} />
-</Base>
+</Panel>
 ```
 
 ```jsx
 // rounded属性を持たない要素・コンポーネントの場合でもstyleでborder-radiusを当てるようにする
 // tailwindの場合 `rounded-l(smarthr-uiを利用している場合shr-rounded-l)` などで指定できます
 // https://tailwindcss.com/docs/border-radius
-<Base>
+<Panel>
   <Section className="shr-bg-white shr-rounded-l" />
     {children}
   </Section>
-</Base>
+</Panel>
 ```

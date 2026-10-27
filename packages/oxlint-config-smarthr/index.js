@@ -226,6 +226,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',
     'eslint-plugin-smarthr/best-practice-for-nested-attributes-array-index': 'error',
     'eslint-plugin-smarthr/best-practice-for-no-unnecessary-variable': 'off',
+    'eslint-plugin-smarthr/best-practice-for-object-props': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
     'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'error',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
@@ -242,6 +243,7 @@ const config = {
     'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
     'eslint-plugin-smarthr/format-import-path': 'off',
     'eslint-plugin-smarthr/format-translate-component': 'off',
     'eslint-plugin-smarthr/no-import-other-domain': 'off',

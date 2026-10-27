@@ -343,8 +343,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.27.0
-        version: 6.27.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
+        specifier: 6.28.0
+        version: 6.28.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -4422,6 +4422,11 @@ packages:
 
   eslint-plugin-smarthr@6.27.0:
     resolution: {integrity: sha512-DiZ569pj54OytjnSiYyIeOPb+1UFuKjcoCbeBR8w+U8taMcS2kgnfgq5UChulJHWiJvpbbCx4R7552Fjpuy2Ng==}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@6.28.0:
+    resolution: {integrity: sha512-UfP8pcmjfGl8oDO9zclTpJuZUQqaCrtURf5vQ73QfF8uaPcZr9tV4op3qWYO2mJidNlaV75Q5BaiJidCX0mZVg==}
     peerDependencies:
       eslint: ^9
 
@@ -11297,6 +11302,11 @@ snapshots:
       json5: 2.2.3
 
   eslint-plugin-smarthr@6.27.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
+    dependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
+      json5: 2.2.3
+
+  eslint-plugin-smarthr@6.28.0(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@10.2.2)
       json5: 2.2.3

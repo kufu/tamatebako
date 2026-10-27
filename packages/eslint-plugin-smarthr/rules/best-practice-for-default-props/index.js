@@ -4,26 +4,14 @@
 
 // smarthr-uiコンポーネントのデフォルト値定義
 const DEFAULT_PROPS = {
-  Stack: {
-    inline: false,
-    gap: 1,
+  AccordionPanel: {
+    iconPosition: 'left',
+    expandableMultiply: true,
   },
-  Cluster: {
-    inline: false,
-    gap: 0.5,
-  },
-  Reel: {
-    gap: 0.5,
-    padding: 0,
-  },
-  Sidebar: {
-    align: 'stretch',
-    contentsMinWidth: '50%',
-    gap: 1,
-    right: false,
-  },
-  Heading: {
-    type: 'sectionTitle',
+  AnchorButton: {
+    size: 'M',
+    wide: false,
+    variant: 'secondary',
   },
   Button: {
     type: 'button',
@@ -31,6 +19,84 @@ const DEFAULT_PROPS = {
     wide: false,
     variant: 'secondary',
     loading: false,
+  },
+  Cluster: {
+    inline: false,
+    gap: 0.5,
+  },
+  Container: {
+    size: 'DEFAULT',
+  },
+  DropZone: {
+    multiple: true,
+  },
+  Heading: {
+    type: 'sectionTitle',
+  },
+  InformationPanel: {
+    type: 'info',
+  },
+  LineClamp: {
+    maxLines: 3,
+  },
+  Loader: {
+    size: 'M',
+    type: 'primary',
+  },
+  ModelessDialog: {
+    resizable: false,
+  },
+  PageHeading: {
+    autoPageTitle: true,
+    size: 'XL',
+  },
+  Reel: {
+    gap: 0.5,
+    padding: 0,
+  },
+  ResponseMessage: {
+    status: 'info',
+  },
+  Scroller: {
+    direction: 'vertical',
+    styleType: 'auto',
+  },
+  SegmentedControl: {
+    size: 'M',
+  },
+  Sidebar: {
+    align: 'stretch',
+    contentsMinWidth: '50%',
+    gap: 1,
+    right: false,
+  },
+  SideMenu: {
+    elementAs: 'ul',
+  },
+  SideNav: {
+    size: 'M',
+  },
+  Stack: {
+    inline: false,
+    gap: 1,
+  },
+  StatusLabel: {
+    type: 'grey',
+    bold: false,
+  },
+  TabItem: {
+    selected: false,
+  },
+  Table: {
+    reel: true,
+  },
+  Textarea: {
+    autoResize: false,
+    rows: 2,
+  },
+  Tooltip: {
+    type: 'description',
+    ariaDescribedbyTarget: 'wrapper',
   },
 }
 

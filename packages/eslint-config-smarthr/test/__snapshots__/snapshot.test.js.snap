@@ -3090,6 +3090,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-no-unnecessary-variable": [
       0,
     ],
+    "smarthr/best-practice-for-object-props": [
+      1,
+    ],
     "smarthr/best-practice-for-optional-chaining": [
       2,
     ],
@@ -3141,6 +3144,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/design-system-guideline-prohibit-information-panel-in-white-bg": [
       2,
+    ],
+    "smarthr/design-system-guideline-prohibit-input-affix-interactive-element": [
+      1,
     ],
     "smarthr/format-import-path": [
       0,

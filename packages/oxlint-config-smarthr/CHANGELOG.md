@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.22](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.21...oxlint-config-smarthr-v0.1.22) (2026-10-27)
+
+
+### Features
+
+* eslint-plugin-smarthr 6.28.0への更新（oxlint-config-smarthr） ([#1640](https://github.com/kufu/tamatebako/issues/1640)) ([9a3ae82](https://github.com/kufu/tamatebako/commit/9a3ae826452e69b2c8fa6ae3a8a7bec69117037e))
+
 ## [0.1.21](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.20...oxlint-config-smarthr-v0.1.21) (2026-10-20)
 
 

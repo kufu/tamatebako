@@ -74,6 +74,9 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 **ModelessDialog**
 - `resizable={false}`
 
+**MultiCombobox**
+- `isFilteringDisabled={false}`
+
 **PageHeading**
 - `autoPageTitle={true}`
 - `size="XL"`
@@ -93,6 +96,9 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 
 **SideNav**
 - `size="M"`
+
+**SingleCombobox**
+- `isFilteringDisabled={false}`
 
 **SmartHRAILogo**
 - `compact={true}`
@@ -217,12 +223,14 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - [LineClamp.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/LineClamp/LineClamp.tsx)
 - [Loader.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Loader/Loader.tsx)
 - [ModelessDialog.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Dialog/ModelessDialog/ModelessDialog.tsx)
+- [MultiCombobox.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Combobox/client/MultiCombobox/MultiCombobox.tsx)
 - [PageHeading.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Heading/client/PageHeading/PageHeading.tsx)
 - [ResponseMessage.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/ResponseMessage/ResponseMessage.tsx)
 - [Scroller.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Scroller/client/Scroller.tsx)
 - [SegmentedControl.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SegmentedControl/client/SegmentedControl.tsx)
 - [SideMenu.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideMenu/SideMenu.tsx)
 - [SideNav.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SideNav/SideNav.tsx)
+- [SingleCombobox.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/Combobox/client/SingleCombobox/SingleCombobox.tsx)
 - [SmartHRAILogo.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/SmartHRAILogo/SmartHRAILogo.tsx)
 - [StatusLabel.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/StatusLabel/StatusLabel.tsx)
 - [TabItem.tsx](https://github.com/kufu/smarthr-ui/blob/master/packages/smarthr-ui/src/components/TabBar/client/TabItem.tsx)

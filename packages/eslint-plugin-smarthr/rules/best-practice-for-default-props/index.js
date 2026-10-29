@@ -46,6 +46,9 @@ const DEFAULT_PROPS = {
   ModelessDialog: {
     resizable: false,
   },
+  MultiCombobox: {
+    isFilteringDisabled: false,
+  },
   PageHeading: {
     autoPageTitle: true,
     size: 'XL',
@@ -75,6 +78,9 @@ const DEFAULT_PROPS = {
   },
   SideNav: {
     size: 'M',
+  },
+  SingleCombobox: {
+    isFilteringDisabled: false,
   },
   SmartHRAILogo: {
     compact: true,

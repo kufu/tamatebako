@@ -88,7 +88,7 @@ ruleTester.run('best-practice-for-default-props', rule, {
       code: '<ModelessDialog resizable>content</ModelessDialog>',
     },
     {
-      code: '<MultiCombobox isFilteringDisabled>content</MultiCombobox>',
+      code: '<MultiCombobox disableFiltering>content</MultiCombobox>',
     },
     {
       code: '<PageHeading autoPageTitle={false}>Title</PageHeading>',
@@ -109,7 +109,7 @@ ruleTester.run('best-practice-for-default-props', rule, {
       code: '<SideNav size="S">content</SideNav>',
     },
     {
-      code: '<SingleCombobox isFilteringDisabled>content</SingleCombobox>',
+      code: '<SingleCombobox disableFiltering>content</SingleCombobox>',
     },
     {
       code: '<SmartHRAILogo compact={false} />',
@@ -431,11 +431,11 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<ModelessDialog>content</ModelessDialog>',
       errors: [{ message: /prop "resizable" はデフォルト値と同じため不要です/ }],
     },
-    // MultiCombobox: isFilteringDisabled={false}
+    // MultiCombobox: disableFiltering={false}
     {
-      code: '<MultiCombobox isFilteringDisabled={false}>content</MultiCombobox>',
+      code: '<MultiCombobox disableFiltering={false}>content</MultiCombobox>',
       output: '<MultiCombobox>content</MultiCombobox>',
-      errors: [{ message: /prop "isFilteringDisabled" はデフォルト値と同じため不要です/ }],
+      errors: [{ message: /prop "disableFiltering" はデフォルト値と同じため不要です/ }],
     },
     // PageHeading: autoPageTitle={true}
     {
@@ -485,11 +485,11 @@ ruleTester.run('best-practice-for-default-props', rule, {
       output: '<SideNav>content</SideNav>',
       errors: [{ message: /prop "size" はデフォルト値と同じため不要です/ }],
     },
-    // SingleCombobox: isFilteringDisabled={false}
+    // SingleCombobox: disableFiltering={false}
     {
-      code: '<SingleCombobox isFilteringDisabled={false}>content</SingleCombobox>',
+      code: '<SingleCombobox disableFiltering={false}>content</SingleCombobox>',
       output: '<SingleCombobox>content</SingleCombobox>',
-      errors: [{ message: /prop "isFilteringDisabled" はデフォルト値と同じため不要です/ }],
+      errors: [{ message: /prop "disableFiltering" はデフォルト値と同じため不要です/ }],
     },
     // SmartHRAILogo: compact={true}
     {

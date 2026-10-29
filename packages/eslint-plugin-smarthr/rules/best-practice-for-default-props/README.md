@@ -75,7 +75,7 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - `resizable={false}`
 
 **MultiCombobox**
-- `isFilteringDisabled={false}`
+- `disableFiltering={false}`
 
 **PageHeading**
 - `autoPageTitle={true}`
@@ -98,7 +98,7 @@ smarthr-uiコンポーネントで、デフォルト値と同じ値が指定さ�
 - `size="M"`
 
 **SingleCombobox**
-- `isFilteringDisabled={false}`
+- `disableFiltering={false}`
 
 **SmartHRAILogo**
 - `compact={true}`

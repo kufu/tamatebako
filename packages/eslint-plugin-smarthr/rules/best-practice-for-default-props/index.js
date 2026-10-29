@@ -47,7 +47,7 @@ const DEFAULT_PROPS = {
     resizable: false,
   },
   MultiCombobox: {
-    isFilteringDisabled: false,
+    disableFiltering: false,
   },
   PageHeading: {
     autoPageTitle: true,
@@ -80,7 +80,7 @@ const DEFAULT_PROPS = {
     size: 'M',
   },
   SingleCombobox: {
-    isFilteringDisabled: false,
+    disableFiltering: false,
   },
   SmartHRAILogo: {
     compact: true,

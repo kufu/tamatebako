@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.29.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.28.0...eslint-plugin-smarthr-v6.29.0) (2026-10-29)
+
+
+### Features
+
+* SingleCombobox/MultiComboboxのisFilteringDisabledデフォルト値を追加 ([#1646](https://github.com/kufu/tamatebako/issues/1646)) ([e0cf2da](https://github.com/kufu/tamatebako/commit/e0cf2da97e02fdbd858f593f46a368a98e81bb81))
+
 ## [6.28.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.27.0...eslint-plugin-smarthr-v6.28.0) (2026-10-27)
 
 

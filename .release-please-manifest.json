@@ -1,7 +1,7 @@
 {
   "packages/create-lint-set": "1.1.8",
   "packages/eslint-config-smarthr": "14.14.0",
-  "packages/eslint-plugin-smarthr": "6.28.0",
+  "packages/eslint-plugin-smarthr": "6.29.0",
   "packages/next-auth": "0.1.8",
   "packages/prettier-config-smarthr": "1.0.1",
   "packages/stylelint-config-smarthr": "3.1.0",

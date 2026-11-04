@@ -1,13 +1,13 @@
 # smarthr/best-practice-for-layouts
 
-smarthr-ui/Layoutsに属するコンポーネント(Center,Cluster,Container,Reel,Stack,Sidebar)の利用方法をチェックするルールです。
+smarthr-ui/Layoutsに属するコンポーネント(Center,Cluster,Container,Reel,Stack,Sidebar)、およびTuckの利用方法をチェックするルールです。
 
 ## チェックする内容
 
-### Cluster, Stackの子要素が単一の場合エラー
+### Cluster, Stack, Tuckの子要素が単一の場合エラー
 
-Cluster, Stackは子要素が単一の場合エラーになります。<br />
-Cluster, Stackは複数要素の間隔を調整するためのコンポーネントのため、子要素が単一である場合は利用する必要がありません。<br />
+Cluster, Stack, Tuckは子要素が単一の場合エラーになります。<br />
+Cluster, Stackは複数要素の間隔を調整するため、Tuckは複数アイテムをまとめて並べるためのコンポーネントのため、子要素が単一である場合は利用する必要がありません。<br />
 そのためこのチェックは**ループ処理などで結果単一になる場合**ではなく、**コードとして子要素が単一になる場合**が対象です。
 
 ```jsx
@@ -16,9 +16,22 @@ Cluster, Stackは複数要素の間隔を調整するためのコンポーネン
 
 // 仮にMultipleItemsコンポーネントが複数要素を帰す場合でもNG
 <Stack><MultipleItems /></Stack>
+
+// Tuckも同様。ary.map(...)の結果が一つだけの場合でもOK
+<Tuck tucked={tucked}>{ary.map((i) => <Chip key={i}>{i}</Chip>)}</Tuck>
+
+// 子要素が静的に一つだけの場合はNG
+<Tuck tucked={tucked}><Chip>hoge</Chip></Tuck>
 ```
 
 上記例のMultipleItemsコンポーネントが複数要素を帰す場合、StackコンポーネントはMultipleItems内で設置するようにしてください。
+
+なお、Cluster・Stackの唯一の子要素がTuckである場合は、Tuck自体が複数アイテムをまとめて並べるコンポーネントのため、このチェックの対象外です（Tuck自身に対するチェックは上記の通り別途行われます）。
+
+```jsx
+// TuckがCluster/Stackの唯一の子要素でもOK（Tuck自体のチェックは別途行われる）
+<Cluster><Tuck tucked={tucked}>{ary.map((i) => <Chip key={i}>{i}</Chip>)}</Tuck></Cluster>
+```
 
 例外として下記の条件に合致する場合、UIの変更が起きるためエラーにはなりません
 

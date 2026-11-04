@@ -1,4 +1,4 @@
-const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
+const MULTI_CHILDREN_REGEX = /(Cluster|Stack|Tuck)$/
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
 const MAP_METHOD_REGEX = /^(map|flatMap)$/

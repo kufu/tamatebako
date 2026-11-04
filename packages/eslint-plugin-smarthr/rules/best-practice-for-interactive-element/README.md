@@ -216,6 +216,12 @@ additionalInteractiveComponentRegexオプションに独自コンポーネント
 ```
 
 ```jsx
+// Buttonをradiogroupパターンのradioとして再利用する場合など、
+// 特定のコンポーネント・role属性の組み合わせは例外的に許容されているのでOK
+<Button role="radio" aria-checked={checked} onClick={onClick}>...</Button>
+```
+
+```jsx
 // additionalInteractiveComponentRegex: ['^InteractiveComponent$']
 // インタラクティブなコンポーネントとして扱われるものに対してroleを指定していないのでOK
 <InteractiveComponent any={hoge}>...</InteractiveComponent>

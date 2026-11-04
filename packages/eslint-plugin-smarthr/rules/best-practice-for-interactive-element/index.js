@@ -35,7 +35,7 @@ const DELEGATE_REGEX = /(d|D)elegate/
 const ARROW_ROLES = {
   'Check(b|B)ox$': ['switch'],
   '(^i|I)nput$': ['switch', 'combobox'],
-  '(^b|B)utton$': ['option', 'menuitem'],
+  '(^b|B)utton$': ['option', 'menuitem', 'radio'],
 }
 const NOT_ARROW_ROLE_ATTRIBUTES = Object.entries(ARROW_ROLES).reduce((prev, [key, vs]) => (
     vs.reduce((p, v) => `${p}:not([parent.name.name=/${key}/][value.value="${v}"])`, prev)

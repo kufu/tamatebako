@@ -2,6 +2,7 @@ const MULTI_CHILDREN_REGEX = /(Cluster|Stack)$/
 const REGEX_NLSP = /^\s*\n+\s*$/
 const FLEX_END_REGEX = /^(flex-)?end$/
 const MAP_METHOD_REGEX = /^(map|flatMap)$/
+const TUCK_REGEX = /Tuck$/
 
 const LAYOUT_COMPONENT_REGEX_WITHOUT_STACK = /(Center|Cluster|Container|Reel|Sidebar)$/
 const LAYOUT_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Stack|Sidebar)$/
@@ -33,6 +34,11 @@ const searchChildren = (node) => {
     if (children.length > 1) {
       return false
     }
+  }
+
+  // Tuckは子要素を複数アイテムとしてまとめて並べるコンポーネントのため、常に許容する
+  if (node.type === 'JSXElement' && TUCK_REGEX.test(node.openingElement.name?.name)) {
+    return false
   }
 
   switch(node.type) {

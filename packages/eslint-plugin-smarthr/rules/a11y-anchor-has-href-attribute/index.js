@@ -37,6 +37,8 @@ const OPTION = (() => {
             break
         }
       }
+
+      return result()
     }
   }
 
@@ -49,7 +51,7 @@ const INVALID_HREF_SELECTOR = `${ANCHOR_ELEMENT}:has(${HREF_ATTRIBUTE}:matches([
 const NO_HREF_SELECTOR = `${ANCHOR_ELEMENT}:not(:has(${HREF_ATTRIBUTE}))`
 
 const NEXT_LINK_REGEX = /Link$/
-const nextCheck = (node) => NEXT_LINK_REGEX.test(node.parent.parent.openingElement.name.name || '')
+const nextCheck = (node) => NEXT_LINK_REGEX.test(node.parent.parent.openingElement?.name.name || '')
 
 const SCHEMA = [
   {

@@ -125,3 +125,9 @@ fielset要素はmarkupとしては必須でinputを持つ必要性はないこ�
   <FugaFormControl />
 </Fieldset>
 ```
+
+```jsx
+// コンポーネント名の末尾がPickerの場合、内部で入力要素を実装しているとみなされるため、
+// 内部のinputがFormControl等で囲まれていなくてもOK
+const DatetimeLocalPicker = () => <input type="datetime-local" />
+```

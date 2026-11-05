@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.29.2](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.29.1...eslint-plugin-smarthr-v6.29.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* a11y-input-in-form-controlでPickerサフィックスのコンポーネントを入力要素として扱う ([#1666](https://github.com/kufu/tamatebako/issues/1666)) ([8ac853d](https://github.com/kufu/tamatebako/commit/8ac853dca9917ab67b8b480b733fa0efed7d689b))
+
 ## [6.29.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.29.0...eslint-plugin-smarthr-v6.29.1) (2026-11-05)
 
 

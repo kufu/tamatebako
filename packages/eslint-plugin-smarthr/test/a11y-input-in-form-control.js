@@ -16,14 +16,14 @@ const noLabeledInput = (name) => `${name} を、smarthr-ui/FormControl もしく
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
      - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
  - ${name}が入力要素とラベル・タイトル・説明など含む概念を表示するコンポーネントの場合、コンポーネント名を/(Form(Control|Group)|(F|^f)ieldset)$/とマッチするように修正してください
- - ${name}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$/とマッチするように修正してください`
+ - ${name}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|Picker)$/とマッチするように修正してください`
 const noLabeledSelect = (name) => `${name} を、smarthr-ui/FormControl もしくはそれを拡張したコンポーネントが囲むようマークアップを変更してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - FormControlで入力要素を囲むことでラベルと入力要素が適切に紐づき、操作性が高まります
    - 画面上に表示するラベルが存在しない場合でも、必ずその入力要素は何であるか、どんな値を入力すればいいのか？を伝えるため、ラベルの設定は必須です。
      - この場合、FormControlのdangerouslyTitleHidden属性をtrueにして、ラベルを非表示にしてください(https://smarthr.design/products/components/form-control/)
  - ${name}が入力要素とラベル・タイトル・説明など含む概念を表示するコンポーネントの場合、コンポーネント名を/(Form(Control|Group)|(F|^f)ieldset)$/とマッチするように修正してください
- - ${name}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$/とマッチするように修正してください`
+ - ${name}が入力要素自体を表現するコンポーネントの一部である場合、ルートとなるコンポーネントの名称を/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|Picker)$/とマッチするように修正してください`
 const invalidPureCheckboxInFormControl = (name) => `HogeFormControl が ${name} を含んでいます。smarthr-ui/FormControl を smarthr-ui/Fieldset に変更し、正しくグルーピングされるように修正してください。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
  - 可能なら${name}はsmarthr-ui/Checkboxへの変更を検討してください。難しい場合は ${name} と結びつくlabel要素が必ず存在するよう、マークアップする必要があることに注意してください。`
@@ -91,7 +91,7 @@ const invalidChildreninFormControl = (children) => `FormControl が、${children
  - 方法2: 親要素であるFormControlがsmarthr-ui/FormControlを拡張したコンポーネントではない場合、コンポーネント名を/(Form(Control|Group))$/と一致しない名称に変更してください`
 const requireMultiInputInFormControlWithRoleGroup = () => `HogeFormControl内に入力要素が2個以上存在しないため、'role=\"group\"'を削除してください。'role=\"group\"'は複数の入力要素を一つのグループとして扱うための属性です。
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/a11y-input-in-form-control
- - HogeFormControl内に2つ以上の入力要素が存在する場合、入力要素を含むコンポーネント名全てを/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$/、もしくは/(Form(Control|Group)|(F|^f)ieldset)$/にマッチする名称に変更してください`
+ - HogeFormControl内に2つ以上の入力要素が存在する場合、入力要素を含むコンポーネント名全てを/(RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|Picker)$/、もしくは/(Form(Control|Group)|(F|^f)ieldset)$/にマッチする名称に変更してください`
 
 ruleTester.run('a11y-input-in-form-control', rule, {
   valid: [
@@ -116,6 +116,9 @@ ruleTester.run('a11y-input-in-form-control', rule, {
     { code: `export const AnyComboBox = () => <input />` },
     { code: `function AnySingleCombobox() { return <SingleCombobox /> }` },
     { code: `export function AnySingleCombobox() { return <SingleCombobox /> }` },
+    { code: `const DatetimeLocalPicker = () => <input type="datetime-local" />` },
+    { code: `export const MonthPicker = () => <input type="month" />` },
+    { code: `function AnyPicker() { return <input /> }` },
     { code: `<Fieldset><HogeFieldset /><HogeFormControl /></Fieldset>` },
     { code: '<HogeFieldset><HogeCheckBox /><HogeInput id="any" /></HogeFieldset>' },
     { code: '<FugaSection><HogeInput id="any" /></FugaSection>' },

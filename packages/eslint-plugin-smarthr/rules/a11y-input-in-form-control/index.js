@@ -1,6 +1,6 @@
 const LABELED_INPUTS_REGEX_STR = 'RadioButton(Panel)?(s)?|Check(B|b)ox(es|s)?'
 const LABELED_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR})$`)
-const FORM_CONTROL_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR}|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|(Date|Wareki|Time)Picker)$`)
+const FORM_CONTROL_INPUTS_REGEX = new RegExp(`(${LABELED_INPUTS_REGEX_STR}|(Search)?(I|^i)nput(File)?|(T|^t)extarea|(S|^s)elect|Combo(B|b)ox|Picker)$`)
 const SEARCH_INPUT_REGEX = /SearchInput$/
 const INPUT_REGEX = /(i|I)nput$/
 const RADIO_BUTTONS_REGEX = /RadioButton(Panel)?(s)?$/

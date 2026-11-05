@@ -35,6 +35,10 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyStack>{a || <><Hoge /><Hoge /></>}</AnyStack>` },
     { code: `<AnyStack>{a || a.map(action)}</AnyStack>` },
     { code: `<AnyStack>{a ? a.b.map(action) : <Hoge />}</AnyStack>` },
+    { code: `<AnyCluster><Tuck>{a.map(action)}</Tuck></AnyCluster>` },
+    { code: `<AnyStack><Tuck>{a.map(action)}</Tuck></AnyStack>` },
+    { code: `<Tuck>{a.map(action)}</Tuck>` },
+    { code: `<Tuck><Hoge /><Hoge /></Tuck>` },
     { code: `<Stack align="flex-end">{a}</Stack>` },
     { code: `<HogeStack align="end">{a}</HogeStack>` },
     { code: `<Heading><Stack as="span"><Hoge /><Fuga /></Stack></Heading>` },
@@ -55,6 +59,8 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyStack>{a || <><Hoge /></>}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<AnyStack>{a || a.hoge(action)}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
     { code: `<AnyStack>{a ? a.b.hoge(action) : <Hoge />}</AnyStack>`, errors: [ { message: errorMessage('Stack', 'AnyStack') } ] },
+    { code: `<Tuck><Hoge /></Tuck>`, errors: [ { message: errorMessage('Tuck', 'Tuck') } ] },
+    { code: `<AnyCluster><Tuck><Hoge /></Tuck></AnyCluster>`, errors: [ { message: errorMessage('Tuck', 'Tuck') } ] },
     { code: `<HogeStack gap={0}>{a}{b}</HogeStack>`, errors: [ { message: `HogeStack に "gap={0}" が指定されており、smarthr-ui/Stack の利用方法として誤っている可能性があります。以下の修正方法を検討してください。${DETAIL_LINK_MESSAGE}
  - 方法1: 子要素を一つにまとめられないか検討してください
    - 例: "<Stack gap={0}><p>hoge</p><p>fuga</p></Stack>" を "<p>hoge<br />fuga</p>" にするなど

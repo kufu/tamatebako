@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.29.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.29.0...eslint-plugin-smarthr-v6.29.1) (2026-11-05)
+
+
+### Bug Fixes
+
+* **a11y-anchor-has-href-attribute:** react-routerとnextの片方だけを利用している場合もチェック方法を切り替える ([#1663](https://github.com/kufu/tamatebako/issues/1663)) ([3ee68fb](https://github.com/kufu/tamatebako/commit/3ee68fb816baf24dae443bba72d56ed1d037c47b))
+* ButtonのradioロールをARROW_ROLESに追加し誤検知を修正 ([#1660](https://github.com/kufu/tamatebako/issues/1660)) ([3fd07ba](https://github.com/kufu/tamatebako/commit/3fd07ba142b430ce2faa82938d23a8c8f8a78a70))
+* Cluster/Stack/Tuckの子要素単一チェックを修正・拡張 ([#1659](https://github.com/kufu/tamatebako/issues/1659)) ([abf6ce9](https://github.com/kufu/tamatebako/commit/abf6ce9381dfd06fa9cbc497c0255ac69b84a46e))
+
 ## [6.29.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.28.0...eslint-plugin-smarthr-v6.29.0) (2026-11-04)
 
 

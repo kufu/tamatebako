@@ -51,6 +51,27 @@ Cluster・Stackのalign・justify属性に`end` `flex-end` を指定した場合
 <Center><Any /></Center>
 ```
 
+### Clusterの子要素が異なるコンポーネントで構成される2要素であり、grow属性が未設定の場合エラー
+
+Clusterの子要素がちょうど2つであり、かつそれぞれが異なるコンポーネントで構成されている場合、grow属性の設定を検討するようエラーになります。<br />
+折り返し時に意図しない幅のレイアウトになることを防ぐため、どちらの要素を優先して幅を広げるかを明示的に指定することを推奨しています。
+
+このチェックは子要素が静的に2つと判断できる場合のみ対象です。子要素が1つ・3つ以上の場合や、三項演算子・`.map()`など動的な内容を含む場合は対象外です。<br />
+また、子要素が同じコンポーネントの場合も対象外です。
+
+```jsx
+// Text, Buttonという異なるコンポーネントで構成されているのでNG
+<Cluster><Text /><Button /></Cluster>
+```
+
+```jsx
+// grow属性を設定していればOK
+<Cluster grow="start"><Text /><Button /></Cluster>
+
+// 同じコンポーネント同士の場合は対象外
+<Cluster><Button /><Button /></Cluster>
+```
+
 ### Stackに `gap={0}` を指定している場合エラー
 
 Stackに`gap={0}`を指定するとエラーになります。<br />
@@ -116,6 +137,11 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 ```
 
 ```jsx
+// 異なるコンポーネント2つで構成されており、grow属性が未設定のためNG
+<Cluster><Text /><Button /></Cluster>
+```
+
+```jsx
 // divに置き換え可能 or Stackの内部的なstyleを期待した実装になってしまうためNG
 <Stack gap={0}>
   <Any />
@@ -172,6 +198,14 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
   <Any />
   <Any />
 </Cluster>
+```
+
+```jsx
+// grow属性を設定していればOK
+<Cluster grow="start"><Text /><Button /></Cluster>
+
+// 同じコンポーネント同士の場合は対象外
+<Cluster><Button /><Button /></Cluster>
 ```
 
 ```jsx

@@ -241,6 +241,7 @@ const config = {
     'eslint-plugin-smarthr/component-name': 'error',
     'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-disabled-while-pending': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定

@@ -20,7 +20,11 @@ const findPendingIdentifier = (expr) => {
     case 'Identifier':
       return PENDING_NAME_REGEX.test(expr.name) ? expr : null
     case 'LogicalExpression':
-      return findPendingIdentifier(expr.left) || findPendingIdentifier(expr.right)
+      // "&&"は「pendingかつ他の条件も満たす場合のみdisabled」という別の意図のため対象外とする
+      // (例: isPending && isRouteRefetching は isPending単体では無効化されないため、loadingへの置き換えを強制しない)
+      return expr.operator === '||'
+        ? findPendingIdentifier(expr.left) || findPendingIdentifier(expr.right)
+        : null
     default:
       return null
   }

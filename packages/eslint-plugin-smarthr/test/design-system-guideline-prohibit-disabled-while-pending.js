@@ -31,6 +31,8 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     { code: `<Button disabled={isPending}>送信</Button>` },
     // pending系以外の変数名は対象外
     { code: `<Button type="submit" disabled={isRouteRefetching}>送信</Button>` },
+    // &&は「pendingかつ他の条件を満たす場合のみdisabled」という別の意図のため対象外
+    { code: `<Button type="submit" disabled={isPending && isRouteRefetching}>送信</Button>` },
     { code: `<Button type="submit" disabled={selectedUsers.length === 0}>送信</Button>` },
     // 既にloadingを使っている場合はOK
     { code: `<Button type="submit" loading={isPending}>送信</Button>` },
@@ -45,6 +47,7 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     // Dialogのactionbuttonにpending系以外のキーの場合は対象外
     { code: `<ActionDialog actionButton={{ text: '削除', theme: 'danger' }} />` },
     { code: `<ActionDialog actionButton={{ text: '削除', disabled: selectedUsers.length === 0 }} />` },
+    { code: `<ActionDialog actionButton={{ text: '削除', disabled: isPending && isRouteRefetching }} />` },
     // closeButtonは対象外
     { code: `<ActionDialog closeButton={{ text: undefined, disabled: isPending }} />` },
     // actionButtonがオブジェクトでない(ReactNode)場合は対象外

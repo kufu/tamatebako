@@ -36,6 +36,13 @@ disabled状態は「操作できない理由」を示すための属性で、見
 <Button type="submit" loading={isPending} disabled={isRouteRefetching}>送信</Button>
 ```
 
+`&&`で結合されている場合は対象外です。pending単体では無効化されず、他の条件と両方満たした場合のみ無効化するという別の意図のためです。
+
+```jsx
+// isPending単体では無効化されないため対象外
+<Button type="submit" disabled={isPending && isRouteRefetching}>送信</Button>
+```
+
 このチェックは`type="submit"`が指定されているButton系コンポーネントのみが対象です。また、`Button`で終わるコンポーネント名のみが対象で、htmlの`button`要素は対象外です(loading属性を持たないため)。
 
 ### Dialog系コンポーネントのactionButtonのdisabledにpending状態を示す変数が含まれる場合エラー

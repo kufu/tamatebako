@@ -58,7 +58,7 @@ disabled状態は「操作できない理由」を示すための属性で、見
 <ActionDialog actionButton={{ text: '削除', disabled: isPending }} responseStatus={responseStatus} />
 
 // OK
-<ActionDialog actionButton={{ text: '削除' }} responseStatus={isPending ? { status: 'processing' } : responseStatus} />
+<ActionDialog actionButton="削除" responseStatus={isPending ? { status: 'processing' } : responseStatus} />
 ```
 
 `closeButton`のdisabledはこのチェックの対象外です。閉じる操作に処理中(loading)という概念がないため、処理中は閉じられないようにする目的で`disabled`を使い続けて問題ありません。
@@ -92,7 +92,7 @@ disabled状態は「操作できない理由」を示すための属性で、見
 ```jsx
 <Button type="submit" loading={isPending}>送信</Button>
 <Button type="submit" loading={isPending} disabled={isRouteRefetching}>送信</Button>
-<ActionDialog actionButton={{ text: '削除' }} responseStatus={isPending ? { status: 'processing' } : responseStatus} />
+<ActionDialog actionButton="削除" responseStatus={isPending ? { status: 'processing' } : responseStatus} />
 <FormDialog actionButton={{ text: '保存', disabled: selectedUsers.length === 0 }} responseStatus={isPending ? { status: 'processing' } : responseStatus} />
 
 // closeButtonは対象外

@@ -8,7 +8,7 @@
 
 ## プロジェクト概要
 
-tamatebako は、SmartHR の全プロダクトで共有する lint 設定・ESLintカスタムルールを管理する pnpm モノレポです。各パッケージは独立して npm に公開され、[release-please](https://github.com/googleapis/release-please) によってパッケージ単位でバージョン管理されます（タグ形式: `<package-name>-v<version>`）。
+tamatebako は、SmartHR の全プロダクトで共有する lint 設定・ESLintカスタムルール・汎用ユーティリティを管理する pnpm モノレポです。lint関連のパッケージが中心ですが、`wareki` のようにlintと無関係な共有utilityパッケージも含みます。各パッケージは独立して npm に公開され、[release-please](https://github.com/googleapis/release-please) によってパッケージ単位でバージョン管理されます（タグ形式: `<package-name>-v<version>`）。
 
 主なパッケージ:
 

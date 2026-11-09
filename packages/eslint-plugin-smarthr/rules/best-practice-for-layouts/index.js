@@ -83,6 +83,7 @@ module.exports = {
         let justifyAttr = null
         let alignAttr = null
         let gapAttr = null
+        let growAttr = null
 
         for (const a of node.attributes) {
           switch (a.name?.name) {
@@ -94,6 +95,9 @@ module.exports = {
               break
             case 'gap':
               gapAttr = a
+              break
+            case 'grow':
+              growAttr = a
               break
           }
         }
@@ -132,6 +136,20 @@ module.exports = {
                   : `${nodeName}には子要素が一つしか無いため、${layoutType}でマークアップする意味がありません。${DETAIL_LINK_MESSAGE}
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${nodeName}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
+            })
+          }
+        } else if (layoutType === 'Cluster' && children.length === 2 && !growAttr) {
+          const [first, second] = children
+          const firstName = first.type === 'JSXElement' ? first.openingElement.name?.name : null
+          const secondName = second.type === 'JSXElement' ? second.openingElement.name?.name : null
+
+          if (firstName && secondName && firstName !== secondName) {
+            context.report({
+              node,
+              message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
+ - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
+ - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
+ - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`,
             })
           }
         }

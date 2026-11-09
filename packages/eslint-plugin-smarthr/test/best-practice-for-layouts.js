@@ -16,6 +16,10 @@ const DETAIL_LINK_MESSAGE = `
 const errorMessage = (type, name) => `${name}には子要素が一つしか無いため、${type}でマークアップする意味がありません。${DETAIL_LINK_MESSAGE}
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${name}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
+const clusterGrowMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
+ - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
+ - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
+ - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`
 
 ruleTester.run('best-practice-for-layouts', rule, {
   valid: [
@@ -47,7 +51,11 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyFormControl label={{ text: 'hoge', icon: <AnyIcon /> }} />` },
     { code: `<AnyFieldset legend={{ text: <AnyStack as="span"><span>a</span><span>b</span></AnyStack> }} />` },
     { code: `<Fieldset legend={{ text: 'hoge', icon: <AnyIcon /> }} />` },
-    { code: `<AnyRadioButton><Cluster as="span"><A /><B /></Cluster></AnyRadioButton>` },
+    { code: `<AnyRadioButton><Cluster as="span" grow="start"><A /><B /></Cluster></AnyRadioButton>` },
+    { code: `<Cluster grow="start"><Text /><Button /></Cluster>` },
+    { code: `<Cluster grow="end"><Text /><Button /></Cluster>` },
+    { code: `<Cluster><Button /><Button /></Cluster>` },
+    { code: `<Cluster>{cond ? <A /> : <B />}<C /></Cluster>` },
     { code: `<RadioButtonPanel><AnyStack forwardedAs="span"><A /><B /></AnyStack></RadioButtonPanel>` },
     { code: `<AnyCheckbox><Sidebar as="span"><A /><B /></Sidebar></AnyCheckbox>` },
   ],
@@ -80,6 +88,8 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyFieldset legend={{ text: <Text prefixIcon={<SomeIcon />}>hoge</Text>}} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<RadioButtonPanel><AnyStack><A /><B /></AnyStack></RadioButtonPanel>`, errors: [ { message: `RadioButton, RadioButtonPanelの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<AnyCheckbox><Sidebar><A /><B /></Sidebar></AnyCheckbox>`, errors: [ { message: `Checkboxの子孫にSidebarを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
+    { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Text', 'Button') } ] },
+    { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterGrowMessage('AnyCluster', 'Text', 'Button') } ] },
   ]
 })
 

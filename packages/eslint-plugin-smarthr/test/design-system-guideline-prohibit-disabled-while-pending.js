@@ -1,0 +1,60 @@
+const rule = require('../rules/design-system-guideline-prohibit-disabled-while-pending')
+const RuleTester = require('eslint').RuleTester
+
+const ruleTester = new RuleTester({
+  languageOptions: {
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+  },
+})
+
+const DETAIL_LINK_MESSAGE = `
+ - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-disabled-while-pending`
+
+const buttonMessage = (name) => `disabled属性にpending状態を示す変数(${name})が指定されています。処理中であることが伝わるよう、loading属性を使用してください。${DETAIL_LINK_MESSAGE}
+ - 参考: https://smarthr.design/products/components/button/
+ - 例: disabled={${name}} を loading={${name}} に変更してください
+ - 他の無効化理由と混在している場合、pending以外の条件のみdisabledに残してください
+   - 例: disabled={${name} || isRouteRefetching} → loading={${name}} disabled={isRouteRefetching}`
+
+const dialogMessage = (name) => `actionButtonのdisabledにpending状態を示す変数(${name})が指定されています。処理中であることが伝わるよう、responseStatus属性を使用してください。${DETAIL_LINK_MESSAGE}
+ - 参考: https://smarthr.design/products/design-patterns/feedback/
+ - 例: actionButtonのdisabledを削除し、responseStatus={${name} ? { status: 'processing' } : responseStatus} を設定してください
+ - closeButtonのdisabledはこのルールの対象外です(閉じる操作にloading概念はないため)`
+
+ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, {
+  valid: [
+    // type="submit"ではないButtonはpending変数があっても対象外
+    { code: `<Button disabled={isPending}>送信</Button>` },
+    // pending系以外の変数名は対象外
+    { code: `<Button type="submit" disabled={isRouteRefetching}>送信</Button>` },
+    { code: `<Button type="submit" disabled={selectedUsers.length === 0}>送信</Button>` },
+    // 既にloadingを使っている場合はOK
+    { code: `<Button type="submit" loading={isPending}>送信</Button>` },
+    { code: `<Button type="submit" loading={isPending} disabled={isRouteRefetching}>送信</Button>` },
+    // button html要素は対象外(BUTTON_REGEXはコンポーネント名のみ対象)
+    { code: `<button type="submit" disabled={isPending}>送信</button>` },
+
+    // Dialogのactionbuttonにpending系以外のキーの場合は対象外
+    { code: `<ActionDialog actionButton={{ text: '削除', theme: 'danger' }} />` },
+    { code: `<ActionDialog actionButton={{ text: '削除', disabled: selectedUsers.length === 0 }} />` },
+    // closeButtonは対象外
+    { code: `<ActionDialog closeButton={{ text: undefined, disabled: isPending }} />` },
+    // actionButtonがオブジェクトでない(ReactNode)場合は対象外
+    { code: `<ActionDialog actionButton={<FormattedMessage id="save" />} />` },
+  ],
+  invalid: [
+    { code: `<Button type="submit" disabled={isPending}>送信</Button>`, errors: [ { message: buttonMessage('isPending') } ] },
+    { code: `<Button type="submit" disabled={pending}>送信</Button>`, errors: [ { message: buttonMessage('pending') } ] },
+    { code: `<Button type="submit" disabled={isSubmitting}>送信</Button>`, errors: [ { message: buttonMessage('isSubmitting') } ] },
+    { code: `<Button type="submit" disabled={isPending || isRouteRefetching}>送信</Button>`, errors: [ { message: buttonMessage('isPending') } ] },
+    { code: `<AnyButton type="submit" disabled={isPending}>送信</AnyButton>`, errors: [ { message: buttonMessage('isPending') } ] },
+
+    { code: `<ActionDialog actionButton={{ text: '削除', disabled: isPending }} />`, errors: [ { message: dialogMessage('isPending') } ] },
+    { code: `<FormDialog actionButton={{ text: '保存', disabled: isPending || selectedUsers.length === 0 }} />`, errors: [ { message: dialogMessage('isPending') } ] },
+    { code: `<ControlledActionDialog actionButton={{ text: '削除', disabled: isPending }} />`, errors: [ { message: dialogMessage('isPending') } ] },
+  ]
+})

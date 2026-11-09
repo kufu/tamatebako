@@ -3146,6 +3146,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/design-system-guideline-prohibit-dialog-button-icon": [
       2,
     ],
+    "smarthr/design-system-guideline-prohibit-disabled-while-pending": [
+      1,
+    ],
     "smarthr/design-system-guideline-prohibit-double-icons": [
       0,
     ],

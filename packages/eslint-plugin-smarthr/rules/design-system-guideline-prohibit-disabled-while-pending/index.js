@@ -1,7 +1,7 @@
 // smarthr-ui/Buttonはloading属性を持つがhtmlのbutton要素は持たないため、小文字のbuttonタグは対象外とする
 const BUTTON_REGEX = /Button$/
 const DIALOG_REGEX = /Dialog(WithTrigger)?$/
-const PENDING_NAME_REGEX = /((l|L)oading|(p|P)(ending|rocessing)|(s|S)(aving|ending|ubmit(ting)?))/
+const PENDING_NAME_REGEX = /((^l|L)oading|(^p|P)(ending|rocessing)|(^s|S)(aving|ending|ubmit(ting)?))/
 
 const DETAIL_LINK_MESSAGE = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-disabled-while-pending`

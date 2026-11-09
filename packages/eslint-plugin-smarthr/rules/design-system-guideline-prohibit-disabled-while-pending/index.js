@@ -30,13 +30,13 @@ const findPendingIdentifier = (expr) => {
   }
 }
 
-const buttonMessage = (name) => `disabled属性にpending状態を示す変数(${name})が指定されています。処理中であることが伝わるよう、loading属性を使用してください。${DETAIL_LINK_MESSAGE}
+const buttonMessage = (name) => `disabled属性に処理中を表すと思われる変数(${name})が指定されています。処理中であることが伝わるよう、loading属性を使用してください。${DETAIL_LINK_MESSAGE}
  - 参考: https://smarthr.design/products/components/button/
  - 例: disabled={${name}} を loading={${name}} に変更してください
  - 他の無効化理由と混在している場合、pending以外の条件のみdisabledに残してください
    - 例: disabled={${name} || isRouteRefetching} → loading={${name}} disabled={isRouteRefetching}`
 
-const dialogMessage = (name) => `actionButtonのdisabledにpending状態を示す変数(${name})が指定されています。処理中であることが伝わるよう、responseStatus属性を使用してください。${DETAIL_LINK_MESSAGE}
+const dialogMessage = (name) => `actionButtonのdisabledに処理中を表すと思われる変数(${name})が指定されています。処理中であることが伝わるよう、responseStatus属性を使用してください。${DETAIL_LINK_MESSAGE}
  - 参考: https://smarthr.design/products/design-patterns/feedback/
  - 例: actionButtonのdisabledを削除し、responseStatus={${name} ? { status: 'processing' } : responseStatus} を設定してください
  - closeButtonのdisabledはこのルールの対象外です(閉じる操作にloading概念はないため)`

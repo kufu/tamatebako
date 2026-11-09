@@ -7,22 +7,20 @@ const DETAIL_LINK_MESSAGE = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-disabled-while-pending`
 
 const findPendingIdentifier = (expr) => {
-  if (!expr) {
-    return null
+  if (expr) {
+    switch (expr.type) {
+      case 'Identifier':
+        return PENDING_NAME_REGEX.test(expr.name) ? expr : null
+      case 'LogicalExpression':
+        // "&&"は「pendingかつ他の条件も満たす場合のみdisabled」という別の意図のため対象外とする
+        // (例: isPending && isRouteRefetching は isPending単体では無効化されないため、loadingへの置き換えを強制しない)
+        return expr.operator === '||'
+          ? findPendingIdentifier(expr.left) || findPendingIdentifier(expr.right)
+          : null
+    }
   }
 
-  switch (expr.type) {
-    case 'Identifier':
-      return PENDING_NAME_REGEX.test(expr.name) ? expr : null
-    case 'LogicalExpression':
-      // "&&"は「pendingかつ他の条件も満たす場合のみdisabled」という別の意図のため対象外とする
-      // (例: isPending && isRouteRefetching は isPending単体では無効化されないため、loadingへの置き換えを強制しない)
-      return expr.operator === '||'
-        ? findPendingIdentifier(expr.left) || findPendingIdentifier(expr.right)
-        : null
-    default:
-      return null
-  }
+  return null
 }
 
 const buttonMessage = (name) => `disabled属性に処理中を表すと思われる変数(${name})が指定されています。処理中であることが伝わるよう、loading属性を使用してください。${DETAIL_LINK_MESSAGE}
@@ -52,26 +50,22 @@ module.exports = {
         const expr = node.value?.type === 'JSXExpressionContainer' ? node.value.expression : null
         const pendingId = findPendingIdentifier(expr)
 
-        if (!pendingId) {
-          return
+        if (pendingId) {
+          context.report({
+            node,
+            message: buttonMessage(pendingId.name),
+          })
         }
-
-        context.report({
-          node,
-          message: buttonMessage(pendingId.name),
-        })
       },
       [`JSXOpeningElement[name.name=${DIALOG_REGEX}] > JSXAttribute[name.name="actionButton"] > JSXExpressionContainer > ObjectExpression > Property[key.name="disabled"]`]: (node) => {
         const pendingId = findPendingIdentifier(node.value)
 
-        if (!pendingId) {
-          return
+        if (pendingId) {
+          context.report({
+            node,
+            message: dialogMessage(pendingId.name),
+          })
         }
-
-        context.report({
-          node,
-          message: dialogMessage(pendingId.name),
-        })
       },
     }
   },

@@ -15,7 +15,7 @@ disabled状態は「操作できない理由」を示すための属性で、見
 
 ### `type="submit"`のButton系コンポーネントのdisabled属性にpending状態を示す変数が含まれる場合エラー
 
-`Pending`、`Submit`、`Submitting`、`Sending`、`Saving`、`Processing`、`Loading`のいずれかの単語をキャメルケースの単語境界で含む変数(`isPending`、`pending`、`formIsPending`、`deletePending`、`isSubmit`、`isLoading`等)が`disabled`属性に直接、もしくは`||`で結合された条件の一部として含まれている場合エラーになります。<br />
+`Pending`、`Submit`、`Submitting`、`Sending`、`Saving`、`Processing`、`Loading`のいずれかの単語を、変数名の先頭に全て小文字で使っている(`pending`、`submit`等)、もしくは変数名の途中にキャメルケースの単語境界(単語の先頭が大文字)で含んでいる(`isPending`、`formIsPending`、`deletePending`、`isSubmit`、`isLoading`等)変数が`disabled`属性に直接、もしくは`||`で結合された条件の一部として含まれている場合エラーになります。<br />
 `isDepending`、`isAppending`、`isSpending`のように単語境界が異なる(単語の先頭が大文字でない)場合は誤検知しません。
 
 ```jsx

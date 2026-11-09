@@ -37,6 +37,10 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     { code: `<Button type="submit" loading={isPending} disabled={isRouteRefetching}>送信</Button>` },
     // button html要素は対象外(BUTTON_REGEXはコンポーネント名のみ対象)
     { code: `<button type="submit" disabled={isPending}>送信</button>` },
+    // pending等を含むが単語境界が異なる(誤検知しない)変数名
+    { code: `<Button type="submit" disabled={isDepending}>送信</Button>` },
+    { code: `<Button type="submit" disabled={isAppending}>送信</Button>` },
+    { code: `<Button type="submit" disabled={isSpending}>送信</Button>` },
 
     // Dialogのactionbuttonにpending系以外のキーの場合は対象外
     { code: `<ActionDialog actionButton={{ text: '削除', theme: 'danger' }} />` },
@@ -51,6 +55,9 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     { code: `<Button type="submit" disabled={pending}>送信</Button>`, errors: [ { message: buttonMessage('pending') } ] },
     { code: `<Button type="submit" disabled={isSubmitting}>送信</Button>`, errors: [ { message: buttonMessage('isSubmitting') } ] },
     { code: `<Button type="submit" disabled={isPending || isRouteRefetching}>送信</Button>`, errors: [ { message: buttonMessage('isPending') } ] },
+    { code: `<Button type="submit" disabled={disabled || pending}>送信</Button>`, errors: [ { message: buttonMessage('pending') } ] },
+    { code: `<Button type="submit" disabled={formIsPending}>送信</Button>`, errors: [ { message: buttonMessage('formIsPending') } ] },
+    { code: `<Button type="submit" disabled={deletePending}>送信</Button>`, errors: [ { message: buttonMessage('deletePending') } ] },
     { code: `<AnyButton type="submit" disabled={isPending}>送信</AnyButton>`, errors: [ { message: buttonMessage('isPending') } ] },
 
     { code: `<ActionDialog actionButton={{ text: '削除', disabled: isPending }} />`, errors: [ { message: dialogMessage('isPending') } ] },

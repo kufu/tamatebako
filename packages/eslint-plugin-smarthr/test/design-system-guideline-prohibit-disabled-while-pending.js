@@ -58,6 +58,8 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     { code: `<Button type="submit" disabled={disabled || pending}>送信</Button>`, errors: [ { message: buttonMessage('pending') } ] },
     { code: `<Button type="submit" disabled={formIsPending}>送信</Button>`, errors: [ { message: buttonMessage('formIsPending') } ] },
     { code: `<Button type="submit" disabled={deletePending}>送信</Button>`, errors: [ { message: buttonMessage('deletePending') } ] },
+    { code: `<Button type="submit" disabled={isSubmit}>送信</Button>`, errors: [ { message: buttonMessage('isSubmit') } ] },
+    { code: `<Button type="submit" disabled={submit}>送信</Button>`, errors: [ { message: buttonMessage('submit') } ] },
     { code: `<AnyButton type="submit" disabled={isPending}>送信</AnyButton>`, errors: [ { message: buttonMessage('isPending') } ] },
 
     { code: `<ActionDialog actionButton={{ text: '削除', disabled: isPending }} />`, errors: [ { message: dialogMessage('isPending') } ] },

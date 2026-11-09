@@ -53,7 +53,7 @@ module.exports = {
   },
   create(context) {
     return {
-      [`JSXOpeningElement[name.name=${BUTTON_REGEX}]:has(JSXAttribute[name.name="type"][value.value="submit"]) > JSXAttribute[name.name="disabled"]`]: (node) => {
+      [`JSXOpeningElement[name.name=${BUTTON_REGEX}]:has(JSXAttribute[name.name="type"][value.value="submit"]):not(:has(JSXAttribute[name.name="loading"])) > JSXAttribute[name.name="disabled"]`]: (node) => {
         const expr = node.value?.type === 'JSXExpressionContainer' ? node.value.expression : null
         const pendingId = findPendingIdentifier(expr)
 

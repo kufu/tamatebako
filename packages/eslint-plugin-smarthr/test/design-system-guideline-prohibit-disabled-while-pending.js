@@ -37,6 +37,8 @@ ruleTester.run('design-system-guideline-prohibit-disabled-while-pending', rule, 
     // 既にloadingを使っている場合はOK
     { code: `<Button type="submit" loading={isPending}>送信</Button>` },
     { code: `<Button type="submit" loading={isPending} disabled={isRouteRefetching}>送信</Button>` },
+    // loading属性が既に設定されている場合はチェック自体をスキップする
+    { code: `<Button type="submit" loading={isSaving} disabled={isPending}>送信</Button>` },
     // button html要素は対象外(BUTTON_REGEXはコンポーネント名のみ対象)
     { code: `<button type="submit" disabled={isPending}>送信</button>` },
     // pending等を含むが単語境界が異なる(誤検知しない)変数名

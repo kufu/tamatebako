@@ -43,7 +43,13 @@ disabled状態は「操作できない理由」を示すための属性で、見
 <Button type="submit" disabled={isPending && isRouteRefetching}>送信</Button>
 ```
 
-このチェックは`type="submit"`が指定されているButton系コンポーネントのみが対象です。また、`Button`で終わるコンポーネント名のみが対象で、htmlの`button`要素は対象外です(loading属性を持たないため)。
+このチェックは`type="submit"`が指定されているButton系コンポーネントのみが対象です。また、`Button`で終わるコンポーネント名のみが対象で、htmlの`button`要素は対象外です(loading属性を持たないため)。<br />
+既に`loading`属性が設定されている場合はチェック自体をスキップします。
+
+```jsx
+// loading属性が既に設定されているため対象外
+<Button type="submit" loading={isSaving} disabled={isPending}>送信</Button>
+```
 
 ### Dialog系コンポーネントのactionButtonのdisabledにpending状態を示す変数が含まれる場合エラー
 

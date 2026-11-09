@@ -46,6 +46,7 @@
 - [component-name](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/component-name)
 - [design-system-guideline-bulk-action-row-button](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-bulk-action-row-button)
 - [design-system-guideline-prohibit-dialog-button-icon](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-dialog-button-icon)
+- [design-system-guideline-prohibit-disabled-while-pending](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-disabled-while-pending)
 - [design-system-guideline-prohibit-double-icons](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-double-icons)
 - [design-system-guideline-prohibit-information-panel-in-white-bg](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-information-panel-in-white-bg)
 - [design-system-guideline-prohibit-input-affix-interactive-element](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/design-system-guideline-prohibit-input-affix-interactive-element)

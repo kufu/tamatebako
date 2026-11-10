@@ -86,6 +86,7 @@ const config = {
     'no-div-regex': 'warn',
     'no-eval': 'error',
     'no-extend-native': 'error',
+    'no-implicit-coercion': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
     'no-inner-declarations': 'warn',
     'no-iterator': 'error',
     'no-label-var': 'error',

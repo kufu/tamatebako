@@ -79,6 +79,7 @@ export default [
       'smarthr/component-name': 'error',
       'smarthr/design-system-guideline-bulk-action-row-button': 'error',
       'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
+      'smarthr/design-system-guideline-prohibit-disabled-while-pending': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
       'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
       'smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定

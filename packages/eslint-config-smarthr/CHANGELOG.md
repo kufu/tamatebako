@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.16.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.15.0...eslint-config-smarthr-v14.16.0) (2026-11-11)
+
+
+### Features
+
+* eslint-config-smarthrにno-implicit-coercion(boolean)をwarnで導入 ([#1688](https://github.com/kufu/tamatebako/issues/1688)) ([8827130](https://github.com/kufu/tamatebako/commit/8827130f727b7cd2ad41c0117e5a5ce48e086ac4))
+
 ## [14.15.0](https://github.com/kufu/tamatebako/compare/eslint-config-smarthr-v14.14.3...eslint-config-smarthr-v14.15.0) (2026-11-10)
 
 

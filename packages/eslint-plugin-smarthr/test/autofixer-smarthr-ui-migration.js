@@ -11,6 +11,8 @@ const v97ToV98Tests = require('../rules/autofixer-smarthr-ui-migration/versions/
 const v98ToV99Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v98-to-v99/test')
 const v99ToV100Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v99-to-v100/test')
 const v100ToV101Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v100-to-v101/test')
+const v101ToV102Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v101-to-v102/test')
+const v102ToV103Tests = require('../rules/autofixer-smarthr-ui-migration/versions/v102-to-v103/test')
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -35,6 +37,8 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     ...v98ToV99Tests.valid,
     ...v99ToV100Tests.valid,
     ...v100ToV101Tests.valid,
+    ...v101ToV102Tests.valid,
+    ...v102ToV103Tests.valid,
   ],
 
   invalid: [
@@ -47,7 +51,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     },
     {
       code: `import { ActionDialog } from 'smarthr-ui'`,
-      options: [{ from: '101', to: '102' }],
+      options: [{ from: '200', to: '201' }],
       errors: [{ messageId: 'unsupportedVersion' }],
     },
 
@@ -98,5 +102,7 @@ ruleTester.run('autofixer-smarthr-ui-migration', rule, {
     ...v98ToV99Tests.invalid,
     ...v99ToV100Tests.invalid,
     ...v100ToV101Tests.invalid,
+    ...v101ToV102Tests.invalid,
+    ...v102ToV103Tests.invalid,
   ],
 })

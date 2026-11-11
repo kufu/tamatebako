@@ -20,6 +20,9 @@ const clusterGrowMessage = (name, first, second) => `${name}の子要素が異�
  - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
  - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
  - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`
+const pageHeadingIconMessage = (name) => `${name}にはicon属性がありません。これは意図的な設計です(${name}はhtml内に1つのみのため、Iconによる他の見出しとの差別化が不要なため)。${DETAIL_LINK_MESSAGE}
+ - ${name}の子要素にIconが必要な場合、本来${name}を使うべきではない内容(例: ResponseMessageなど別コンポーネントで表現するべき内容)をマークアップしている可能性が高いです
+ - 利用箇所のマークアップ、およびUIデザインそのものを見直してください`
 
 ruleTester.run('best-practice-for-layouts', rule, {
   valid: [
@@ -90,6 +93,8 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyCheckbox><Sidebar><A /><B /></Sidebar></AnyCheckbox>`, errors: [ { message: `Checkboxの子孫にSidebarを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Text', 'Button') } ] },
     { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterGrowMessage('AnyCluster', 'Text', 'Button') } ] },
+    { code: `<PageHeading><AnyIcon text="hoge" /></PageHeading>`, errors: [ { message: pageHeadingIconMessage('PageHeading') } ] },
+    { code: `<AnyPageHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyPageHeading>`, errors: [ { message: pageHeadingIconMessage('AnyPageHeading') } ] },
   ]
 })
 

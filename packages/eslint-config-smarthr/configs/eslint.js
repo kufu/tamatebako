@@ -58,6 +58,7 @@ export default [
       'no-extend-native': 'error',
       'no-extra-parens': ['error', 'functions'],
       'no-floating-decimal': 'error',
+      'no-implicit-coercion': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
       'no-implicit-globals': 'error',
       'no-implied-eval': 'error',
       'no-import-assign': 'error',

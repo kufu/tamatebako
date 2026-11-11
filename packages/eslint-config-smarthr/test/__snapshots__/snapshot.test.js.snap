@@ -2451,6 +2451,16 @@ exports[`should match ESLint Configuration snapshot 1`] = `
         "exceptions": [],
       },
     ],
+    "no-implicit-coercion": [
+      1,
+      {
+        "allow": [],
+        "boolean": true,
+        "disallowTemplateShorthand": false,
+        "number": true,
+        "string": true,
+      },
+    ],
     "no-implicit-globals": [
       2,
       {

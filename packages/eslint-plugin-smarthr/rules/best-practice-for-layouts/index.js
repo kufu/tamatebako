@@ -8,6 +8,8 @@ const LAYOUT_COMPONENT_REGEX_WITHOUT_STACK = /(Center|Cluster|Container|Reel|Sid
 const LAYOUT_COMPONENT_REGEX = /(Center|Cluster|Container|Reel|Stack|Sidebar)$/
 const LAYOUT_COMPONENT_ELEMENT_WITHOUT_STACK = `JSXOpeningElement[name.name=${LAYOUT_COMPONENT_REGEX_WITHOUT_STACK}]`
 const HEADING_ELEMENT = 'JSXElement[openingElement.name.name=/Heading$/]'
+const HEADING_NAME_REGEX = /Heading$/
+const PAGE_HEADING_NAME_REGEX = /PageHeading$/
 const NOT_HAS_AS_SPAN_ATTRIBUTE = ':not(:has(JSXAttribute[name.name=/^(as|forwardedAs)$/][value.value="span"]))'
 const STACK_ELEMENT_NOT_SPAN = `JSXOpeningElement[name.name=/Stack$/]${NOT_HAS_AS_SPAN_ATTRIBUTE}`
 const LAYOUT_ELEMENT_NOT_SPAN = `JSXOpeningElement[name.name=${LAYOUT_COMPONENT_REGEX}]${NOT_HAS_AS_SPAN_ATTRIBUTE}`
@@ -23,6 +25,20 @@ const checkFalsyJSXText = (c) => (
     c.type === 'JSXEmptyExpression'
   )
 )
+
+const findHeadingAncestorName = (node) => {
+  let current = node.parent
+
+  while (current) {
+    if (current.type === 'JSXElement' && HEADING_NAME_REGEX.test(current.openingElement.name?.name)) {
+      return current.openingElement.name.name
+    }
+
+    current = current.parent
+  }
+
+  return null
+}
 
 const searchChildren = (node) => {
   if (
@@ -169,6 +185,18 @@ module.exports = {
         })
       },
       [`${HEADING_ELEMENT} :matches(${ICON_ELEMENT_WITH_TEXT},${TEXT_ELEMENT_WITH_PREFIX})`]: (node) => {
+        const headingName = findHeadingAncestorName(node)
+
+        if (headingName && PAGE_HEADING_NAME_REGEX.test(headingName)) {
+          context.report({
+            node,
+            message: `${headingName}にはicon属性がありません。これは意図的な設計です(${headingName}はhtml内に1つのみのため、Iconによる他の見出しとの差別化が不要なため)。${DETAIL_LINK_MESSAGE}
+ - ${headingName}の子要素にIconが必要な場合、本来${headingName}を使うべきではない内容(例: ResponseMessageなど別コンポーネントで表現するべき内容)をマークアップしている可能性が高いです
+ - 利用箇所のマークアップ、およびUIデザインそのものを見直してください`,
+          })
+          return
+        }
+
         context.report({
           node,
           message: `HeadingにIconを設定する場合 <Heading icon={<XxxIcon />}></Heading> のようにicon属性を利用してください${DETAIL_LINK_MESSAGE}`,

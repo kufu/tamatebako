@@ -98,6 +98,15 @@ Heading, FormControl, Fieldsetには要素を配置するための属性が用�
 その場合、Stackのas・もしくはforwardedAs属性に `span` を指定してください。<br />
 `span` を指定する理由はLayoutsに属するコンポーネントは基本的にdiv要素で出力されるため、デフォルトのままではinvalidなhtmlになってしまうためです。
 
+#### PageHeadingの場合はicon属性の案内をしない
+
+`PageHeading`はhtml内に1つのみ設置される想定のコンポーネントのため、意図的に`icon`属性を公開していません。他の見出しとIconで差別化する必要性がないためです。<br />
+そのため`PageHeading`の子要素にIcon・prefixIcon付きのTextが見つかった場合は、「icon属性を使ってください」という案内ではなく、**本来`PageHeading`を使うべきではない内容(別コンポーネントで表現するべき内容)をマークアップしている可能性が高い**という指摘になります。
+
+```jsx
+// PageHeadingにIconが必要な時点で、markupやUIデザインを見直すべき
+<PageHeading><AnyIcon text="hoge" /></PageHeading>
+```
 
 ### Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを設置する場合エラー 
 
@@ -161,6 +170,11 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
     <SubText />
   </Stack>
 } />
+```
+
+```jsx
+// PageHeadingにIconが必要な時点でmarkup・UIデザインを見直すべき(icon属性の案内はされない)
+<PageHeading><AnyIcon text="hoge" /></PageHeading>
 ```
 
 ```jsx

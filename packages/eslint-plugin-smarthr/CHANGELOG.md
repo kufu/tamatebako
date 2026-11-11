@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.31.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.30.0...eslint-plugin-smarthr-v6.31.0) (2026-11-11)
+
+
+### Features
+
+* autofixer-smarthr-ui-migrationにv101-to-v102, v102-to-v103を追加 ([#1696](https://github.com/kufu/tamatebako/issues/1696)) ([1fc8e8f](https://github.com/kufu/tamatebako/commit/1fc8e8f3558fe69325ded39a469726dfff22fb5c))
+
+
+### Bug Fixes
+
+* PageHeading内のIcon検知でicon属性の案内を出さないよう修正 ([#1693](https://github.com/kufu/tamatebako/issues/1693)) ([16d59fb](https://github.com/kufu/tamatebako/commit/16d59fb78c7bf1a553e6bcf757c27384ea68e002))
+
 ## [6.30.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.29.2...eslint-plugin-smarthr-v6.30.0) (2026-11-09)
 
 

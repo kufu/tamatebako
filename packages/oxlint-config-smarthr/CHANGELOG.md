@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.27](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.26...oxlint-config-smarthr-v0.1.27) (2026-11-11)
+
+
+### Features
+
+* oxlint-config-smarthrにno-implicit-coercion(boolean)をwarnで導入 ([#1689](https://github.com/kufu/tamatebako/issues/1689)) ([5f3a79e](https://github.com/kufu/tamatebako/commit/5f3a79e397ea7ea52ce945ef5f6ea30cc894c2a0))
+
 ## [0.1.26](https://github.com/kufu/tamatebako/compare/oxlint-config-smarthr-v0.1.25...oxlint-config-smarthr-v0.1.26) (2026-11-10)
 
 

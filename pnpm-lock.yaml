@@ -343,8 +343,8 @@ importers:
   packages/oxlint-config-smarthr:
     dependencies:
       eslint-plugin-smarthr:
-        specifier: 6.30.0
-        version: 6.30.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
+        specifier: 6.31.0
+        version: 6.31.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
       oxlint:
         specifier: '>=1.0.0'
         version: 1.59.0
@@ -4127,6 +4127,11 @@ packages:
 
   eslint-plugin-smarthr@6.30.0:
     resolution: {integrity: sha512-PleJAsTuBK0MgQ3BUYj+iKFaffmsoPic49F5rp8/4VG/cbytpKUJHKvhfnF047FXbUTpOsKds9PaOj/EIJ3NpA==}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@6.31.0:
+    resolution: {integrity: sha512-bFS4ZwCssLQz9/L5GLWVUqHgmb/Xys+BaZ0cL13Gq2k1ecaDSD+FbiC1yZX1yQKNEUOFaIsq33WSbspbx//K/A==}
     peerDependencies:
       eslint: ^9
 
@@ -10231,6 +10236,11 @@ snapshots:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       json5: 2.2.3
 
+  eslint-plugin-smarthr@6.31.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
+    dependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
+      json5: 2.2.3
+
   eslint-scope@5.1.1:
     dependencies:
       esrecurse: 4.3.0
@@ -12773,7 +12783,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
-      postcss: 8.5.28
+      postcss: 8.5.32
       rollup: 4.60.3
       tinyglobby: 0.2.17
     optionalDependencies:

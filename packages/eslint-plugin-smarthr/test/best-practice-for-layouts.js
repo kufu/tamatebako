@@ -17,8 +17,8 @@ const errorMessage = (type, name) => `${name}には子要素が一つしか無�
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${name}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
 const clusterInlineMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されています。${DETAIL_LINK_MESSAGE}
- - テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がない場合、inline={true} を設定してください
- - 幅を優先させたい要素がある場合は、grow属性を設定してください`
+ - ${name}の子要素で幅を優先させたい要素がある場合は、grow="start"、もしくはgrow="end"を設定してください
+ - ${name}の幅を親要素の幅まで引き延ばす必要がない場合、inline={true} を設定してください`
 const pageHeadingIconMessage = (name) => `${name}にはicon属性がありません。これは意図的な設計です(${name}はhtml内に1つのみのため、Iconによる他の見出しとの差別化が不要なため)。${DETAIL_LINK_MESSAGE}
  - ${name}の子要素にIconが必要な場合、本来${name}を使うべきではない内容(例: ResponseMessageなど別コンポーネントで表現するべき内容)をマークアップしている可能性が高いです
  - 利用箇所のマークアップ、およびUIデザインそのものを見直してください`

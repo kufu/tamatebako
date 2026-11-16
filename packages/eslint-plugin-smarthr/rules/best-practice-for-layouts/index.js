@@ -174,8 +174,8 @@ module.exports = {
             context.report({
               node,
               message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されています。${DETAIL_LINK_MESSAGE}
- - テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がない場合、inline={true} を設定してください
- - 幅を優先させたい要素がある場合は、grow属性を設定してください`,
+ - ${nodeName}の子要素で幅を優先させたい要素がある場合は、grow="start"、もしくはgrow="end"を設定してください
+ - ${nodeName}の幅を親要素の幅まで引き延ばす必要がない場合、inline={true} を設定してください`,
             })
           }
         }

@@ -174,8 +174,9 @@ module.exports = {
             context.report({
               node,
               message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されています。${DETAIL_LINK_MESSAGE}
- - ${nodeName}の子要素で幅を優先させたい要素がある場合は、grow="start"、もしくはgrow="end"を設定してください
- - ${nodeName}の幅を親要素の幅まで引き延ばす必要がない場合、inline={true} を設定してください`,
+ - テキストなど内容により長さが変わる要素と、ボタン・リンクなど操作要素を組み合わせている場合、テキスト量や画面幅によって折り返しが発生することがあります
+ - 操作要素の位置を${nodeName}の端に固定したい場合は、可変長側の要素に grow="start"(先頭要素の場合)、もしくは grow="end"(末尾要素の場合)を設定してください
+ - 操作要素がテキストの末尾にそのまま続く形で問題ない場合は、inline={true} を設定してください`,
             })
           }
         }

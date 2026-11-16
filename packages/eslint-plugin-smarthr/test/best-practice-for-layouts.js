@@ -20,6 +20,9 @@ const clusterGrowMessage = (name, first, second) => `${name}の子要素が異�
  - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
  - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
  - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`
+const clusterInlineMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されています。${DETAIL_LINK_MESSAGE}
+ - テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がない場合、inline={true} を設定してください
+ - 幅を優先させたい要素がある場合は、grow属性を設定してください`
 const pageHeadingIconMessage = (name) => `${name}にはicon属性がありません。これは意図的な設計です(${name}はhtml内に1つのみのため、Iconによる他の見出しとの差別化が不要なため)。${DETAIL_LINK_MESSAGE}
  - ${name}の子要素にIconが必要な場合、本来${name}を使うべきではない内容(例: ResponseMessageなど別コンポーネントで表現するべき内容)をマークアップしている可能性が高いです
  - 利用箇所のマークアップ、およびUIデザインそのものを見直してください`
@@ -59,6 +62,10 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<Cluster grow="end"><Text /><Button /></Cluster>` },
     { code: `<Cluster><Button /><Button /></Cluster>` },
     { code: `<Cluster>{cond ? <A /> : <B />}<C /></Cluster>` },
+    // inline属性が設定済みの場合は対象外
+    { code: `<Cluster inline><Text /><Button /></Cluster>` },
+    { code: `<Cluster inline={true}><Text /><Button /></Cluster>` },
+    { code: `<Cluster inline={someCondition}><Text /><Button /></Cluster>` },
     { code: `<RadioButtonPanel><AnyStack forwardedAs="span"><A /><B /></AnyStack></RadioButtonPanel>` },
     { code: `<AnyCheckbox><Sidebar as="span"><A /><B /></Sidebar></AnyCheckbox>` },
   ],
@@ -91,8 +98,15 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyFieldset legend={{ text: <Text prefixIcon={<SomeIcon />}>hoge</Text>}} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<RadioButtonPanel><AnyStack><A /><B /></AnyStack></RadioButtonPanel>`, errors: [ { message: `RadioButton, RadioButtonPanelの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<AnyCheckbox><Sidebar><A /><B /></Sidebar></AnyCheckbox>`, errors: [ { message: `Checkboxの子孫にSidebarを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
-    { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Text', 'Button') } ] },
-    { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterGrowMessage('AnyCluster', 'Text', 'Button') } ] },
+    { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Text', 'Button') } ] },
+    { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterInlineMessage('AnyCluster', 'Text', 'Button') } ] },
+    { code: `<Cluster><p>hoge</p><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'p', 'Button') } ] },
+    { code: `<Cluster><Icon /><span>hoge</span></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Icon', 'span') } ] },
+    { code: `<Cluster><AnyLabel /><span>hoge</span></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'AnyLabel', 'span') } ] },
+    // inline={false}は明示的にfalseを指定しているだけでinline指定ありとはみなさないため、引き続き対象
+    { code: `<Cluster inline={false}><Text /><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Text', 'Button') } ] },
+    // 両方ともinlineコンテンツとみなさない組み合わせの場合はgrow属性の提案のまま
+    { code: `<Cluster><Avatar /><FormControl /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Avatar', 'FormControl') } ] },
     { code: `<PageHeading><AnyIcon text="hoge" /></PageHeading>`, errors: [ { message: pageHeadingIconMessage('PageHeading') } ] },
     { code: `<AnyPageHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyPageHeading>`, errors: [ { message: pageHeadingIconMessage('AnyPageHeading') } ] },
   ]

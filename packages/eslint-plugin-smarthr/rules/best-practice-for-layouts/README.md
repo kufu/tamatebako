@@ -51,25 +51,43 @@ Cluster・Stackのalign・justify属性に`end` `flex-end` を指定した場合
 <Center><Any /></Center>
 ```
 
-### Clusterの子要素が異なるコンポーネントで構成される2要素であり、grow属性が未設定の場合エラー
+### Clusterの子要素が異なるコンポーネントで構成される2要素であり、grow属性・inline属性が未設定の場合エラー
 
-Clusterの子要素がちょうど2つであり、かつそれぞれが異なるコンポーネントで構成されている場合、grow属性の設定を検討するようエラーになります。<br />
-折り返し時に意図しない幅のレイアウトになることを防ぐため、どちらの要素を優先して幅を広げるかを明示的に指定することを推奨しています。
+Clusterの子要素がちょうど2つであり、かつそれぞれが異なるコンポーネントで構成されている場合、`grow`属性または`inline`属性の設定を検討するようエラーになります。<br />
+折り返し時に意図しない幅のレイアウトになることを防ぐため、どちらの要素を優先して幅を広げるか、もしくは内容に合わせた幅にするかを明示的に指定することを推奨しています。
 
 このチェックは子要素が静的に2つと判断できる場合のみ対象です。子要素が1つ・3つ以上の場合や、三項演算子・`.map()`など動的な内容を含む場合は対象外です。<br />
-また、子要素が同じコンポーネントの場合も対象外です。
+また、子要素が同じコンポーネントの場合、および`inline`属性が既に設定されている場合(明示的な`inline={false}`を除く)も対象外です。
 
 ```jsx
-// Text, Buttonという異なるコンポーネントで構成されているのでNG
-<Cluster><Text /><Button /></Cluster>
+// Avatar, FormControlという異なるコンポーネントで構成されているのでNG
+<Cluster><Avatar /><FormControl /></Cluster>
 ```
 
 ```jsx
 // grow属性を設定していればOK
-<Cluster grow="start"><Text /><Button /></Cluster>
+<Cluster grow="start"><Avatar /><FormControl /></Cluster>
 
 // 同じコンポーネント同士の場合は対象外
 <Cluster><Button /><Button /></Cluster>
+```
+
+#### 子要素がテキスト・ボタン・アイコンなどの「inlineコンテンツ」の場合はinline属性を提案
+
+子要素が`Text`・`Button`・`Link`・`Icon`・`Label`で終わるコンポーネントや`span`・`p`のような、内容に合わせた幅になることを期待する要素同士の組み合わせの場合、`grow`ではなく`inline`属性の設定を提案します。<br />
+テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がないケースが該当します。
+
+```jsx
+// Text, Buttonはどちらもinlineコンテンツとみなされるため、growではなくinlineを提案
+<Cluster><Text /><Button /></Cluster>
+```
+
+```jsx
+// inline属性を設定していればOK
+<Cluster inline><Text /><Button /></Cluster>
+
+// 幅を優先させたい要素がある場合はgrow属性を設定する
+<Cluster grow="start"><Text /><Button /></Cluster>
 ```
 
 ### Stackに `gap={0}` を指定している場合エラー
@@ -147,6 +165,9 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 
 ```jsx
 // 異なるコンポーネント2つで構成されており、grow属性が未設定のためNG
+<Cluster><Avatar /><FormControl /></Cluster>
+
+// Text, Buttonはどちらもinlineコンテンツとみなされ、inline属性が未設定のためNG
 <Cluster><Text /><Button /></Cluster>
 ```
 
@@ -216,7 +237,10 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 
 ```jsx
 // grow属性を設定していればOK
-<Cluster grow="start"><Text /><Button /></Cluster>
+<Cluster grow="start"><Avatar /><FormControl /></Cluster>
+
+// inline属性を設定していればOK
+<Cluster inline><Text /><Button /></Cluster>
 
 // 同じコンポーネント同士の場合は対象外
 <Cluster><Button /><Button /></Cluster>

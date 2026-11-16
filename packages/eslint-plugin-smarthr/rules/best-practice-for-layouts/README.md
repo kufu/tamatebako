@@ -68,27 +68,14 @@ Clusterの子要素がちょうど2つであり、かつそれぞれが異なる
 // grow属性を設定していればOK
 <Cluster grow="start"><Avatar /><FormControl /></Cluster>
 
+// inline属性を設定していればOK(幅を親要素に合わせて引き延ばす必要がない場合)
+<Cluster inline><Text /><Button /></Cluster>
+
 // 同じコンポーネント同士の場合は対象外
 <Cluster><Button /><Button /></Cluster>
 ```
 
-#### 子要素がテキスト・ボタン・アイコンなどの「inlineコンテンツ」の場合はinline属性を提案
-
-子要素が`Text`・`Button`・`Link`・`Icon`・`Label`で終わるコンポーネントや`span`・`p`のような、内容に合わせた幅になることを期待する要素同士の組み合わせの場合、`grow`ではなく`inline`属性の設定を提案します。<br />
-テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がないケースが該当します。
-
-```jsx
-// Text, Buttonはどちらもinlineコンテンツとみなされるため、growではなくinlineを提案
-<Cluster><Text /><Button /></Cluster>
-```
-
-```jsx
-// inline属性を設定していればOK
-<Cluster inline><Text /><Button /></Cluster>
-
-// 幅を優先させたい要素がある場合はgrow属性を設定する
-<Cluster grow="start"><Text /><Button /></Cluster>
-```
+どちらの属性を設定するべきかは子要素の見た目・意図によって異なるため、ルール側では判断せず、利用者が選択してください。
 
 ### Stackに `gap={0}` を指定している場合エラー
 
@@ -164,10 +151,8 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 ```
 
 ```jsx
-// 異なるコンポーネント2つで構成されており、grow属性が未設定のためNG
+// 異なるコンポーネント2つで構成されており、grow属性・inline属性がともに未設定のためNG
 <Cluster><Avatar /><FormControl /></Cluster>
-
-// Text, Buttonはどちらもinlineコンテンツとみなされ、inline属性が未設定のためNG
 <Cluster><Text /><Button /></Cluster>
 ```
 

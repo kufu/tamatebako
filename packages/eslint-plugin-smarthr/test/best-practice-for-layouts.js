@@ -16,10 +16,6 @@ const DETAIL_LINK_MESSAGE = `
 const errorMessage = (type, name) => `${name}には子要素が一つしか無いため、${type}でマークアップする意味がありません。${DETAIL_LINK_MESSAGE}
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${name}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
-const clusterGrowMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
- - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
- - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
- - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`
 const clusterInlineMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されています。${DETAIL_LINK_MESSAGE}
  - テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がない場合、inline={true} を設定してください
  - 幅を優先させたい要素がある場合は、grow属性を設定してください`
@@ -105,8 +101,7 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<Cluster><AnyLabel /><span>hoge</span></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'AnyLabel', 'span') } ] },
     // inline={false}は明示的にfalseを指定しているだけでinline指定ありとはみなさないため、引き続き対象
     { code: `<Cluster inline={false}><Text /><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Text', 'Button') } ] },
-    // 両方ともinlineコンテンツとみなさない組み合わせの場合はgrow属性の提案のまま
-    { code: `<Cluster><Avatar /><FormControl /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Avatar', 'FormControl') } ] },
+    { code: `<Cluster><Avatar /><FormControl /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Avatar', 'FormControl') } ] },
     { code: `<PageHeading><AnyIcon text="hoge" /></PageHeading>`, errors: [ { message: pageHeadingIconMessage('PageHeading') } ] },
     { code: `<AnyPageHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyPageHeading>`, errors: [ { message: pageHeadingIconMessage('AnyPageHeading') } ] },
   ]

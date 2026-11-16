@@ -17,8 +17,6 @@ const FORM_CONTROL_LABEL_ATTRIBUTE = 'JSXOpeningElement[name.name=/FormControl$/
 const FIELDSET_LEGEND_ATTRIBUTE = 'JSXOpeningElement[name.name=/Fieldset$/] JSXAttribute[name.name="legend"]'
 const ICON_ELEMENT_WITH_TEXT = `JSXOpeningElement[name.name=/Icon$/]:has(JSXAttribute[name.name="text"])`
 const TEXT_ELEMENT_WITH_PREFIX = 'JSXOpeningElement[name.name=/Text$/]:has(JSXAttribute[name.name=/^(prefixIcon|icon)$/])'
-// テキスト・ボタン・アイコン・リンクなど、内容に合わせた幅になることを期待する「inlineコンテンツ」とみなすコンポーネント・html要素
-const INLINE_CONTENT_REGEX = /^(span|p)$|(Button|Link|Icon|Text|Label)$/
 
 const filterFalsyJSXText = (cs) => cs.filter(checkFalsyJSXText)
 const checkFalsyJSXText = (c) => (
@@ -173,22 +171,12 @@ module.exports = {
           const secondName = second.type === 'JSXElement' ? second.openingElement.name?.name : null
 
           if (firstName && secondName && firstName !== secondName) {
-            if (INLINE_CONTENT_REGEX.test(firstName) && INLINE_CONTENT_REGEX.test(secondName)) {
-              context.report({
-                node,
-                message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されています。${DETAIL_LINK_MESSAGE}
+            context.report({
+              node,
+              message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されています。${DETAIL_LINK_MESSAGE}
  - テキスト + ボタンやボタン + ボタンのように、幅を親要素に合わせて引き延ばす必要がない場合、inline={true} を設定してください
  - 幅を優先させたい要素がある場合は、grow属性を設定してください`,
-              })
-            } else {
-              context.report({
-                node,
-                message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
- - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
- - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
- - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`,
-              })
-            }
+            })
           }
         }
       },

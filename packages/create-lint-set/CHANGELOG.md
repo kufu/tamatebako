@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.9](https://github.com/kufu/tamatebako/compare/create-lint-set-v1.1.8...create-lint-set-v1.1.9) (2026-11-16)
+
+
+### Dependencies
+
+* update dependency commander to ^15.1.0 ([#1707](https://github.com/kufu/tamatebako/issues/1707)) ([8c8a17c](https://github.com/kufu/tamatebako/commit/8c8a17c8b1f0143a2498fd7e3459f43946847c20))
+
 ## [1.1.8](https://github.com/kufu/tamatebako/compare/create-lint-set-v1.1.7...create-lint-set-v1.1.8) (2026-10-22)
 
 

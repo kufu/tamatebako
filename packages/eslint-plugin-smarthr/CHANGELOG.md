@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.31.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.31.0...eslint-plugin-smarthr-v6.31.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* Cluster子要素が異なるコンポーネント2要素の場合grow/inline属性の設定を促す ([#1705](https://github.com/kufu/tamatebako/issues/1705)) ([823d710](https://github.com/kufu/tamatebako/commit/823d7106b6740af777e1ea5b5c997e916c3f3d69))
+
 ## [6.31.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.30.0...eslint-plugin-smarthr-v6.31.0) (2026-11-11)
 
 

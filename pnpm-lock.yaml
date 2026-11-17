@@ -255,8 +255,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
       eslint-plugin-smarthr:
-        specifier: 6.31.0
-        version: 6.31.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
+        specifier: 6.31.1
+        version: 6.31.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
       globals:
         specifier: ^17.14.0
         version: 17.14.0
@@ -4127,6 +4127,11 @@ packages:
 
   eslint-plugin-smarthr@6.31.0:
     resolution: {integrity: sha512-bFS4ZwCssLQz9/L5GLWVUqHgmb/Xys+BaZ0cL13Gq2k1ecaDSD+FbiC1yZX1yQKNEUOFaIsq33WSbspbx//K/A==}
+    peerDependencies:
+      eslint: ^9
+
+  eslint-plugin-smarthr@6.31.1:
+    resolution: {integrity: sha512-cGSfdHNr52xBT4QGgavCb0YygTiNemsHGEv6k78+mpY4XZf+6iUQDTj/HIHi5Im6VGVx+bmN3pnBpIXilLYdEw==}
     peerDependencies:
       eslint: ^9
 
@@ -10228,6 +10233,11 @@ snapshots:
       json5: 2.2.3
 
   eslint-plugin-smarthr@6.31.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
+    dependencies:
+      eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
+      json5: 2.2.3
+
+  eslint-plugin-smarthr@6.31.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       json5: 2.2.3

@@ -16,10 +16,10 @@ const DETAIL_LINK_MESSAGE = `
 const errorMessage = (type, name) => `${name}には子要素が一つしか無いため、${type}でマークアップする意味がありません。${DETAIL_LINK_MESSAGE}
  - styleを確認し、div・spanなど、別要素でマークアップし直すか、${name}を削除してください
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
-const clusterGrowMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
- - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
- - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
- - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`
+const clusterInlineMessage = (name, first, second) => `${name}の子要素が異なるコンポーネント(${first}, ${second})で構成されています。${DETAIL_LINK_MESSAGE}
+ - テキストなど内容により長さが変わる要素を含む場合、テキスト量や画面幅によって折り返しが発生することがあります
+ - 先頭・末尾どちらかの要素を優先して幅を広げたい場合(操作要素の位置を${name}の端に固定したい場合など)は、可変長側の要素に grow="start"(先頭要素の場合)、もしくは grow="end"(末尾要素の場合)を設定してください
+ - どちらの要素も優先して幅を広げる必要がない場合(ボタン+リンクのようにどちらも固定サイズの場合や、操作要素がテキストの末尾にそのまま続く形で問題ない場合)は、inline={true} を設定してください`
 const pageHeadingIconMessage = (name) => `${name}にはicon属性がありません。これは意図的な設計です(${name}はhtml内に1つのみのため、Iconによる他の見出しとの差別化が不要なため)。${DETAIL_LINK_MESSAGE}
  - ${name}の子要素にIconが必要な場合、本来${name}を使うべきではない内容(例: ResponseMessageなど別コンポーネントで表現するべき内容)をマークアップしている可能性が高いです
  - 利用箇所のマークアップ、およびUIデザインそのものを見直してください`
@@ -59,6 +59,10 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<Cluster grow="end"><Text /><Button /></Cluster>` },
     { code: `<Cluster><Button /><Button /></Cluster>` },
     { code: `<Cluster>{cond ? <A /> : <B />}<C /></Cluster>` },
+    // inline属性が設定済みの場合は対象外
+    { code: `<Cluster inline><Text /><Button /></Cluster>` },
+    { code: `<Cluster inline={true}><Text /><Button /></Cluster>` },
+    { code: `<Cluster inline={someCondition}><Text /><Button /></Cluster>` },
     { code: `<RadioButtonPanel><AnyStack forwardedAs="span"><A /><B /></AnyStack></RadioButtonPanel>` },
     { code: `<AnyCheckbox><Sidebar as="span"><A /><B /></Sidebar></AnyCheckbox>` },
   ],
@@ -91,8 +95,14 @@ ruleTester.run('best-practice-for-layouts', rule, {
     { code: `<AnyFieldset legend={{ text: <Text prefixIcon={<SomeIcon />}>hoge</Text>}} />`, errors: [ { message: `Fieldsetのlegend属性にアイコンを設定する場合 <Fieldset legend={{ text: 'テキスト', icon: <XxxIcon /> }} /> のようにlegend.icon属性を利用してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<RadioButtonPanel><AnyStack><A /><B /></AnyStack></RadioButtonPanel>`, errors: [ { message: `RadioButton, RadioButtonPanelの子孫にStackを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
     { code: `<AnyCheckbox><Sidebar><A /><B /></Sidebar></AnyCheckbox>`, errors: [ { message: `Checkboxの子孫にSidebarを置く場合、as属性、もしくはforwardedAs属性に \`span\` を指定してください${DETAIL_LINK_MESSAGE}` } ] },
-    { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterGrowMessage('Cluster', 'Text', 'Button') } ] },
-    { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterGrowMessage('AnyCluster', 'Text', 'Button') } ] },
+    { code: `<Cluster><Text /><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Text', 'Button') } ] },
+    { code: `<AnyCluster><Text /><Button /></AnyCluster>`, errors: [ { message: clusterInlineMessage('AnyCluster', 'Text', 'Button') } ] },
+    { code: `<Cluster><p>hoge</p><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'p', 'Button') } ] },
+    { code: `<Cluster><Icon /><span>hoge</span></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Icon', 'span') } ] },
+    { code: `<Cluster><AnyLabel /><span>hoge</span></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'AnyLabel', 'span') } ] },
+    // inline={false}は明示的にfalseを指定しているだけでinline指定ありとはみなさないため、引き続き対象
+    { code: `<Cluster inline={false}><Text /><Button /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Text', 'Button') } ] },
+    { code: `<Cluster><Avatar /><FormControl /></Cluster>`, errors: [ { message: clusterInlineMessage('Cluster', 'Avatar', 'FormControl') } ] },
     { code: `<PageHeading><AnyIcon text="hoge" /></PageHeading>`, errors: [ { message: pageHeadingIconMessage('PageHeading') } ] },
     { code: `<AnyPageHeading><Text prefixIcon={<SomeIcon />}>hoge</Text></AnyPageHeading>`, errors: [ { message: pageHeadingIconMessage('AnyPageHeading') } ] },
   ]

@@ -51,26 +51,35 @@ Cluster・Stackのalign・justify属性に`end` `flex-end` を指定した場合
 <Center><Any /></Center>
 ```
 
-### Clusterの子要素が異なるコンポーネントで構成される2要素であり、grow属性が未設定の場合エラー
+### Clusterの子要素が異なるコンポーネントで構成される2要素であり、grow属性・inline属性が未設定の場合エラー
 
-Clusterの子要素がちょうど2つであり、かつそれぞれが異なるコンポーネントで構成されている場合、grow属性の設定を検討するようエラーになります。<br />
-折り返し時に意図しない幅のレイアウトになることを防ぐため、どちらの要素を優先して幅を広げるかを明示的に指定することを推奨しています。
+Clusterの子要素がちょうど2つであり、かつそれぞれが異なるコンポーネントで構成されている場合、`grow`属性または`inline`属性の設定を検討するようエラーになります。<br />
+折り返し時に意図しない幅のレイアウトになることを防ぐため、どちらの要素を優先して幅を広げるか、もしくは内容に合わせた幅にするかを明示的に指定することを推奨しています。
 
 このチェックは子要素が静的に2つと判断できる場合のみ対象です。子要素が1つ・3つ以上の場合や、三項演算子・`.map()`など動的な内容を含む場合は対象外です。<br />
-また、子要素が同じコンポーネントの場合も対象外です。
+また、子要素が同じコンポーネントの場合、`grow`属性が既に設定されている場合、および`inline`属性が既に設定されている場合(明示的な`inline={false}`を除く)も対象外です。
 
 ```jsx
-// Text, Buttonという異なるコンポーネントで構成されているのでNG
-<Cluster><Text /><Button /></Cluster>
+// Avatar, FormControlという異なるコンポーネントで構成されているのでNG
+<Cluster><Avatar /><FormControl /></Cluster>
 ```
 
 ```jsx
 // grow属性を設定していればOK
-<Cluster grow="start"><Text /><Button /></Cluster>
+<Cluster grow="start"><Avatar /><FormControl /></Cluster>
+
+// inline属性を設定していればOK(幅を親要素に合わせて引き延ばす必要がない場合)
+<Cluster inline><Text /><Button /></Cluster>
 
 // 同じコンポーネント同士の場合は対象外
 <Cluster><Button /><Button /></Cluster>
 ```
+
+どちらの属性を設定するべきかは子要素の見た目・意図によって異なるため、ルール側では判断していません。利用者がどちらを選択するべきか判断してください。<br />
+判断基準の一例として、テキストなど内容により長さが変わる要素を含む場合、テキスト量や画面幅によって折り返しが発生することがあります。
+
+- 先頭・末尾どちらかの要素を優先して幅を広げたい場合(操作要素の位置をClusterの端に固定したい場合など)は、可変長側の要素に`grow="start"`(先頭要素の場合)、もしくは`grow="end"`(末尾要素の場合)を設定してください
+- どちらの要素も優先して幅を広げる必要がない場合(ボタン+リンクのようにどちらも固定サイズの場合や、操作要素がテキストの末尾にそのまま続く形で問題ない場合)は、`inline={true}`を設定してください
 
 ### Stackに `gap={0}` を指定している場合エラー
 
@@ -146,7 +155,8 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 ```
 
 ```jsx
-// 異なるコンポーネント2つで構成されており、grow属性が未設定のためNG
+// 異なるコンポーネント2つで構成されており、grow属性・inline属性がともに未設定のためNG
+<Cluster><Avatar /><FormControl /></Cluster>
 <Cluster><Text /><Button /></Cluster>
 ```
 
@@ -216,7 +226,10 @@ Checkbox, RadioButtonの子要素にLayoutsに属するコンポーネントを�
 
 ```jsx
 // grow属性を設定していればOK
-<Cluster grow="start"><Text /><Button /></Cluster>
+<Cluster grow="start"><Avatar /><FormControl /></Cluster>
+
+// inline属性を設定していればOK
+<Cluster inline><Text /><Button /></Cluster>
 
 // 同じコンポーネント同士の場合は対象外
 <Cluster><Button /><Button /></Cluster>

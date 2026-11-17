@@ -100,6 +100,7 @@ module.exports = {
         let alignAttr = null
         let gapAttr = null
         let growAttr = null
+        let inlineAttr = null
 
         for (const a of node.attributes) {
           switch (a.name?.name) {
@@ -115,8 +116,18 @@ module.exports = {
             case 'grow':
               growAttr = a
               break
+            case 'inline':
+              inlineAttr = a
+              break
           }
         }
+
+        // 明示的に inline={false} が指定されている場合は対象外とし、それ以外(bare属性・inline={true}・動的な値)はinline指定ありとみなす
+        const isInlineTrue = !!inlineAttr && !(
+          inlineAttr.value?.type === 'JSXExpressionContainer' &&
+          inlineAttr.value.expression.type === 'Literal' &&
+          inlineAttr.value.expression.value === false
+        )
 
         if (layoutType === 'Stack') {
           if (alignAttr && FLEX_END_REGEX.test(alignAttr.value.value)) {
@@ -154,7 +165,7 @@ module.exports = {
  - as, forwardedAsなどでSectioningContent系要素に変更している場合、対応するsmarthr-ui/Section, Aside, Nav, Article のいずれかに差し替えてください`
             })
           }
-        } else if (layoutType === 'Cluster' && children.length === 2 && !growAttr) {
+        } else if (layoutType === 'Cluster' && children.length === 2 && !growAttr && !isInlineTrue) {
           const [first, second] = children
           const firstName = first.type === 'JSXElement' ? first.openingElement.name?.name : null
           const secondName = second.type === 'JSXElement' ? second.openingElement.name?.name : null
@@ -162,10 +173,10 @@ module.exports = {
           if (firstName && secondName && firstName !== secondName) {
             context.report({
               node,
-              message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されているため、grow属性の設定を検討してください。${DETAIL_LINK_MESSAGE}
- - 方法1: 幅を優先させたい要素が先頭の場合 grow="start" を設定してください
- - 方法2: 幅を優先させたい要素が末尾の場合 grow="end" を設定してください
- - 方法3: 意図的にgrowを設定しない場合、折り返し時のレイアウトを確認した上でこの指摘を無視してください`,
+              message: `${nodeName}の子要素が異なるコンポーネント(${firstName}, ${secondName})で構成されています。${DETAIL_LINK_MESSAGE}
+ - テキストなど内容により長さが変わる要素を含む場合、テキスト量や画面幅によって折り返しが発生することがあります
+ - 先頭・末尾どちらかの要素を優先して幅を広げたい場合(操作要素の位置を${nodeName}の端に固定したい場合など)は、可変長側の要素に grow="start"(先頭要素の場合)、もしくは grow="end"(末尾要素の場合)を設定してください
+ - どちらの要素も優先して幅を広げる必要がない場合(ボタン+リンクのようにどちらも固定サイズの場合や、操作要素がテキストの末尾にそのまま続く形で問題ない場合)は、inline={true} を設定してください`,
             })
           }
         }

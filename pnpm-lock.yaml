@@ -6299,15 +6299,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-intl@4.15.1:
-    resolution: {integrity: sha512-WJwcDTRzrg4JaEu3Jl1oEEXu5fLkWh+R8jZAhEYrTWMYqGYExKAi51MwtSBZZpYa7HzqluJPx2jmEap21kQlUQ==}
-    peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
   use-sync-external-store@1.6.0:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
@@ -12762,16 +12753,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-intl@4.15.1(@types/react@19.3.0)(react@19.3.1):
-    dependencies:
-      '@formatjs/fast-memoize': 3.1.4
-      '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.15.2
-      intl-messageformat: 11.2.4
-      react: 19.3.1
-    optionalDependencies:
-      '@types/react': 19.3.0
 
   use-intl@4.15.1(@types/react@19.3.0)(react@19.3.1):
     dependencies:

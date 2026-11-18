@@ -56,6 +56,17 @@ function isReferenceOf(variable, identifierNode) {
 }
 
 /**
+ * list内のスプレッドが、残余引数のスプレッド1つだけかどうかを判定する
+ * HINT: 残余引数以外のスプレッドが混在している場合、分割代入をやめると
+ * 後続のスプレッドに値を上書きされる等、結果が変わる可能性があるため対象外とする
+ */
+function hasOnlyRestSpread(list, spreadType, restVariable) {
+  const spreads = list.filter((item) => item.type === spreadType)
+
+  return spreads.length === 1 && spreads[0].argument.type === 'Identifier' && isReferenceOf(restVariable, spreads[0].argument)
+}
+
+/**
  * propAの唯一の参照が、`{...rest}`と同じJSX要素・オブジェクトに
  * そのまま渡されているだけの冗長な受け渡しかどうかを判定する。
  * 該当する場合、削除対象のノード(JSXAttribute または Property)を返す
@@ -73,9 +84,7 @@ function findRedundantPassthrough(usageNode, propName, restVariable) {
   ) {
     const jsxAttr = parent.parent
     const openingElement = jsxAttr.parent
-    const hasRestSpread = openingElement.attributes.some(
-      (a) => a.type === 'JSXSpreadAttribute' && a.argument.type === 'Identifier' && isReferenceOf(restVariable, a.argument)
-    )
+    const hasRestSpread = hasOnlyRestSpread(openingElement.attributes, 'JSXSpreadAttribute', restVariable)
 
     return hasRestSpread ? { node: jsxAttr, remove: (fixer) => fixer.remove(jsxAttr) } : null
   }
@@ -95,9 +104,7 @@ function findRedundantPassthrough(usageNode, propName, restVariable) {
 
     if (objectExpression.type !== 'ObjectExpression') return null
 
-    const hasRestSpread = objectExpression.properties.some(
-      (p) => p.type === 'SpreadElement' && p.argument.type === 'Identifier' && isReferenceOf(restVariable, p.argument)
-    )
+    const hasRestSpread = hasOnlyRestSpread(objectExpression.properties, 'SpreadElement', restVariable)
 
     return hasRestSpread
       ? {
@@ -189,11 +196,19 @@ module.exports = {
         if (!restElement || restElement.argument.type !== 'Identifier') return
 
         const propName = node.key.name
+
+        // keyはスプレッドに含めるとReactが警告を出すため、取り出して個別に渡すのが正しい
+        if (propName === 'key') return
+
         const declaredVariables = sourceCode.getDeclaredVariables(functionNode)
         const propVariable = declaredVariables.find((v) => v.defs.some((d) => d.name === node.value))
         const restVariable = declaredVariables.find((v) => v.defs.some((d) => d.name === restElement.argument))
 
         if (!propVariable || !restVariable) return
+
+        // 残余引数が複数箇所で使われている場合、分割代入をやめると
+        // 渡したくない別の箇所にも値が流れてしまうため対象外
+        if (restVariable.references.filter((r) => r.identifier !== restElement.argument).length !== 1) return
 
         // 宣言位置そのものを除いた参照を取得
         const references = propVariable.references.filter((r) => r.identifier !== node.value)

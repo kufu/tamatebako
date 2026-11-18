@@ -69,6 +69,19 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
         if (a) return { ...rest, a }
       }
     ` },
+    // restが複数箇所で使われている場合、分割代入をやめると別の箇所にも値が流れるため対象外
+    { code: `const Th = ({ sort, onSort, ...rest }) => sort ? <SortableTh {...rest} sort={sort} onSort={onSort} /> : <ActualTh {...rest} />` },
+    { code: `
+      const hoge = ({ a, ...rest }) => {
+        log(rest)
+        return { ...rest, a }
+      }
+    ` },
+    // keyはスプレッドに含めるとReactが警告を出すため対象外
+    { code: `const List = ({ items }) => items.map(({ key, ...rest }) => <Item {...rest} key={key} />)` },
+    // rest以外のスプレッドが同じ箇所にある場合、上書き順が変わる可能性があるため対象外
+    { code: `const hoge = ({ icon, ...rest }) => <Text {...rest} {...typography} icon={icon} />` },
+    { code: `const hoge = ({ a, ...rest }) => ({ ...rest, ...other, a })` },
     // restが別スコープでシャドーイングされている場合、名前が同じでも別の変数のため対象外(JSX)
     { code: `
       const hoge = ({ a, ...rest }) => {

@@ -2452,7 +2452,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       },
     ],
     "no-implicit-coercion": [
-      1,
+      2,
       {
         "allow": [],
         "boolean": true,
@@ -3108,7 +3108,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       0,
     ],
     "smarthr/best-practice-for-object-props": [
-      1,
+      2,
     ],
     "smarthr/best-practice-for-optional-chaining": [
       2,
@@ -3157,7 +3157,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/design-system-guideline-prohibit-disabled-while-pending": [
-      1,
+      2,
     ],
     "smarthr/design-system-guideline-prohibit-double-icons": [
       0,
@@ -3166,7 +3166,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/design-system-guideline-prohibit-input-affix-interactive-element": [
-      1,
+      2,
     ],
     "smarthr/format-import-path": [
       0,
@@ -3199,10 +3199,10 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       0,
     ],
     "smarthr/require-i18n-text": [
-      1,
+      2,
     ],
     "smarthr/require-i18n-translation-sync": [
-      1,
+      2,
     ],
     "smarthr/require-import": [
       0,

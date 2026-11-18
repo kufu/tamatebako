@@ -64,7 +64,7 @@ export default [
       'smarthr/best-practice-for-layouts': 'error',
       'smarthr/best-practice-for-nested-attributes-array-index': 'error',
       'smarthr/best-practice-for-no-unnecessary-variable': 'off',
-      'smarthr/best-practice-for-object-props': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
+      'smarthr/best-practice-for-object-props': 'error',
       'smarthr/best-practice-for-unstable-dependencies': 'error',
       'smarthr/best-practice-for-optional-chaining': 'error',
       'smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
@@ -79,10 +79,10 @@ export default [
       'smarthr/component-name': 'error',
       'smarthr/design-system-guideline-bulk-action-row-button': 'error',
       'smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
-      'smarthr/design-system-guideline-prohibit-disabled-while-pending': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-disabled-while-pending': 'error',
       'smarthr/design-system-guideline-prohibit-double-icons': 'off',
       'smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
-      'smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
+      'smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'error',
       'smarthr/format-import-path': 'off',
       'smarthr/format-translate-component': 'off',
       'smarthr/no-import-other-domain': 'off',
@@ -93,8 +93,8 @@ export default [
       'smarthr/require-barrel-import': 'error',
       'smarthr/require-declaration': 'off',
       'smarthr/require-export': 'off',
-      'smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
-      'smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
+      'smarthr/require-i18n-text': 'error',
+      'smarthr/require-i18n-translation-sync': 'error',
       'smarthr/require-import': 'off',
       'smarthr/trim-props': 'error',
     }

@@ -161,6 +161,26 @@ ruleTester.run('best-practice-for-rest-parameters', rule, {
       options: [{ fix: true }],
       errors: [ { message: redundantPassthroughMessage('a', 'rest') } ],
     },
+    // memo等でラップされた関数の引数でも検知される
+    {
+      code: `const Popover = memo(({ editor, pos, ...rest }) => { use(editor); return <Base {...rest} pos={pos} /> })`,
+      errors: [ { message: redundantPassthroughMessage('pos', 'rest') } ],
+    },
+    // refはkeyと異なりスプレッドで渡せるため対象
+    {
+      code: `const hoge = ({ ref, ...rest }) => <div {...rest} ref={ref} />`,
+      errors: [ { message: redundantPassthroughMessage('ref', 'rest') } ],
+    },
+    // 属性がスプレッドより前にある場合も検知される
+    {
+      code: `const hoge = ({ a, ...rest }) => <Foo a={a} {...rest} />`,
+      errors: [ { message: redundantPassthroughMessage('a', 'rest') } ],
+    },
+    // 他の属性が混在していても、そのまま渡し直しているプロパティのみ検知される
+    {
+      code: `const Fieldset = ({ legend, helpMessage, name, ...rest }) => <Base {...rest} legend={legend} helpMessage={helpMessage} name={\`\${name}_date\`} className="hoge" />`,
+      errors: [ { message: redundantPassthroughMessage('legend', 'rest') }, { message: redundantPassthroughMessage('helpMessage', 'rest') } ],
+    },
     // 複数プロパティが同時に冗長な場合、それぞれ検知される
     // HINT: 1回のfixパスでは片方のみ修正される(ESLintは1つの報告内の複数範囲の修正を
     // 1つの結合された範囲として扱うため、離れた2箇所を同時に書き換える報告同士が重複と

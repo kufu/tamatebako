@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.32.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.31.1...eslint-plugin-smarthr-v6.32.0) (2026-11-18)
+
+
+### Features
+
+* best-practice-for-no-empty-jsx-expressionルールを追加 ([#1719](https://github.com/kufu/tamatebako/issues/1719)) ([e9aeb34](https://github.com/kufu/tamatebako/commit/e9aeb34dfeae928065fb26e5501591c41b1f3d67))
+* best-practice-for-rest-parametersに冗長なプロパティ受け渡しの検知を追加 ([#1724](https://github.com/kufu/tamatebako/issues/1724)) ([ee69c99](https://github.com/kufu/tamatebako/commit/ee69c99b570dd08e16355679814c1ab7e643b752))
+
 ## [6.31.1](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.31.0...eslint-plugin-smarthr-v6.31.1) (2026-11-17)
 
 

@@ -30,7 +30,7 @@
     "react": "^19.3.1",
     "rimraf": "^6.1.4",
     "ts-jest": "^29.4.15",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "packageManager": "pnpm@12.19.0"
 }

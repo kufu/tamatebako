@@ -86,7 +86,7 @@ const config = {
     'no-div-regex': 'warn',
     'no-eval': 'error',
     'no-extend-native': 'error',
-    'no-implicit-coercion': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
+    'no-implicit-coercion': 'error',
     'no-inner-declarations': 'warn',
     'no-iterator': 'error',
     'no-label-var': 'error',
@@ -227,7 +227,7 @@ const config = {
     'eslint-plugin-smarthr/best-practice-for-layouts': 'error',
     'eslint-plugin-smarthr/best-practice-for-nested-attributes-array-index': 'error',
     'eslint-plugin-smarthr/best-practice-for-no-unnecessary-variable': 'off',
-    'eslint-plugin-smarthr/best-practice-for-object-props': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/best-practice-for-object-props': 'error',
     'eslint-plugin-smarthr/best-practice-for-unstable-dependencies': 'error',
     'eslint-plugin-smarthr/best-practice-for-optional-chaining': 'error',
     'eslint-plugin-smarthr/best-practice-for-prohibit-import-smarthr-ui-local': 'error',
@@ -242,10 +242,10 @@ const config = {
     'eslint-plugin-smarthr/component-name': 'error',
     'eslint-plugin-smarthr/design-system-guideline-bulk-action-row-button': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-dialog-button-icon': 'error',
-    'eslint-plugin-smarthr/design-system-guideline-prohibit-disabled-while-pending': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-disabled-while-pending': 'error',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-double-icons': 'off',
     'eslint-plugin-smarthr/design-system-guideline-prohibit-information-panel-in-white-bg': 'error',
-    'eslint-plugin-smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'warn', // TODO: 2026/10にwarn導入。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/design-system-guideline-prohibit-input-affix-interactive-element': 'error',
     'eslint-plugin-smarthr/format-import-path': 'off',
     'eslint-plugin-smarthr/format-translate-component': 'off',
     'eslint-plugin-smarthr/no-import-other-domain': 'off',
@@ -256,8 +256,8 @@ const config = {
     'eslint-plugin-smarthr/require-barrel-import': 'error',
     'eslint-plugin-smarthr/require-declaration': 'off',
     'eslint-plugin-smarthr/require-export': 'off',
-    'eslint-plugin-smarthr/require-i18n-text': 'warn', // TODO: 2025/11にwarn化。問題なければerrorに変更予定
-    'eslint-plugin-smarthr/require-i18n-translation-sync': 'warn', // TODO: 2026/07にwarn化。問題なければerrorに変更予定
+    'eslint-plugin-smarthr/require-i18n-text': 'error',
+    'eslint-plugin-smarthr/require-i18n-translation-sync': 'error',
     'eslint-plugin-smarthr/require-import': 'off',
     'eslint-plugin-smarthr/trim-props': 'error',
   },

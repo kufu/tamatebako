@@ -3104,6 +3104,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/best-practice-for-nested-attributes-array-index": [
       2,
     ],
+    "smarthr/best-practice-for-no-empty-jsx-expression": [
+      1,
+    ],
     "smarthr/best-practice-for-no-unnecessary-variable": [
       0,
     ],
@@ -3124,6 +3127,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     ],
     "smarthr/best-practice-for-rest-parameters": [
       0,
+      {
+        "fix": false,
+      },
     ],
     "smarthr/best-practice-for-spread-syntax": [
       2,

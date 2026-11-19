@@ -197,7 +197,7 @@ importers:
         specifier: ^30.5.2
         version: 30.5.2(@types/node@20.19.43)(supports-color@8.1.1)
       prettier:
-        specifier: ^3.10.0
+        specifier: ^3.10.1
         version: 3.10.1
       prettier-config-smarthr:
         specifier: ^1.0.1
@@ -4156,11 +4156,6 @@ packages:
 
   eslint-plugin-smarthr@6.30.0:
     resolution: {integrity: sha512-PleJAsTuBK0MgQ3BUYj+iKFaffmsoPic49F5rp8/4VG/cbytpKUJHKvhfnF047FXbUTpOsKds9PaOj/EIJ3NpA==}
-    peerDependencies:
-      eslint: ^9
-
-  eslint-plugin-smarthr@6.31.1:
-    resolution: {integrity: sha512-cGSfdHNr52xBT4QGgavCb0YygTiNemsHGEv6k78+mpY4XZf+6iUQDTj/HIHi5Im6VGVx+bmN3pnBpIXilLYdEw==}
     peerDependencies:
       eslint: ^9
 
@@ -10298,11 +10293,6 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-smarthr@6.30.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
-    dependencies:
-      eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
-      json5: 2.2.3
-
-  eslint-plugin-smarthr@6.31.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1)):
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       json5: 2.2.3

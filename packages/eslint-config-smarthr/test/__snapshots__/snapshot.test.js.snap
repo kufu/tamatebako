@@ -3126,7 +3126,7 @@ exports[`should match ESLint Configuration snapshot 1`] = `
       2,
     ],
     "smarthr/best-practice-for-rest-parameters": [
-      0,
+      1,
       {
         "fix": false,
       },

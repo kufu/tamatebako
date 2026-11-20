@@ -327,7 +327,7 @@ importers:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
       use-intl:
-        specifier: ^4.15.0
+        specifier: ^4.15.1
         version: 4.15.1(@types/react@19.3.0)(react@19.3.1)
 
   packages/next-auth:

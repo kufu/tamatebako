@@ -41,6 +41,8 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
 - `localize(...)` / `formatMessage(...)` の呼び出し結果
   - `intl.formatMessage(...)` のようなメンバー式経由の呼び出しも含みます
 
+変数・プロパティアクセス(`label`、`user.name` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
+
 ### 対象外になるケース
 
 - JSX属性値(`aria-current={current ? 'page' : undefined}` 等)
@@ -89,6 +91,7 @@ export const SafeBrowserTranslation = 'span' as const
       // {
       //   additionalTextComponentRegex: ['^Trans$'],
       //   additionalTextFunctionRegex: ['^t$'],
+      //   additionalTextVariableRegex: ['^label$', '\\.name$'],
       // },
     ],
   },
@@ -104,6 +107,25 @@ export const SafeBrowserTranslation = 'span' as const
 ### additionalTextFunctionRegex
 
 `localize` / `formatMessage` 以外に「戻り値が常に文字列になる関数(翻訳関数等)」が存在する場合、その名称を正規表現で指定します。メンバー式経由の呼び出し(`i18n.t(...)`)はプロパティ名で判定します。
+
+### additionalTextVariableRegex
+
+値が文字列であることが分かっている変数・プロパティアクセスを「生のテキスト」として扱いたい場合、その名称を正規表現で指定します。
+
+プロパティアクセスは `.` つなぎの文字列に変換した上で判定します。オプショナルチェーン(`user?.name`)は `user.name` として扱います。
+
+| 指定例 | 対象になる式 |
+| --- | --- |
+| `'^label$'` | 変数 `label` のみ |
+| `'\\.name$'` | `.name` で終わるプロパティアクセス(`user.name`、`user?.department?.name` 等) |
+| `'^user\\.name$'` | `user.name` のみ |
+| `'Text$'` | 変数 `xxxText` と、`.xxxText` で終わるプロパティアクセスの両方 |
+
+- `items[0].name` や `getUser().name` のように `.` つなぎで表せない式は対象外です
+- マッチした式は文字列リテラルと同じ扱いになります
+  - `{cond && label}` や `{cond ? label : null}` は検知します
+  - `{cond ? label : '未設定'}` のような文字列同士の切り替えは検知しません
+- 実行時に空文字列・`null` 等になりうるかは判定できないため、値が常にテキストとしてレンダーされる前提で検知します
 
 ## ❌ Incorrect
 
@@ -126,6 +148,10 @@ export const SafeBrowserTranslation = 'span' as const
 
 // additionalTextFunctionRegex: ['^t$']
 <div>{loading && t('loading')}</div>
+
+// additionalTextVariableRegex: ['^label$', '\\.name$']
+<div>{loading && label}</div>
+<div>{visible ? user.name : null}</div>
 ```
 
 ## ✅ Correct

@@ -4,6 +4,7 @@ const SCHEMA = [
     properties: {
       additionalTextComponentRegex: { type: 'array', items: { type: 'string' } },
       additionalTextFunctionRegex: { type: 'array', items: { type: 'string' } },
+      additionalTextVariableRegex: { type: 'array', items: { type: 'string' } },
     },
     additionalProperties: false,
   },
@@ -35,6 +36,29 @@ const getCallExpressionName = (node) => {
 
   if (callee.type === 'Identifier') return callee.name
   if (callee.type === 'MemberExpression' && !callee.computed && callee.property.type === 'Identifier') return callee.property.name
+
+  return undefined
+}
+
+// 変数・プロパティアクセスを`.`つなぎの文字列に変換する(例: `user?.name` → `user.name`)
+// HINT: `items[0].name` や `getUser().name` のように`.`つなぎで表せない式は対象外
+const getVariablePath = (node) => {
+  switch (node.type) {
+    case 'Identifier':
+      return node.name
+    case 'ThisExpression':
+      return 'this'
+    case 'ChainExpression':
+    case 'TSNonNullExpression':
+      return getVariablePath(node.expression)
+    case 'MemberExpression': {
+      if (node.computed || node.property.type !== 'Identifier') return undefined
+
+      const objectPath = getVariablePath(node.object)
+
+      return objectPath ? `${objectPath}.${node.property.name}` : undefined
+    }
+  }
 
   return undefined
 }
@@ -109,6 +133,7 @@ module.exports = {
     const options = context.options[0] || {}
     const textComponentRegex = generateRegex(TEXT_COMPONENT_NAMES, options.additionalTextComponentRegex)
     const textFunctionRegex = generateRegex(TEXT_FUNCTION_NAMES, options.additionalTextFunctionRegex)
+    const textVariableRegex = options.additionalTextVariableRegex ? new RegExp(options.additionalTextVariableRegex.join('|')) : null
 
     // JSXのkey属性を調べる
     // HINT: Reactはkeyが異なると型が同じでも要素を再利用せず、アンマウントしてからマウントする
@@ -152,6 +177,15 @@ module.exports = {
 
       if (functionName && textFunctionRegex.test(functionName)) {
         return { isString: true, identity: 'string', label: `${functionName}()の呼び出し結果` }
+      }
+
+      if (textVariableRegex) {
+        const variablePath = getVariablePath(node)
+
+        // HINT: undefinedは「何もレンダーされない」値のため、正規表現にマッチしても対象外
+        if (variablePath && variablePath !== 'undefined' && textVariableRegex.test(variablePath)) {
+          return { isString: true, identity: 'string', label: variablePath }
+        }
       }
 
       return undefined

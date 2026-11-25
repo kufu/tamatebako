@@ -213,6 +213,34 @@ ruleTester.run('require-safe-browser-translation', rule, {
     { code: `const Foo = ({ loading }) => <div>{loading && t('x')}</div>` },
     // Fragmentで囲まれたテキストは検知できない(既知の限界)
     { code: `const Foo = ({ loading }) => <div>{loading && <>処理中</>}</div>` },
+    // additionalTextVariableRegex: オプション未指定の場合、変数・プロパティアクセスは対象外
+    { code: `const Foo = ({ loading, label }) => <div>{loading && label}</div>` },
+    { code: `const Foo = ({ loading, user }) => <div>{loading ? user.name : null}</div>` },
+    // additionalTextVariableRegex: マッチしない変数・プロパティアクセスは対象外
+    {
+      code: `const Foo = ({ loading, text, user }) => <div>{loading && text}{loading && user.age}{loading && name}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$', '\\.name$'] }],
+    },
+    // additionalTextVariableRegex: 文字列とみなすため、文字列同士の切り替えは対象外
+    {
+      code: `const Foo = ({ loading, label, user }) => <div>{loading ? label : '未設定'}{loading ? user.name : label}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$', '\\.name$'] }],
+    },
+    // additionalTextVariableRegex: `.`つなぎで表せない式は対象外
+    {
+      code: `const Foo = ({ loading, users, key }) => <div>{loading && users[0].name}{loading && getUser().name}{loading && users[key]}</div>`,
+      options: [{ additionalTextVariableRegex: ['name$', '^users'] }],
+    },
+    // additionalTextVariableRegex: 要素で囲まれていれば対象外
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading && <SafeBrowserTranslation>{label}</SafeBrowserTranslation>}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+    },
+    // additionalTextVariableRegex: JSX属性値は対象外
+    {
+      code: `const Foo = ({ loading, label }) => <div aria-label={loading ? label : undefined} />`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+    },
     // SafeBrowserTranslation以外の要素で囲まれている場合も対象外
     { code: `const Foo = ({ loading }) => <div>{loading && <p>処理中</p>}</div>` },
     { code: `const Foo = ({ loading }) => <div>{loading ? <Text><Localizer id="x" defaultText="処理中" /></Text> : null}</div>` },
@@ -552,6 +580,47 @@ ruleTester.run('require-safe-browser-translation', rule, {
       code: `const Foo = ({ loading, i18n }) => <div>{loading ? i18n.t('x') : null}</div>`,
       options: [{ additionalTextFunctionRegex: ['^t$'] }],
       errors: [{ message: errorMessage('t()の呼び出し結果') }],
+    },
+    // additionalTextVariableRegex: 変数名にマッチする場合、文字列とみなして検知される
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading && label}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      errors: [{ message: errorMessage('label') }],
+    },
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading ? label : null}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      errors: [{ message: errorMessage('label') }],
+    },
+    // additionalTextVariableRegex: 属性名は`.`つなぎで指定できる
+    {
+      code: `const Foo = ({ loading, user }) => <div>{loading && user.name}</div>`,
+      options: [{ additionalTextVariableRegex: ['\\.name$'] }],
+      errors: [{ message: errorMessage('user.name') }],
+    },
+    // additionalTextVariableRegex: オプショナルチェーン・non-null assertion相当・thisも`.`つなぎとして扱う
+    {
+      code: `const Foo = ({ loading, user }) => <div>{loading && user?.department?.name}{loading ? this.props.name : <Icon />}</div>`,
+      options: [{ additionalTextVariableRegex: ['\\.name$'] }],
+      errors: [{ message: errorMessage('user.department.name') }, { message: errorMessage('this.props.name') }],
+    },
+    // additionalTextVariableRegex: 経路全体を指定することもできる
+    {
+      code: `const Foo = ({ loading, user, group }) => <div>{loading && user.name}{loading && group.name}</div>`,
+      options: [{ additionalTextVariableRegex: ['^user\\.name$'] }],
+      errors: [{ message: errorMessage('user.name') }],
+    },
+    // additionalTextVariableRegex: 要素・何もレンダーされない値との切り替えは検知される
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading ? label : <Icon />}{loading ? '' : label}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      errors: [{ message: errorMessage('label') }, { message: errorMessage('label') }],
+    },
+    // additionalTextVariableRegex: コンポーネントとの切り替えは種類が異なるため両方検知される
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading ? label : <Localizer id="x" defaultText="処理中" />}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      errors: [{ message: errorMessage('label') }, { message: errorMessage('Localizer要素') }],
     },
     // Fragmentの直下にある場合も検知される
     {

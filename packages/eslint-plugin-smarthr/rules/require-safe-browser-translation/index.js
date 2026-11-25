@@ -14,6 +14,8 @@ const SCHEMA = [
 const TEXT_COMPONENT_NAMES = '^(Localizer|FormattedMessage)$'
 // 戻り値が常に文字列になる関数(上記コンポーネントの関数版)
 const TEXT_FUNCTION_NAMES = '^(localize|formatMessage)$'
+// 値が文字列であることが分かっている変数・プロパティアクセス(翻訳済みの文言をまとめたオブジェクトの属性)
+const TEXT_VARIABLE_NAMES = '^(translated|localized)\\.'
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation`
@@ -133,7 +135,7 @@ module.exports = {
     const options = context.options[0] || {}
     const textComponentRegex = generateRegex(TEXT_COMPONENT_NAMES, options.additionalTextComponentRegex)
     const textFunctionRegex = generateRegex(TEXT_FUNCTION_NAMES, options.additionalTextFunctionRegex)
-    const textVariableRegex = options.additionalTextVariableRegex ? new RegExp(options.additionalTextVariableRegex.join('|')) : null
+    const textVariableRegex = generateRegex(TEXT_VARIABLE_NAMES, options.additionalTextVariableRegex)
 
     // JSXのkey属性を調べる
     // HINT: Reactはkeyが異なると型が同じでも要素を再利用せず、アンマウントしてからマウントする
@@ -179,13 +181,11 @@ module.exports = {
         return { isString: true, identity: 'string', label: `${functionName}()の呼び出し結果` }
       }
 
-      if (textVariableRegex) {
-        const variablePath = getVariablePath(node)
+      const variablePath = getVariablePath(node)
 
-        // HINT: undefinedは「何もレンダーされない」値のため、正規表現にマッチしても対象外
-        if (variablePath && variablePath !== 'undefined' && textVariableRegex.test(variablePath)) {
-          return { isString: true, identity: 'string', label: variablePath }
-        }
+      // HINT: undefinedは「何もレンダーされない」値のため、正規表現にマッチしても対象外
+      if (variablePath && variablePath !== 'undefined' && textVariableRegex.test(variablePath)) {
+        return { isString: true, identity: 'string', label: variablePath }
       }
 
       return undefined

@@ -213,7 +213,14 @@ ruleTester.run('require-safe-browser-translation', rule, {
     { code: `const Foo = ({ loading }) => <div>{loading && t('x')}</div>` },
     // Fragmentで囲まれたテキストは検知できない(既知の限界)
     { code: `const Foo = ({ loading }) => <div>{loading && <>処理中</>}</div>` },
-    // additionalTextVariableRegex: オプション未指定の場合、変数・プロパティアクセスは対象外
+    // translated.xxx / localized.xxx は文字列とみなすため、文字列同士の切り替えは対象外
+    { code: `const Foo = ({ page, translated }) => <div>{page === 'favorite' ? translated.favoriteModeText : translated.allModeText}</div>` },
+    { code: `const Foo = ({ checked, localized }) => <div>{checked ? localized.checked : '無選択'}</div>` },
+    // translated / localized そのもの、および先頭以外に含まれる場合は対象外
+    { code: `const Foo = ({ loading, translated, props, untranslated }) => <div>{loading && translated}{loading && props.translated.text}{loading && untranslated.text}</div>` },
+    // translated.xxx / localized.xxx が要素で囲まれている場合は対象外
+    { code: `const Foo = ({ loading, translated }) => <div>{loading && <SafeBrowserTranslation>{translated.text}</SafeBrowserTranslation>}</div>` },
+    // additionalTextVariableRegex: オプション未指定の場合、translated. / localized. 以外の変数・プロパティアクセスは対象外
     { code: `const Foo = ({ loading, label }) => <div>{loading && label}</div>` },
     { code: `const Foo = ({ loading, user }) => <div>{loading ? user.name : null}</div>` },
     // additionalTextVariableRegex: マッチしない変数・プロパティアクセスは対象外
@@ -580,6 +587,40 @@ ruleTester.run('require-safe-browser-translation', rule, {
       code: `const Foo = ({ loading, i18n }) => <div>{loading ? i18n.t('x') : null}</div>`,
       options: [{ additionalTextFunctionRegex: ['^t$'] }],
       errors: [{ message: errorMessage('t()の呼び出し結果') }],
+    },
+    // translated.xxx / localized.xxx はデフォルトで文字列とみなして検知される
+    {
+      code: `const Foo = ({ loading, translated }) => <div>{loading && translated.text}</div>`,
+      errors: [{ message: errorMessage('translated.text') }],
+    },
+    {
+      code: `const Foo = ({ loading, localized }) => <div>{loading ? localized?.text : null}</div>`,
+      errors: [{ message: errorMessage('localized.text') }],
+    },
+    // 要素との切り替えは検知される
+    {
+      code: `
+        const Foo = ({ mode, page, translated }) => (
+          <div>
+            {mode === 'search' ? (
+              <SafeBrowserTranslation>
+                <Localizer id="x" defaultText="検索結果" />
+              </SafeBrowserTranslation>
+            ) : page === 'favorite' ? (
+              translated.favoriteModeText
+            ) : (
+              translated.allModeText
+            )}
+          </div>
+        )
+      `,
+      errors: [{ message: errorMessage('translated.favoriteModeText') }, { message: errorMessage('translated.allModeText') }],
+    },
+    // additionalTextVariableRegex: デフォルトの translated. / localized. も引き続き検知される
+    {
+      code: `const Foo = ({ loading, translated }) => <div>{loading && translated.text}</div>`,
+      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      errors: [{ message: errorMessage('translated.text') }],
     },
     // additionalTextVariableRegex: 変数名にマッチする場合、文字列とみなして検知される
     {

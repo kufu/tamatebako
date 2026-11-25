@@ -41,7 +41,10 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
 - `localize(...)` / `formatMessage(...)` の呼び出し結果
   - `intl.formatMessage(...)` のようなメンバー式経由の呼び出しも含みます
 
-変数・プロパティアクセス(`label`、`user.name` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
+- `translated.xxx` / `localized.xxx` 形式のプロパティアクセス
+  - 翻訳済みの文言をまとめたオブジェクトの属性で、値が文字列であることが分かっているためです
+
+上記以外の変数・プロパティアクセス(`label`、`user.name` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
 
 ### 対象外になるケース
 
@@ -110,7 +113,7 @@ export const SafeBrowserTranslation = 'span' as const
 
 ### additionalTextVariableRegex
 
-値が文字列であることが分かっている変数・プロパティアクセスを「生のテキスト」として扱いたい場合、その名称を正規表現で指定します。
+`translated.xxx` / `localized.xxx` 以外に、値が文字列であることが分かっている変数・プロパティアクセスを「生のテキスト」として扱いたい場合、その名称を正規表現で指定します。
 
 プロパティアクセスは `.` つなぎの文字列に変換した上で判定します。オプショナルチェーン(`user?.name`)は `user.name` として扱います。
 
@@ -145,6 +148,9 @@ export const SafeBrowserTranslation = 'span' as const
 <div>
   {exceeded ? <Localizer key="a" id="a" defaultText="a" /> : <Localizer key="b" id="b" defaultText="b" />}
 </div>
+
+// translated.xxx / localized.xxx が条件によって出入りしている
+<div>{loading && translated.loadingText}</div>
 
 // additionalTextFunctionRegex: ['^t$']
 <div>{loading && t('loading')}</div>

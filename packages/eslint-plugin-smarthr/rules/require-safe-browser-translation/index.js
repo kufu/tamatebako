@@ -22,7 +22,8 @@ const TEXT_VARIABLE_NAMES = '^(translated|localized)\\.|(^|\\.)(name|label|text|
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation`
 
-const generateRegex = (base, additional) => new RegExp(additional ? `${base}|${additional.join('|')}` : base)
+// HINT: 空配列の場合に末尾が`|`の正規表現(すべての名称にマッチする)を生成しないよう、要素数で判定する
+const generateRegex = (base, additional) => new RegExp(additional?.length ? `${base}|${additional.join('|')}` : base)
 
 const getJSXElementName = (node) => {
   if (node.type !== 'JSXElement') return undefined
@@ -197,8 +198,9 @@ module.exports = {
       context.report({
         node,
         message: `${label}が条件によって出入りしています。ブラウザの自動翻訳機能を利用している場合、Reactがクラッシュする可能性があります${DETAIL_LINK}
- - 意味づけ・スタイルのために要素で囲むべきテキストの場合、適切な要素で囲んでください(spanに限らず、要素で囲まれていれば問題ありません)
- - 現状のマークアップが正しい場合、smarthr-ui/SafeBrowserTranslationで囲み、意味づけ・スタイルのための要素ではないことを明確にしてください`,
+ - 意味づけ・スタイルのために要素で囲むべきテキストの場合、適切な要素で囲んでください(spanに限らず、テキストと一緒に出入りする要素であれば問題ありません)
+ - 現状のマークアップが正しい場合、smarthr-ui/SafeBrowserTranslationで囲み、意味づけ・スタイルのための要素ではないことを明確にしてください
+ - いずれの場合も、条件分岐の内側でテキストを囲んでください。条件分岐の外側を囲んでも解決しません`,
       })
     }
 

@@ -13,8 +13,9 @@ const ruleTester = new RuleTester({
 
 const errorMessage = (label) => `${label}が条件によって出入りしています。ブラウザの自動翻訳機能を利用している場合、Reactがクラッシュする可能性があります
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation
- - 意味づけ・スタイルのために要素で囲むべきテキストの場合、適切な要素で囲んでください(spanに限らず、要素で囲まれていれば問題ありません)
- - 現状のマークアップが正しい場合、smarthr-ui/SafeBrowserTranslationで囲み、意味づけ・スタイルのための要素ではないことを明確にしてください`
+ - 意味づけ・スタイルのために要素で囲むべきテキストの場合、適切な要素で囲んでください(spanに限らず、テキストと一緒に出入りする要素であれば問題ありません)
+ - 現状のマークアップが正しい場合、smarthr-ui/SafeBrowserTranslationで囲み、意味づけ・スタイルのための要素ではないことを明確にしてください
+ - いずれの場合も、条件分岐の内側でテキストを囲んでください。条件分岐の外側を囲んでも解決しません`
 
 ruleTester.run('require-safe-browser-translation', rule, {
   valid: [
@@ -255,6 +256,11 @@ ruleTester.run('require-safe-browser-translation', rule, {
     {
       code: `const Foo = ({ loading, caption }) => <div aria-label={loading ? caption : undefined} />`,
       options: [{ additionalTextVariableRegex: ['^caption$'] }],
+    },
+    // オプションに空配列を指定した場合、省略時と同じ結果になる(デフォルトの対象以外は検知されない)
+    {
+      code: `const Foo = ({ loading, content }) => <div>{loading && <span>text</span>}{loading && <Trans id="x" />}{loading && t('x')}{loading && content}{loading && getText()}</div>`,
+      options: [{ additionalTextComponentRegex: [], additionalTextFunctionRegex: [], additionalTextVariableRegex: [] }],
     },
     // SafeBrowserTranslation以外の要素で囲まれている場合も対象外
     { code: `const Foo = ({ loading }) => <div>{loading && <p>処理中</p>}</div>` },
@@ -690,6 +696,21 @@ ruleTester.run('require-safe-browser-translation', rule, {
       code: `const Foo = ({ loading, caption }) => <div>{loading ? caption : <Localizer id="x" defaultText="処理中" />}</div>`,
       options: [{ additionalTextVariableRegex: ['^caption$'] }],
       errors: [{ message: errorMessage('caption') }, { message: errorMessage('Localizer要素') }],
+    },
+    // オプションに空配列を指定した場合、省略時と同じ結果になる(デフォルトの対象は引き続き検知される)
+    {
+      code: `const Foo = ({ loading, label }) => <div>{loading && <Localizer id="x" defaultText="処理中" />}{loading && localize({ id: 'x' })}{loading && label}</div>`,
+      options: [{ additionalTextComponentRegex: [], additionalTextFunctionRegex: [], additionalTextVariableRegex: [] }],
+      errors: [{ message: errorMessage('Localizer要素') }, { message: errorMessage('localize()の呼び出し結果') }, { message: errorMessage('label') }],
+    },
+    // 条件分岐の外側を要素で囲んでも、テキストノード自体が出入りするため検知される
+    {
+      code: `const Foo = ({ loading }) => <div><Icon /><SafeBrowserTranslation>{loading && <Localizer id="x" defaultText="処理中" />}</SafeBrowserTranslation></div>`,
+      errors: [{ message: errorMessage('Localizer要素') }],
+    },
+    {
+      code: `const Foo = ({ loading }) => <div><Icon /><span>{loading ? '処理中' : null}</span></div>`,
+      errors: [{ message: errorMessage('文字列リテラル') }],
     },
     // Fragmentの直下にある場合も検知される
     {

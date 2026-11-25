@@ -14,8 +14,10 @@ const SCHEMA = [
 const TEXT_COMPONENT_NAMES = '^(Localizer|FormattedMessage)$'
 // 戻り値が常に文字列になる関数(上記コンポーネントの関数版)
 const TEXT_FUNCTION_NAMES = '^(localize|formatMessage)$'
-// 値が文字列であることが分かっている変数・プロパティアクセス(翻訳済みの文言をまとめたオブジェクトの属性)
-const TEXT_VARIABLE_NAMES = '^(translated|localized)\\.'
+// 値が文字列であると推測できる変数・プロパティアクセス
+// - translated.xxx / localized.xxx: 翻訳済みの文言をまとめたオブジェクトの属性
+// - name / label / text / title / message / description、およびそれらで終わる名称(xxxName、xxx.name 等)
+const TEXT_VARIABLE_NAMES = '^(translated|localized)\\.|(^|\\.)(name|label|text|title|message|description)$|(Name|Label|Text|Title|Message|Description)$'
 
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation`

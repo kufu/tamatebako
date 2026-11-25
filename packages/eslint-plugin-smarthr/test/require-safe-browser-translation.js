@@ -111,7 +111,7 @@ ruleTester.run('require-safe-browser-translation', rule, {
 
     // 変数・関数呼び出しは型が静的に確定しないため対象外
     { code: `
-      const Foo = ({ loading, text }) => <div>{loading && text}</div>
+      const Foo = ({ loading, content }) => <div>{loading && content}</div>
     ` },
 
     // JSX属性値はHTML属性でテキストノードを生成しないため対象外(&&)
@@ -217,36 +217,44 @@ ruleTester.run('require-safe-browser-translation', rule, {
     { code: `const Foo = ({ page, translated }) => <div>{page === 'favorite' ? translated.favoriteModeText : translated.allModeText}</div>` },
     { code: `const Foo = ({ checked, localized }) => <div>{checked ? localized.checked : '無選択'}</div>` },
     // translated / localized そのもの、および先頭以外に含まれる場合は対象外
-    { code: `const Foo = ({ loading, translated, props, untranslated }) => <div>{loading && translated}{loading && props.translated.text}{loading && untranslated.text}</div>` },
+    { code: `const Foo = ({ loading, translated, props, untranslated }) => <div>{loading && translated}{loading && props.translated.value}{loading && untranslated.value}</div>` },
     // translated.xxx / localized.xxx が要素で囲まれている場合は対象外
     { code: `const Foo = ({ loading, translated }) => <div>{loading && <SafeBrowserTranslation>{translated.text}</SafeBrowserTranslation>}</div>` },
-    // additionalTextVariableRegex: オプション未指定の場合、translated. / localized. 以外の変数・プロパティアクセスは対象外
-    { code: `const Foo = ({ loading, label }) => <div>{loading && label}</div>` },
-    { code: `const Foo = ({ loading, user }) => <div>{loading ? user.name : null}</div>` },
+    // name / label / text / title / message / description 系は文字列とみなすため、文字列同士の切り替えは対象外
+    { code: `const Foo = ({ checked, label, user }) => <div>{checked ? label : '未設定'}{checked ? user.name : user.displayName}</div>` },
+    // name / label / text / title / message / description 系が要素で囲まれている場合は対象外
+    { code: `const Foo = ({ loading, title }) => <div>{loading && <p>{title}</p>}</div>` },
+    // 別の単語の末尾に含まれるだけの場合は対象外(rename, context, subtitle 等)
+    { code: `const Foo = ({ loading, rename, context, subtitle, user }) => <div>{loading && rename}{loading && context}{loading && subtitle}{loading && user.filename}</div>` },
+    // JSX属性値は対象外
+    { code: `const Foo = ({ loading, label }) => <div aria-label={loading ? label : undefined} />` },
+    // additionalTextVariableRegex: オプション未指定の場合、デフォルトの対象以外の変数・プロパティアクセスは対象外
+    { code: `const Foo = ({ loading, caption }) => <div>{loading && caption}</div>` },
+    { code: `const Foo = ({ loading, user }) => <div>{loading ? user.kana : null}</div>` },
     // additionalTextVariableRegex: マッチしない変数・プロパティアクセスは対象外
     {
-      code: `const Foo = ({ loading, text, user }) => <div>{loading && text}{loading && user.age}{loading && name}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$', '\\.name$'] }],
+      code: `const Foo = ({ loading, content, user }) => <div>{loading && content}{loading && user.age}{loading && kana}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$', '\\.kana$'] }],
     },
     // additionalTextVariableRegex: 文字列とみなすため、文字列同士の切り替えは対象外
     {
-      code: `const Foo = ({ loading, label, user }) => <div>{loading ? label : '未設定'}{loading ? user.name : label}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$', '\\.name$'] }],
+      code: `const Foo = ({ loading, caption, user }) => <div>{loading ? caption : '未設定'}{loading ? user.kana : caption}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$', '\\.kana$'] }],
     },
     // additionalTextVariableRegex: `.`つなぎで表せない式は対象外
     {
-      code: `const Foo = ({ loading, users, key }) => <div>{loading && users[0].name}{loading && getUser().name}{loading && users[key]}</div>`,
-      options: [{ additionalTextVariableRegex: ['name$', '^users'] }],
+      code: `const Foo = ({ loading, users, key }) => <div>{loading && users[0].kana}{loading && getUser().kana}{loading && users[key]}</div>`,
+      options: [{ additionalTextVariableRegex: ['kana$', '^users'] }],
     },
     // additionalTextVariableRegex: 要素で囲まれていれば対象外
     {
-      code: `const Foo = ({ loading, label }) => <div>{loading && <SafeBrowserTranslation>{label}</SafeBrowserTranslation>}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      code: `const Foo = ({ loading, caption }) => <div>{loading && <SafeBrowserTranslation>{caption}</SafeBrowserTranslation>}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
     },
     // additionalTextVariableRegex: JSX属性値は対象外
     {
-      code: `const Foo = ({ loading, label }) => <div aria-label={loading ? label : undefined} />`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      code: `const Foo = ({ loading, caption }) => <div aria-label={loading ? caption : undefined} />`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
     },
     // SafeBrowserTranslation以外の要素で囲まれている場合も対象外
     { code: `const Foo = ({ loading }) => <div>{loading && <p>処理中</p>}</div>` },
@@ -310,14 +318,14 @@ ruleTester.run('require-safe-browser-translation', rule, {
     // ネストした三項演算子で、一部の分岐のみが対象コンポーネント
     {
       code: `
-        const Foo = ({ mode, page, text }) => (
+        const Foo = ({ mode, page, values }) => (
           <div>
             {mode === 'search' ? (
               <Localizer id="x" defaultText="検索結果" />
             ) : page === 'favorite' ? (
-              text.favoriteModeText
+              values.favorite
             ) : (
-              text.allModeText
+              values.all
             )}
           </div>
         )
@@ -616,52 +624,72 @@ ruleTester.run('require-safe-browser-translation', rule, {
       `,
       errors: [{ message: errorMessage('translated.favoriteModeText') }, { message: errorMessage('translated.allModeText') }],
     },
-    // additionalTextVariableRegex: デフォルトの translated. / localized. も引き続き検知される
+    // name / label / text / title / message / description はデフォルトで文字列とみなして検知される
+    {
+      code: `const Foo = ({ loading, name, label, text, title, message, description }) => <div>{loading && name}{loading && label}{loading && text}{loading && title}{loading && message}{loading && description}</div>`,
+      errors: [{ message: errorMessage('name') }, { message: errorMessage('label') }, { message: errorMessage('text') }, { message: errorMessage('title') }, { message: errorMessage('message') }, { message: errorMessage('description') }],
+    },
+    // xxxName のように大文字始まりで終わる名称も検知される
+    {
+      code: `const Foo = ({ loading, userName, errorMessage, item }) => <div>{loading && userName}{loading ? errorMessage : null}{loading && item.shortDescription}</div>`,
+      errors: [{ message: errorMessage('userName') }, { message: errorMessage('errorMessage') }, { message: errorMessage('item.shortDescription') }],
+    },
+    // xxx.name のようなプロパティアクセスも検知される
+    {
+      code: `const Foo = ({ loading, user }) => <div>{loading && user.name}{loading && user?.department?.fullName}</div>`,
+      errors: [{ message: errorMessage('user.name') }, { message: errorMessage('user.department.fullName') }],
+    },
+    // 要素との切り替えは検知される
+    {
+      code: `const Foo = ({ isNew, label }) => <button>{isNew ? <Text>新規</Text> : label}</button>`,
+      errors: [{ message: errorMessage('label') }],
+    },
+    // additionalTextVariableRegex: デフォルトの対象も引き続き検知される
     {
       code: `const Foo = ({ loading, translated }) => <div>{loading && translated.text}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
       errors: [{ message: errorMessage('translated.text') }],
     },
     // additionalTextVariableRegex: 変数名にマッチする場合、文字列とみなして検知される
     {
-      code: `const Foo = ({ loading, label }) => <div>{loading && label}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
-      errors: [{ message: errorMessage('label') }],
+      code: `const Foo = ({ loading, caption }) => <div>{loading && caption}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
+      errors: [{ message: errorMessage('caption') }],
     },
     {
-      code: `const Foo = ({ loading, label }) => <div>{loading ? label : null}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
-      errors: [{ message: errorMessage('label') }],
+      code: `const Foo = ({ loading, caption }) => <div>{loading ? caption : null}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
+      errors: [{ message: errorMessage('caption') }],
     },
     // additionalTextVariableRegex: 属性名は`.`つなぎで指定できる
     {
-      code: `const Foo = ({ loading, user }) => <div>{loading && user.name}</div>`,
-      options: [{ additionalTextVariableRegex: ['\\.name$'] }],
-      errors: [{ message: errorMessage('user.name') }],
+      code: `const Foo = ({ loading, user }) => <div>{loading && user.kana}</div>`,
+      options: [{ additionalTextVariableRegex: ['\\.kana$'] }],
+      errors: [{ message: errorMessage('user.kana') }],
     },
     // additionalTextVariableRegex: オプショナルチェーン・non-null assertion相当・thisも`.`つなぎとして扱う
     {
-      code: `const Foo = ({ loading, user }) => <div>{loading && user?.department?.name}{loading ? this.props.name : <Icon />}</div>`,
-      options: [{ additionalTextVariableRegex: ['\\.name$'] }],
-      errors: [{ message: errorMessage('user.department.name') }, { message: errorMessage('this.props.name') }],
+      code: `const Foo = ({ loading, user }) => <div>{loading && user?.department?.kana}{loading ? this.props.kana : <Icon />}</div>`,
+      options: [{ additionalTextVariableRegex: ['\\.kana$'] }],
+      errors: [{ message: errorMessage('user.department.kana') }, { message: errorMessage('this.props.kana') }],
     },
     // additionalTextVariableRegex: 経路全体を指定することもできる
     {
-      code: `const Foo = ({ loading, user, group }) => <div>{loading && user.name}{loading && group.name}</div>`,
-      options: [{ additionalTextVariableRegex: ['^user\\.name$'] }],
-      errors: [{ message: errorMessage('user.name') }],
+      code: `const Foo = ({ loading, user, group }) => <div>{loading && user.kana}{loading && group.kana}</div>`,
+      options: [{ additionalTextVariableRegex: ['^user\\.kana$'] }],
+      errors: [{ message: errorMessage('user.kana') }],
     },
     // additionalTextVariableRegex: 要素・何もレンダーされない値との切り替えは検知される
     {
-      code: `const Foo = ({ loading, label }) => <div>{loading ? label : <Icon />}{loading ? '' : label}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
-      errors: [{ message: errorMessage('label') }, { message: errorMessage('label') }],
+      code: `const Foo = ({ loading, caption }) => <div>{loading ? caption : <Icon />}{loading ? '' : caption}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
+      errors: [{ message: errorMessage('caption') }, { message: errorMessage('caption') }],
     },
     // additionalTextVariableRegex: コンポーネントとの切り替えは種類が異なるため両方検知される
     {
-      code: `const Foo = ({ loading, label }) => <div>{loading ? label : <Localizer id="x" defaultText="処理中" />}</div>`,
-      options: [{ additionalTextVariableRegex: ['^label$'] }],
-      errors: [{ message: errorMessage('label') }, { message: errorMessage('Localizer要素') }],
+      code: `const Foo = ({ loading, caption }) => <div>{loading ? caption : <Localizer id="x" defaultText="処理中" />}</div>`,
+      options: [{ additionalTextVariableRegex: ['^caption$'] }],
+      errors: [{ message: errorMessage('caption') }, { message: errorMessage('Localizer要素') }],
     },
     // Fragmentの直下にある場合も検知される
     {

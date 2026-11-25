@@ -44,7 +44,13 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
 - `translated.xxx` / `localized.xxx` 形式のプロパティアクセス
   - 翻訳済みの文言をまとめたオブジェクトの属性で、値が文字列であることが分かっているためです
 
-上記以外の変数・プロパティアクセス(`label`、`user.name` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
+- `name` / `label` / `text` / `title` / `message` / `description`、およびそれらで終わる名称の変数・プロパティアクセス
+  - 例: `label`、`userName`、`user.name`、`user?.department?.fullName`
+  - 名称から値が文字列であると推測できるためです
+  - `rename` や `subtitle` のように、別の単語の末尾に含まれているだけの場合は対象外です
+  - 名称のみで判定するため、`isShowName` のように文字列ではない値でも対象になります。その場合は変数名を見直すか、`eslint-disable` で対応してください
+
+上記以外の変数・プロパティアクセス(`value`、`user.id` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
 
 ### 対象外になるケース
 
@@ -94,7 +100,7 @@ export const SafeBrowserTranslation = 'span' as const
       // {
       //   additionalTextComponentRegex: ['^Trans$'],
       //   additionalTextFunctionRegex: ['^t$'],
-      //   additionalTextVariableRegex: ['^label$', '\\.name$'],
+      //   additionalTextVariableRegex: ['^caption$', '\\.kana$'],
       // },
     ],
   },
@@ -113,21 +119,21 @@ export const SafeBrowserTranslation = 'span' as const
 
 ### additionalTextVariableRegex
 
-`translated.xxx` / `localized.xxx` 以外に、値が文字列であることが分かっている変数・プロパティアクセスを「生のテキスト」として扱いたい場合、その名称を正規表現で指定します。
+デフォルトの対象以外に、値が文字列であることが分かっている変数・プロパティアクセスを「生のテキスト」として扱いたい場合、その名称を正規表現で指定します。
 
 プロパティアクセスは `.` つなぎの文字列に変換した上で判定します。オプショナルチェーン(`user?.name`)は `user.name` として扱います。
 
 | 指定例 | 対象になる式 |
 | --- | --- |
-| `'^label$'` | 変数 `label` のみ |
-| `'\\.name$'` | `.name` で終わるプロパティアクセス(`user.name`、`user?.department?.name` 等) |
-| `'^user\\.name$'` | `user.name` のみ |
-| `'Text$'` | 変数 `xxxText` と、`.xxxText` で終わるプロパティアクセスの両方 |
+| `'^caption$'` | 変数 `caption` のみ |
+| `'\\.kana$'` | `.kana` で終わるプロパティアクセス(`user.kana`、`user?.profile?.kana` 等) |
+| `'^user\\.kana$'` | `user.kana` のみ |
+| `'Caption$'` | 変数 `xxxCaption` と、`.xxxCaption` で終わるプロパティアクセスの両方 |
 
 - `items[0].name` や `getUser().name` のように `.` つなぎで表せない式は対象外です
 - マッチした式は文字列リテラルと同じ扱いになります
-  - `{cond && label}` や `{cond ? label : null}` は検知します
-  - `{cond ? label : '未設定'}` のような文字列同士の切り替えは検知しません
+  - `{cond && caption}` や `{cond ? caption : null}` は検知します
+  - `{cond ? caption : '未設定'}` のような文字列同士の切り替えは検知しません
 - 実行時に空文字列・`null` 等になりうるかは判定できないため、値が常にテキストとしてレンダーされる前提で検知します
 
 ## ❌ Incorrect
@@ -155,9 +161,13 @@ export const SafeBrowserTranslation = 'span' as const
 // additionalTextFunctionRegex: ['^t$']
 <div>{loading && t('loading')}</div>
 
-// additionalTextVariableRegex: ['^label$', '\\.name$']
+// name / label / text / title / message / description 系の変数・プロパティアクセスが条件によって出入りしている
 <div>{loading && label}</div>
 <div>{visible ? user.name : null}</div>
+
+// additionalTextVariableRegex: ['^caption$', '\\.kana$']
+<div>{loading && caption}</div>
+<div>{visible ? user.kana : null}</div>
 ```
 
 ## ✅ Correct

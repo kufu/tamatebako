@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.33.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.32.0...eslint-plugin-smarthr-v6.33.0) (2026-11-26)
+
+
+### Features
+
+* require-safe-browser-translationルールを追加 ([#1738](https://github.com/kufu/tamatebako/issues/1738)) ([187a20d](https://github.com/kufu/tamatebako/commit/187a20dbcd7de5fbc948089d045c30374bccc6fc))
+
 ## [6.32.0](https://github.com/kufu/tamatebako/compare/eslint-plugin-smarthr-v6.31.1...eslint-plugin-smarthr-v6.32.0) (2026-11-18)
 
 

@@ -64,4 +64,5 @@
 - [require-i18n-text](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-text)
 - [require-i18n-translation-sync](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-i18n-translation-sync)
 - [require-import](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-import)
+- [require-safe-browser-translation](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation)
 - [trim-props](https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/trim-props)

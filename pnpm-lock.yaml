@@ -264,8 +264,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)
       eslint-plugin-smarthr:
-        specifier: 6.33.0
-        version: 6.33.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
+        specifier: 6.34.0
+        version: 6.34.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
       globals:
         specifier: ^17.14.0
         version: 17.14.0

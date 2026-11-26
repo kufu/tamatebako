@@ -97,6 +97,7 @@ export default [
       'smarthr/require-i18n-text': 'error',
       'smarthr/require-i18n-translation-sync': 'error',
       'smarthr/require-import': 'off',
+      'smarthr/require-safe-browser-translation': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
       'smarthr/trim-props': 'error',
     }
 

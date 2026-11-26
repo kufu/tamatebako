@@ -260,6 +260,7 @@ const config = {
     'eslint-plugin-smarthr/require-i18n-text': 'error',
     'eslint-plugin-smarthr/require-i18n-translation-sync': 'error',
     'eslint-plugin-smarthr/require-import': 'off',
+    'eslint-plugin-smarthr/require-safe-browser-translation': 'warn', // TODO: 2026/11にwarn導入。問題なければerrorに変更予定
     'eslint-plugin-smarthr/trim-props': 'error',
   },
 }

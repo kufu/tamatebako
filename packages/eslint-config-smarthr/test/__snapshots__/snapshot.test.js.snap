@@ -3213,6 +3213,9 @@ exports[`should match ESLint Configuration snapshot 1`] = `
     "smarthr/require-import": [
       0,
     ],
+    "smarthr/require-safe-browser-translation": [
+      1,
+    ],
     "smarthr/trim-props": [
       2,
     ],

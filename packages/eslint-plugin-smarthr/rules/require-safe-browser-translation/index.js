@@ -22,6 +22,11 @@ const TEXT_VARIABLE_NAMES = '^(translated|localized)\\.|(^|\\.)(name|label|text|
 const DETAIL_LINK = `
  - 詳細: https://github.com/kufu/tamatebako/tree/master/packages/eslint-plugin-smarthr/rules/require-safe-browser-translation`
 
+const SAFE_BROWSER_TRANSLATION_NAME = 'SafeBrowserTranslation'
+const MAP_METHOD_NAMES = /^(map|flatMap)$/
+const FUNCTION_TYPES = /^(ArrowFunctionExpression|FunctionExpression|FunctionDeclaration)$/
+const TS_WRAPPER_TYPES = /^TS(AsExpression|SatisfiesExpression|NonNullExpression|TypeAssertion)$/
+
 // HINT: 空配列の場合に末尾が`|`の正規表現(すべての名称にマッチする)を生成しないよう、要素数で判定する
 const generateRegex = (base, additional) => new RegExp(additional?.length ? `${base}|${additional.join('|')}` : base)
 
@@ -126,6 +131,83 @@ const isJSXChildExpressionPosition = (node) => {
   )
 }
 
+// `items.map(...)` / `items.flatMap(...)` の呼び出しかどうか
+const isMapCallExpression = (node) => {
+  if (node.type !== 'CallExpression') return false
+
+  const { callee } = node
+
+  return callee.type === 'MemberExpression' && !callee.computed && MAP_METHOD_NAMES.test(callee.property.name)
+}
+
+// mapメソッドのコールバック関数かどうか
+const isMapCallback = (node) => isMapCallExpression(node.parent) && node.parent.arguments.includes(node)
+
+// return文が「mapメソッドのコールバック関数の戻り値」もしくは「if・switchによる条件付きのreturn」かどうか
+const isConditionalOrMapReturn = (node) => {
+  let conditional = false
+  let current = node.parent
+
+  while (current && !FUNCTION_TYPES.test(current.type)) {
+    if (current.type === 'IfStatement' || current.type === 'SwitchStatement') {
+      conditional = true
+    }
+
+    current = current.parent
+  }
+
+  return !!current && (conditional || isMapCallback(current))
+}
+
+// 条件分岐・mapメソッドによって出入りする子要素を持つかどうか
+// HINT: 出入りする要素の直後にテキストノードがある場合、要素の挿入位置の基準となるテキストノードが
+// ブラウザ翻訳によって置き換えられているとinsertBeforeでクラッシュする。
+// そのため出入りする兄弟を持つテキストをSafeBrowserTranslationで囲むことは正当な利用として扱う
+const hasConditionalSibling = (parent, node) =>
+  parent.children.some((child) => {
+    if (child === node || child.type !== 'JSXExpressionContainer') return false
+
+    let { expression } = child
+
+    while (TS_WRAPPER_TYPES.test(expression.type)) {
+      expression = expression.expression
+    }
+
+    return expression.type === 'LogicalExpression' || expression.type === 'ConditionalExpression' || isMapCallExpression(expression)
+  })
+
+// SafeBrowserTranslationが「条件分岐・mapメソッドによって出入りするテキストを直接囲む位置」にあるかどうか
+const isSafeBrowserTranslationPosition = (node) => {
+  let current = node
+
+  while (current.parent) {
+    const { parent } = current
+
+    switch (parent.type) {
+      case 'LogicalExpression':
+        return parent.right === current
+      case 'ConditionalExpression':
+        return parent.consequent === current || parent.alternate === current
+      case 'ArrowFunctionExpression':
+        return parent.body === current && isMapCallback(parent)
+      case 'ReturnStatement':
+        return isConditionalOrMapReturn(parent)
+      case 'JSXElement':
+        return hasConditionalSibling(parent, current)
+      case 'JSXFragment':
+        // HINT: Fragmentは要素を生成しないため、Fragment自体の位置で判定する
+        if (hasConditionalSibling(parent, current)) return true
+        break
+      default:
+        if (!TS_WRAPPER_TYPES.test(parent.type)) return false
+    }
+
+    current = parent
+  }
+
+  return false
+}
+
 /**
  * @type {import('@typescript-eslint/utils').TSESLint.RuleModule<''>}
  */
@@ -205,6 +287,29 @@ module.exports = {
     }
 
     return {
+      [`JSXElement[openingElement.name.name="${SAFE_BROWSER_TRANSLATION_NAME}"]`]: (node) => {
+        const { openingElement } = node
+
+        // HINT: keyは要素を再生成させる目的で指定する場合があるため対象外
+        if (openingElement.attributes.some((a) => a.type !== 'JSXAttribute' || a.name.name !== 'key')) {
+          context.report({
+            node: openingElement,
+            message: `${SAFE_BROWSER_TRANSLATION_NAME}にkey以外の属性を指定しないでください${DETAIL_LINK}
+ - ${SAFE_BROWSER_TRANSLATION_NAME}は「意味づけ・スタイルのための要素ではない」ことを明確にするためのコンポーネントです
+ - 属性が必要な場合、意味づけ・スタイルのための要素のため、spanなどの適切な要素に置き換えてください`,
+          })
+        }
+
+        if (!isSafeBrowserTranslationPosition(node)) {
+          context.report({
+            node: openingElement,
+            message: `${SAFE_BROWSER_TRANSLATION_NAME}は、条件分岐もしくはmapメソッドによって出入りするテキストを直接囲む位置で利用してください${DETAIL_LINK}
+ - テキストが出入りしない場合、もしくは親の要素と一緒に出入りする場合、${SAFE_BROWSER_TRANSLATION_NAME}は不要なため削除してください
+ - 別の場所にある条件分岐・mapメソッドによって出入りする場合、その条件分岐・mapメソッドの内側に移動してください
+ - stateに保持する等、意図的にこの位置で利用している場合は eslint-disable で理由を明記してください`,
+          })
+        }
+      },
       'LogicalExpression[operator="&&"]': (node) => {
         if (!isJSXChildExpressionPosition(node)) return
 

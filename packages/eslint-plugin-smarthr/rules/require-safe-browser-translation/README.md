@@ -2,6 +2,8 @@
 
 ブラウザの自動翻訳機能によるクラッシュを防ぐため、条件によって出入りする「要素で囲まれていない生のテキスト」を検知するルールです。
 
+あわせて、対策として利用する `SafeBrowserTranslation` が適切な位置・方法で使われているかもチェックします。
+
 ## なぜ必要なのか
 
 ブラウザの自動翻訳機能(Google翻訳等)は、ページ内のテキストノードを別の要素(`<font>`等)に置き換えます。その後、条件によって当該テキストがアンマウントされると、Reactは既に存在しないテキストノードを操作しようとして `removeChild` / `insertBefore` で `NotFoundError` を起こし、画面全体がクラッシュします。
@@ -26,6 +28,8 @@
 ```
 
 ## チェック内容
+
+### 条件によって出入りする生のテキスト
 
 JSXの子要素(children)の位置にある式のうち、以下のパターンを検知します。
 
@@ -52,7 +56,7 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
 
 上記以外の変数・プロパティアクセス(`value`、`user.id` 等)は、文字列である保証がないためデフォルトでは対象外です。`additionalTextVariableRegex` オプションで指定した場合のみ「生のテキスト」として扱います。
 
-### 対象外になるケース
+#### 対象外になるケース
 
 - JSX属性値(`aria-current={current ? 'page' : undefined}` 等)
   - 属性はテキストノードを生成せず、ブラウザ翻訳の影響を受けないためです
@@ -64,7 +68,7 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
   - Reactは文字列・数値をどちらも同じテキストノードとして扱うため、要素の出入りが発生せず安全なケースが多いためです
   - `null` / `undefined` / `true` / `false` / 空文字列、もしくはJSX要素が分岐に含まれる場合は、要素の有無そのものが切り替わるため検知します
 
-### 検知できないケース
+#### 検知できないケース
 
 以下は構文解析だけでは判定できないため検知できません。レビュー等で確認してください。
 
@@ -74,6 +78,40 @@ JSXの子要素(children)の位置にある式のうち、以下のパターン�
   - 例: `{cond ? 'text' : value}` で `value` が `null` になりうる場合
 - Fragmentで囲まれたテキスト
   - 例: `{cond && <>text</>}`
+- 出入りする要素の直後にある、常に表示されるテキスト
+  - 例: `<button>{icon && <Icon />}保存</button>`
+  - Reactは要素を挿入する際、直後のノードを挿入位置の基準にします。基準となるテキストノードがブラウザ翻訳によって置き換えられていると `insertBefore` でクラッシュします
+  - この場合は、常に表示されるテキスト側を囲んでください(`<button>{icon && <Icon />}<SafeBrowserTranslation>保存</SafeBrowserTranslation></button>`)
+
+### SafeBrowserTranslationの位置
+
+`SafeBrowserTranslation` は、出入りするテキストを直接囲む位置で利用してください。以下のいずれにも該当しない位置にある場合は検知します。
+
+- 論理演算子(`&&` / `||` / `??`)の右辺
+- 三項演算子の分岐
+- `map` / `flatMap` メソッドのコールバック関数の戻り値
+- `if` / `switch` による条件付きの `return`
+- 同じ親の中に、条件分岐・`map` メソッドによって出入りする子要素がある場合
+  - 上記「検知できないケース」の、出入りする要素の直後にあるテキストを保護する目的での利用です
+
+Fragmentは要素を生成しないため、Fragment自体の位置で判定します(`{cond && <><SafeBrowserTranslation>text</SafeBrowserTranslation><Icon /></>}` は問題ありません)。
+
+検知された場合は、以下のいずれかで対応してください。
+
+- テキストが出入りしない場合、もしくは親の要素と一緒に出入りする場合は、`SafeBrowserTranslation` が不要なため削除する
+  - 例: `<p><SafeBrowserTranslation>text</SafeBrowserTranslation></p>` は、テキストが `p` と一緒に出入りするため `<p>text</p>` で問題ありません
+- 別の場所にある条件分岐・`map` メソッドによって出入りする場合は、その条件分岐・`map` メソッドの内側に移動する
+  - 例: コンポーネントが `SafeBrowserTranslation` を無条件で直接返している場合、そのコンポーネントを条件付きでレンダーしている呼び出し側で囲んでください
+  - 呼び出し側でも検知できるよう、当該コンポーネントの名称を `additionalTextComponentRegex` に指定することを推奨します
+- stateに保持してから条件付きでレンダーする等、意図的にその位置で利用している場合は、`eslint-disable` で理由を明記する
+
+### SafeBrowserTranslationの属性
+
+`SafeBrowserTranslation` に `key` 以外の属性(スプレッドを含む)が指定されている場合は検知します。
+
+`SafeBrowserTranslation` は「意味づけ・スタイルのための要素ではなく、ブラウザ翻訳対策のための要素である」ことを明確にするためのコンポーネントです。`className` や `aria-*` 等の属性が必要な場合は、意味づけ・スタイルのための要素のため、`span` などの適切な要素に置き換えてください。
+
+`key` は要素を再生成させる目的で指定する場合があるため対象外です。
 
 ## 修正方法
 
@@ -178,6 +216,14 @@ export const SafeBrowserTranslation = 'span' as const
 // additionalTextVariableRegex: ['^caption$', '\\.kana$']
 <div>{loading && caption}</div>
 <div>{visible ? user.kana : null}</div>
+
+// SafeBrowserTranslationが、出入りするテキストを直接囲む位置にない
+<p><SafeBrowserTranslation>処理中</SafeBrowserTranslation></p>
+const LoadingText = () => <SafeBrowserTranslation>処理中</SafeBrowserTranslation>
+setText(<SafeBrowserTranslation>処理中</SafeBrowserTranslation>)
+
+// SafeBrowserTranslationにkey以外の属性が指定されている
+<div>{loading && <SafeBrowserTranslation className="text">処理中</SafeBrowserTranslation>}</div>
 ```
 
 ## ✅ Correct
@@ -203,4 +249,16 @@ export const SafeBrowserTranslation = 'span' as const
 
 // JSX属性値は対象外
 <a aria-current={current ? 'page' : undefined} />
+
+// mapメソッドによって出入りするテキストをSafeBrowserTranslationで囲んでいる
+<p>{names.map((name) => <SafeBrowserTranslation key={name}>{name}</SafeBrowserTranslation>)}</p>
+
+// 出入りする要素の直後にあるテキストをSafeBrowserTranslationで囲んでいる
+<button>
+  {icon && <Icon />}
+  <SafeBrowserTranslation>保存</SafeBrowserTranslation>
+</button>
+
+// 属性が必要な場合はspan等の要素を利用する
+<div>{loading && <span className="text">処理中</span>}</div>
 ```

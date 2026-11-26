@@ -113,6 +113,16 @@ Fragmentは要素を生成しないため、Fragment自体の位置で判定し�
 
 `key` は要素を再生成させる目的で指定する場合があるため対象外です。
 
+### SafeBrowserTranslationの中身
+
+位置が正しい場合でも、中身が「確実に要素である」と判定できる場合は `SafeBrowserTranslation` が不要なため検知します。削除してください。
+
+- 対象は、子要素がちょうど1つで、その子要素がテキストコンポーネント(`Localizer` / `FormattedMessage`、および `additionalTextComponentRegex` で指定したコンポーネント)ではないJSX要素の場合です
+  - 例: `{loading && <SafeBrowserTranslation><Icon /></SafeBrowserTranslation>}`
+  - `Icon` 等のコンポーネントが `alt` でテキストを持つ場合も、そのテキストは要素でラップされて提供されるため、生のテキストノードとして出入りすることはありません
+- 子要素が複数・0件の場合、Fragmentの場合、`{label || '処理中'}` や変数などの式の場合は、「確実に要素である」とまでは判定できないため対象外です
+- 中身が実体としてテキストノードしか生成しない独自のコンポーネントの場合は、その名称を `additionalTextComponentRegex` に指定してください
+
 ## 修正方法
 
 1. まずマークアップを見直してください。意味づけ・スタイルのために要素で囲むべきテキストの場合は、適切な要素で囲んでください
@@ -224,6 +234,9 @@ setText(<SafeBrowserTranslation>処理中</SafeBrowserTranslation>)
 
 // SafeBrowserTranslationにkey以外の属性が指定されている
 <div>{loading && <SafeBrowserTranslation className="text">処理中</SafeBrowserTranslation>}</div>
+
+// SafeBrowserTranslationの中身が確実に要素である
+<div>{loading && <SafeBrowserTranslation><Icon /></SafeBrowserTranslation>}</div>
 ```
 
 ## ✅ Correct

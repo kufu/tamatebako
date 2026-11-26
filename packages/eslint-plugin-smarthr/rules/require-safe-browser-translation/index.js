@@ -286,6 +286,28 @@ module.exports = {
       })
     }
 
+    // HINT: 前後の空白のみのJSXTextは実質的な子要素ではないため除外する
+    const getMeaningfulChildren = (node) => node.children.filter((child) => !(child.type === 'JSXText' && child.value.trim() === ''))
+
+    // SafeBrowserTranslationの中身が「確実に要素であるコンポーネント」のみかどうか
+    // HINT: LogicalExpression・変数等、classifyBareTextで分類できない式は「生のテキストではない」ことまでは
+    // 確定していないため、安全側に倒して「不要ではない(=必要)」とみなす。
+    // 「不要」と判定するのは、子要素がJSXElementで、かつテキストコンポーネントでもない
+    // (=Icon等、確実に要素である)と明確にわかる場合のみに限定する
+    const isSafeBrowserTranslationContentDefinitelyElement = (node) => {
+      const children = getMeaningfulChildren(node)
+
+      if (children.length !== 1) return false
+
+      const [child] = children
+
+      if (child.type !== 'JSXElement') return false
+
+      const componentName = getJSXElementName(child)
+
+      return !(componentName && textComponentRegex.test(componentName))
+    }
+
     return {
       [`JSXElement[openingElement.name.name="${SAFE_BROWSER_TRANSLATION_NAME}"]`]: (node) => {
         const { openingElement } = node
@@ -307,6 +329,14 @@ module.exports = {
  - テキストが出入りしない場合、もしくは親の要素と一緒に出入りする場合、${SAFE_BROWSER_TRANSLATION_NAME}は不要なため削除してください
  - 別の場所にある条件分岐・mapメソッドによって出入りする場合、その条件分岐・mapメソッドの内側に移動してください
  - stateに保持する等、意図的にこの位置で利用している場合は eslint-disable で理由を明記してください`,
+          })
+        } else if (isSafeBrowserTranslationContentDefinitelyElement(node)) {
+          context.report({
+            node: openingElement,
+            message: `${SAFE_BROWSER_TRANSLATION_NAME}の中身は、要素でラップされていない生のテキストではないため不要です${DETAIL_LINK}
+ - 対象はLocalizer/FormattedMessage要素、文字列・テンプレートリテラル、localize()等の呼び出し結果、name/label等の変数です
+ - Icon等、中身が確実に要素であるコンポーネントを包んでいる場合は${SAFE_BROWSER_TRANSLATION_NAME}を削除してください
+ - 中身が実体としてテキストノードしか生成しないコンポーネントの場合、additionalTextComponentRegexオプションに名称を指定してください`,
           })
         }
       },

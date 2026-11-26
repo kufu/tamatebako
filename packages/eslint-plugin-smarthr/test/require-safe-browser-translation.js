@@ -26,6 +26,10 @@ const ERROR_POSITION = `SafeBrowserTranslationは、条件分岐もしくはmap�
 const ERROR_ATTRIBUTE = `SafeBrowserTranslationにkey以外の属性を指定しないでください${DETAIL_LINK}
  - SafeBrowserTranslationは「意味づけ・スタイルのための要素ではない」ことを明確にするためのコンポーネントです
  - 属性が必要な場合、意味づけ・スタイルのための要素のため、spanなどの適切な要素に置き換えてください`
+const ERROR_UNNECESSARY = `SafeBrowserTranslationの中身は、要素でラップされていない生のテキストではないため不要です${DETAIL_LINK}
+ - 対象はLocalizer/FormattedMessage要素、文字列・テンプレートリテラル、localize()等の呼び出し結果、name/label等の変数です
+ - Icon等、中身が確実に要素であるコンポーネントを包んでいる場合はSafeBrowserTranslationを削除してください
+ - 中身が実体としてテキストノードしか生成しないコンポーネントの場合、additionalTextComponentRegexオプションに名称を指定してください`
 
 ruleTester.run('require-safe-browser-translation', rule, {
   valid: [
@@ -314,6 +318,19 @@ ruleTester.run('require-safe-browser-translation', rule, {
     { code: `const Foo = ({ icon }) => <>{icon && <Icon />}<SafeBrowserTranslation>保存</SafeBrowserTranslation></>` },
     // SafeBrowserTranslation以外の要素は位置・属性のチェック対象外
     { code: `const Foo = () => <p><span className="x">text</span></p>` },
+    // SafeBrowserTranslationの中身: 子要素が複数、または0件の場合は安全側に倒して対象外
+    { code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation><Icon />text</SafeBrowserTranslation>}</div>` },
+    { code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation></SafeBrowserTranslation>}</div>` },
+    // SafeBrowserTranslationの中身: Fragment・LogicalExpression・判定不能な変数等、
+    // classifyBareTextで分類できない式は「確実に要素」と判定できないため安全側に倒して対象外
+    { code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation><><Icon /></></SafeBrowserTranslation>}</div>` },
+    { code: `const Foo = ({ loading, label }) => <div><Icon />{loading && (<SafeBrowserTranslation>{label || '処理中'}</SafeBrowserTranslation>)}</div>` },
+    { code: `const Foo = ({ loading, value }) => <div>{loading && <SafeBrowserTranslation>{value}</SafeBrowserTranslation>}</div>` },
+    // SafeBrowserTranslationの中身: additionalTextComponentRegexで指定したコンポーネントはテキストとして扱う
+    {
+      code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation><Trans id="x" /></SafeBrowserTranslation>}</div>`,
+      options: [{ additionalTextComponentRegex: ['^Trans$'] }],
+    },
   ],
   invalid: [
     // SafeBrowserTranslationの位置: 要素の直下(テキストは親の要素と一緒に出入りするため不要)
@@ -383,6 +400,20 @@ ruleTester.run('require-safe-browser-translation', rule, {
     {
       code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation key="a" id="x">処理中</SafeBrowserTranslation>}</div>`,
       errors: [{ message: ERROR_ATTRIBUTE }],
+    },
+    // SafeBrowserTranslationの中身: 確実に要素であるコンポーネント(Icon等)のみの場合は不要
+    {
+      code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation><Icon /></SafeBrowserTranslation>}</div>`,
+      errors: [{ message: ERROR_UNNECESSARY }],
+    },
+    {
+      code: `const Foo = ({ scope }) => <div>{scope === 'table' ? <SafeBrowserTranslation><Icon /></SafeBrowserTranslation> : <SafeBrowserTranslation>text</SafeBrowserTranslation>}</div>`,
+      errors: [{ message: ERROR_UNNECESSARY }],
+    },
+    // additionalTextComponentRegexで指定していないコンポーネントは要素として扱う
+    {
+      code: `const Foo = ({ loading }) => <div>{loading && <SafeBrowserTranslation><Trans id="x" /></SafeBrowserTranslation>}</div>`,
+      errors: [{ message: ERROR_UNNECESSARY }],
     },
     // 属性・位置の両方に問題がある場合、それぞれ検知される
     {
